@@ -19,7 +19,7 @@ import (
 var (
 	contactsPath   = flag.String("contacts", contacts.PathFor("zurich-city"), "Path to contacts YAML file")
 	overridesPath  = flag.String("overrides", "data/email_overrides.yaml", "Path to email overrides YAML file")
-	platform       = flag.String("platform", "", "Platform campaign: bluesky | instagram (mutually exclusive with --audience/--custom)")
+	platform       = flag.String("platform", "", "Platform campaign: bluesky | instagram | facebook (mutually exclusive with --audience/--custom)")
 	audience       = flag.String("audience", "", "Audience campaign: city-parties | cantonal-national-parties | cantonal-zh | federal-zh (mutually exclusive with --platform/--custom)")
 	custom         = flag.String("custom", "", "Custom campaign: path to a messages YAML file (per-message to/subject/body; mutually exclusive with --platform/--audience)")
 	recipientsPath = flag.String("recipients", "", "Override the recipient YAML file for --audience (default: the audience's data/campaign_recipients/*.yaml)")
@@ -35,11 +35,15 @@ type platformConfig struct {
 	DisplayName string
 	Subject     string
 	Body        func(platformURL string) string
+	// SkipIfOn lists platforms whose holders are left out: they already heard
+	// about the project through that channel, so this email would be a repeat.
+	SkipIfOn []string
 }
 
 var platformConfigs = map[string]platformConfig{
 	"bluesky":   blueskyConfig,
 	"instagram": instagramConfig,
+	"facebook":  facebookConfig,
 }
 
 // audienceConfig describes an outreach campaign to a whole audience (parties,
@@ -165,6 +169,33 @@ https://www.linkedin.com/in/christof-gerber/
 	},
 }
 
+// facebookConfig only targets contacts whose sole project-relevant channel is
+// Facebook: anyone on Bluesky, Instagram or X is reached through those already.
+var facebookConfig = platformConfig{
+	Key:         "facebook",
+	DisplayName: "Facebook",
+	Subject:     "zuerichratsinfo jetzt auch auf Facebook",
+	SkipIfOn:    []string{"bluesky", "instagram", "x"},
+	Body: func(url string) string {
+		return fmt.Sprintf(`zuerichratsinfo ist jetzt auch auf Facebook verfügbar:
+👉 https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
+
+Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und markiert jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben (wie dich: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
+
+Wir arbeiten laufend daran, die Posts weiterzuentwickeln – zum Beispiel mit Statistiken, wie die einzelnen Fraktionen abgestimmt haben. Falls du Ideen oder Feedback hast, würde ich mich sehr darüber freuen!
+
+Ich würde mich freuen, wenn du dem Account folgst. Und vielleicht hast du ja mal Lust einen Abstimmungspost mit deinen Followern zu teilen.
+
+Weitere Informationen zum Projekt:
+https://github.com/SiiiTschiii/zuerichratsinfo
+
+Vielen Dank und liebe Grüsse
+Christof
+https://www.linkedin.com/in/christof-gerber/
+`, url)
+	},
+}
+
 type Recipient struct {
 	Name        string
 	Email       string
@@ -251,7 +282,7 @@ func buildCampaign() Campaign {
 		}
 	}
 	if modes == 0 {
-		log.Fatal("One of --platform (bluesky|instagram), --audience (city-parties|…) or --custom <file> is required")
+		log.Fatal("One of --platform (bluesky|instagram|facebook), --audience (city-parties|…) or --custom <file> is required")
 	}
 	if modes > 1 {
 		log.Fatal("Use only one of --platform, --audience or --custom")
@@ -263,7 +294,7 @@ func buildCampaign() Campaign {
 	case *platform != "":
 		cfg, ok := platformConfigs[strings.ToLower(*platform)]
 		if !ok {
-			log.Fatalf("Unknown --platform %q; supported: bluesky, instagram", *platform)
+			log.Fatalf("Unknown --platform %q; supported: bluesky, instagram, facebook", *platform)
 		}
 		return Campaign{
 			Recipients:    buildPlatformRecipientList(cfg),
@@ -438,12 +469,19 @@ func buildPlatformRecipientList(cfg platformConfig) []Recipient {
 
 	allContacts := mapper.GetAllContacts()
 	var matchingContacts []contacts.Contact
+	skipped := 0
 	for _, c := range allContacts {
-		if len(mapper.GetPlatformURLs(c.Name, cfg.Key)) > 0 {
-			matchingContacts = append(matchingContacts, c)
+		if len(mapper.GetPlatformURLs(c.Name, cfg.Key)) == 0 {
+			continue
 		}
+		if hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) {
+			skipped++
+			continue
+		}
+		matchingContacts = append(matchingContacts, c)
 	}
-	fmt.Fprintf(os.Stderr, "Found %d contacts with %s accounts\n", len(matchingContacts), cfg.DisplayName)
+	fmt.Fprintf(os.Stderr, "Found %d contacts with %s accounts (%d skipped for also being on %s)\n",
+		len(matchingContacts), cfg.DisplayName, skipped, strings.Join(cfg.SkipIfOn, "/"))
 
 	fmt.Fprintf(os.Stderr, "Fetching contact data from API...\n")
 	client := zurichapi.NewClient()
@@ -509,6 +547,15 @@ func buildPlatformRecipientList(cfg platformConfig) []Recipient {
 		countBySource(recipients, "override"))
 
 	return recipients
+}
+
+func hasAnyPlatform(mapper *contacts.Mapper, name string, platforms []string) bool {
+	for _, p := range platforms {
+		if len(mapper.GetPlatformURLs(name, p)) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func countBySource(recipients []Recipient, source string) int {

@@ -12,8 +12,9 @@ Exactly one of `--platform`, `--audience` or `--custom` is required.
 
 - `bluesky`
 - `instagram`
+- `facebook` — only contacts on Facebook **and not** on Bluesky, Instagram or X (they were already reached there)
 
-Planned future additions: `facebook`, `tiktok`, `linkedin` (once those project accounts are active).
+Planned future additions: `tiktok`, `linkedin` (once those project accounts are active).
 
 ## Supported audiences (`--audience`)
 
