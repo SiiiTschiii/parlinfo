@@ -197,9 +197,9 @@ func facebookBody(url string, formal bool) string {
 	return fmt.Sprintf(`zuerichratsinfo ist jetzt auch auf Facebook verfügbar:
 👉 https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
 
-Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat der Stadt Zürich und dem Kantonsrat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und nennt jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben, beim Namen (wie %s: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
+Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat der Stadt Zürich, dem Kantonsrat und dem Nationalrat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und nennt jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben, beim Namen (wie %s: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
 
-Als Nächstes geplant sind das nationale Parlament sowie die eingereichten Motionen und Postulate. %s, würde ich mich sehr darüber freuen!
+Als Nächstes geplant sind die eingereichten Motionen und Postulate. %s, würde ich mich sehr darüber freuen!
 
 Ich würde mich freuen, wenn %s. %s
 
