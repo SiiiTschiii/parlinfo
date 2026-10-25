@@ -180,9 +180,9 @@ var facebookConfig = platformConfig{
 		return fmt.Sprintf(`zuerichratsinfo ist jetzt auch auf Facebook verfügbar:
 👉 https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
 
-Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und nennt jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben, beim Namen (wie dich: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
+Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat der Stadt Zürich und dem Kantonsrat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und nennt jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben, beim Namen (wie dich: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
 
-Wir arbeiten laufend daran, die Posts weiterzuentwickeln – zum Beispiel mit Statistiken, wie die einzelnen Fraktionen abgestimmt haben. Falls du Ideen oder Feedback hast, würde ich mich sehr darüber freuen!
+Als Nächstes geplant sind das nationale Parlament sowie die eingereichten Motionen und Postulate. Falls du Ideen oder Feedback hast, würde ich mich sehr darüber freuen!
 
 Ich würde mich freuen, wenn du dem Account folgst. Und vielleicht hast du ja mal Lust einen Abstimmungspost mit deinen Followern zu teilen.
 
