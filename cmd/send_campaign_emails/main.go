@@ -584,6 +584,17 @@ func buildCantonRecipients(cfg platformConfig, existing []Recipient) []Recipient
 	if err != nil {
 		log.Fatalf("Failed to load canton contacts: %v", err)
 	}
+	if _, err := os.Stat(*cantonRecipientsPath); os.IsNotExist(err) {
+		// The file is gitignored, so a fresh checkout or worktree lacks it. An
+		// explicitly named file that is missing is a typo; the default is not.
+		explicit := false
+		flag.Visit(func(f *flag.Flag) { explicit = explicit || f.Name == "canton-recipients" })
+		if explicit {
+			log.Fatalf("Kantonsrat recipients file %s does not exist", *cantonRecipientsPath)
+		}
+		fmt.Fprintf(os.Stderr, "  ⚠️  %s not found: SKIPPING all Kantonsrat contacts (pass --canton-recipients <file> to include them)\n", *cantonRecipientsPath)
+		return nil
+	}
 	byName := make(map[string]Recipient)
 	for _, r := range loadAudienceRecipients(*cantonRecipientsPath) {
 		byName[normalize(r.Name)] = r
