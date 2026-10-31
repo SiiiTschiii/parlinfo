@@ -26,9 +26,11 @@ import (
 // DefaultBaseURL is the OData service root.
 const DefaultBaseURL = "https://ws.parlament.ch/odata.svc"
 
-// Attribution credits the Parlamentsdienste, whose open data terms ask for the
-// source to be named.
-const Attribution = "Source: parlament.ch"
+// Attribution credits the Parlamentsdienste. Their open data terms allow use
+// only with the source named as «Parlamentsdienste der Bundesversammlung,
+// Bern», in those words:
+// https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services
+const Attribution = "Daten: Parlamentsdienste der Bundesversammlung, Bern"
 
 // Client fetches Nationalrat votes.
 type Client struct {

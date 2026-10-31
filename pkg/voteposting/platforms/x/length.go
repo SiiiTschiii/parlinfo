@@ -59,8 +59,8 @@ func runeWeight(r rune) int {
 //
 // Bare domains count, not just explicit http(s) URLs. X linkifies "example.ch"
 // on sight and charges it the full 23 — and the CC BY credit line every
-// Kanton Zürich post carries is exactly that: "Source: OpenParlData.ch" renders
-// as a link. Missing it undercharged those posts by 8, in the one direction
+// Kanton Zürich post carries is exactly that: "Daten: OpenParlData.ch" renders
+// as a link. Missing it undercharged those posts, in the one direction
 // that gets a reply rejected mid-thread.
 func urlLenAt(s string, i int) int {
 	if i > 0 {

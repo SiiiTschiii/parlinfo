@@ -59,6 +59,137 @@ func TestGenerateCarousel_ValidJPEG(t *testing.T) {
 	}
 }
 
+// Every card carries alt text, and it says what that card shows: the title on
+// the first card, each vote's own counts on its result card.
+func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
+	fixtures := testfixtures.AllFixtures()
+	// Its 1,739-character vote label would push the counts past the cap if the
+	// label did not give way first.
+	fixtures["instagram-long-multi-vote-truncation"] = testfixtures.InstagramLongMultiVoteTruncation()
+	for name, group := range fixtures {
+		t.Run(name, func(t *testing.T) {
+			cards, err := GenerateCards(group)
+			if err != nil {
+				t.Fatalf("GenerateCards failed: %v", err)
+			}
+			images, err := GenerateCarousel(group)
+			if err != nil {
+				t.Fatalf("GenerateCarousel failed: %v", err)
+			}
+			if len(cards) != len(images) {
+				t.Fatalf("got %d cards, want one per carousel image (%d)", len(cards), len(images))
+			}
+			for i, c := range cards {
+				if strings.TrimSpace(c.Alt) == "" {
+					t.Errorf("card %d has no alt text", i)
+				}
+				if n := len([]rune(c.Alt)); n > maxAltRunes {
+					t.Errorf("card %d alt text is %d runes, over the %d cap", i, n, maxAltRunes)
+				}
+			}
+
+			title := []rune(voteformat.CleanVoteTitle(group[0].Title))
+			if len(title) > 40 {
+				title = title[:40] // a long title is shortened, never dropped
+			}
+			if len(title) > 0 && !strings.Contains(cards[0].Alt, string(title)) {
+				t.Errorf("first card's alt text does not name the business %q:\n%s", string(title), cards[0].Alt)
+			}
+			if len(cards) == len(group)+1 {
+				for i, v := range group {
+					// The overview lists every vote's result, as the card does.
+					// Where ten of them crowd the cap their labels are cut
+					// shorter, but every vote keeps its numbered line.
+					line, ok := formatSummaryLine(i+1, v, len(group))
+					if ok && len(group) <= 4 && !strings.Contains(cards[0].Alt, line) {
+						t.Errorf("overview alt text lacks vote %d's summary %q:\n%s", i+1, line, cards[0].Alt)
+					}
+					if ok && !strings.Contains(cards[0].Alt, fmt.Sprintf("\n%d. ", i+1)) {
+						t.Errorf("overview alt text does not list vote %d:\n%s", i+1, cards[0].Alt)
+					}
+					counts := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
+					if !strings.Contains(cards[i+1].Alt, counts) {
+						t.Errorf("result card %d alt text lacks its counts %q:\n%s", i+1, counts, cards[i+1].Alt)
+					}
+				}
+			}
+			// An Auswahl card prints the chosen option; so must its description.
+			for i, v := range group {
+				outcome := auswahlOutcome(v)
+				if outcome == "" || votes.IsWahlgeschaeftGroup(group) {
+					continue
+				}
+				card := cards[0]
+				if len(cards) == len(group)+1 {
+					card = cards[i+1]
+				}
+				if !strings.Contains(card.Alt, outcome) {
+					t.Errorf("vote %d alt text lacks the Auswahl outcome %q:\n%s", i+1, outcome, card.Alt)
+				}
+			}
+		})
+	}
+}
+
+func TestAssembleAlt_LabelGivesWayToResult(t *testing.T) {
+	result := "📊 130 Ja | 44 Nein"
+	got := assembleAlt(strings.Repeat("Antrag ", 500), result)
+	if !strings.HasSuffix(got, result) {
+		t.Errorf("the result did not survive the cap:\n%s", got)
+	}
+	if n := len([]rune(got)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+	// A result longer than the cap still leaves the label its floor.
+	got = assembleAlt(strings.Repeat("Titel ", 200), strings.Repeat("1. ✅ Ziffer\n", 200))
+	if !strings.HasPrefix(got, strings.Repeat("Titel ", 40)) {
+		t.Errorf("the label lost its floor:\n%s", got)
+	}
+	if n := len([]rune(got)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+	if got := assembleAlt("Titel", "Ergebnis"); got != "Titel\n\nErgebnis" {
+		t.Errorf("short alt text changed: %q", got)
+	}
+}
+
+// A long election title gives way; the sentence saying there is no result
+// does not, as it does not on the card.
+func TestWahlgeschaeftAlt_KeepsTheNoResultNotice(t *testing.T) {
+	group := testfixtures.KantonsratWahlgeschaeft()
+	group[0].Title = strings.Repeat("Wahl eines Mitglieds der Kommission ", 60)
+	alt := wahlgeschaeftAlt(group)
+	if !strings.HasSuffix(alt, voteformat.WahlgeschaeftNoResult) {
+		t.Errorf("the no-result notice did not survive a long title:\n%s", alt)
+	}
+	if n := len([]rune(alt)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+}
+
+// A result card's description dates the vote as the card's corner does.
+func TestResultAlt_CarriesTheCardTimestamp(t *testing.T) {
+	group := testfixtures.MultiVoteGroup()
+	for i, v := range group {
+		stamp := voteformat.FormatVoteDateTime(v.Date)
+		if stamp == "" {
+			t.Fatalf("fixture vote %d has no date", i+1)
+		}
+		if alt := resultAlt(group, i); !strings.HasPrefix(alt, stamp+"\n") {
+			t.Errorf("result card %d alt text does not open with %q:\n%s", i+1, stamp, alt)
+		}
+	}
+}
+
+func TestCapRunes(t *testing.T) {
+	if got := capRunes("Abstimmung", 20); got != "Abstimmung" {
+		t.Errorf("short text changed: %q", got)
+	}
+	if got := capRunes("Abstimmungsergebnis", 6); got != "Absti…" {
+		t.Errorf("capRunes = %q, want %q", got, "Absti…")
+	}
+}
+
 func TestGenerateCarousel_Empty(t *testing.T) {
 	_, err := GenerateCarousel(nil)
 	if err == nil {

@@ -23,22 +23,30 @@ type tweetResponse struct {
 	} `json:"data"`
 }
 
+// apiBase is the X API host. A variable so tests can point the media calls at
+// a local server.
+var apiBase = "https://api.x.com"
+
+// MaxMediaPerTweet is how many images one tweet can carry.
+const MaxMediaPerTweet = 4
+
+// MaxAltTextRunes is X's limit on an image description.
+const MaxAltTextRunes = 1000
+
 // PostTweet posts a tweet using X API v2 with OAuth 1.0a User Context.
 // If inReplyToTweetID is non-empty, the tweet is posted as a reply.
+// mediaIDs are optional, at most MaxMediaPerTweet, each from UploadImage.
 // Returns the created tweet's ID.
-func PostTweet(apiKey, apiSecret, accessToken, accessSecret, message, inReplyToTweetID string) (string, error) {
+func PostTweet(apiKey, apiSecret, accessToken, accessSecret, message, inReplyToTweetID string, mediaIDs []string) (string, error) {
 	// X API v2 endpoint for creating tweets
-	apiURL := "https://api.x.com/2/tweets"
+	apiURL := apiBase + "/2/tweets"
+
+	if len(mediaIDs) > MaxMediaPerTweet {
+		return "", fmt.Errorf("a tweet holds at most %d images, got %d", MaxMediaPerTweet, len(mediaIDs))
+	}
 
 	// Create the tweet payload
-	payload := map[string]interface{}{
-		"text": message,
-	}
-	if inReplyToTweetID != "" {
-		payload["reply"] = map[string]interface{}{
-			"in_reply_to_tweet_id": inReplyToTweetID,
-		}
-	}
+	payload := tweetPayload(message, inReplyToTweetID, mediaIDs)
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal tweet payload: %w", err)
@@ -77,6 +85,102 @@ func PostTweet(apiKey, apiSecret, accessToken, accessSecret, message, inReplyToT
 
 	fmt.Printf("✅ Tweet posted successfully! (ID: %s)\n", tweetResp.Data.ID)
 	return tweetResp.Data.ID, nil
+}
+
+// tweetPayload builds the POST /2/tweets body. The text is sent even when
+// empty: X accepts a tweet with media and no text.
+func tweetPayload(message, inReplyToTweetID string, mediaIDs []string) map[string]interface{} {
+	payload := map[string]interface{}{
+		"text": message,
+	}
+	if inReplyToTweetID != "" {
+		payload["reply"] = map[string]interface{}{
+			"in_reply_to_tweet_id": inReplyToTweetID,
+		}
+	}
+	if len(mediaIDs) > 0 {
+		payload["media"] = map[string]interface{}{
+			"media_ids": mediaIDs,
+		}
+	}
+	return payload
+}
+
+// UploadImage uploads a JPEG through the one-shot v2 media endpoint and
+// returns its media ID, ready for PostTweet.
+//
+// The image goes base64-encoded in a JSON body rather than as multipart: OAuth
+// 1.0a signs neither kind of body, and JSON spares building a multipart one.
+// An uploaded image no tweet uses expires on its own, so a failed post leaves
+// nothing behind to clean up.
+func UploadImage(apiKey, apiSecret, accessToken, accessSecret string, jpeg []byte) (string, error) {
+	body, err := postJSON(apiBase+"/2/media/upload", apiKey, apiSecret, accessToken, accessSecret, map[string]string{
+		"media":          base64.StdEncoding.EncodeToString(jpeg),
+		"media_category": "tweet_image",
+	})
+	if err != nil {
+		return "", fmt.Errorf("uploading image: %w", err)
+	}
+
+	var out struct {
+		Data struct {
+			ID string `json:"id"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(body, &out); err != nil {
+		return "", fmt.Errorf("failed to parse media upload response: %w", err)
+	}
+	if out.Data.ID == "" {
+		return "", fmt.Errorf("media upload response has no id: %s", string(body))
+	}
+	return out.Data.ID, nil
+}
+
+// SetAltText attaches an image description to uploaded media. It has to run
+// before the tweet that uses the media is posted.
+func SetAltText(apiKey, apiSecret, accessToken, accessSecret, mediaID, alt string) error {
+	if runes := []rune(alt); len(runes) > MaxAltTextRunes {
+		alt = string(runes[:MaxAltTextRunes-1]) + "…"
+	}
+	_, err := postJSON(apiBase+"/2/media/metadata", apiKey, apiSecret, accessToken, accessSecret, map[string]interface{}{
+		"id": mediaID,
+		"metadata": map[string]interface{}{
+			"alt_text": map[string]string{"text": alt},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("setting alt text: %w", err)
+	}
+	return nil
+}
+
+// postJSON sends an OAuth 1.0a-signed JSON POST and returns the response body
+// of a 2xx response.
+func postJSON(apiURL, apiKey, apiSecret, accessToken, accessSecret string, payload interface{}) ([]byte, error) {
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", generateOAuthHeader(apiURL, "POST", apiKey, apiSecret, accessToken, accessSecret))
+
+	client := &http.Client{Timeout: 60 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, fmt.Errorf("x API returned status %d: %s", resp.StatusCode, string(body))
+	}
+	return body, nil
 }
 
 // GetAuthenticatedUserID returns the user ID of the authenticated user.

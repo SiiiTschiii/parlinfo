@@ -10,7 +10,6 @@ import (
 
 	"github.com/siiitschiii/parlinfo/pkg/config"
 	"github.com/siiitschiii/parlinfo/pkg/imagegen"
-	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms/instagram"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
@@ -84,37 +83,19 @@ func main() {
 
 // liveGroups fetches what the bot would actually post for a jurisdiction right
 // now, so the carousel can be checked against real data rather than fixtures.
-//
-// The vote log is empty and the age guard off, matching generate_vote_post:
-// previewing is exactly when already-posted and out-of-window votes still need
-// to show up.
+// See voteposting.LatestGroups.
 func liveGroups(jurisdictionKey string, fetchLimit, numGroups int) (map[string][]votes.Vote, []string) {
 	jurisdiction, err := config.LookupJurisdiction(jurisdictionKey)
 	if err != nil {
 		log.Fatalf("%v. Available: %v", err, config.JurisdictionKeys())
 	}
 
-	emptyLog := votelog.NewEmpty(jurisdiction.Key, votelog.PlatformInstagram)
-	groups, err := voteposting.PrepareVoteGroups(jurisdiction.NewSource(), emptyLog, fetchLimit, 0)
+	groups, err := voteposting.LatestGroups(jurisdiction.NewSource(), jurisdiction.Key, fetchLimit, numGroups)
 	if err != nil {
 		log.Fatalf("Error preparing votes: %v", err)
 	}
-	// PrepareVoteGroups serves everything fetched; posting is what drops the
-	// unrenderable and the deliberately unpublished. A preview that skipped this
-	// would render the attendance roll calls the bot refuses to post.
-	groups = voteposting.PostableGroups(groups)
 	if len(groups) == 0 {
 		log.Fatalf("No votes found for %s", jurisdiction.Key)
-	}
-
-	// Newest first: a preview is nearly always about the most recent sitting,
-	// and PrepareVoteGroups orders oldest first so the bot drains a backlog
-	// chronologically.
-	for i, j := 0, len(groups)-1; i < j; i, j = i+1, j-1 {
-		groups[i], groups[j] = groups[j], groups[i]
-	}
-	if numGroups > 0 && len(groups) > numGroups {
-		groups = groups[:numGroups]
 	}
 
 	out := make(map[string][]votes.Vote, len(groups))

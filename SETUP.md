@@ -414,6 +414,11 @@ go run cmd/post_fixture/main.go --fixture=kantonsrat-vote --platform=bluesky
 # Post all fixtures to all platforms
 go run cmd/post_fixture/main.go --fixture=all
 
+# Live votes of any parliament through the same test accounts — the newest
+# Nationalrat business, or the newest one with several votes
+go run cmd/post_fixture/main.go --jurisdiction=nationalrat --platform=bluesky
+go run cmd/post_fixture/main.go --jurisdiction=nationalrat --min-votes=2 --fetch=300
+
 # Use real contacts (tags real accounts — use with care)
 go run cmd/post_fixture/main.go --contacts=data/zurich-city/contacts.yaml --fixture=vote-with-mentions
 
