@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -16,7 +17,8 @@ const DefaultMaxChars = 280
 
 // XPost holds the formatted text for a single post in an X thread
 type XPost struct {
-	Text string
+	Text   string
+	Images []imagegen.Card // carousel cards to attach, at most xapi.MaxMediaPerTweet
 }
 
 // FormatVoteThread creates an X thread for a group of related votes.

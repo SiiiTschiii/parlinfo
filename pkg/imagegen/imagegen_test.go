@@ -59,6 +59,56 @@ func TestGenerateCarousel_ValidJPEG(t *testing.T) {
 	}
 }
 
+// Every card carries alt text, and it says what that card shows: the title on
+// the first card, each vote's own counts on its result card.
+func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
+	for name, group := range testfixtures.AllFixtures() {
+		t.Run(name, func(t *testing.T) {
+			cards, err := GenerateCards(group)
+			if err != nil {
+				t.Fatalf("GenerateCards failed: %v", err)
+			}
+			images, err := GenerateCarousel(group)
+			if err != nil {
+				t.Fatalf("GenerateCarousel failed: %v", err)
+			}
+			if len(cards) != len(images) {
+				t.Fatalf("got %d cards, want one per carousel image (%d)", len(cards), len(images))
+			}
+			for i, c := range cards {
+				if strings.TrimSpace(c.Alt) == "" {
+					t.Errorf("card %d has no alt text", i)
+				}
+				if n := len([]rune(c.Alt)); n > maxAltRunes {
+					t.Errorf("card %d alt text is %d runes, over the %d cap", i, n, maxAltRunes)
+				}
+			}
+
+			title := voteformat.CleanVoteTitle(group[0].Title)
+			if title != "" && !strings.Contains(cards[0].Alt, title) {
+				t.Errorf("first card's alt text does not name the business %q:\n%s", title, cards[0].Alt)
+			}
+			if len(cards) == len(group)+1 {
+				for i, v := range group {
+					counts := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
+					if !strings.Contains(cards[i+1].Alt, counts) {
+						t.Errorf("result card %d alt text lacks its counts %q:\n%s", i+1, counts, cards[i+1].Alt)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestCapRunes(t *testing.T) {
+	if got := capRunes("Abstimmung", 20); got != "Abstimmung" {
+		t.Errorf("short text changed: %q", got)
+	}
+	if got := capRunes("Abstimmungsergebnis", 6); got != "Absti…" {
+		t.Errorf("capRunes = %q, want %q", got, "Absti…")
+	}
+}
+
 func TestGenerateCarousel_Empty(t *testing.T) {
 	_, err := GenerateCarousel(nil)
 	if err == nil {

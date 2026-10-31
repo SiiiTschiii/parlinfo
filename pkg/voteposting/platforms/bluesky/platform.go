@@ -1,12 +1,14 @@
 package bluesky
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/bskyapi"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
@@ -26,6 +28,9 @@ func (c *BlueskyContent) String() string {
 		} else {
 			sb.WriteString(fmt.Sprintf("\n  ↳ Reply %d:\n%s", i, post.Text))
 		}
+		if len(post.Images) > 0 {
+			sb.WriteString(fmt.Sprintf("\n  🖼️ %d image(s)", len(post.Images)))
+		}
 		// Show detected mentions in preview
 		for _, m := range post.Mentions {
 			name := post.Text[m.ByteStart:m.ByteEnd]
@@ -36,7 +41,13 @@ func (c *BlueskyContent) String() string {
 }
 
 // CreateRecordFunc is the signature for creating a Bluesky post. Defaults to bskyapi.CreateRecord.
-type CreateRecordFunc func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef) (*bskyapi.PostRef, error)
+type CreateRecordFunc func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error)
+
+// UploadBlobFunc is the signature for uploading an image. Defaults to bskyapi.UploadBlob.
+type UploadBlobFunc func(session *bskyapi.Session, data []byte, mimeType string) (json.RawMessage, error)
+
+// GenerateCardsFunc is the signature for rendering a group's cards. Defaults to imagegen.GenerateCards.
+type GenerateCardsFunc func(group []votes.Vote) ([]imagegen.Card, error)
 
 // CreateSessionFunc is the signature for creating a Bluesky session. Defaults to bskyapi.CreateSession.
 type CreateSessionFunc func(handle, password string) (*bskyapi.Session, error)
@@ -56,6 +67,8 @@ type BlueskyPlatform struct {
 	createRecordFunc  CreateRecordFunc  // injectable for testing
 	createSessionFunc CreateSessionFunc // injectable for testing
 	resolveHandleFunc ResolveHandleFunc // injectable for testing
+	uploadBlobFunc    UploadBlobFunc    // injectable for testing
+	generateCardsFunc GenerateCardsFunc // injectable for testing
 }
 
 // NewBlueskyPlatform creates a new Bluesky platform poster
@@ -70,6 +83,8 @@ func NewBlueskyPlatform(handle, password string, maxPostsPerRun int, contactMapp
 		createRecordFunc:  bskyapi.CreateRecord,
 		createSessionFunc: bskyapi.CreateSession,
 		resolveHandleFunc: bskyapi.ResolveHandle,
+		uploadBlobFunc:    bskyapi.UploadBlob,
+		generateCardsFunc: imagegen.GenerateCards,
 	}
 }
 
@@ -89,10 +104,45 @@ func (p *BlueskyPlatform) ensureSession() error {
 	return nil
 }
 
-// Format formats a group of votes into a Bluesky thread
+// Format formats a group of votes into a Bluesky thread and attaches the
+// group's carousel cards to it, the first four on the root (see
+// platforms.SpreadCards).
+//
+// A card that fails to render costs the thread its images, never its text: the
+// text carries every fact the cards do, and the tags and links besides.
 func (p *BlueskyPlatform) Format(group []votes.Vote) (platforms.Content, error) {
 	thread := FormatVoteThread(group, p.contactMapper)
+	if p.generateCardsFunc == nil || len(thread) == 0 {
+		return &BlueskyContent{thread: thread}, nil
+	}
+	cards, err := p.generateCardsFunc(group)
+	if err != nil {
+		log.Printf("Warning: posting to Bluesky without images, rendering cards failed: %v", err)
+		return &BlueskyContent{thread: thread}, nil
+	}
+	for i, images := range platforms.SpreadCards(cards, len(thread), bskyapi.MaxImagesPerPost) {
+		if i == len(thread) {
+			thread = append(thread, &BlueskyPost{})
+		}
+		thread[i].Images = images
+	}
 	return &BlueskyContent{thread: thread}, nil
+}
+
+// uploadImages uploads a post's cards and returns them ready to embed. A card
+// that fails to upload is left out with a warning rather than failing the
+// thread, for the same reason Format falls back to text.
+func (p *BlueskyPlatform) uploadImages(cards []imagegen.Card) []bskyapi.Image {
+	var images []bskyapi.Image
+	for _, c := range cards {
+		blob, err := p.uploadBlobFunc(p.session, c.JPEG, "image/jpeg")
+		if err != nil {
+			log.Printf("Warning: posting without one image, upload failed: %v", err)
+			continue
+		}
+		images = append(images, bskyapi.Image{Blob: blob, Alt: c.Alt, Width: c.Width, Height: c.Height})
+	}
+	return images
 }
 
 // Post posts a thread to Bluesky (root post + reply chain) and returns a ref
@@ -116,7 +166,7 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 	// Post the root
 	root := bskyContent.thread[0]
 	p.resolveMentionFacets(root)
-	rootRef, err := p.createRecordFunc(p.session, root.Text, root.Facets, nil)
+	rootRef, err := p.createRecordFunc(p.session, root.Text, root.Facets, nil, p.uploadImages(root.Images))
 	if err != nil {
 		return votelog.PostRef{}, false, fmt.Errorf("failed to post root: %w", err)
 	}
@@ -133,7 +183,12 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 			Parent: *parentRef,
 		}
 
-		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef)
+		images := p.uploadImages(reply.Images)
+		if reply.Text == "" && len(images) == 0 {
+			// An image-only reply whose images all failed has nothing left to say.
+			continue
+		}
+		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, images)
 		if err != nil {
 			return votelog.PostRef{}, false, fmt.Errorf("failed to post reply %d: %w", i+1, err)
 		}

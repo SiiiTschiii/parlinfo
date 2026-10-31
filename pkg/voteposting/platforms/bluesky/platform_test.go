@@ -1,12 +1,16 @@
 package bluesky
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/siiitschiii/parlinfo/pkg/bskyapi"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
+	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
 // recordCall records a single call to the mock createRecordFunc.
@@ -14,13 +18,14 @@ type recordCall struct {
 	text    string
 	facets  []bskyapi.Facet
 	replyTo *bskyapi.ReplyRef
+	images  []bskyapi.Image
 }
 
 // mockCreateRecord returns a CreateRecordFunc that records calls and returns sequential fake PostRefs.
 func mockCreateRecord(calls *[]recordCall) CreateRecordFunc {
 	counter := 0
-	return func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef) (*bskyapi.PostRef, error) {
-		*calls = append(*calls, recordCall{text: text, facets: facets, replyTo: replyTo})
+	return func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error) {
+		*calls = append(*calls, recordCall{text: text, facets: facets, replyTo: replyTo, images: images})
 		counter++
 		return &bskyapi.PostRef{
 			URI: fmt.Sprintf("at://did:fake/app.bsky.feed.post/%d", counter),
@@ -257,6 +262,138 @@ func TestPostURL(t *testing.T) {
 	for uri, want := range cases {
 		if got := postURL(uri); got != want {
 			t.Errorf("postURL(%q) = %q, want %q", uri, got, want)
+		}
+	}
+}
+
+// withImages wires n placeholder cards and a fake blob upload into p. Each
+// blob is {"card":<index>}; any card whose index is in failUploads fails.
+func withImages(p *BlueskyPlatform, n int, failUploads map[byte]bool) {
+	p.generateCardsFunc = func([]votes.Vote) ([]imagegen.Card, error) {
+		cards := make([]imagegen.Card, n)
+		for i := range cards {
+			cards[i] = imagegen.Card{JPEG: []byte{byte(i)}, Alt: fmt.Sprintf("card %d", i+1), Width: 1080, Height: 1350}
+		}
+		return cards, nil
+	}
+	p.uploadBlobFunc = func(_ *bskyapi.Session, data []byte, mimeType string) (json.RawMessage, error) {
+		if mimeType != "image/jpeg" {
+			return nil, fmt.Errorf("unexpected mime type %q", mimeType)
+		}
+		if failUploads[data[0]] {
+			return nil, errors.New("upload refused")
+		}
+		return json.RawMessage(fmt.Sprintf(`{"card":%d}`, data[0])), nil
+	}
+}
+
+func blobs(images []bskyapi.Image) string {
+	s := ""
+	for _, img := range images {
+		s += string(img.Blob)
+	}
+	return s
+}
+
+func TestPost_AttachesCardsToRoot(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	withImages(p, 3, nil)
+
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post error: %v", err)
+	}
+
+	root := recordCalls[0].images
+	if got := blobs(root); got != `{"card":0}{"card":1}{"card":2}` {
+		t.Errorf("root blobs = %s, want all three cards", got)
+	}
+	if root[1].Alt != "card 2" || root[1].Width != 1080 || root[1].Height != 1350 {
+		t.Errorf("root image 2 = %+v, want its alt text and aspect ratio", root[1])
+	}
+	for i, c := range recordCalls[1:] {
+		if len(c.images) != 0 {
+			t.Errorf("reply %d carries %d images; three cards fit on the root", i+1, len(c.images))
+		}
+	}
+}
+
+func TestPost_OverflowCardsBecomeImageOnlyReplies(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	withImages(p, 30, nil)
+
+	content, err := p.Format(testfixtures.SingleVoteAngenommen())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post error: %v", err)
+	}
+
+	total := 0
+	for i, c := range recordCalls {
+		if len(c.images) > bskyapi.MaxImagesPerPost {
+			t.Errorf("post %d carries %d images", i, len(c.images))
+		}
+		total += len(c.images)
+		if i > 0 && c.replyTo.Parent.URI != fmt.Sprintf("at://did:fake/app.bsky.feed.post/%d", i) {
+			t.Errorf("post %d replies to %s, want the post before it", i, c.replyTo.Parent.URI)
+		}
+	}
+	if total != 30 {
+		t.Errorf("posted %d images, want all 30", total)
+	}
+	if last := recordCalls[len(recordCalls)-1]; last.text != "" {
+		t.Errorf("overflow reply should be image-only, has text %q", last.text)
+	}
+}
+
+func TestPost_FailedUploadDropsOnlyThatImage(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	withImages(p, 6, map[byte]bool{1: true, 4: true, 5: true})
+
+	content, err := p.Format(testfixtures.SingleVoteAngenommen())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post error: %v", err)
+	}
+	if got := blobs(recordCalls[0].images); got != `{"card":0}{"card":2}{"card":3}` {
+		t.Errorf("root blobs = %s", got)
+	}
+	for i, c := range recordCalls {
+		if c.text == "" && len(c.images) == 0 {
+			t.Errorf("post %d is empty: an image-only reply whose images all failed should be skipped", i)
+		}
+	}
+}
+
+func TestFormat_RenderFailureKeepsText(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	p.generateCardsFunc = func([]votes.Vote) ([]imagegen.Card, error) { return nil, errors.New("font missing") }
+
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format should fall back to text, got error: %v", err)
+	}
+	for i, post := range content.(*BlueskyContent).thread {
+		if len(post.Images) != 0 {
+			t.Errorf("post %d has images after a render failure", i)
+		}
+		if post.Text == "" {
+			t.Errorf("post %d lost its text", i)
 		}
 	}
 }

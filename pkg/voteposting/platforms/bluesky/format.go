@@ -6,6 +6,7 @@ import (
 
 	"github.com/siiitschiii/parlinfo/pkg/bskyapi"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -18,6 +19,7 @@ type BlueskyPost struct {
 	Text     string
 	Facets   []bskyapi.Facet
 	Mentions []contacts.BlueskyMention // unresolved mentions (handle + byte offsets)
+	Images   []imagegen.Card           // carousel cards to embed, at most bskyapi.MaxImagesPerPost
 }
 
 // FormatVoteThread creates a Bluesky thread for a group of related votes.
