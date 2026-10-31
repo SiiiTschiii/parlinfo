@@ -2,9 +2,10 @@ name: CH Parl Info Bot
 
 on:
   schedule:
-    # Half an hour off the Zürich bot, so the two rarely queue behind each
-    # other in the shared concurrency group below.
-    - cron: "6 * * * *"
+    # Every four hours, at minute 6: half an hour off the Zürich bot's hourly
+    # minute, so the two rarely queue behind each other in the shared
+    # concurrency group below.
+    - cron: "6 */4 * * *"
 
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
@@ -95,7 +96,7 @@ jobs:
           CHPARL_BLUESKY_PASSWORD: ${{ secrets.CHPARL_BLUESKY_PASSWORD }}
           CHPARL_IG_USER_ID: ${{ secrets.CHPARL_IG_USER_ID }}
           CHPARL_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
-          # See bot.yml: images are hosted on this repo's gh-pages branch, and
+          # See bot-zhparl.yml: images are hosted on this repo's gh-pages branch, and
           # github.token can write nowhere else.
           CHPARL_IMAGE_HOST_REPO: ${{ github.repository }}
           CHPARL_IMAGE_HOST_TOKEN: ${{ github.token }}
@@ -113,7 +114,7 @@ jobs:
 
           MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK }}
           MAX_VOTE_AGE_DAYS_NATIONALRAT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
-          # Nothing posts until this is "true". See bot.yml.
+          # Nothing posts until this is "true". See bot-zhparl.yml.
           JURISDICTION_NATIONALRAT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_ENABLED }}
         run: go run main.go
 
