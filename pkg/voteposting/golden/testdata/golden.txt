@@ -10,7 +10,7 @@
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -33,7 +33,7 @@ Grüne 0/0/0/2
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -57,7 +57,7 @@ Grüne 0/0/0/2
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 90 Ja | 30 Nein | 0 Enth. | 5 Abw.
 
@@ -91,7 +91,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -113,7 +113,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE single-vote-abgelehnt ################
 
@@ -127,7 +127,7 @@ Daten: Stadt Zürich
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -150,7 +150,7 @@ AL 0/5/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -174,7 +174,7 @@ AL 0/5/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 20 Ja | 95 Nein | 5 Enth. | 5 Abw.
 
@@ -208,7 +208,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -230,7 +230,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE single-vote-dringlicherklaerung ################
 
@@ -245,7 +245,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
@@ -269,7 +269,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
@@ -293,7 +293,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 66 Ja | 0 Nein | 0 Enth. | 59 Abw.
 
@@ -328,7 +328,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -351,7 +351,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE long-title-truncation ################
 
@@ -365,7 +365,7 @@ Daten: Stadt Zürich
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -388,7 +388,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -411,7 +411,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
@@ -445,7 +445,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -467,7 +467,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE tall-title-band-clearance ################
 
@@ -481,7 +481,7 @@ Daten: Stadt Zürich
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
@@ -504,7 +504,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
@@ -528,7 +528,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 117 Ja | 0 Nein | 0 Enth. | 8 Abw.
 
@@ -562,7 +562,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -584,7 +584,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE extreme-title-full-roster ################
 
@@ -598,7 +598,7 @@ Daten: Stadt Zürich
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -623,7 +623,7 @@ Fraktionslos 0/1/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -648,7 +648,7 @@ Fraktionslos 0/1/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 60 Ja | 60 Nein | 0 Enth. | 5 Abw.
 [facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1 DID: Tag:}]}
@@ -687,7 +687,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -711,7 +711,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE multi-vote-group ################
 
@@ -725,7 +725,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Einleitungsartikel
@@ -763,7 +763,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Einleitungsartikel
@@ -801,7 +801,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 [post 2]
@@ -862,7 +862,7 @@ Die Mitte 0/12/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 3
@@ -872,7 +872,7 @@ Daten: Stadt Zürich
 Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen im Bereich Stadtentwicklung
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enthaltung | 10 Abwesend
@@ -914,7 +914,7 @@ AL 0/8/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -937,7 +937,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -961,7 +961,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 35 Nein | 5 Enth. | 5 Abw.
 
@@ -995,7 +995,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1017,7 +1017,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE ten-vote-stress-test ################
 
@@ -1031,7 +1031,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Ziffer A
@@ -1173,7 +1173,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Ziffer A
@@ -1315,7 +1315,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 [post 2]
@@ -1566,10 +1566,10 @@ AL 0/3/0/1
 ✅ Angenommen: Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-🏛️ Fraktionen…
+🏛️ Frakti…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 10
@@ -1593,7 +1593,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Ziffer A
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
@@ -1733,7 +1733,7 @@ AL 0/3/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1756,7 +1756,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1780,7 +1780,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
@@ -1814,7 +1814,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1836,7 +1836,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE auswahl-vote ################
 
@@ -1850,7 +1850,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
@@ -1873,7 +1873,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
@@ -1896,7 +1896,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abw. 10
 
@@ -1929,7 +1929,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1950,7 +1950,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE auswahl-vote-all-fraktionen ################
 
@@ -1965,7 +1965,7 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
@@ -1989,7 +1989,7 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
@@ -2013,10 +2013,12 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abw. 7
+[facet] {Index:{ByteStart:5 ByteEnd:100} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1 DID: Tag:}]}
 
+[post 2]
 🏛️ Fraktionen (Auswahl A/Auswahl B/Auswahl C/Abw):
 SP 38/0/0/3
 FDP 0/22/0/2
@@ -2025,7 +2027,6 @@ GLP 0/0/13/2
 Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 0/7/0/0
-[facet] {Index:{ByteStart:5 ByteEnd:100} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -2047,7 +2048,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -2069,7 +2070,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE mixed-multi-vote ################
 
@@ -2083,7 +2084,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Änderungsantrag 9
@@ -2121,7 +2122,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Änderungsantrag 9
@@ -2159,7 +2160,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed DID: Tag:}]}
 
 [post 2]
@@ -2220,7 +2221,7 @@ Die Mitte 4/0/10/1
 AL 0/0/5/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 3
@@ -2230,7 +2231,7 @@ Daten: Stadt Zürich
 Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung der Bestimmungen für Gewerbe- und Industriezonen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enthaltung | 12 Abwesend
@@ -2272,7 +2273,7 @@ AL 0/0/5/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
@@ -2295,7 +2296,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
@@ -2319,7 +2320,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 📊 21 Ja | 38 Nein | 56 Enth. | 10 Abw.
 
@@ -2353,7 +2354,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -2375,7 +2376,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ################ FIXTURE kantonsrat-vote ################
 
@@ -3733,7 +3734,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
@@ -3885,7 +3886,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 [post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
@@ -4027,7 +4028,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 [post 2]
@@ -4175,10 +4176,10 @@ AL 0/3/0/1
 [caption]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
 
-Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktan…
+Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Tra…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 10
@@ -4202,7 +4203,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-Daten: Stadt Zürich
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend

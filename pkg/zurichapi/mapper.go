@@ -11,10 +11,11 @@ import (
 // PARIS serves.
 const JurisdictionKey = "zurich-city"
 
-// Attribution names the source. Open Data Zürich publishes under CC0, which asks
-// for no credit; the line is there so every post names its data the same way,
-// whichever parliament it comes from.
-const Attribution = "Daten: Stadt Zürich"
+// Attribution names the source: the city's Open Data Zürich portal, which
+// publishes the PARIS API. Its data is CC0 and asks for no credit; the line is
+// there so every post names its data the same way, whichever parliament it
+// comes from.
+const Attribution = "Daten: Open Data Zürich"
 
 // Jurisdiction describes the body behind this API.
 var Jurisdiction = votes.Jurisdiction{

@@ -145,7 +145,7 @@ func base(guid, title, grNr string) votes.Vote {
 		Type:        "Normal",
 		SourceURL:   VoteURL(objGUID),
 		GroupURL:    TraktandumURL(sitzungGUID, traktandumGUID),
-		Attribution: "Daten: Stadt Zürich",
+		Attribution: "Daten: Open Data Zürich",
 		Affair: votes.Affair{
 			Number: grNr,
 			Title:  title,

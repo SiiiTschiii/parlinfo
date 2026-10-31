@@ -25,7 +25,7 @@ The only data published by this bot is publicly available council vote records, 
 - **Kantonsrat Zürich** — [OpenParlData](https://api.openparldata.ch), published under CC BY 4.0
 - **Nationalrat** — the [Parlamentsdienste's open data web services](https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services)
 
-Every post names its source on a "Daten: …" line: Stadt Zürich, OpenParlData.ch, or Parlamentsdienste der Bundesversammlung, Bern. OpenParlData's licence and the Parlamentsdienste's terms require that credit.
+Every post names its source on a "Daten: …" line: Open Data Zürich, OpenParlData.ch, or Parlamentsdienste der Bundesversammlung, Bern. OpenParlData's licence and the Parlamentsdienste's terms require that credit.
 
 All include names of elected council members acting in their official public capacity.
 
