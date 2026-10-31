@@ -1,5 +1,12 @@
 {
   "jurisdiction": "nationalrat",
   "platform": "x",
-  "votes": []
+  "votes": [
+    {
+      "id": "38947",
+      "posted_at": "2026-10-31T19:39:10.873410598Z",
+      "post_id": "2116615985469727178",
+      "post_url": "https://x.com/i/status/2116615985469727178"
+    }
+  ]
 }
