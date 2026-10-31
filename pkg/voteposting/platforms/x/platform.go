@@ -116,9 +116,10 @@ func (p *XPlatform) Format(group []votes.Vote) (platforms.Content, error) {
 }
 
 // uploadImages uploads a post's cards, describes each, and returns their media
-// IDs. A card that fails to upload is left out with a warning rather than
-// failing the thread, for the same reason Format falls back to text; one whose
-// description fails is still posted, since the thread's text says the same.
+// IDs. A card that fails to upload or to take its description is left out with
+// a warning rather than failing the thread, for the same reason Format falls
+// back to text. An undescribed card is not posted: on an image-only reply it
+// would be the whole post, with nothing a screen reader could read.
 func (p *XPlatform) uploadImages(cards []imagegen.Card) []string {
 	var ids []string
 	for _, c := range cards {
@@ -128,7 +129,8 @@ func (p *XPlatform) uploadImages(cards []imagegen.Card) []string {
 			continue
 		}
 		if err := p.setAltTextFunc(p.apiKey, p.apiSecret, p.accessToken, p.accessSecret, id, c.Alt); err != nil {
-			log.Printf("Warning: posting image %s without alt text: %v", id, err)
+			log.Printf("Warning: posting without image %s, setting its alt text failed: %v", id, err)
+			continue
 		}
 		ids = append(ids, id)
 	}

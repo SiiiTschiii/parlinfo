@@ -273,3 +273,36 @@ func TestFormat_RenderFailureKeepsText(t *testing.T) {
 		}
 	}
 }
+
+func TestPost_ImageWithoutAltTextIsDropped(t *testing.T) {
+	var calls []tweetCall
+	p := newTestXPlatform(&calls, 10)
+	withImages(p, 5, nil)
+	p.setAltTextFunc = func(_, _, _, _, mediaID, _ string) error {
+		if mediaID == "media-1" || mediaID == "media-4" {
+			return errors.New("metadata refused")
+		}
+		return nil
+	}
+
+	content, err := p.Format(testfixtures.SingleVoteAngenommen())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post error: %v", err)
+	}
+	if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0,media-2,media-3" {
+		t.Errorf("root media = %s, want the undescribed media-1 left out", got)
+	}
+	for i, c := range calls {
+		for _, id := range c.mediaIDs {
+			if id == "media-4" {
+				t.Errorf("post %d carries undescribed media-4", i)
+			}
+		}
+		if c.message == "" && len(c.mediaIDs) == 0 {
+			t.Errorf("post %d is empty: its only image was undescribed", i)
+		}
+	}
+}
