@@ -54,7 +54,7 @@ Wir haben das Projekt ins Leben gerufen, weil eine gesunde Demokratie auf zwei D
 | LinkedIn    | ❌ Planned | -                                                                                    | -                                                                                    |
 | TikTok      | ❌ Planned | -                                                                                    | -                                                                                    |
 
-_Politicians the bot can tag per platform, from the curated mapping in [data/](data/): LinkedIn 120, Instagram 103, Facebook 96, X 69, Bluesky 27, TikTok 19. Tagging is not available for every body yet._
+_Politicians the bot can tag per platform, from the curated mapping in [data/](data/): LinkedIn 199, Facebook 136, Instagram 128, X 108, Bluesky 28, TikTok 19. Tagging is not available for every body yet._
 
 ## What It Does
 
