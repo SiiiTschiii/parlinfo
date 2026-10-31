@@ -46,8 +46,8 @@ Wir haben das Projekt ins Leben gerufen, weil eine gesunde Demokratie auf zwei D
 | ----------- | ---------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | Instagram   | ✅ Active  | [@zueriratsinfo](https://www.instagram.com/zueriratsinfo)                            | [@chparlinfo](https://www.instagram.com/chparlinfo)                                  |
 | Facebook    | ✅ Active  | [ZueriRatsinfo](https://www.facebook.com/profile.php?id=1063164230212573)            | [CH Parl Info](https://www.facebook.com/profile.php?id=61595771216866)               |
-| X (Twitter) | ✅ Active  | [@zuerichratsinfo](https://x.com/zuerichratsinfo)                                    | 🔜 Planned                                                                           |
-| Bluesky     | ✅ Active  | [@zuerichratsinfo.bsky.social](https://bsky.app/profile/zuerichratsinfo.bsky.social) | 🔜 Planned                                                                           |
+| X (Twitter) | ✅ Active  | [@zuerichratsinfo](https://x.com/zuerichratsinfo)                                    | [@chparlinfo](https://x.com/chparlinfo)                                              |
+| Bluesky     | ✅ Active  | [@zuerichratsinfo.bsky.social](https://bsky.app/profile/zuerichratsinfo.bsky.social) | [@chparlinfo.bsky.social](https://bsky.app/profile/chparlinfo.bsky.social)           |
 | LinkedIn    | ❌ Planned | -                                                                                    | -                                                                                    |
 | TikTok      | ❌ Planned | -                                                                                    | -                                                                                    |
 
