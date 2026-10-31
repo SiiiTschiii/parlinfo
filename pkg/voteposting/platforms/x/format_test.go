@@ -204,9 +204,8 @@ func TestFormatVoteThread_SingleVoteStructure(t *testing.T) {
 	}
 
 	// Last reply contains link
-	lastReply := thread[len(thread)-1].Text
-	if !strings.Contains(lastReply, "🔗") {
-		t.Error("last reply should contain link")
+	if !strings.Contains(thread[1].Text, "🔗") {
+		t.Error("first reply should contain link")
 	}
 }
 
@@ -257,9 +256,13 @@ func TestFormatVoteThread_MultiVoteStructure(t *testing.T) {
 		t.Error("thread should contain second vote subtitle")
 	}
 
-	lastReply := thread[len(thread)-1].Text
-	if !strings.Contains(lastReply, "🔗") {
-		t.Error("last reply should contain link")
+	if !strings.Contains(thread[1].Text, "🔗") {
+		t.Error("first reply should contain link")
+	}
+	for i, post := range thread[1:] {
+		if strings.Contains(post.Text, "https://") && strings.Contains(post.Text, "📊") {
+			t.Errorf("reply %d mixes the links with a vote:\n%s", i+1, post.Text)
+		}
 	}
 }
 
@@ -285,10 +288,10 @@ func TestFormatVoteThread_LinkPlacement(t *testing.T) {
 		t.Error("root should not contain link — link belongs in replies")
 	}
 
-	// Link must be in last reply
-	lastReply := thread[len(thread)-1].Text
-	if !strings.Contains(lastReply, "🔗") {
-		t.Errorf("last reply should contain link, got: %s", lastReply)
+	// Link must lead the replies. A lone vote's counts may share that reply,
+	// since it carries no card.
+	if !strings.HasPrefix(thread[1].Text, "🔗") {
+		t.Errorf("first reply should open with the link, got: %s", thread[1].Text)
 	}
 }
 

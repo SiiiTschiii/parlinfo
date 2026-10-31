@@ -27,7 +27,7 @@ type XPost struct {
 // charLimit sets the per-post character limit (e.g. 280 for free accounts, 2000 for Premium).
 //
 // Root post contains: header, title, result (single vote), thread hint
-// Replies contain: vote details (counts per vote), link
+// Replies contain: the links, then vote details (counts per vote)
 func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper, charLimit int) []*XPost {
 	thread, _ := FormatVoteThreadWithCards(group, contactMapper, charLimit)
 	return thread
@@ -86,12 +86,14 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
 }
 
-// replyEntry is one block of reply text: the signatory line (vote -1), or a
-// vote's counts (starts) or its Fraktion breakdown.
+// replyEntry is one block of reply text: a link block (link) or the signatory
+// line, both with vote -1, or a vote's counts (starts) or its Fraktion
+// breakdown.
 type replyEntry struct {
 	text   string
 	vote   int
 	starts bool
+	link   bool
 }
 
 // buildWahlgeschaeftPost builds the single post reporting that an election
@@ -198,14 +200,21 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 }
 
 // buildReplyPosts creates reply posts with vote details and link.
-// Packs as many vote entries as fit into each reply (≤charLimit).
-// The link is appended to the last reply.
+// Packs entries into replies (≤charLimit).
+// The link block leads, and each vote opens a reply of its own.
 func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contactMapper *contacts.Mapper, charLimit int) ([]*XPost, []int) {
 
 	// Build individual vote entries
 	var entries []replyEntry
 
-	// The signatories the root could not hold come first, so a reader meets
+	// The links lead the thread. They are about the whole business, not about
+	// any one vote, so they sit where a reader meets them first rather than
+	// after the last vote — but not on the root, which needs its room for the
+	// title, and on Bluesky could not hold them at all.
+	if link := strings.Trim(linkLine, "\n"); link != "" {
+		entries = append(entries, replyEntry{text: link, vote: -1, link: true})
+	}
+	// The signatories the root could not hold come next, so a reader meets
 	// them before the tallies rather than after them.
 	if signatoryLine != "" {
 		entries = append(entries, replyEntry{text: signatoryLine, vote: -1})
@@ -258,66 +267,44 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contact
 	var currentEntries []string
 	currentLen := 0
 	// Each vote opens a reply of its own, so the reply carrying a vote's card
-	// talks about that vote and no other. Only the signatories, which belong to
-	// no vote, may share the first vote's reply.
+	// talks about that vote and no other. What belongs to no vote — the links
+	// and the signatories — may share the first vote's reply, except that in a
+	// multi-vote group the links keep a reply to themselves: that first vote's
+	// reply carries its card, and the links are not about that vote.
+	multiVote := len(group) > 1
 	voteStarts := make([]int, len(group))
-	currentHasVote := false
-
-	for i, e := range entries {
-		entry := e.text
-		entryLen := weightedLen(entry)
-		if e.starts && currentHasVote {
+	currentHasVote, currentHasLink := false, false
+	flush := func() {
+		if len(currentEntries) > 0 {
 			replies = append(replies, &XPost{Text: strings.Join(currentEntries, "\n\n")})
-			currentEntries = nil
-			currentLen = 0
-			currentHasVote = false
+		}
+		currentEntries, currentLen = nil, 0
+		currentHasVote, currentHasLink = false, false
+	}
+
+	for _, e := range entries {
+		entryLen := weightedLen(e.text)
+		if e.starts && (currentHasVote || (multiVote && currentHasLink)) {
+			flush()
 		}
 		separatorLen := 0
 		if len(currentEntries) > 0 {
 			separatorLen = 2 // "\n\n" between entries
 		}
-
-		// Check if adding this entry would exceed the limit.
-		// If this is the last entry, account for the link line too.
-		extraLen := 0
-		if i == len(entries)-1 {
-			extraLen = weightedLen(linkLine)
-		}
-
-		if currentLen+separatorLen+entryLen+extraLen > charLimit && len(currentEntries) > 0 {
-			// Flush current reply (without link — not the last entry yet)
-			replyText := strings.Join(currentEntries, "\n\n")
-			replies = append(replies, &XPost{Text: replyText})
-			currentEntries = nil
-			currentLen = 0
-			currentHasVote = false
+		if currentLen+separatorLen+entryLen > charLimit && len(currentEntries) > 0 {
+			flush()
+			separatorLen = 0
 		}
 
 		if e.starts {
 			voteStarts[e.vote] = len(replies)
 		}
-		if e.vote >= 0 {
-			currentHasVote = true
-		}
-		if len(currentEntries) > 0 {
-			currentLen += 2 // "\n\n"
-		}
-		currentEntries = append(currentEntries, entry)
-		currentLen += entryLen
+		currentHasVote = currentHasVote || e.vote >= 0
+		currentHasLink = currentHasLink || e.link
+		currentEntries = append(currentEntries, e.text)
+		currentLen += separatorLen + entryLen
 	}
-
-	// Flush remaining entries with the link.
-	// If the link doesn't fit together with the remaining entries, put it
-	// in its own reply so the URL is never truncated.
-	if len(currentEntries) > 0 {
-		body := strings.Join(currentEntries, "\n\n")
-		if weightedLen(body+linkLine) <= charLimit {
-			replies = append(replies, &XPost{Text: body + linkLine})
-		} else {
-			replies = append(replies, &XPost{Text: body})
-			replies = append(replies, &XPost{Text: strings.TrimLeft(linkLine, "\n")})
-		}
-	}
+	flush()
 
 	return replies, voteStarts
 }
