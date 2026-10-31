@@ -11,7 +11,7 @@
   <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/validate-contacts.yml">
     <img src="https://github.com/SiiiTschiii/parlinfo/actions/workflows/validate-contacts.yml/badge.svg" alt="Validate Contacts">
   </a>
-  <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot.yml">
+  <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot-zhparl.yml">
     <img src="https://img.shields.io/github/last-commit/SiiiTschiii/parlinfo/main?label=last%20bot%20run&logo=github" alt="Last Bot Run">
   </a>
 </p>
