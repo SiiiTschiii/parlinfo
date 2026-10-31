@@ -6,6 +6,8 @@ import (
 
 	"github.com/siiitschiii/parlinfo/pkg/bskyapi"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -18,16 +20,25 @@ type BlueskyPost struct {
 	Text     string
 	Facets   []bskyapi.Facet
 	Mentions []contacts.BlueskyMention // unresolved mentions (handle + byte offsets)
+	Images   []imagegen.Card           // carousel cards to embed, at most bskyapi.MaxImagesPerPost
 }
 
 // FormatVoteThread creates a Bluesky thread for a group of related votes.
 // Returns a slice of posts: [0] is the root post, [1:] are replies.
 //
 // Root post contains: header, title, result (single vote), thread hint
-// Replies contain: vote details (counts per vote), link
+// Replies contain: the links, then vote details (counts per vote)
 func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*BlueskyPost {
+	thread, _ := FormatVoteThreadWithCards(group, contactMapper)
+	return thread
+}
+
+// FormatVoteThreadWithCards is FormatVoteThread, also returning for each post
+// the index of the carousel card it carries, or platforms.NoCard. See
+// platforms.ThreadCards.
+func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mapper) ([]*BlueskyPost, []int) {
 	if len(group) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	// A Wahlgeschäft gets one notice, not a thread: its only votes are
@@ -39,7 +50,8 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 	// No mentions are resolved on this path, deliberately: the only name in
 	// the text belongs to the member being replaced, not to anyone elected.
 	if votes.IsWahlgeschaeftGroup(group) {
-		return buildWahlgeschaeftPosts(group)
+		posts := buildWahlgeschaeftPosts(group)
+		return posts, platforms.ThreadCards(1, len(posts), nil)
 	}
 
 	firstVote := group[0]
@@ -54,7 +66,7 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 	// Signatories the root had no room for lead the thread: naming them costs a
 	// line here, where truncating the title to keep them would have cost the
 	// subject of the vote.
-	replies := buildReplyPosts(group, voteformat.SignatoryLine(deferred),
+	replies, voteStarts := buildReplyPosts(group, voteformat.SignatoryLine(deferred),
 		voteformat.LinkLine(group), linkURLs(group))
 
 	thread := make([]*BlueskyPost, 0, 1+len(replies))
@@ -69,7 +81,17 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 		}
 	}
 
-	return thread
+	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
+}
+
+// replyEntry is one block of reply text: a link block (link) or the signatory
+// line, both with vote -1, or a vote's counts (starts) or its Fraktion
+// breakdown.
+type replyEntry struct {
+	text   string
+	vote   int
+	starts bool
+	link   bool
 }
 
 // buildStilleWahlPosts announces a stille Wahl: the office and who was elected
@@ -174,17 +196,25 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 }
 
 // buildReplyPosts creates reply posts with vote details and link.
-// Packs as many vote entries as fit into each reply (≤300 graphemes).
-// The link is appended to the last reply.
-func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURLs []string) []*BlueskyPost {
+// Packs entries into replies (≤300 graphemes).
+// The link block leads, and each vote opens a reply of its own.
+func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURLs []string) ([]*BlueskyPost, []int) {
 
-	// Build individual vote entry strings
-	var entries []string
+	// Build individual vote entries
+	var entries []replyEntry
 
-	// The signatories the root could not hold come first, so a reader meets
+	// The links lead the thread. They are about the whole business, not about
+	// any one vote, so they sit where a reader meets them first rather than
+	// after the last vote — but not on the root, which needs its room for the
+	// title, and on Bluesky could not hold them at all.
+	// linkChunks splits a block too long for one post between its lines.
+	for _, chunk := range linkChunks(linkLine) {
+		entries = append(entries, replyEntry{text: chunk, vote: -1, link: true})
+	}
+	// The signatories the root could not hold come next, so a reader meets
 	// them before the tallies rather than after them.
 	if signatoryLine != "" {
-		entries = append(entries, signatoryLine)
+		entries = append(entries, replyEntry{text: signatoryLine, vote: -1})
 	}
 
 	for i, vote := range group {
@@ -212,13 +242,13 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 			entry.WriteString(voteformat.FormatVoteCounts(counts))
 		}
 
-		entries = append(entries, entry.String())
+		entries = append(entries, replyEntry{text: entry.String(), vote: i, starts: true})
 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
 			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
-				entries = append(entries, breakdown)
+				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}
 	}
@@ -228,51 +258,47 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 	var replies []*BlueskyPost
 	var currentEntries []string
 	currentLen := 0
+	// Each vote opens a reply of its own, so the reply carrying a vote's card
+	// talks about that vote and no other. What belongs to no vote — the links
+	// and the signatories — may share the first vote's reply, except that in a
+	// multi-vote group the links keep a reply to themselves: that first vote's
+	// reply carries its card, and the links are not about that vote.
+	multiVote := len(group) > 1
+	voteStarts := make([]int, len(group))
+	currentHasVote, currentHasLink := false, false
+	flush := func() {
+		if len(currentEntries) > 0 {
+			replies = append(replies, makePost(strings.Join(currentEntries, "\n\n"), linkURLs...))
+		}
+		currentEntries, currentLen = nil, 0
+		currentHasVote, currentHasLink = false, false
+	}
 
-	for i, entry := range entries {
-		entryLen := graphemeLen(entry)
+	for _, e := range entries {
+		entryLen := graphemeLen(e.text)
+		if e.starts && (currentHasVote || (multiVote && currentHasLink)) {
+			flush()
+		}
 		separatorLen := 0
 		if len(currentEntries) > 0 {
 			separatorLen = 2 // "\n\n" between entries
 		}
-
-		// Check if adding this entry would exceed the limit.
-		// If this is the last entry, account for the link line too.
-		extraLen := 0
-		if i == len(entries)-1 {
-			extraLen = graphemeLen(linkLine)
+		if currentLen+separatorLen+entryLen > maxGraphemes && len(currentEntries) > 0 {
+			flush()
+			separatorLen = 0
 		}
 
-		if currentLen+separatorLen+entryLen+extraLen > maxGraphemes && len(currentEntries) > 0 {
-			// Flush current reply (without link — not the last entry yet)
-			replyText := strings.Join(currentEntries, "\n\n")
-			replies = append(replies, makePost(replyText))
-			currentEntries = nil
-			currentLen = 0
+		if e.starts {
+			voteStarts[e.vote] = len(replies)
 		}
-
-		if len(currentEntries) > 0 {
-			currentLen += 2 // "\n\n"
-		}
-		currentEntries = append(currentEntries, entry)
-		currentLen += entryLen
+		currentHasVote = currentHasVote || e.vote >= 0
+		currentHasLink = currentHasLink || e.link
+		currentEntries = append(currentEntries, e.text)
+		currentLen += separatorLen + entryLen
 	}
+	flush()
 
-	// Flush remaining entries with the link.
-	// If the link doesn't fit together with the remaining entries, put it
-	// in its own reply so the URL is never truncated.
-	if len(currentEntries) > 0 {
-		body := strings.Join(currentEntries, "\n\n")
-		if graphemeLen(body+linkLine) <= maxGraphemes {
-			return append(replies, makePost(body+linkLine, linkURLs...))
-		}
-		replies = append(replies, makePost(body))
-	}
-	for _, chunk := range linkChunks(linkLine) {
-		replies = append(replies, makePost(chunk, linkURLs...))
-	}
-
-	return replies
+	return replies, voteStarts
 }
 
 // linkChunks packs the trailing link block into as few posts as hold it,

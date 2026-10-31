@@ -10,6 +10,7 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/config"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/igapi"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms/bluesky"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms/facebook"
@@ -56,6 +57,10 @@ func main() {
 	contactsFile := flag.String("contacts", filepath.Join("data", "contacts_test.yaml"), "contacts YAML file (default: test contacts with fake handles)")
 	maxChars := flag.Int("x-max-chars", x.DefaultMaxChars, "per-post character limit for X (280 for free accounts, 2000 for Premium)")
 	channelKey := flag.String("channel", config.DefaultChannelKey, fmt.Sprintf("channel whose credentials to use %v", config.ChannelKeys()))
+	jurisdictionKey := flag.String("jurisdiction", "", fmt.Sprintf("post live votes for this jurisdiction instead of fixtures %v", config.JurisdictionKeys()))
+	fetchLimit := flag.Int("fetch", 50, "with -jurisdiction: number of individual votes to fetch from the source")
+	numGroups := flag.Int("n", 1, "with -jurisdiction: number of vote groups to post, newest first")
+	minVotes := flag.Int("min-votes", 1, "with -jurisdiction: only post groups with at least this many votes")
 	flag.Parse()
 
 	channel, err := config.LookupChannel(*channelKey)
@@ -73,7 +78,15 @@ func main() {
 		contactMapper = nil
 	}
 
-	fixtures := resolveFixtures(*fixture)
+	// Live votes go through the same channel's credentials as the fixtures, so
+	// any parliament can be tried on the test accounts — the Nationalrat, say,
+	// without a CHPARL test account of its own.
+	var fixtures map[string][]votes.Vote
+	if *jurisdictionKey != "" {
+		fixtures = liveFixtures(*jurisdictionKey, *fetchLimit, *numGroups, *minVotes)
+	} else {
+		fixtures = resolveFixtures(*fixture)
+	}
 	plats := buildPlatforms(*platform, creds, contactMapper, *maxChars)
 
 	// Post each fixture to each platform
@@ -154,6 +167,35 @@ func validatePlatform(platform string, creds platformCredentials, channel config
 	if platform != "all" && platform != "x" && platform != "bluesky" && platform != "instagram" && platform != "facebook" {
 		log.Fatalf("Unknown platform %q — use x, bluesky, instagram, facebook, or all", platform)
 	}
+}
+
+// liveFixtures fetches the newest live vote groups a jurisdiction would post,
+// keyed by sitting date and business number. Groups with fewer than minVotes
+// votes are skipped, so a multi-vote thread can be found among the singles.
+func liveFixtures(jurisdictionKey string, fetchLimit, numGroups, minVotes int) map[string][]votes.Vote {
+	jurisdiction, err := config.LookupJurisdiction(jurisdictionKey)
+	if err != nil {
+		log.Fatalf("%v. Available: %v", err, config.JurisdictionKeys())
+	}
+	groups, err := voteposting.LatestGroups(jurisdiction.NewSource(), jurisdiction.Key, fetchLimit, 0)
+	if err != nil {
+		log.Fatalf("Error preparing %s votes: %v", jurisdiction.Key, err)
+	}
+
+	out := map[string][]votes.Vote{}
+	for _, g := range groups {
+		if len(g) < minVotes {
+			continue
+		}
+		out[fmt.Sprintf("%s %s %s", jurisdiction.Key, g[0].DateString(), g[0].Affair.Number)] = g
+		if len(out) == numGroups {
+			break
+		}
+	}
+	if len(out) == 0 {
+		log.Fatalf("No %s vote group with at least %d vote(s) among the latest %d votes; raise -fetch", jurisdiction.Key, minVotes, fetchLimit)
+	}
+	return out
 }
 
 // resolveFixtures loads the requested fixture(s) from the test fixture map.

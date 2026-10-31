@@ -489,3 +489,30 @@ func countsSummary(v votes.Vote) string {
 	return fmt.Sprintf("%s/%s/%s/%s Ja/Nein/Enth/Abw",
 		n(v.Yes), n(v.No), n(v.Abstention), n(v.Absent))
 }
+
+// LatestGroups returns what the bot would post for a source right now, newest
+// first: at most numGroups groups (0 = all) from the latest fetchLimit votes.
+// It is for the tools that preview or test-post live votes.
+//
+// The vote log is empty and the age guard off, because previewing is exactly
+// when already-posted and out-of-window votes still need to show up. Groups
+// posting would refuse are dropped, as PostableGroups explains.
+//
+// Newest first, because a preview is nearly always about the most recent
+// sitting, where PrepareVoteGroups orders oldest first so the bot drains a
+// backlog chronologically.
+func LatestGroups(src votes.Source, jurisdictionKey string, fetchLimit, numGroups int) ([][]votes.Vote, error) {
+	emptyLog := votelog.NewEmpty(jurisdictionKey, votelog.PlatformInstagram)
+	groups, err := PrepareVoteGroups(src, emptyLog, fetchLimit, 0)
+	if err != nil {
+		return nil, err
+	}
+	groups = PostableGroups(groups)
+	for i, j := 0, len(groups)-1; i < j; i, j = i+1, j-1 {
+		groups[i], groups[j] = groups[j], groups[i]
+	}
+	if numGroups > 0 && len(groups) > numGroups {
+		groups = groups[:numGroups]
+	}
+	return groups, nil
+}

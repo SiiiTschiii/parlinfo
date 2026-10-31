@@ -283,14 +283,14 @@ func TestFormatVoteThread_MultipleVotes(t *testing.T) {
 	}
 }
 
-func TestFormatVoteThread_LinkFacetOnLastReply(t *testing.T) {
+func TestFormatVoteThread_LinkFacetOnFirstReply(t *testing.T) {
 	group := []votes.Vote{
 		sampleVote("Budget 2026", "angenommen", 100, 15, 5, 5),
 	}
 	thread := FormatVoteThread(group, nil)
-	lastReply := thread[len(thread)-1]
-	if len(lastReply.Facets) == 0 {
-		t.Errorf("last reply should have a link facet\nText: %s", lastReply.Text)
+	firstReply := thread[1]
+	if len(firstReply.Facets) == 0 {
+		t.Errorf("first reply should have a link facet\nText: %s", firstReply.Text)
 	}
 }
 
@@ -352,9 +352,8 @@ func TestFormatVoteThread_AllPostsWithinLimit(t *testing.T) {
 		}
 	}
 
-	lastReply := thread[len(thread)-1]
-	if !strings.Contains(lastReply.Text, "🔗") {
-		t.Errorf("last reply missing link\n%s", lastReply.Text)
+	if !strings.Contains(thread[1].Text, "🔗") {
+		t.Errorf("first reply missing link\n%s", thread[1].Text)
 	}
 }
 
@@ -751,5 +750,29 @@ func TestFormatVoteThread_NoDuplicateFacetOffsets(t *testing.T) {
 			}
 			seen[f.Index.ByteStart] = true
 		}
+	}
+}
+
+// The links lead the thread, on a reply of their own in a multi-vote group so
+// that no vote's reply — which carries that vote's card — also carries them.
+func TestFormatVoteThread_LinksLeadTheThread(t *testing.T) {
+	group := testfixtures.TenVoteStressTest()
+	thread := FormatVoteThread(group, nil)
+
+	if strings.Contains(thread[0].Text, "https://") {
+		t.Errorf("root carries a link:\n%s", thread[0].Text)
+	}
+	if !strings.Contains(thread[1].Text, "🔗") {
+		t.Errorf("first reply should carry the links:\n%s", thread[1].Text)
+	}
+	for i, post := range thread[1:] {
+		hasLink := strings.Contains(post.Text, "https://")
+		hasVote := strings.Contains(post.Text, "📊")
+		if hasLink && hasVote {
+			t.Errorf("reply %d mixes the links with a vote:\n%s", i+1, post.Text)
+		}
+	}
+	if strings.Contains(thread[len(thread)-1].Text, "https://") {
+		t.Errorf("the last reply still carries a link:\n%s", thread[len(thread)-1].Text)
 	}
 }

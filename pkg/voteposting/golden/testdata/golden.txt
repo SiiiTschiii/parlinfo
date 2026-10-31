@@ -9,6 +9,9 @@
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Open Data Zürich
+
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -19,8 +22,6 @@ GLP 18/0/0/0
 AL 15/0/0/1
 Die Mitte 15/0/0/0
 Grüne 0/0/0/2
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -31,6 +32,9 @@ Grüne 0/0/0/2
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Open Data Zürich
+
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -41,8 +45,6 @@ GLP 18/0/0/0
 AL 15/0/0/1
 Die Mitte 15/0/0/0
 Grüne 0/0/0/2
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
 
 ---- Bluesky ----
 [post 0]
@@ -54,6 +56,9 @@ Grüne 0/0/0/2
 [mention] zri-testbot-7f3a.bsky.social @ 81-94
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Open Data Zürich
+
 📊 90 Ja | 30 Nein | 0 Enth. | 5 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -64,9 +69,7 @@ GLP 18/0/0/0
 AL 15/0/0/1
 Die Mitte 15/0/0/0
 Grüne 0/0/0/2
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
-[facet] {Index:{ByteStart:183 ByteEnd:266} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -88,6 +91,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -109,6 +113,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Open Data Zürich
 
 ################ FIXTURE single-vote-abgelehnt ################
 
@@ -121,6 +126,9 @@ Grüne 0/0/0/2
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Open Data Zürich
+
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -131,8 +139,6 @@ Grüne 0/15/3/0
 GLP 8/7/0/1
 Die Mitte 12/0/0/1
 AL 0/5/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -143,6 +149,9 @@ AL 0/5/0/0
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Open Data Zürich
+
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -153,8 +162,6 @@ Grüne 0/15/3/0
 GLP 8/7/0/1
 Die Mitte 12/0/0/1
 AL 0/5/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
 
 ---- Bluesky ----
 [post 0]
@@ -166,6 +173,9 @@ AL 0/5/0/0
 [mention] zri-testbot-7f3a.bsky.social @ 78-88
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Open Data Zürich
+
 📊 20 Ja | 95 Nein | 5 Enth. | 5 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -176,9 +186,7 @@ Grüne 0/15/3/0
 GLP 8/7/0/1
 Die Mitte 12/0/0/1
 AL 0/5/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
-[facet] {Index:{ByteStart:182 ByteEnd:264} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:87} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -200,6 +208,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -221,6 +230,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Open Data Zürich
 
 ################ FIXTURE single-vote-dringlicherklaerung ################
 
@@ -234,6 +244,9 @@ Dringlicherklärung
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Open Data Zürich
+
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -244,8 +257,6 @@ GLP 0/0/0/15
 Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 7/0/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -257,6 +268,9 @@ Dringlicherklärung
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Open Data Zürich
+
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -268,8 +282,6 @@ Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 7/0/0/0
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -280,6 +292,9 @@ Dringlicherklärung
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Open Data Zürich
+
 📊 66 Ja | 0 Nein | 0 Enth. | 59 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -290,9 +305,7 @@ GLP 0/0/0/15
 Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 7/0/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
-[facet] {Index:{ByteStart:182 ByteEnd:264} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:87} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -315,6 +328,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -337,6 +351,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Open Data Zürich
 
 ################ FIXTURE long-title-truncation ################
 
@@ -349,6 +364,9 @@ Die Mitte 7/0/0/0
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -359,8 +377,6 @@ Grüne 14/0/3/1
 GLP 10/5/0/2
 Die Mitte 8/5/0/1
 AL 0/2/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -371,6 +387,9 @@ AL 0/2/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -382,8 +401,6 @@ GLP 10/5/0/2
 Die Mitte 8/5/0/1
 AL 0/2/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -393,6 +410,9 @@ AL 0/2/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -403,9 +423,7 @@ Grüne 14/0/3/1
 GLP 10/5/0/2
 Die Mitte 8/5/0/1
 AL 0/2/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
-[facet] {Index:{ByteStart:183 ByteEnd:265} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:87} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -427,6 +445,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -448,6 +467,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Open Data Zürich
 
 ################ FIXTURE tall-title-band-clearance ################
 
@@ -460,6 +480,9 @@ AL 0/2/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Open Data Zürich
+
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -470,8 +493,6 @@ GLP 14/0/0/1
 Grüne 12/0/0/2
 AL 8/0/0/0
 Die Mitte 7/0/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -482,6 +503,9 @@ Die Mitte 7/0/0/0
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Open Data Zürich
+
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -492,8 +516,6 @@ GLP 14/0/0/1
 Grüne 12/0/0/2
 AL 8/0/0/0
 Die Mitte 7/0/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
 
 ---- Bluesky ----
 [post 0]
@@ -505,6 +527,9 @@ Die Mitte 7/0/0/0
 [mention] zri-testbot-7f3a.bsky.social @ 81-94
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Open Data Zürich
+
 📊 117 Ja | 0 Nein | 0 Enth. | 8 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -515,9 +540,7 @@ GLP 14/0/0/1
 Grüne 12/0/0/2
 AL 8/0/0/0
 Die Mitte 7/0/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
-[facet] {Index:{ByteStart:182 ByteEnd:268} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:91} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -539,6 +562,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -560,6 +584,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Open Data Zürich
 
 ################ FIXTURE extreme-title-full-roster ################
 
@@ -572,6 +597,9 @@ Die Mitte 7/0/0/0
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Open Data Zürich
+
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -584,8 +612,6 @@ AL 6/0/0/1
 Die Mitte 0/5/0/0
 EVP 0/3/0/0
 Fraktionslos 0/1/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -596,6 +622,9 @@ Fraktionslos 0/1/0/0
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Open Data Zürich
+
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -609,8 +638,6 @@ Die Mitte 0/5/0/0
 EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -620,8 +647,13 @@ Fraktionslos 0/1/0/0
 👇 Details im Thread
 
 [post 1]
-📊 60 Ja | 60 Nein | 0 Enth. | 5 Abw.
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Open Data Zürich
 
+📊 60 Ja | 60 Nein | 0 Enth. | 5 Abw.
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1 DID: Tag:}]}
+
+[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 40/0/0/1
 SVP 0/20/0/1
@@ -632,9 +664,6 @@ AL 6/0/0/1
 Die Mitte 0/5/0/0
 EVP 0/3/0/0
 Fraktionslos 0/1/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
-[facet] {Index:{ByteStart:215 ByteEnd:300} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -658,6 +687,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -681,6 +711,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Open Data Zürich
 
 ################ FIXTURE multi-vote-group ################
 
@@ -693,6 +724,10 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -705,10 +740,10 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 3]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 0/30/2/2
 FDP 0/20/0/2
@@ -717,8 +752,6 @@ GLP 12/0/0/2
 Grüne 10/0/3/1
 Die Mitte 0/12/0/1
 AL 0/8/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 
 ---- X (limit 2000) ----
 [post 0]
@@ -729,6 +762,10 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -741,6 +778,7 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 3]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -753,8 +791,6 @@ Grüne 10/0/3/1
 Die Mitte 0/12/0/1
 AL 0/8/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -764,6 +800,11 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Open Data Zürich
+[facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
+
+[post 2]
 ✅ Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enth. | 10 Abw.
 
@@ -776,10 +817,10 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 3]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enth. | 10 Abw.
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 0/30/2/2
 FDP 0/20/0/2
@@ -788,9 +829,6 @@ GLP 12/0/0/2
 Grüne 10/0/3/1
 Die Mitte 0/12/0/1
 AL 0/8/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-[facet] {Index:{ByteStart:142 ByteEnd:225} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 ---- Instagram ----
 [images] 3
@@ -824,6 +862,7 @@ Die Mitte 0/12/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 3
@@ -833,6 +872,7 @@ AL 0/8/0/1
 Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen im Bereich Stadtentwicklung
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enthaltung | 10 Abwesend
@@ -873,6 +913,9 @@ AL 0/8/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Open Data Zürich
+
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -883,8 +926,6 @@ SVP 0/20/0/0
 GLP 12/3/0/1
 Die Mitte 8/5/0/1
 AL 0/2/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
 
 ---- X (limit 2000) ----
 [post 0]
@@ -895,6 +936,9 @@ AL 0/2/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Open Data Zürich
+
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -905,8 +949,6 @@ SVP 0/20/0/0
 GLP 12/3/0/1
 Die Mitte 8/5/0/1
 AL 0/2/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
 
 ---- Bluesky ----
 [post 0]
@@ -918,6 +960,9 @@ AL 0/2/0/1
 [mention] zri-testbot-7f3a.bsky.social @ 81-92
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Open Data Zürich
+
 📊 80 Ja | 35 Nein | 5 Enth. | 5 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -928,9 +973,7 @@ SVP 0/20/0/0
 GLP 12/3/0/1
 Die Mitte 8/5/0/1
 AL 0/2/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
-[facet] {Index:{ByteStart:182 ByteEnd:259} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:82} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -952,6 +995,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -973,6 +1017,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Open Data Zürich
 
 ################ FIXTURE ten-vote-stress-test ################
 
@@ -985,6 +1030,10 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Ziffer A
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -997,10 +1046,10 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -1010,10 +1059,10 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -1023,10 +1072,10 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 4]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -1036,10 +1085,10 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -1049,10 +1098,10 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 6]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -1062,10 +1111,10 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -1075,10 +1124,10 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 8]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -1088,10 +1137,10 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -1101,10 +1150,10 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 11]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 10]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -1113,8 +1162,6 @@ Grüne 15/0/3/1
 Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
 
 ---- X (limit 2000) ----
 [post 0]
@@ -1125,6 +1172,10 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Ziffer A
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1137,6 +1188,7 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1149,6 +1201,7 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1161,6 +1214,7 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1173,6 +1227,7 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1185,6 +1240,7 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1197,6 +1253,7 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1209,6 +1266,7 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1221,6 +1279,7 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1233,6 +1292,7 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 11]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1245,8 +1305,6 @@ Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -1256,6 +1314,11 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
+
+[post 2]
 ✅ Ziffer A
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
@@ -1268,10 +1331,10 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enth. | 10 Abw.
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -1281,10 +1344,10 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enth. | 10 Abw.
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -1294,10 +1357,10 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enth. | 10 Abw.
 
-[post 4]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -1307,10 +1370,10 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enth. | 10 Abw.
 
-[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -1320,10 +1383,10 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enth. | 10 Abw.
 
-[post 6]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -1333,10 +1396,10 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enth. | 10 Abw.
 
-[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -1346,10 +1409,10 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enth. | 10 Abw.
 
-[post 8]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -1359,10 +1422,10 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enth. | 10 Abw.
 
-[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -1372,10 +1435,10 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 11]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enth. | 10 Abw.
 
-[post 10]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -1384,9 +1447,6 @@ Grüne 15/0/3/1
 Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-[facet] {Index:{ByteStart:141 ByteEnd:226} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 ---- Instagram ----
 [images] 10
@@ -1506,9 +1566,10 @@ AL 0/3/0/1
 ✅ Angenommen: Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):…
+🏛️ Frakti…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 10
@@ -1532,6 +1593,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Ziffer A
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
@@ -1670,6 +1732,9 @@ AL 0/3/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -1680,8 +1745,6 @@ Grüne 16/0/2/1
 SVP 0/18/0/1
 Die Mitte 7/3/0/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -1692,6 +1755,9 @@ AL 0/0/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -1702,8 +1768,6 @@ Grüne 16/0/2/1
 SVP 0/18/0/1
 Die Mitte 7/3/0/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
 
 ---- Bluesky ----
 [post 0]
@@ -1715,6 +1779,9 @@ AL 0/0/0/1
 [mention] zri-testbot-7f3a.bsky.social @ 81-91
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Open Data Zürich
+
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -1725,9 +1792,7 @@ Grüne 16/0/2/1
 SVP 0/18/0/1
 Die Mitte 7/3/0/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
-[facet] {Index:{ByteStart:183 ByteEnd:263} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:85} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -1749,6 +1814,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1770,6 +1836,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Open Data Zürich
 
 ################ FIXTURE auswahl-vote ################
 
@@ -1782,6 +1849,9 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Open Data Zürich
+
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
 🏛️ Fraktionen (A/B/C/Abw):
@@ -1792,8 +1862,6 @@ GLP 14/0/0/1
 Grüne 0/0/13/1
 Die Mitte 12/0/0/1
 AL 0/8/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -1804,6 +1872,9 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Open Data Zürich
+
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
 🏛️ Fraktionen (A/B/C/Abw):
@@ -1815,8 +1886,6 @@ Grüne 0/0/13/1
 Die Mitte 12/0/0/1
 AL 0/8/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 04.03.2026
@@ -1826,6 +1895,9 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Open Data Zürich
+
 📊 A: 74 | B: 28 | C: 13 | Abw. 10
 
 🏛️ Fraktionen (A/B/C/Abw):
@@ -1836,9 +1908,7 @@ GLP 14/0/0/1
 Grüne 0/0/13/1
 Die Mitte 12/0/0/1
 AL 0/8/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
-[facet] {Index:{ByteStart:173 ByteEnd:253} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:85} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -1859,6 +1929,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1879,6 +1950,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Open Data Zürich
 
 ################ FIXTURE auswahl-vote-all-fraktionen ################
 
@@ -1892,6 +1964,9 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Open Data Zürich
+
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
 🏛️ Fraktionen (Auswahl A/Auswahl B/Auswahl C/Abw):
@@ -1902,8 +1977,6 @@ GLP 0/0/13/2
 Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 0/7/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -1915,6 +1988,9 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Open Data Zürich
+
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
 🏛️ Fraktionen (Auswahl A/Auswahl B/Auswahl C/Abw):
@@ -1926,8 +2002,6 @@ Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 0/7/0/0
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 30.09.2026
@@ -1938,8 +2012,13 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 👇 Details im Thread
 
 [post 1]
-📊 A: 76 | B: 29 | C: 13 | Abw. 7
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Open Data Zürich
 
+📊 A: 76 | B: 29 | C: 13 | Abw. 7
+[facet] {Index:{ByteStart:5 ByteEnd:100} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1 DID: Tag:}]}
+
+[post 2]
 🏛️ Fraktionen (Auswahl A/Auswahl B/Auswahl C/Abw):
 SP 38/0/0/3
 FDP 0/22/0/2
@@ -1948,9 +2027,6 @@ GLP 0/0/13/2
 Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 0/7/0/0
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
-[facet] {Index:{ByteStart:195 ByteEnd:290} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -1972,6 +2048,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1993,6 +2070,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Open Data Zürich
 
 ################ FIXTURE mixed-multi-vote ################
 
@@ -2005,6 +2083,10 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enthaltung | 12 Abwesend
 
@@ -2017,11 +2099,10 @@ Die Mitte 8/5/0/2
 Grüne 14/0/0/1
 AL 0/3/0/1
 
-[post 2]
+[post 3]
 Änderungsantrag 17, 1. Abstimmung Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung
 📊 A: 50 | B: 24 | C: 40 | Abwesend 11
 
-[post 3]
 🏛️ Fraktionen (A/B/C/Abw):
 SP 28/0/0/2
 SVP 0/0/20/2
@@ -2030,8 +2111,6 @@ GLP 8/6/0/2
 Grüne 10/0/5/1
 Die Mitte 4/0/10/1
 AL 0/0/5/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
 
 ---- X (limit 2000) ----
 [post 0]
@@ -2042,6 +2121,10 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enthaltung | 12 Abwesend
 
@@ -2054,6 +2137,7 @@ Die Mitte 8/5/0/2
 Grüne 14/0/0/1
 AL 0/3/0/1
 
+[post 3]
 Änderungsantrag 17, 1. Abstimmung Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung
 📊 A: 50 | B: 24 | C: 40 | Abwesend 11
 
@@ -2066,8 +2150,6 @@ Grüne 10/0/5/1
 Die Mitte 4/0/10/1
 AL 0/0/5/1
 
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 25.02.2026
@@ -2077,6 +2159,11 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Open Data Zürich
+[facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed DID: Tag:}]}
+
+[post 2]
 ✅ Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enth. | 12 Abw.
 
@@ -2089,11 +2176,10 @@ Die Mitte 8/5/0/2
 Grüne 14/0/0/1
 AL 0/3/0/1
 
-[post 2]
+[post 3]
 Änderungsantrag 17, 1. Abstimmung Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung
 📊 A: 50 | B: 24 | C: 40 | Abw. 11
 
-[post 3]
 🏛️ Fraktionen (A/B/C/Abw):
 SP 28/0/0/2
 SVP 0/0/20/2
@@ -2102,9 +2188,6 @@ GLP 8/6/0/2
 Grüne 10/0/5/1
 Die Mitte 4/0/10/1
 AL 0/0/5/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
-[facet] {Index:{ByteStart:134 ByteEnd:217} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed DID: Tag:}]}
 
 ---- Instagram ----
 [images] 3
@@ -2138,6 +2221,7 @@ Die Mitte 4/0/10/1
 AL 0/0/5/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 3
@@ -2147,6 +2231,7 @@ AL 0/0/5/1
 Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung der Bestimmungen für Gewerbe- und Industriezonen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enthaltung | 12 Abwesend
@@ -2187,6 +2272,9 @@ AL 0/0/5/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Open Data Zürich
+
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -2197,8 +2285,6 @@ SVP 18/0/0/1
 Grüne 0/0/15/1
 Die Mitte 0/8/6/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
 
 ---- X (limit 2000) ----
 [post 0]
@@ -2209,6 +2295,9 @@ AL 0/0/0/1
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Open Data Zürich
+
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -2219,8 +2308,6 @@ SVP 18/0/0/1
 Grüne 0/0/15/1
 Die Mitte 0/8/6/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
 
 ---- Bluesky ----
 [post 0]
@@ -2232,6 +2319,9 @@ AL 0/0/0/1
 [mention] zri-testbot-7f3a.bsky.social @ 80-93
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Open Data Zürich
+
 📊 21 Ja | 38 Nein | 56 Enth. | 10 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -2242,9 +2332,7 @@ SVP 18/0/0/1
 Grüne 0/0/15/1
 Die Mitte 0/8/6/1
 AL 0/0/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
-[facet] {Index:{ByteStart:184 ByteEnd:261} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1 DID: Tag:}]}
+[facet] {Index:{ByteStart:5 ByteEnd:82} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -2266,6 +2354,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 1
@@ -2287,6 +2376,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Open Data Zürich
 
 ################ FIXTURE kantonsrat-vote ################
 
@@ -2299,6 +2389,11 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
+Daten: OpenParlData.ch
+
 📊 83 Ja | 87 Nein | 0 Enthaltung | 10 Abwesend
 
 [post 2]
@@ -2311,12 +2406,6 @@ Grüne 0/19/0/0
 Die Mitte 11/0/0/1
 EVP 0/6/0/1
 AL 0/5/0/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -2327,6 +2416,11 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
+Daten: OpenParlData.ch
+
 📊 83 Ja | 87 Nein | 0 Enthaltung | 10 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -2339,11 +2433,6 @@ Die Mitte 11/0/0/1
 EVP 0/6/0/1
 AL 0/5/0/0
 
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
-
 ---- Bluesky ----
 [post 0]
 🗳️ Kantonsrat ZH | Abstimmung vom 06.07.2026 (10:21)
@@ -2353,9 +2442,19 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 👇 Details im Thread
 
 [post 1]
-📊 83 Ja | 87 Nein | 0 Enth. | 10 Abw.
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353 DID: Tag:}]}
 
 [post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
+Daten: OpenParlData.ch
+
+📊 83 Ja | 87 Nein | 0 Enth. | 10 Abw.
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06 DID: Tag:}]}
+
+[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 44/0/0/3
 SP 0/35/0/1
@@ -2365,17 +2464,6 @@ Grüne 0/19/0/0
 Die Mitte 11/0/0/1
 EVP 0/6/0/1
 AL 0/5/0/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353 DID: Tag:}]}
-
-[post 4]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -2399,7 +2487,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -2423,7 +2511,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-multi-vote ################
 
@@ -2436,6 +2524,12 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
+[post 2]
 Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
 
@@ -2449,7 +2543,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
-[post 2]
+[post 3]
 Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2463,10 +2557,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 4]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enthaltung | 7 Abwesend
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 0/44/0/3
 SP 32/0/0/4
@@ -2477,10 +2571,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 5]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 4]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2491,10 +2585,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 6]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
-[post 5]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 31/5
@@ -2504,11 +2598,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -2519,6 +2608,12 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
+[post 2]
 Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
 
@@ -2532,6 +2627,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 3]
 Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2545,6 +2641,7 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 4]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enthaltung | 7 Abwesend
 
@@ -2558,6 +2655,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 5]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2571,6 +2669,7 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 6]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
@@ -2584,11 +2683,6 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
-
 ---- Bluesky ----
 [post 0]
 🗳️ Kantonsrat ZH | Abstimmung vom 15.06.2026
@@ -2598,6 +2692,17 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
+
+[post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
+
+[post 3]
 Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enth. | 6 Abw.
 
@@ -2611,10 +2716,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 4]
 Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 2]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2625,10 +2730,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 5]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enth. | 7 Abw.
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 0/44/0/3
 SP 32/0/0/4
@@ -2639,10 +2744,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 6]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 4]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2653,10 +2758,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 7]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
-[post 5]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 31/5
@@ -2666,17 +2771,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-[post 6]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
-
-[post 7]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 6
@@ -2753,7 +2847,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 6
@@ -2765,7 +2859,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [caption of image 2]
 Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
@@ -2853,6 +2947,11 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
 Ausgabenbremse
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2866,11 +2965,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -2881,6 +2975,11 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
 Ausgabenbremse
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2893,11 +2992,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -2908,10 +3002,20 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
-Ausgabenbremse
-📊 129 Zustimmungen | 51 ohne Zustimmung
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59 DID: Tag:}]}
 
 [post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
+Ausgabenbremse
+📊 129 Zustimmungen | 51 ohne Zustimmung
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
+
+[post 3]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2921,17 +3025,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59 DID: Tag:}]}
-
-[post 4]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -2956,7 +3049,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -2981,7 +3074,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-decision-reported ################
 
@@ -2994,6 +3087,12 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
+[post 2]
 ✅ Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
 
@@ -3007,11 +3106,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
-[post 2]
+[post 3]
 ✅ Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 3]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -3021,11 +3119,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3036,6 +3129,12 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+
+[post 2]
 ✅ Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
 
@@ -3049,6 +3148,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 3]
 ✅ Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -3062,11 +3162,6 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
-
 ---- Bluesky ----
 [post 0]
 🗳️ Kantonsrat ZH | Abstimmung vom 15.06.2026
@@ -3076,6 +3171,17 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
+
+[post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
+Daten: OpenParlData.ch
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
+
+[post 3]
 ✅ Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enth. | 6 Abw.
 
@@ -3089,10 +3195,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 4]
 ✅ Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 2]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -3102,17 +3208,6 @@ Grüne 19/0
 Die Mitte 12/0
 EVP 7/0
 AL 5/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
-
-[post 4]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 3
@@ -3150,7 +3245,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 3
@@ -3162,7 +3257,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [caption of image 2]
 ✅ Angenommen: Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
@@ -3206,6 +3301,11 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
+Daten: OpenParlData.ch
+
 📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
 
 [post 2]
@@ -3219,12 +3319,6 @@ Die Mitte 10/0/1/1
 EVP 6/0/1/0
 AL 0/5/0/0
 
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
-
 ---- X (limit 2000) ----
 [post 0]
 🗳️  Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
@@ -3235,6 +3329,11 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
+Daten: OpenParlData.ch
+
 📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -3246,11 +3345,6 @@ Grüne 0/19/0/0
 Die Mitte 10/0/1/1
 EVP 6/0/1/0
 AL 0/5/0/0
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -3263,9 +3357,19 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 [mention] zri-testbot-7f3a.bsky.social @ 72-87
 
 [post 1]
-📊 92 Ja | 82 Nein | 2 Enth. | 4 Abw.
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1 DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1 DID: Tag:}]}
 
 [post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
+Daten: OpenParlData.ch
+
+📊 92 Ja | 82 Nein | 2 Enth. | 4 Abw.
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31 DID: Tag:}]}
+
+[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 46/0/0/1
 SP 0/35/0/1
@@ -3275,17 +3379,6 @@ Grüne 0/19/0/0
 Die Mitte 10/0/1/1
 EVP 6/0/1/0
 AL 0/5/0/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1 DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1 DID: Tag:}]}
-
-[post 4]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -3310,7 +3403,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3335,7 +3428,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-co-signed-business ################
 
@@ -3349,6 +3442,11 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
+Daten: OpenParlData.ch
+
 ✍️ Weitere Unterzeichnende: Judith Anna Stofer (AL)
 
 📊 99 Ja | 74 Nein | 0 Enthaltung | 7 Abwesend
@@ -3364,12 +3462,6 @@ Die Mitte 0/11/0/1
 EVP 0/7/0/0
 AL 5/0/0/0
 
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
-
 ---- X (limit 2000) ----
 [post 0]
 🗳️  Kantonsrat ZH | Abstimmung vom 08.06.2026 (09:15)
@@ -3380,6 +3472,11 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 👇 Details im Thread
 
 [post 1]
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
+Daten: OpenParlData.ch
+
 📊 99 Ja | 74 Nein | 0 Enthaltung | 7 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -3392,11 +3489,6 @@ Die Mitte 0/11/0/1
 EVP 0/7/0/0
 AL 5/0/0/0
 
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
-
 ---- Bluesky ----
 [post 0]
 🗳️ Kantonsrat ZH | Abstimmung vom 08.06.2026 (09:15)
@@ -3407,9 +3499,19 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 👇 Details im Thread
 
 [post 1]
-📊 99 Ja | 74 Nein | 0 Enth. | 7 Abw.
+🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
+🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
+[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01 DID: Tag:}]}
+[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9 DID: Tag:}]}
 
 [post 2]
+📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
+Daten: OpenParlData.ch
+
+📊 99 Ja | 74 Nein | 0 Enth. | 7 Abw.
+[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08 DID: Tag:}]}
+
+[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 0/46/0/2
 SP 36/0/0/0
@@ -3419,17 +3521,6 @@ Grüne 19/0/0/0
 Die Mitte 0/11/0/1
 EVP 0/7/0/0
 AL 5/0/0/0
-
-[post 3]
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
-[facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01 DID: Tag:}]}
-[facet] {Index:{ByteStart:115 ByteEnd:244} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9 DID: Tag:}]}
-
-[post 4]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -3454,7 +3545,7 @@ AL 5/0/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3479,7 +3570,7 @@ AL 5/0/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-wahlgeschaeft ################
 
@@ -3494,7 +3585,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3507,7 +3598,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -3525,7 +3616,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 
 [post 2]
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [facet] {Index:{ByteStart:15 ByteEnd:107} Features:[{Type:app.bsky.richtext.facet#link URI:https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf DID: Tag:}]}
 
 ---- Instagram ----
@@ -3540,7 +3631,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3554,7 +3645,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-wahlgeschaeft-two-rounds ################
 
@@ -3569,7 +3660,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3582,7 +3673,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -3601,7 +3692,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 [facet] {Index:{ByteStart:212 ByteEnd:304} Features:[{Type:app.bsky.richtext.facet#link URI:https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf DID: Tag:}]}
 
 [post 2]
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Instagram ----
 [images] 1
@@ -3615,7 +3706,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3629,7 +3720,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE instagram-long-multi-vote-truncation ################
 
@@ -3642,10 +3733,14 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 2]
+[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 25/0/2/2
 FDP 18/2/0/2
@@ -3655,11 +3750,11 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
-[post 3]
+[post 4]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 4]
+[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -3669,11 +3764,11 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
-[post 5]
+[post 6]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 6]
+[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -3683,11 +3778,11 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
-[post 7]
+[post 8]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 8]
+[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -3697,11 +3792,11 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
-[post 9]
+[post 10]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 10]
+[post 11]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -3711,11 +3806,11 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
-[post 11]
+[post 12]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 12]
+[post 13]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -3725,11 +3820,11 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
-[post 13]
+[post 14]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 14]
+[post 15]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -3739,11 +3834,11 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
-[post 15]
+[post 16]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 16]
+[post 17]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -3753,11 +3848,11 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
-[post 17]
+[post 18]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 18]
+[post 19]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -3767,11 +3862,11 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
-[post 19]
+[post 20]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 20]
+[post 21]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -3780,8 +3875,6 @@ Grüne 15/0/3/1
 Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
-
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3792,6 +3885,10 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+
+[post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3804,7 +3901,7 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
-[post 2]
+[post 3]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3817,7 +3914,7 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
-[post 3]
+[post 4]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3830,7 +3927,7 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
-[post 4]
+[post 5]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3843,7 +3940,7 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
-[post 5]
+[post 6]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3856,7 +3953,7 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
-[post 6]
+[post 7]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3869,7 +3966,7 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
-[post 7]
+[post 8]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3882,7 +3979,7 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
-[post 8]
+[post 9]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3895,7 +3992,7 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
-[post 9]
+[post 10]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3908,7 +4005,7 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
-[post 10]
+[post 11]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -3921,8 +4018,6 @@ Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-
 ---- Bluesky ----
 [post 0]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
@@ -3932,10 +4027,15 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 👇 Details im Thread
 
 [post 1]
+🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
+
+[post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
-[post 2]
+[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 25/0/2/2
 FDP 18/2/0/2
@@ -3945,11 +4045,11 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
-[post 3]
+[post 4]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 81 Ja | 29 Nein | 5 Enth. | 10 Abw.
 
-[post 4]
+[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -3959,11 +4059,11 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
-[post 5]
+[post 6]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 82 Ja | 28 Nein | 5 Enth. | 10 Abw.
 
-[post 6]
+[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -3973,11 +4073,11 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
-[post 7]
+[post 8]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 83 Ja | 27 Nein | 5 Enth. | 10 Abw.
 
-[post 8]
+[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -3987,11 +4087,11 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
-[post 9]
+[post 10]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 84 Ja | 26 Nein | 5 Enth. | 10 Abw.
 
-[post 10]
+[post 11]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -4001,11 +4101,11 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
-[post 11]
+[post 12]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 85 Ja | 25 Nein | 5 Enth. | 10 Abw.
 
-[post 12]
+[post 13]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -4015,11 +4115,11 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
-[post 13]
+[post 14]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 86 Ja | 24 Nein | 5 Enth. | 10 Abw.
 
-[post 14]
+[post 15]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -4029,11 +4129,11 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
-[post 15]
+[post 16]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 87 Ja | 23 Nein | 5 Enth. | 10 Abw.
 
-[post 16]
+[post 17]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -4043,11 +4143,11 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
-[post 17]
+[post 18]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 88 Ja | 22 Nein | 5 Enth. | 10 Abw.
 
-[post 18]
+[post 19]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -4057,11 +4157,11 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
-[post 19]
+[post 20]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 89 Ja | 21 Nein | 5 Enth. | 10 Abw.
 
-[post 20]
+[post 21]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -4071,17 +4171,15 @@ Die Mitte 10/5/0/1
 SVP 0/6/0/1
 AL 0/3/0/1
 
-🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-[facet] {Index:{ByteStart:141 ByteEnd:226} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
-
 ---- Instagram ----
 [images] 10
 [caption]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
 
-Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Trak…
+Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Tra…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 10
@@ -4105,6 +4203,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Open Data Zürich
 [caption of image 2]
 ✅ Angenommen: Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend

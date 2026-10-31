@@ -124,10 +124,87 @@ type ReplyRef struct {
 	Parent PostRef `json:"parent"`
 }
 
+// MaxImagesPerPost is how many images one app.bsky.embed.images embed holds.
+const MaxImagesPerPost = 4
+
+// Image is an uploaded image to embed in a post. Blob is the blob object
+// UploadBlob returned, passed back untouched; Width and Height give the
+// aspect ratio, without which clients crop the image to a default box.
+type Image struct {
+	Blob   json.RawMessage
+	Alt    string
+	Width  int
+	Height int
+}
+
+// UploadBlob uploads data to the session's PDS and returns the blob object a
+// post embeds to reference it.
+//
+// An uploaded blob that no record references is garbage-collected by the PDS,
+// so a failed post leaves nothing behind to clean up.
+func UploadBlob(session *Session, data []byte, mimeType string) (json.RawMessage, error) {
+	url := session.ServiceEndpoint + "/xrpc/com.atproto.repo.uploadBlob"
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create upload request: %w", err)
+	}
+	req.Header.Set("Content-Type", mimeType)
+	req.Header.Set("Authorization", "Bearer "+session.AccessJwt)
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to upload blob: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, _ := io.ReadAll(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("bluesky uploadBlob returned status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var out struct {
+		Blob json.RawMessage `json:"blob"`
+	}
+	if err := json.Unmarshal(body, &out); err != nil {
+		return nil, fmt.Errorf("failed to parse uploadBlob response: %w", err)
+	}
+	if len(out.Blob) == 0 {
+		return nil, fmt.Errorf("bluesky uploadBlob response has no blob: %s", string(body))
+	}
+	return out.Blob, nil
+}
+
+// imagesEmbed builds the app.bsky.embed.images object for a post.
+func imagesEmbed(images []Image) map[string]interface{} {
+	items := make([]map[string]interface{}, len(images))
+	for i, img := range images {
+		item := map[string]interface{}{
+			"image": img.Blob,
+			"alt":   img.Alt,
+		}
+		if img.Width > 0 && img.Height > 0 {
+			item["aspectRatio"] = map[string]int{"width": img.Width, "height": img.Height}
+		}
+		items[i] = item
+	}
+	return map[string]interface{}{
+		"$type":  "app.bsky.embed.images",
+		"images": items,
+	}
+}
+
 // CreateRecord creates a post on Bluesky and returns the post reference.
 // text is the post content, facets are optional rich text annotations (links, mentions).
 // replyTo is optional — if non-nil, the post is created as a reply in a thread.
-func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyRef) (*PostRef, error) {
+// images are optional, at most MaxImagesPerPost, each uploaded with UploadBlob first.
+func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyRef, images []Image) (*PostRef, error) {
+	if len(images) > MaxImagesPerPost {
+		return nil, fmt.Errorf("a post holds at most %d images, got %d", MaxImagesPerPost, len(images))
+	}
+
 	url := session.ServiceEndpoint + "/xrpc/com.atproto.repo.createRecord"
 
 	// Build the record
@@ -139,6 +216,10 @@ func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyR
 
 	if len(facets) > 0 {
 		record["facets"] = facets
+	}
+
+	if len(images) > 0 {
+		record["embed"] = imagesEmbed(images)
 	}
 
 	if replyTo != nil {

@@ -430,6 +430,38 @@ func trimForEllipsis(s string) string {
 // GenerateCarousel produces carousel JPEG images for a vote group.
 // Returns [][]byte (JPEG-encoded images).
 func GenerateCarousel(group []votes.Vote) ([][]byte, error) {
+	cards, err := GenerateCards(group)
+	if err != nil {
+		return nil, err
+	}
+	images := make([][]byte, len(cards))
+	for i, c := range cards {
+		images[i] = c.JPEG
+	}
+	return images, nil
+}
+
+// maxAltRunes caps a card's alt text at X's limit for image descriptions, the
+// stricter of the two platforms that take one. A Fraktion breakdown is the
+// longest thing a card shows, and it stays well under this.
+const maxAltRunes = 1000
+
+// Card is one rendered carousel image with the text a screen reader reads in
+// its place.
+type Card struct {
+	JPEG   []byte
+	Alt    string
+	Width  int
+	Height int
+}
+
+// GenerateCards renders the same carousel as GenerateCarousel, each image paired
+// with its alt text.
+//
+// Bluesky and X show the cards next to a thread rather than under a caption, so
+// whatever a card says has to be readable without it: the alt text repeats the
+// card's facts as text. See alt.go.
+func GenerateCards(group []votes.Vote) ([]Card, error) {
 	if len(group) == 0 {
 		return nil, fmt.Errorf("no votes provided")
 	}
@@ -441,15 +473,28 @@ func GenerateCarousel(group []votes.Vote) ([][]byte, error) {
 		return nil, fmt.Errorf("loading fonts: %w", err)
 	}
 
-	var images [][]byte
+	var cards []Card
 	for _, c := range carouselCards(group, bgColor, fonts) {
 		img, err := renderCard(c, bgColor, fonts)
 		if err != nil {
 			return nil, fmt.Errorf("rendering %s: %w", c.name, err)
 		}
-		images = append(images, img)
+		cards = append(cards, Card{
+			JPEG:   img,
+			Alt:    c.alt,
+			Width:  imgWidth,
+			Height: imgHeight,
+		})
 	}
-	return images, nil
+	return cards, nil
+}
+
+func capRunes(s string, max int) string {
+	runes := []rune(s)
+	if len(runes) <= max {
+		return s
+	}
+	return string(runes[:max-1]) + "…"
 }
 
 // card is one image of a carousel: the vote whose band and corner it carries,
@@ -463,6 +508,9 @@ type card struct {
 	vote   votes.Vote
 	corner cardCorner
 	layout func(img *image.RGBA, cur *layoutCursor, inset int) error
+	// alt is what the card says, as text. It lives beside the layout so a card
+	// added here cannot ship without one.
+	alt string
 }
 
 // inset is the Y the card's content starts below: the band, then the corner
@@ -486,7 +534,7 @@ func carouselCards(group []votes.Vote, bg color.RGBA, fonts *fontSet) []card {
 		return []card{{"Wahlgeschäft card", v, dateCorner(v), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutWahlgeschaeftCard(img, cur, inset, &v, bg, fonts)
 			return nil
-		}}}
+		}, wahlgeschaeftAlt(group)}}
 	}
 
 	if len(group) == 1 {
@@ -494,19 +542,19 @@ func carouselCards(group []votes.Vote, bg color.RGBA, fonts *fontSet) []card {
 		return []card{{"combined card", v, voteCorner(v, ""), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			_, _, err := layoutCombinedCard(img, cur, inset, &v, bg, fonts)
 			return err
-		}}}
+		}, combinedAlt(group)}}
 	}
 
 	cards := []card{{"title card", group[0], dateCorner(group[0]), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 		layoutTitleCard(img, cur, inset, group, bg, fonts)
 		return nil
-	}}}
+	}, titleAlt(group)}}
 	for i := range group {
 		v := group[i]
 		cards = append(cards, card{fmt.Sprintf("result card %d", i+1), v, voteCorner(v, formatProgressBadge(i+1, len(group))), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutResultCard(img, cur, inset, &v, bg, fonts, i+1, len(group))
 			return nil
-		}})
+		}, resultAlt(group, i)})
 	}
 	return cards
 }
@@ -1110,7 +1158,7 @@ func fitTitleAndSummary(group []votes.Vote, inset, maxWidth int, fonts *fontSet)
 	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
 		summaryLines = nil
 		for i, sv := range group {
-			line, ok := formatSummaryLine(i+1, sv, len(group), maxRunes)
+			line, ok := formatSummaryLineWithin(i+1, sv, len(group), maxRunes)
 			if ok {
 				summaryLines = append(summaryLines, wrapText(fonts.small, line, maxWidth)...)
 			}
@@ -1326,15 +1374,20 @@ func layoutResultCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.Vo
 	drawFraktionTable(img, cur, fraktionCounts, bg, fonts.partyBold, fonts.partyNum)
 }
 
-// formatSummaryLine builds one entry of the Übersicht. A maxSubtitleRunes above
-// zero cuts the subtitle to that length; zero leaves it whole.
-func formatSummaryLine(index int, vote votes.Vote, groupSize, maxSubtitleRunes int) (string, bool) {
+func formatSummaryLine(index int, vote votes.Vote, groupSize int) (string, bool) {
+	return formatSummaryLineWithin(index, vote, groupSize, summarySubtitleMaxRunes)
+}
+
+// formatSummaryLineWithin is formatSummaryLine with the vote label cut to
+// maxRunes instead of the card's summarySubtitleMaxRunes. Zero leaves the label
+// whole.
+func formatSummaryLineWithin(index int, vote votes.Vote, groupSize, maxRunes int) (string, bool) {
 	subtitle := voteformat.SubVoteLabel(vote, index-1, groupSize)
 	if subtitle == "" {
 		return "", false
 	}
-	if maxSubtitleRunes > 0 {
-		subtitle = truncateWithEllipsis(subtitle, maxSubtitleRunes)
+	if maxRunes > 0 {
+		subtitle = truncateWithEllipsis(subtitle, maxRunes)
 	}
 
 	counts := voteformat.CountsOf(vote)
