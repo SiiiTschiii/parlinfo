@@ -705,10 +705,10 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 2]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 0/30/2/2
 FDP 0/20/0/2
@@ -741,6 +741,7 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 2]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -776,10 +777,10 @@ GLP 14/0/0/2
 Die Mitte 12/0/0/1
 AL 0/2/0/1
 
+[post 2]
 ❌ Schlussabstimmung
 📊 40 Ja | 70 Nein | 5 Enth. | 10 Abw.
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 0/30/2/2
 FDP 0/20/0/2
@@ -790,7 +791,7 @@ Die Mitte 0/12/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
-[facet] {Index:{ByteStart:142 ByteEnd:225} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
+[facet] {Index:{ByteStart:206 ByteEnd:289} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 ---- Instagram ----
 [images] 3
@@ -997,10 +998,10 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 2]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -1010,10 +1011,10 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -1023,10 +1024,10 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 4]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -1036,10 +1037,10 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -1049,10 +1050,10 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 6]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -1062,10 +1063,10 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -1075,10 +1076,10 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 8]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -1088,10 +1089,10 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -1101,10 +1102,10 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-[post 10]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -1137,6 +1138,7 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 2]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1149,6 +1151,7 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1161,6 +1164,7 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1173,6 +1177,7 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1185,6 +1190,7 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1197,6 +1203,7 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1209,6 +1216,7 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1221,6 +1229,7 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1233,6 +1242,7 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1268,10 +1278,10 @@ Die Mitte 10/5/0/1
 SVP 0/15/0/1
 AL 0/3/0/1
 
+[post 2]
 ✅ Ziffer B
 📊 81 Ja | 29 Nein | 5 Enth. | 10 Abw.
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -1281,10 +1291,10 @@ Die Mitte 10/5/0/1
 SVP 0/14/0/1
 AL 0/3/0/1
 
+[post 3]
 ✅ Ziffer C
 📊 82 Ja | 28 Nein | 5 Enth. | 10 Abw.
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -1294,10 +1304,10 @@ Die Mitte 10/5/0/1
 SVP 0/13/0/1
 AL 0/3/0/1
 
+[post 4]
 ✅ Ziffer D
 📊 83 Ja | 27 Nein | 5 Enth. | 10 Abw.
 
-[post 4]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -1307,10 +1317,10 @@ Die Mitte 10/5/0/1
 SVP 0/12/0/1
 AL 0/3/0/1
 
+[post 5]
 ✅ Ziffer E
 📊 84 Ja | 26 Nein | 5 Enth. | 10 Abw.
 
-[post 5]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -1320,10 +1330,10 @@ Die Mitte 10/5/0/1
 SVP 0/11/0/1
 AL 0/3/0/1
 
+[post 6]
 ✅ Ziffer F
 📊 85 Ja | 25 Nein | 5 Enth. | 10 Abw.
 
-[post 6]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -1333,10 +1343,10 @@ Die Mitte 10/5/0/1
 SVP 0/10/0/1
 AL 0/3/0/1
 
+[post 7]
 ✅ Ziffer G
 📊 86 Ja | 24 Nein | 5 Enth. | 10 Abw.
 
-[post 7]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -1346,10 +1356,10 @@ Die Mitte 10/5/0/1
 SVP 0/9/0/1
 AL 0/3/0/1
 
+[post 8]
 ✅ Ziffer H
 📊 87 Ja | 23 Nein | 5 Enth. | 10 Abw.
 
-[post 8]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -1359,10 +1369,10 @@ Die Mitte 10/5/0/1
 SVP 0/8/0/1
 AL 0/3/0/1
 
+[post 9]
 ✅ Ziffer I
 📊 88 Ja | 22 Nein | 5 Enth. | 10 Abw.
 
-[post 9]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -1372,10 +1382,10 @@ Die Mitte 10/5/0/1
 SVP 0/7/0/1
 AL 0/3/0/1
 
+[post 10]
 ✅ Ziffer J
 📊 89 Ja | 21 Nein | 5 Enth. | 10 Abw.
 
-[post 10]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2
@@ -1386,7 +1396,7 @@ SVP 0/6/0/1
 AL 0/3/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
-[facet] {Index:{ByteStart:141 ByteEnd:226} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
+[facet] {Index:{ByteStart:196 ByteEnd:281} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 ---- Instagram ----
 [images] 10
@@ -2054,6 +2064,7 @@ Die Mitte 8/5/0/2
 Grüne 14/0/0/1
 AL 0/3/0/1
 
+[post 2]
 Änderungsantrag 17, 1. Abstimmung Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung
 📊 A: 50 | B: 24 | C: 40 | Abwesend 11
 
@@ -2463,10 +2474,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 3]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enthaltung | 7 Abwesend
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 0/44/0/3
 SP 32/0/0/4
@@ -2477,10 +2488,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 4]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 4]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2491,10 +2502,11 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 5]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
-[post 5]
+[post 6]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 31/5
@@ -2532,6 +2544,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 2]
 Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2545,6 +2558,7 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 3]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enthaltung | 7 Abwesend
 
@@ -2558,6 +2572,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 4]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -2571,6 +2586,7 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 5]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
@@ -2611,10 +2627,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 2]
 Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 2]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2625,10 +2641,10 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 3]
 Abstimmung 3 (11:40)
 📊 129 Ja | 44 Nein | 0 Enth. | 7 Abw.
 
-[post 3]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SVP 0/44/0/3
 SP 32/0/0/4
@@ -2639,10 +2655,10 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 4]
 Abstimmung 4 (11:41) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 4]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -2653,10 +2669,11 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
+[post 5]
 Abstimmung 5 (11:42) · Quorum
 📊 128 Zustimmungen | 52 ohne Zustimmung
 
-[post 5]
+[post 6]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 31/5
@@ -2667,13 +2684,13 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
-[post 6]
+[post 7]
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 [facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
 [facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
 
-[post 7]
+[post 8]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
 Source: OpenParlData.ch
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
@@ -3049,6 +3066,7 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 2]
 ✅ Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
@@ -3089,10 +3107,11 @@ Die Mitte 12/0/0/0
 EVP 7/0/0/0
 AL 5/0/0/0
 
+[post 2]
 ✅ Abstimmung 2 (11:30) · Quorum
 📊 129 Zustimmungen | 51 ohne Zustimmung
 
-[post 2]
+[post 3]
 🏛️ Fraktionen (Zust./ohne):
 SVP 0/47
 SP 32/4
@@ -3103,13 +3122,13 @@ Die Mitte 12/0
 EVP 7/0
 AL 5/0
 
-[post 3]
+[post 4]
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 [facet] {Index:{ByteStart:16 ByteEnd:102} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2 DID: Tag:}]}
 [facet] {Index:{ByteStart:115 ByteEnd:196} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13 DID: Tag:}]}
 
-[post 4]
+[post 5]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
 Source: OpenParlData.ch
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}

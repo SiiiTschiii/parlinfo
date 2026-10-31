@@ -5,40 +5,24 @@ import (
 	"testing"
 )
 
-func TestSpreadCards(t *testing.T) {
-	cards := func(n int) []int {
-		out := make([]int, n)
-		for i := range out {
-			out[i] = i + 1
-		}
-		return out
-	}
-
+func TestThreadCards(t *testing.T) {
 	tests := []struct {
-		name  string
-		cards int
-		posts int
-		want  [][]int
+		name       string
+		groupSize  int
+		posts      int
+		voteStarts []int
+		want       []int
 	}{
-		{"single card on a two-post thread", 1, 2, [][]int{{1}, nil}},
-		{"four cards all on the root", 4, 2, [][]int{{1, 2, 3, 4}, nil}},
-		{"overflow goes to the first reply", 6, 3, [][]int{{1, 2, 3, 4}, {5, 6}, nil}},
-		{"more cards than the thread holds adds posts", 10, 2, [][]int{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10}}},
-		{"no cards", 0, 2, [][]int{nil, nil}},
+		{"lone vote: card on the root only", 1, 2, []int{0}, []int{0, NoCard}},
+		{"each vote's card on the reply opening it", 3, 4, []int{0, 1, 2}, []int{0, 1, 2, 3}},
+		{"a vote spilling over leaves its continuation bare", 2, 5, []int{0, 2}, []int{0, 1, NoCard, 2, NoCard}},
+		{"election notice: one post, one card", 1, 1, nil, []int{0}},
+		{"no posts", 2, 0, nil, []int{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := SpreadCards(cards(tt.cards), tt.posts, 4)
-			if len(got) != len(tt.want) {
-				t.Fatalf("got %d posts, want %d: %v", len(got), len(tt.want), got)
-			}
-			for i := range got {
-				if len(got[i]) == 0 && len(tt.want[i]) == 0 {
-					continue
-				}
-				if !reflect.DeepEqual(got[i], tt.want[i]) {
-					t.Errorf("post %d = %v, want %v", i, got[i], tt.want[i])
-				}
+			if got := ThreadCards(tt.groupSize, tt.posts, tt.voteStarts); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ThreadCards = %v, want %v", got, tt.want)
 			}
 		})
 	}

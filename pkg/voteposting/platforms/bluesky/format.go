@@ -7,6 +7,7 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/bskyapi"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/imagegen"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -28,8 +29,16 @@ type BlueskyPost struct {
 // Root post contains: header, title, result (single vote), thread hint
 // Replies contain: vote details (counts per vote), link
 func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*BlueskyPost {
+	thread, _ := FormatVoteThreadWithCards(group, contactMapper)
+	return thread
+}
+
+// FormatVoteThreadWithCards is FormatVoteThread, also returning for each post
+// the index of the carousel card it carries, or platforms.NoCard. See
+// platforms.ThreadCards.
+func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mapper) ([]*BlueskyPost, []int) {
 	if len(group) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	// A Wahlgeschäft gets one notice, not a thread: its only votes are
@@ -41,7 +50,8 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 	// No mentions are resolved on this path, deliberately: the only name in
 	// the text belongs to the member being replaced, not to anyone elected.
 	if votes.IsWahlgeschaeftGroup(group) {
-		return buildWahlgeschaeftPosts(group)
+		posts := buildWahlgeschaeftPosts(group)
+		return posts, platforms.ThreadCards(1, len(posts), nil)
 	}
 
 	firstVote := group[0]
@@ -56,7 +66,7 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 	// Signatories the root had no room for lead the thread: naming them costs a
 	// line here, where truncating the title to keep them would have cost the
 	// subject of the vote.
-	replies := buildReplyPosts(group, voteformat.SignatoryLine(deferred),
+	replies, voteStarts := buildReplyPosts(group, voteformat.SignatoryLine(deferred),
 		voteformat.LinkLine(group), linkURLs(group))
 
 	thread := make([]*BlueskyPost, 0, 1+len(replies))
@@ -71,7 +81,15 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper) []*Blu
 		}
 	}
 
-	return thread
+	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
+}
+
+// replyEntry is one block of reply text: the signatory line (vote -1), or a
+// vote's counts (starts) or its Fraktion breakdown.
+type replyEntry struct {
+	text   string
+	vote   int
+	starts bool
 }
 
 // buildStilleWahlPosts announces a stille Wahl: the office and who was elected
@@ -178,15 +196,15 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs as many vote entries as fit into each reply (≤300 graphemes).
 // The link is appended to the last reply.
-func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURLs []string) []*BlueskyPost {
+func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURLs []string) ([]*BlueskyPost, []int) {
 
-	// Build individual vote entry strings
-	var entries []string
+	// Build individual vote entries
+	var entries []replyEntry
 
 	// The signatories the root could not hold come first, so a reader meets
 	// them before the tallies rather than after them.
 	if signatoryLine != "" {
-		entries = append(entries, signatoryLine)
+		entries = append(entries, replyEntry{text: signatoryLine, vote: -1})
 	}
 
 	for i, vote := range group {
@@ -214,13 +232,13 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 			entry.WriteString(voteformat.FormatVoteCounts(counts))
 		}
 
-		entries = append(entries, entry.String())
+		entries = append(entries, replyEntry{text: entry.String(), vote: i, starts: true})
 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
 			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
-				entries = append(entries, breakdown)
+				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}
 	}
@@ -230,9 +248,21 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 	var replies []*BlueskyPost
 	var currentEntries []string
 	currentLen := 0
+	// Each vote opens a reply of its own, so the reply carrying a vote's card
+	// talks about that vote and no other. Only the signatories, which belong to
+	// no vote, may share the first vote's reply.
+	voteStarts := make([]int, len(group))
+	currentHasVote := false
 
-	for i, entry := range entries {
+	for i, e := range entries {
+		entry := e.text
 		entryLen := graphemeLen(entry)
+		if e.starts && currentHasVote {
+			replies = append(replies, makePost(strings.Join(currentEntries, "\n\n")))
+			currentEntries = nil
+			currentLen = 0
+			currentHasVote = false
+		}
 		separatorLen := 0
 		if len(currentEntries) > 0 {
 			separatorLen = 2 // "\n\n" between entries
@@ -251,8 +281,15 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 			replies = append(replies, makePost(replyText))
 			currentEntries = nil
 			currentLen = 0
+			currentHasVote = false
 		}
 
+		if e.starts {
+			voteStarts[e.vote] = len(replies)
+		}
+		if e.vote >= 0 {
+			currentHasVote = true
+		}
 		if len(currentEntries) > 0 {
 			currentLen += 2 // "\n\n"
 		}
@@ -266,7 +303,7 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 	if len(currentEntries) > 0 {
 		body := strings.Join(currentEntries, "\n\n")
 		if graphemeLen(body+linkLine) <= maxGraphemes {
-			return append(replies, makePost(body+linkLine, linkURLs...))
+			return append(replies, makePost(body+linkLine, linkURLs...)), voteStarts
 		}
 		replies = append(replies, makePost(body))
 	}
@@ -274,7 +311,7 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 		replies = append(replies, makePost(chunk, linkURLs...))
 	}
 
-	return replies
+	return replies, voteStarts
 }
 
 // linkChunks packs the trailing link block into as few posts as hold it,

@@ -9,6 +9,7 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
@@ -144,113 +145,144 @@ func TestPost_PostLimitReached(t *testing.T) {
 	}
 }
 
-// fakeCards returns a GenerateCardsFunc that renders n placeholder cards.
-func fakeCards(n int) GenerateCardsFunc {
-	return func([]votes.Vote) ([]imagegen.Card, error) {
+// withImages wires real-count placeholder cards and fake upload and alt-text
+// calls into p. Card k's upload returns "media-k" unless k is in failUploads,
+// and its alt text fails if k is in failAlts.
+func withImages(p *XPlatform, failUploads, failAlts map[int]bool) {
+	p.generateCardsFunc = func(group []votes.Vote) ([]imagegen.Card, error) {
+		n := 1
+		if len(group) > 1 && !votes.IsWahlgeschaeftGroup(group) {
+			n = len(group) + 1
+		}
 		cards := make([]imagegen.Card, n)
 		for i := range cards {
-			cards[i] = imagegen.Card{JPEG: []byte{byte(i)}, Alt: fmt.Sprintf("card %d", i+1), Width: 1080, Height: 1350}
+			cards[i] = imagegen.Card{JPEG: []byte{byte(i)}, Alt: fmt.Sprintf("card %d", i)}
 		}
 		return cards, nil
 	}
-}
-
-// withImages wires fake upload and alt-text calls into p. Uploads return
-// "media-<card index>", alt texts are recorded by media ID, and any card whose
-// index is in failUploads fails to upload.
-func withImages(p *XPlatform, n int, failUploads map[byte]bool) map[string]string {
-	alts := map[string]string{}
-	p.generateCardsFunc = fakeCards(n)
 	p.uploadImageFunc = func(_, _, _, _ string, jpeg []byte) (string, error) {
-		if failUploads[jpeg[0]] {
+		if failUploads[int(jpeg[0])] {
 			return "", errors.New("upload refused")
 		}
 		return fmt.Sprintf("media-%d", jpeg[0]), nil
 	}
-	p.setAltTextFunc = func(_, _, _, _, mediaID, alt string) error {
-		alts[mediaID] = alt
+	p.setAltTextFunc = func(_, _, _, _, mediaID, _ string) error {
+		var k int
+		_, _ = fmt.Sscanf(mediaID, "media-%d", &k)
+		if failAlts[k] {
+			return errors.New("metadata refused")
+		}
 		return nil
 	}
-	return alts
 }
 
-func TestPost_AttachesCardsToRoot(t *testing.T) {
+// Every post's image shows what that post's text says: the root carries the
+// overview, and each vote's result card rides on the reply that opens that
+// vote — never on a reply about another vote.
+func TestPost_EachCardOnItsVotesReply(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		group []votes.Vote
+	}{
+		{"multi-vote", testfixtures.MultiVoteGroup()},
+		{"ten votes", testfixtures.TenVoteStressTest()},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var calls []tweetCall
+			p := newTestXPlatform(&calls, 10)
+			withImages(p, nil, nil)
+
+			content, err := p.Format(tc.group)
+			if err != nil {
+				t.Fatalf("Format error: %v", err)
+			}
+			if _, _, err := p.Post(content); err != nil {
+				t.Fatalf("Post error: %v", err)
+			}
+
+			if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0" {
+				t.Errorf("root media = %q, want the overview card alone", got)
+			}
+			seen := map[string]bool{}
+			for i, c := range calls[1:] {
+				if len(c.mediaIDs) > 1 {
+					t.Errorf("reply %d carries %d images, want at most one", i+1, len(c.mediaIDs))
+				}
+				for _, id := range c.mediaIDs {
+					var k int
+					_, _ = fmt.Sscanf(id, "media-%d", &k)
+					v := k - 1
+					label := voteformat.SubVoteLabel(tc.group[v], v, len(tc.group))
+					if !strings.Contains(c.message, label) {
+						t.Errorf("reply %d carries vote %d's card but its text is about something else:\n%s", i+1, v+1, c.message)
+					}
+					for w, other := range tc.group {
+						if w != v && strings.Contains(c.message, voteformat.SubVoteLabel(other, w, len(tc.group))) {
+							t.Errorf("reply %d carries vote %d's card but also talks about vote %d:\n%s", i+1, v+1, w+1, c.message)
+						}
+					}
+					seen[id] = true
+				}
+			}
+			if len(seen) != len(tc.group) {
+				t.Errorf("posted %d result cards, want one per vote (%d)", len(seen), len(tc.group))
+			}
+		})
+	}
+}
+
+func TestPost_LoneVoteCardOnRootOnly(t *testing.T) {
 	var calls []tweetCall
 	p := newTestXPlatform(&calls, 10)
-	alts := withImages(p, 3, nil)
+	withImages(p, nil, nil)
 
-	content, err := p.Format(testfixtures.MultiVoteGroup())
+	content, err := p.Format(testfixtures.SingleVoteAngenommen())
 	if err != nil {
 		t.Fatalf("Format error: %v", err)
 	}
 	if _, _, err := p.Post(content); err != nil {
 		t.Fatalf("Post error: %v", err)
 	}
-
-	if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0,media-1,media-2" {
-		t.Errorf("root media = %s, want all three cards", got)
+	if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0" {
+		t.Errorf("root media = %q, want the combined card", got)
 	}
 	for i, c := range calls[1:] {
 		if len(c.mediaIDs) != 0 {
-			t.Errorf("reply %d carries media %v; three cards fit on the root", i+1, c.mediaIDs)
+			t.Errorf("reply %d carries %v; a lone vote's card is on the root", i+1, c.mediaIDs)
 		}
-	}
-	if alts["media-1"] != "card 2" {
-		t.Errorf("alt text for media-1 = %q", alts["media-1"])
 	}
 }
 
-// Cards beyond what the thread's replies can hold go out as image-only replies
-// at the end, still chained.
-func TestPost_OverflowCardsBecomeImageOnlyReplies(t *testing.T) {
+// A card that fails to upload or to take its alt text is left out; its reply
+// still posts its text.
+func TestPost_FailedImageKeepsTheReplyText(t *testing.T) {
 	var calls []tweetCall
 	p := newTestXPlatform(&calls, 10)
-	withImages(p, 30, nil)
+	withImages(p, map[int]bool{1: true}, map[int]bool{2: true})
 
-	content, err := p.Format(testfixtures.SingleVoteAngenommen())
+	group := testfixtures.MultiVoteGroup()
+	content, err := p.Format(group)
 	if err != nil {
 		t.Fatalf("Format error: %v", err)
 	}
 	if _, _, err := p.Post(content); err != nil {
 		t.Fatalf("Post error: %v", err)
 	}
-
-	total := 0
 	for i, c := range calls {
-		if len(c.mediaIDs) > 4 {
-			t.Errorf("post %d carries %d images, over X's four", i, len(c.mediaIDs))
-		}
-		total += len(c.mediaIDs)
-		if i > 0 && c.inReplyToTweetID != fmt.Sprintf("fake-tweet-%d", i) {
-			t.Errorf("post %d replies to %q, want the post before it", i, c.inReplyToTweetID)
+		for _, id := range c.mediaIDs {
+			if id == "media-1" || id == "media-2" {
+				t.Errorf("post %d carries %s, which failed", i, id)
+			}
 		}
 	}
-	if total != 30 {
-		t.Errorf("posted %d images, want all 30", total)
-	}
-	if last := calls[len(calls)-1]; last.message != "" {
-		t.Errorf("overflow reply should be image-only, has text %q", last.message)
-	}
-}
-
-func TestPost_FailedUploadDropsOnlyThatImage(t *testing.T) {
-	var calls []tweetCall
-	p := newTestXPlatform(&calls, 10)
-	withImages(p, 6, map[byte]bool{1: true, 4: true, 5: true})
-
-	content, err := p.Format(testfixtures.SingleVoteAngenommen())
-	if err != nil {
-		t.Fatalf("Format error: %v", err)
-	}
-	if _, _, err := p.Post(content); err != nil {
-		t.Fatalf("Post error: %v", err)
-	}
-	if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0,media-2,media-3" {
-		t.Errorf("root media = %s", got)
-	}
-	for i, c := range calls {
-		if c.message == "" && len(c.mediaIDs) == 0 {
-			t.Errorf("post %d is empty: an image-only reply whose images all failed should be skipped", i)
+	for v := 0; v < 2; v++ {
+		label := voteformat.SubVoteLabel(group[v], v, len(group))
+		found := false
+		for _, c := range calls {
+			found = found || strings.Contains(c.message, label)
+		}
+		if !found {
+			t.Errorf("vote %d's text was lost with its card", v+1)
 		}
 	}
 }
@@ -270,39 +302,6 @@ func TestFormat_RenderFailureKeepsText(t *testing.T) {
 		}
 		if post.Text == "" {
 			t.Errorf("post %d lost its text", i)
-		}
-	}
-}
-
-func TestPost_ImageWithoutAltTextIsDropped(t *testing.T) {
-	var calls []tweetCall
-	p := newTestXPlatform(&calls, 10)
-	withImages(p, 5, nil)
-	p.setAltTextFunc = func(_, _, _, _, mediaID, _ string) error {
-		if mediaID == "media-1" || mediaID == "media-4" {
-			return errors.New("metadata refused")
-		}
-		return nil
-	}
-
-	content, err := p.Format(testfixtures.SingleVoteAngenommen())
-	if err != nil {
-		t.Fatalf("Format error: %v", err)
-	}
-	if _, _, err := p.Post(content); err != nil {
-		t.Fatalf("Post error: %v", err)
-	}
-	if got := strings.Join(calls[0].mediaIDs, ","); got != "media-0,media-2,media-3" {
-		t.Errorf("root media = %s, want the undescribed media-1 left out", got)
-	}
-	for i, c := range calls {
-		for _, id := range c.mediaIDs {
-			if id == "media-4" {
-				t.Errorf("post %d carries undescribed media-4", i)
-			}
-		}
-		if c.message == "" && len(c.mediaIDs) == 0 {
-			t.Errorf("post %d is empty: its only image was undescribed", i)
 		}
 	}
 }

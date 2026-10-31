@@ -1,33 +1,36 @@
 package platforms
 
-// SpreadCards assigns a group's carousel cards to the posts of a thread, in
-// carousel order: the root takes the first perPost, each reply the next
-// perPost. The result has one entry per post, and more entries than posts when
-// the thread runs out before the cards do — those are image-only replies for
-// the caller to append.
+// NoCard marks a thread post that carries no carousel card.
+const NoCard = -1
+
+// ThreadCards maps a vote thread onto the group's carousel: for each post, the
+// index of the card it carries, or NoCard.
 //
-// Front-loading the root keeps the opening post as close to the Instagram
-// carousel as the platform allows: for the nineteen groups in twenty that
-// render four cards or fewer, the root carries all of them.
-func SpreadCards[T any](cards []T, posts, perPost int) [][]T {
-	if perPost <= 0 {
-		return make([][]T, posts)
-	}
-	n := posts
-	if needed := (len(cards) + perPost - 1) / perPost; needed > n {
-		n = needed
-	}
-	out := make([][]T, n)
+// The root carries the first card — the combined card of a lone vote, or the
+// overview of a multi-vote group — which shows what the root says: the title
+// and the verdicts. In a multi-vote group each vote's result card goes on the
+// reply that opens that vote, given by voteStarts (reply indices, the root not
+// counted). A lone vote's replies carry nothing, its one card being on the
+// root already.
+//
+// The indices follow imagegen.GenerateCards: one combined card for a lone vote,
+// otherwise the overview followed by one result card per vote.
+func ThreadCards(groupSize, posts int, voteStarts []int) []int {
+	out := make([]int, posts)
 	for i := range out {
-		start := i * perPost
-		if start >= len(cards) {
-			break
+		out[i] = NoCard
+	}
+	if posts == 0 {
+		return out
+	}
+	out[0] = 0
+	if groupSize < 2 {
+		return out
+	}
+	for v, reply := range voteStarts {
+		if post := 1 + reply; post < posts {
+			out[post] = v + 1
 		}
-		end := start + perPost
-		if end > len(cards) {
-			end = len(cards)
-		}
-		out[i] = cards[start:end]
 	}
 	return out
 }

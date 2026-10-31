@@ -92,12 +92,14 @@ func (p *XPlatform) SetMaxChars(n int) {
 }
 
 // Format formats a group of votes into an X thread and attaches the group's
-// carousel cards to it, the first four on the root (see platforms.SpreadCards).
+// carousel cards to it: the first card on the root, and each vote's result
+// card on the reply that opens that vote (see platforms.ThreadCards), so every
+// post's image shows what that post's text says.
 //
 // A card that fails to render costs the thread its images, never its text: the
 // text carries every fact the cards do, and the tags and links besides.
 func (p *XPlatform) Format(group []votes.Vote) (platforms.Content, error) {
-	thread := FormatVoteThread(group, p.contactMapper, p.maxChars)
+	thread, cardOf := FormatVoteThreadWithCards(group, p.contactMapper, p.maxChars)
 	if p.generateCardsFunc == nil || len(thread) == 0 {
 		return &XContent{thread: thread}, nil
 	}
@@ -106,11 +108,10 @@ func (p *XPlatform) Format(group []votes.Vote) (platforms.Content, error) {
 		log.Printf("Warning: posting to X without images, rendering cards failed: %v", err)
 		return &XContent{thread: thread}, nil
 	}
-	for i, images := range platforms.SpreadCards(cards, len(thread), xapi.MaxMediaPerTweet) {
-		if i == len(thread) {
-			thread = append(thread, &XPost{})
+	for i, card := range cardOf {
+		if card != platforms.NoCard && card < len(cards) {
+			thread[i].Images = []imagegen.Card{cards[card]}
 		}
-		thread[i].Images = images
 	}
 	return &XContent{thread: thread}, nil
 }
@@ -118,8 +119,8 @@ func (p *XPlatform) Format(group []votes.Vote) (platforms.Content, error) {
 // uploadImages uploads a post's cards, describes each, and returns their media
 // IDs. A card that fails to upload or to take its description is left out with
 // a warning rather than failing the thread, for the same reason Format falls
-// back to text. An undescribed card is not posted: on an image-only reply it
-// would be the whole post, with nothing a screen reader could read.
+// back to text. An undescribed card is not posted: an image a screen reader
+// cannot read is better left to the post's text, which says the same.
 func (p *XPlatform) uploadImages(cards []imagegen.Card) []string {
 	var ids []string
 	for _, c := range cards {
@@ -164,14 +165,9 @@ func (p *XPlatform) Post(content platforms.Content) (votelog.PostRef, bool, erro
 	// Post replies as a chain
 	parentTweetID := rootTweetID
 	for i, reply := range xContent.thread[1:] {
-		mediaIDs := p.uploadImages(reply.Images)
-		if reply.Text == "" && len(mediaIDs) == 0 {
-			// An image-only reply whose images all failed has nothing left to say.
-			continue
-		}
 		tweetID, err := p.postTweetFunc(
 			p.apiKey, p.apiSecret, p.accessToken, p.accessSecret,
-			reply.Text, parentTweetID, mediaIDs,
+			reply.Text, parentTweetID, p.uploadImages(reply.Images),
 		)
 		if err != nil {
 			return votelog.PostRef{}, false, fmt.Errorf("failed to post reply %d: %w", i+1, err)

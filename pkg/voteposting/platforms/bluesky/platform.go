@@ -105,13 +105,14 @@ func (p *BlueskyPlatform) ensureSession() error {
 }
 
 // Format formats a group of votes into a Bluesky thread and attaches the
-// group's carousel cards to it, the first four on the root (see
-// platforms.SpreadCards).
+// group's carousel cards to it: the first card on the root, and each vote's
+// result card on the reply that opens that vote (see platforms.ThreadCards), so
+// every post's image shows what that post's text says.
 //
 // A card that fails to render costs the thread its images, never its text: the
 // text carries every fact the cards do, and the tags and links besides.
 func (p *BlueskyPlatform) Format(group []votes.Vote) (platforms.Content, error) {
-	thread := FormatVoteThread(group, p.contactMapper)
+	thread, cardOf := FormatVoteThreadWithCards(group, p.contactMapper)
 	if p.generateCardsFunc == nil || len(thread) == 0 {
 		return &BlueskyContent{thread: thread}, nil
 	}
@@ -120,11 +121,10 @@ func (p *BlueskyPlatform) Format(group []votes.Vote) (platforms.Content, error) 
 		log.Printf("Warning: posting to Bluesky without images, rendering cards failed: %v", err)
 		return &BlueskyContent{thread: thread}, nil
 	}
-	for i, images := range platforms.SpreadCards(cards, len(thread), bskyapi.MaxImagesPerPost) {
-		if i == len(thread) {
-			thread = append(thread, &BlueskyPost{})
+	for i, card := range cardOf {
+		if card != platforms.NoCard && card < len(cards) {
+			thread[i].Images = []imagegen.Card{cards[card]}
 		}
-		thread[i].Images = images
 	}
 	return &BlueskyContent{thread: thread}, nil
 }
@@ -183,12 +183,7 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 			Parent: *parentRef,
 		}
 
-		images := p.uploadImages(reply.Images)
-		if reply.Text == "" && len(images) == 0 {
-			// An image-only reply whose images all failed has nothing left to say.
-			continue
-		}
-		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, images)
+		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, p.uploadImages(reply.Images))
 		if err != nil {
 			return votelog.PostRef{}, false, fmt.Errorf("failed to post reply %d: %w", i+1, err)
 		}
