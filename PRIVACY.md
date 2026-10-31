@@ -22,9 +22,12 @@ ZueriRatsinfo does **not** collect, store, or process any personal data from use
 The only data published by this bot is publicly available council vote records, sourced from open government data:
 
 - **Gemeinderat Stadt Zürich** — the [City of Zurich PARIS API](https://opendatazurich.github.io/paris-api/)
-- **Kantonsrat Zürich** — [OpenParlData](https://api.openparldata.ch), published under CC BY 4.0 and credited on every post that uses it
+- **Kantonsrat Zürich** — [OpenParlData](https://api.openparldata.ch), published under CC BY 4.0
+- **Nationalrat** — the [Parlamentsdienste's open data web services](https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services)
 
-Both include names of elected council members acting in their official public capacity.
+Every post names its source on a "Daten: …" line: Stadt Zürich, OpenParlData.ch, or Parlamentsdienste der Bundesversammlung, Bern. OpenParlData's licence and the Parlamentsdienste's terms require that credit.
+
+All include names of elected council members acting in their official public capacity.
 
 ## Social Media Platforms
 

@@ -11,6 +11,11 @@ import (
 // PARIS serves.
 const JurisdictionKey = "zurich-city"
 
+// Attribution names the source. Open Data Zürich publishes under CC0, which asks
+// for no credit; the line is there so every post names its data the same way,
+// whichever parliament it comes from.
+const Attribution = "Daten: Stadt Zürich"
+
 // Jurisdiction describes the body behind this API.
 var Jurisdiction = votes.Jurisdiction{
 	Key:       JurisdictionKey,
@@ -52,8 +57,9 @@ func ToVote(a Abstimmung) votes.Vote {
 		Subtitle: a.Abstimmungstitel,
 		Type:     a.Abstimmungstyp,
 
-		SourceURL: sourceURL,
-		GroupURL:  groupURL,
+		SourceURL:   sourceURL,
+		GroupURL:    groupURL,
+		Attribution: Attribution,
 
 		Yes:        a.AnzahlJa,
 		No:         a.AnzahlNein,

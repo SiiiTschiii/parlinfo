@@ -119,9 +119,12 @@ type Vote struct {
 	// "Auswahl A"). Derived from the totals when the source omits it.
 	Decision string
 
-	// Attribution is the credit line the source's licence requires, or empty
-	// when it requires none. It rides on the vote rather than being looked up
-	// because it is a property of where this particular datum came from.
+	// Attribution is the "Daten: …" line naming the source, closing the link
+	// block of every post. Two sources' terms require it (OpenParlData's CC BY
+	// 4.0, the Parlamentsdienste's open data terms); the others carry one too,
+	// so posts name their data the same way across parliaments. It rides on the
+	// vote rather than being looked up because it is a property of where this
+	// particular datum came from.
 	Attribution string
 
 	Affair      Affair

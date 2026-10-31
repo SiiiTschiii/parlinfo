@@ -10,6 +10,7 @@
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Stadt Zürich
 
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -32,6 +33,7 @@ Grüne 0/0/0/2
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Stadt Zürich
 
 📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -55,6 +57,7 @@ Grüne 0/0/0/2
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Stadt Zürich
 
 📊 90 Ja | 30 Nein | 0 Enth. | 5 Abw.
 
@@ -88,6 +91,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -109,6 +113,7 @@ Die Mitte 15/0/0/0
 Grüne 0/0/0/2
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+Daten: Stadt Zürich
 
 ################ FIXTURE single-vote-abgelehnt ################
 
@@ -122,6 +127,7 @@ Grüne 0/0/0/2
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Stadt Zürich
 
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -144,6 +150,7 @@ AL 0/5/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Stadt Zürich
 
 📊 20 Ja | 95 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -167,6 +174,7 @@ AL 0/5/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Stadt Zürich
 
 📊 20 Ja | 95 Nein | 5 Enth. | 5 Abw.
 
@@ -200,6 +208,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -221,6 +230,7 @@ Die Mitte 12/0/0/1
 AL 0/5/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-abgelehnt-1
+Daten: Stadt Zürich
 
 ################ FIXTURE single-vote-dringlicherklaerung ################
 
@@ -235,6 +245,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Stadt Zürich
 
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
@@ -258,6 +269,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Stadt Zürich
 
 📊 66 Ja | 0 Nein | 0 Enthaltung | 59 Abwesend
 
@@ -281,6 +293,7 @@ Dringlicherklärung
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Stadt Zürich
 
 📊 66 Ja | 0 Nein | 0 Enth. | 59 Abw.
 
@@ -315,6 +328,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -337,6 +351,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-dringlich-1
+Daten: Stadt Zürich
 
 ################ FIXTURE long-title-truncation ################
 
@@ -350,6 +365,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -372,6 +388,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -394,6 +411,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
@@ -427,6 +445,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -448,6 +467,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-longtrunc-1
+Daten: Stadt Zürich
 
 ################ FIXTURE tall-title-band-clearance ################
 
@@ -461,6 +481,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Stadt Zürich
 
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
@@ -483,6 +504,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Stadt Zürich
 
 📊 117 Ja | 0 Nein | 0 Enthaltung | 8 Abwesend
 
@@ -506,6 +528,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Stadt Zürich
 
 📊 117 Ja | 0 Nein | 0 Enth. | 8 Abw.
 
@@ -539,6 +562,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -560,6 +584,7 @@ AL 8/0/0/0
 Die Mitte 7/0/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-bandclearance-1
+Daten: Stadt Zürich
 
 ################ FIXTURE extreme-title-full-roster ################
 
@@ -573,6 +598,7 @@ Die Mitte 7/0/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Stadt Zürich
 
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -597,6 +623,7 @@ Fraktionslos 0/1/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Stadt Zürich
 
 📊 60 Ja | 60 Nein | 0 Enthaltung | 5 Abwesend
 
@@ -621,9 +648,12 @@ Fraktionslos 0/1/0/0
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Stadt Zürich
 
 📊 60 Ja | 60 Nein | 0 Enth. | 5 Abw.
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1 DID: Tag:}]}
 
+[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 40/0/0/1
 SVP 0/20/0/1
@@ -634,7 +664,6 @@ AL 6/0/0/1
 Die Mitte 0/5/0/0
 EVP 0/3/0/0
 Fraktionslos 0/1/0/0
-[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1 DID: Tag:}]}
 
 ---- Instagram ----
 [images] 1
@@ -658,6 +687,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -681,6 +711,7 @@ EVP 0/3/0/0
 Fraktionslos 0/1/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-extremetitle-1
+Daten: Stadt Zürich
 
 ################ FIXTURE multi-vote-group ################
 
@@ -694,6 +725,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Einleitungsartikel
@@ -731,6 +763,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Einleitungsartikel
@@ -768,6 +801,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Stadt Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 [post 2]
@@ -828,6 +862,7 @@ Die Mitte 0/12/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 3
@@ -837,6 +872,7 @@ AL 0/8/0/1
 Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen im Bereich Stadtentwicklung
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
+Daten: Stadt Zürich
 [caption of image 2]
 ✅ Angenommen: Einleitungsartikel
 📊 90 Ja | 20 Nein | 5 Enthaltung | 10 Abwesend
@@ -878,6 +914,7 @@ AL 0/8/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Stadt Zürich
 
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -900,6 +937,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Stadt Zürich
 
 📊 80 Ja | 35 Nein | 5 Enthaltung | 5 Abwesend
 
@@ -923,6 +961,7 @@ AL 0/2/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Stadt Zürich
 
 📊 80 Ja | 35 Nein | 5 Enth. | 5 Abw.
 
@@ -956,6 +995,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -977,6 +1017,7 @@ Die Mitte 8/5/0/1
 AL 0/2/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/geschaefte/detail.php?gid=geschaeft-antrag
+Daten: Stadt Zürich
 
 ################ FIXTURE ten-vote-stress-test ################
 
@@ -990,6 +1031,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Ziffer A
@@ -1131,6 +1173,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Ziffer A
@@ -1272,6 +1315,7 @@ Totalrevision der Bau- und Zonenordnung der Stadt Zürich, Anpassungen an das ü
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 [post 2]
@@ -1522,9 +1566,10 @@ AL 0/3/0/1
 ✅ Angenommen: Ziffer J
 📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
 
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):…
+🏛️ Fraktionen…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 10
@@ -1548,6 +1593,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 [caption of image 2]
 ✅ Angenommen: Ziffer A
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
@@ -1687,6 +1733,7 @@ AL 0/3/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1709,6 +1756,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
 
@@ -1732,6 +1780,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Stadt Zürich
 
 📊 80 Ja | 30 Nein | 5 Enth. | 10 Abw.
 
@@ -1765,6 +1814,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1786,6 +1836,7 @@ Die Mitte 7/3/0/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-mention-1
+Daten: Stadt Zürich
 
 ################ FIXTURE auswahl-vote ################
 
@@ -1799,6 +1850,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Stadt Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
@@ -1821,6 +1873,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Stadt Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abwesend 10
 
@@ -1843,6 +1896,7 @@ Weisung des Stadtrats betreffend Objektkredit für die Erneuerung der Jugendwohn
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Stadt Zürich
 
 📊 A: 74 | B: 28 | C: 13 | Abw. 10
 
@@ -1875,6 +1929,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -1895,6 +1950,7 @@ Die Mitte 12/0/0/1
 AL 0/8/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-1
+Daten: Stadt Zürich
 
 ################ FIXTURE auswahl-vote-all-fraktionen ################
 
@@ -1909,6 +1965,7 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Stadt Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
@@ -1932,6 +1989,7 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Stadt Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abwesend 7
 
@@ -1955,6 +2013,7 @@ Weisung des Stadtrats betreffend Teilrevision der Verordnung über die Schulraum
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Stadt Zürich
 
 📊 A: 76 | B: 29 | C: 13 | Abw. 7
 
@@ -1988,6 +2047,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -2009,6 +2069,7 @@ AL 8/0/0/0
 Die Mitte 0/7/0/0
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-auswahl-all-fraktionen-1
+Daten: Stadt Zürich
 
 ################ FIXTURE mixed-multi-vote ################
 
@@ -2022,6 +2083,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Änderungsantrag 9
@@ -2059,6 +2121,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Änderungsantrag 9
@@ -2096,6 +2159,7 @@ Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung d
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Stadt Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:88} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed DID: Tag:}]}
 
 [post 2]
@@ -2156,6 +2220,7 @@ Die Mitte 4/0/10/1
 AL 0/0/5/1
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 3
@@ -2165,6 +2230,7 @@ AL 0/0/5/1
 Weisung des Stadtrats betreffend Revision der Bau- und Zonenordnung, Anpassung der Bestimmungen für Gewerbe- und Industriezonen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-mixed#trakt-mixed
+Daten: Stadt Zürich
 [caption of image 2]
 ✅ Angenommen: Änderungsantrag 9
 📊 62 Ja | 51 Nein | 0 Enthaltung | 12 Abwesend
@@ -2206,6 +2272,7 @@ AL 0/0/5/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Stadt Zürich
 
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
@@ -2228,6 +2295,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Stadt Zürich
 
 📊 21 Ja | 38 Nein | 56 Enthaltung | 10 Abwesend
 
@@ -2251,6 +2319,7 @@ AL 0/0/0/1
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Stadt Zürich
 
 📊 21 Ja | 38 Nein | 56 Enth. | 10 Abw.
 
@@ -2284,6 +2353,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 1
@@ -2305,6 +2375,7 @@ Die Mitte 0/8/6/1
 AL 0/0/0/1
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-grnr-1
+Daten: Stadt Zürich
 
 ################ FIXTURE kantonsrat-vote ################
 
@@ -2320,7 +2391,7 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 83 Ja | 87 Nein | 0 Enthaltung | 10 Abwesend
 
@@ -2347,7 +2418,7 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 83 Ja | 87 Nein | 0 Enthaltung | 10 Abwesend
 
@@ -2377,7 +2448,7 @@ Einzelinitiative betreffend Ausbau des Angebots an Tagesschulen und familienerg�
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 83 Ja | 87 Nein | 0 Enth. | 10 Abw.
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06 DID: Tag:}]}
@@ -2415,7 +2486,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -2439,7 +2510,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=89f5a593-67ad-4ff5-82b4-818a2bab741a&segmentUid=921ebc9c-1891-4d4e-bd8f-12d0ab2a7353
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-07-06&startDate=2026-07-06
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-multi-vote ################
 
@@ -2455,7 +2526,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 [post 2]
 Abstimmung 1 (11:29)
@@ -2539,7 +2610,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 [post 2]
 Abstimmung 1 (11:29)
@@ -2627,7 +2698,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
 
 [post 3]
@@ -2775,7 +2846,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 6
@@ -2787,7 +2858,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [caption of image 2]
 Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
@@ -2878,7 +2949,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 Ausgabenbremse
 📊 129 Zustimmungen | 51 ohne Zustimmung
@@ -2906,7 +2977,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 Ausgabenbremse
 📊 129 Zustimmungen | 51 ohne Zustimmung
@@ -2937,7 +3008,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 Ausgabenbremse
 📊 129 Zustimmungen | 51 ohne Zustimmung
@@ -2977,7 +3048,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3002,7 +3073,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13&segmentUid=fc47bda1-dbb3-447f-bd3e-ce1d95ccea59
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-decision-reported ################
 
@@ -3018,7 +3089,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 [post 2]
 ✅ Abstimmung 1 (11:29)
@@ -3060,7 +3131,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 [post 2]
 ✅ Abstimmung 1 (11:29)
@@ -3106,7 +3177,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15 DID: Tag:}]}
 
 [post 3]
@@ -3173,7 +3244,7 @@ AL 5/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 3
@@ -3185,7 +3256,7 @@ Staatsbeitrag Bau Verlängerung Glattalbahn, Flughafen bis Kloten Industrie, Obj
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=89ddd67395d74b70bb1015edac49b7e2
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=c2c4b880-e83b-4ecc-aadb-5895d0f80f13
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-15&startDate=2026-06-15
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [caption of image 2]
 ✅ Angenommen: Abstimmung 1 (11:29)
 📊 130 Ja | 44 Nein | 0 Enthaltung | 6 Abwesend
@@ -3232,7 +3303,7 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
 
@@ -3260,7 +3331,7 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
 
@@ -3292,7 +3363,7 @@ Verbindliche Richtlinien – keine Smartphones an Volksschulen
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 92 Ja | 82 Nein | 2 Enth. | 4 Abw.
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31 DID: Tag:}]}
@@ -3331,7 +3402,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3356,7 +3427,7 @@ AL 0/5/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-co-signed-business ################
 
@@ -3373,7 +3444,7 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ✍️ Weitere Unterzeichnende: Judith Anna Stofer (AL)
 
@@ -3403,7 +3474,7 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 99 Ja | 74 Nein | 0 Enthaltung | 7 Abwesend
 
@@ -3434,7 +3505,7 @@ Gleichstellung von LGBTI-Menschen und Massnahmen gegen Hasskommunikation
 
 [post 2]
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 📊 99 Ja | 74 Nein | 0 Enth. | 7 Abw.
 [facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08 DID: Tag:}]}
@@ -3473,7 +3544,7 @@ AL 5/0/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3498,7 +3569,7 @@ AL 5/0/0/0
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=1a6f4c92-77ad-4e05-8b3c-52b1a0f4d8e6&segmentUid=8c31b5d0-9e64-4a71-b0d8-3f2a7c6e15b9
 📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-06-08&startDate=2026-06-08
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-wahlgeschaeft ################
 
@@ -3513,7 +3584,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3526,7 +3597,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -3544,7 +3615,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 
 [post 2]
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 [facet] {Index:{ByteStart:15 ByteEnd:107} Features:[{Type:app.bsky.richtext.facet#link URI:https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf DID: Tag:}]}
 
 ---- Instagram ----
@@ -3559,7 +3630,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3573,7 +3644,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f&segmentUid=287041e6-dc9a-428b-9c29-a37570e5f7ff
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE kantonsrat-wahlgeschaeft-two-rounds ################
 
@@ -3588,7 +3659,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- X (limit 2000) ----
 [post 0]
@@ -3601,7 +3672,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Bluesky ----
 [post 0]
@@ -3620,7 +3691,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 [facet] {Index:{ByteStart:212 ByteEnd:304} Features:[{Type:app.bsky.richtext.facet#link URI:https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf DID: Tag:}]}
 
 [post 2]
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Instagram ----
 [images] 1
@@ -3634,7 +3705,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ---- Facebook ----
 [images] 1
@@ -3648,7 +3719,7 @@ Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=5fdb30c929a04ac2a30fdd07977045e7
 🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=5bb43fa5-18bd-4f5d-b501-28ee1eca8f2f
 📄 Bulletin: https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf
-Source: OpenParlData.ch
+Daten: OpenParlData.ch
 
 ################ FIXTURE instagram-long-multi-vote-truncation ################
 
@@ -3662,6 +3733,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
@@ -3813,6 +3885,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 [post 2]
 ✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
@@ -3954,6 +4027,7 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 
 [post 1]
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 [facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress DID: Tag:}]}
 
 [post 2]
@@ -4101,9 +4175,10 @@ AL 0/3/0/1
 [caption]
 🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
 
-Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Trak…
+Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktan…
 ℹ️ Gekürzt – weitere Teilabstimmungen im Link.
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 
 ---- Facebook ----
 [images] 10
@@ -4127,6 +4202,7 @@ AL 0/3/0/1
 🔗 Abstimmung: https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-stress-9
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-stress#trakt-stress
+Daten: Stadt Zürich
 [caption of image 2]
 ✅ Angenommen: Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
 📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
