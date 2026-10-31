@@ -453,8 +453,7 @@ type Card struct {
 //
 // Bluesky and X show the cards next to a thread rather than under a caption, so
 // whatever a card says has to be readable without it: the alt text repeats the
-// card's facts as text, built from the same voteformat pieces as the Instagram
-// caption so the two cannot disagree.
+// card's facts as text. See alt.go.
 func GenerateCards(group []votes.Vote) ([]Card, error) {
 	if len(group) == 0 {
 		return nil, fmt.Errorf("no votes provided")
@@ -475,7 +474,7 @@ func GenerateCards(group []votes.Vote) ([]Card, error) {
 		}
 		cards = append(cards, Card{
 			JPEG:   img,
-			Alt:    capRunes(strings.TrimSpace(c.alt), maxAltRunes),
+			Alt:    c.alt,
 			Width:  imgWidth,
 			Height: imgHeight,
 		})
@@ -528,7 +527,7 @@ func carouselCards(group []votes.Vote, bg color.RGBA, fonts *fontSet) []card {
 		return []card{{"Wahlgeschäft card", v, dateCorner(v), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutWahlgeschaeftCard(img, cur, inset, &v, bg, fonts)
 			return nil
-		}, fmt.Sprintf("🗳️ %s\n\n%s", voteformat.PostHeadline(group), voteformat.WahlgeschaeftBody(group))}}
+		}, wahlgeschaeftAlt(group)}}
 	}
 
 	if len(group) == 1 {
@@ -536,19 +535,19 @@ func carouselCards(group []votes.Vote, bg color.RGBA, fonts *fontSet) []card {
 		return []card{{"combined card", v, voteCorner(v, ""), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			_, _, err := layoutCombinedCard(img, cur, inset, &v, bg, fonts)
 			return err
-		}, voteformat.LongFormBody(group, voteformat.Tags{})}}
+		}, combinedAlt(group)}}
 	}
 
 	cards := []card{{"title card", group[0], dateCorner(group[0]), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 		layoutTitleCard(img, cur, inset, group, bg, fonts)
 		return nil
-	}, fmt.Sprintf("%s%d Abstimmungen", voteformat.LongFormHeading(group, voteformat.Tags{}), len(group))}}
+	}, titleAlt(group)}}
 	for i := range group {
 		v := group[i]
 		cards = append(cards, card{fmt.Sprintf("result card %d", i+1), v, voteCorner(v, formatProgressBadge(i+1, len(group))), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutResultCard(img, cur, inset, &v, bg, fonts, i+1, len(group))
 			return nil
-		}, voteformat.LongFormVote(group, i, voteformat.Tags{})})
+		}, resultAlt(group, i)})
 	}
 	return cards
 }
@@ -1347,11 +1346,17 @@ func layoutResultCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.Vo
 }
 
 func formatSummaryLine(index int, vote votes.Vote, groupSize int) (string, bool) {
+	return formatSummaryLineWithin(index, vote, groupSize, summarySubtitleMaxRunes)
+}
+
+// formatSummaryLineWithin is formatSummaryLine with the vote label cut to
+// maxRunes instead of the card's summarySubtitleMaxRunes.
+func formatSummaryLineWithin(index int, vote votes.Vote, groupSize, maxRunes int) (string, bool) {
 	subtitle := voteformat.SubVoteLabel(vote, index-1, groupSize)
 	if subtitle == "" {
 		return "", false
 	}
-	subtitle = truncateWithEllipsis(subtitle, summarySubtitleMaxRunes)
+	subtitle = truncateWithEllipsis(subtitle, maxRunes)
 
 	counts := voteformat.CountsOf(vote)
 	var verdict string
