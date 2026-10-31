@@ -153,6 +153,34 @@ func TestAssembleAlt_LabelGivesWayToResult(t *testing.T) {
 	}
 }
 
+// A long election title gives way; the sentence saying there is no result
+// does not, as it does not on the card.
+func TestWahlgeschaeftAlt_KeepsTheNoResultNotice(t *testing.T) {
+	group := testfixtures.KantonsratWahlgeschaeft()
+	group[0].Title = strings.Repeat("Wahl eines Mitglieds der Kommission ", 60)
+	alt := wahlgeschaeftAlt(group)
+	if !strings.HasSuffix(alt, voteformat.WahlgeschaeftNoResult) {
+		t.Errorf("the no-result notice did not survive a long title:\n%s", alt)
+	}
+	if n := len([]rune(alt)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+}
+
+// A result card's description dates the vote as the card's corner does.
+func TestResultAlt_CarriesTheCardTimestamp(t *testing.T) {
+	group := testfixtures.MultiVoteGroup()
+	for i, v := range group {
+		stamp := voteformat.FormatVoteDateTime(v.Date)
+		if stamp == "" {
+			t.Fatalf("fixture vote %d has no date", i+1)
+		}
+		if alt := resultAlt(group, i); !strings.HasPrefix(alt, stamp+"\n") {
+			t.Errorf("result card %d alt text does not open with %q:\n%s", i+1, stamp, alt)
+		}
+	}
+}
+
 func TestCapRunes(t *testing.T) {
 	if got := capRunes("Abstimmung", 20); got != "Abstimmung" {
 		t.Errorf("short text changed: %q", got)

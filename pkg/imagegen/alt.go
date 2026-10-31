@@ -39,9 +39,12 @@ func assembleAlt(label, result string) string {
 	return label + "\n\n" + capRunes(result, maxAltRunes-len([]rune(label))-2)
 }
 
-// wahlgeschaeftAlt describes the election notice card.
+// wahlgeschaeftAlt describes the election notice card. The business title is
+// label, not result: it can run long, and the sentence saying we have no result
+// is what has to survive the cap, as it does on the card.
 func wahlgeschaeftAlt(group []votes.Vote) string {
-	return assembleAlt(fmt.Sprintf("🗳️ %s", voteformat.PostHeadline(group)), voteformat.WahlgeschaeftBody(group))
+	label := fmt.Sprintf("🗳️ %s\n\n%s", voteformat.PostHeadline(group), voteformat.CleanVoteTitle(group[0].Title))
+	return assembleAlt(label, voteformat.WahlgeschaeftNoResult)
 }
 
 // combinedAlt describes a lone vote's card: the heading, then the outcome and
@@ -79,8 +82,10 @@ func titleAlt(group []votes.Vote) string {
 	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
 }
 
-// resultAlt describes vote i's result card: its label and verdict, then its
-// counts and Fraktion breakdown.
+// resultAlt describes vote i's result card: when it was taken, its label and
+// verdict, then its counts and Fraktion breakdown. The timestamp is the one the
+// card prints in its corner; a result card posted on its own reply has nothing
+// else to date it by.
 func resultAlt(group []votes.Vote, i int) string {
 	v := group[i]
 	label := voteformat.SubVoteLabel(v, i, len(group))
@@ -89,6 +94,10 @@ func resultAlt(group []votes.Vote, i int) string {
 		label = auswahlOutcome(v) + ": " + label
 	case voteformat.HasVerdict(v):
 		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(v.Decision), voteformat.GetVoteResultText(v.Decision), label)
+	}
+
+	if stamp := voteformat.FormatVoteDateTime(v.Date); stamp != "" {
+		label = stamp + "\n" + label
 	}
 
 	result := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
