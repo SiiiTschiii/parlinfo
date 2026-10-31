@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"net/url"
+	"time"
 )
 
 const (
@@ -34,6 +36,33 @@ func (c *Client) FetchLatestGeschaeft() (*Geschaeft, error) {
 	}
 
 	return &resp.Hits[0].Geschaeft, nil
+}
+
+// FetchGeschaefteSince fetches up to limit Geschäfte whose Beginn — the
+// sitting at which they were filed — falls after since, newest first.
+//
+// The query cannot filter by Geschaeftsart: PARIS exposes no search field for
+// it, so callers filter the result.
+func (c *Client) FetchGeschaefteSince(since time.Time, limit int) ([]Geschaeft, error) {
+	q := fmt.Sprintf(`beginn_start > "%s" sortBy beginn_start/sort.descending`, since.Format("2006-01-02 15:04:05"))
+	u := fmt.Sprintf("%s/searchdetails?q=%s&l=de-CH&s=1&m=%d", GeschaeftBaseURL, url.PathEscape(q), limit)
+
+	body, err := c.makeRequest(u)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp GeschaeftSearchResponse
+	if err := xml.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("failed to parse XML response: %w", err)
+	}
+
+	geschaefte := make([]Geschaeft, len(resp.Hits))
+	for i, hit := range resp.Hits {
+		geschaefte[i] = hit.Geschaeft
+	}
+
+	return geschaefte, nil
 }
 
 // FetchAllKontakte fetches all contacts from the Zurich council API

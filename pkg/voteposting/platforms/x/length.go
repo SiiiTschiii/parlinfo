@@ -42,6 +42,10 @@ func weightedLen(s string) int {
 	return total
 }
 
+// WeightedLen is weightedLen for callers outside this package that build their
+// own posts and must budget them the way X will count them.
+func WeightedLen(s string) int { return weightedLen(s) }
+
 // runeWeight is X's per-code-point cost: 1 inside these ranges, 2 outside.
 func runeWeight(r rune) int {
 	switch {

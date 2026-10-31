@@ -35,9 +35,10 @@ jobs:
       # Keeping it off `main` lets this Action update state without tripping
       # the pull request ruleset / branch protection on the primary branch.
       STATE_BRANCH: state-log
-      # Vote logs live at data/<jurisdiction>/posted_votes_<platform>.json.
-      # Globbing means adding a jurisdiction needs no edit here.
-      STATE_FILES: "data/*/posted_votes_*.json"
+      # Logs live at data/<jurisdiction>/posted_<kind>_<platform>.json, one
+      # kind for votes and one for newly filed Geschäfte. Globbing means adding
+      # a jurisdiction or a kind needs no edit here.
+      STATE_FILES: "data/*/posted_*.json"
 
     steps:
       - name: Checkout code
@@ -67,11 +68,18 @@ jobs:
           git fetch origin "$STATE_BRANCH"
 
           if ! git checkout FETCH_HEAD -- "$STATE_FILES"; then
-            echo "::error::'$STATE_BRANCH' contains no vote logs matching $STATE_FILES."
+            echo "::error::'$STATE_BRANCH' contains no logs matching $STATE_FILES."
+            exit 1
+          fi
+          # The glob also matches Geschäft logs, so it succeeding no longer
+          # proves the vote logs came back. Without them the vote bot would
+          # read every recent vote as unposted.
+          if [ -z "$(find data -name 'posted_votes_*.json' -print -quit)" ]; then
+            echo "::error::'$STATE_BRANCH' contains no vote logs (posted_votes_*.json); refusing to run without them."
             exit 1
           fi
           echo "Restored:"
-          find data -name 'posted_votes_*.json' | sort
+          find data -name 'posted_*.json' | sort
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -133,6 +141,36 @@ jobs:
           JURISDICTION_ZURICH_CANTON_ENABLED: ${{ vars.JURISDICTION_ZURICH_CANTON_ENABLED }}
         run: go run main.go
 
+      # Announces newly filed Motionen and Postulate. Off unless the
+      # GESCHAEFTE_ENABLED variable is "true", independently of the vote posts.
+      # Runs even when the vote bot failed — a vote source outage is no reason
+      # to hold back a filing — but never without the restored logs. A
+      # platform's first run seeds its log and posts nothing; see
+      # cmd/post_geschaefte.
+      - name: Announce new Geschäfte
+        if: "!cancelled() && steps.restore.outcome == 'success' && vars.GESCHAEFTE_ENABLED == 'true'"
+        env:
+          ZURICH_X_API_KEY: ${{ secrets.ZURICH_X_API_KEY }}
+          ZURICH_X_API_SECRET: ${{ secrets.ZURICH_X_API_SECRET }}
+          ZURICH_X_ACCESS_TOKEN: ${{ secrets.ZURICH_X_ACCESS_TOKEN }}
+          ZURICH_X_ACCESS_SECRET: ${{ secrets.ZURICH_X_ACCESS_SECRET }}
+          ZURICH_X_MAX_CHARS: ${{ vars.ZURICH_X_MAX_CHARS }}
+          ZURICH_BLUESKY_HANDLE: ${{ vars.ZURICH_BLUESKY_HANDLE }}
+          ZURICH_BLUESKY_PASSWORD: ${{ secrets.ZURICH_BLUESKY_PASSWORD }}
+          ZURICH_IG_USER_ID: ${{ secrets.ZURICH_IG_USER_ID }}
+          ZURICH_IG_ACCESS_TOKEN: ${{ secrets.ZURICH_IG_ACCESS_TOKEN }}
+          ZURICH_IMAGE_HOST_REPO: ${{ github.repository }}
+          ZURICH_IMAGE_HOST_TOKEN: ${{ github.token }}
+          # Separate budgets from the vote posts, so announcements cannot
+          # crowd out results. Unset means 3 for X and Bluesky, 2 for Instagram.
+          ZURICH_GESCHAEFTE_X_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_GESCHAEFTE_X_MAX_POSTS_PER_RUN }}
+          ZURICH_GESCHAEFTE_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_GESCHAEFTE_BLUESKY_MAX_POSTS_PER_RUN }}
+          ZURICH_GESCHAEFTE_IG_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_GESCHAEFTE_IG_MAX_POSTS_PER_RUN }}
+          MAX_GESCHAEFT_AGE_DAYS: ${{ vars.MAX_GESCHAEFT_AGE_DAYS }}
+          # The city's switch pauses its announcements along with its votes.
+          JURISDICTION_ZURICH_CITY_ENABLED: ${{ vars.JURISDICTION_ZURICH_CITY_ENABLED }}
+        run: go run ./cmd/post_geschaefte
+
       # Runs even when the bot itself fails, so a partial run still records what
       # it posted — but not when the restore failed, since the logs on disk would
       # then be missing or stale rather than the real state.
@@ -151,14 +189,14 @@ jobs:
           # --parents preserves data/<jurisdiction>/, without which two
           # jurisdictions' logs would overwrite each other in the state branch
           # and votes would look unposted on the next run.
-          mapfile -t state_files < <(find data -name 'posted_votes_*.json' | sort)
+          mapfile -t state_files < <(find data -name 'posted_*.json' | sort)
           cp --parents "${state_files[@]}" "$worktree/"
 
           git -C "$worktree" add -- data
           if git -C "$worktree" diff --staged --quiet; then
-            echo "No vote log changes to commit."
+            echo "No log changes to commit."
           else
-            git -C "$worktree" commit -m "Update posted votes log [skip ci]"
+            git -C "$worktree" commit -m "Update posted logs [skip ci]"
             git -C "$worktree" push origin "$STATE_BRANCH"
           fi
 

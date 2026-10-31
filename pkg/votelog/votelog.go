@@ -22,6 +22,17 @@ const (
 // dataDir is the root the logs live under, relative to the working directory.
 const dataDir = "data"
 
+// Kind names what a log records, and is the stem of its file name. Votes and
+// Geschäfte are deduplicated separately because their IDs come from different
+// PARIS indexes, and because a Geschäft being announced says nothing about
+// whether its vote has been.
+type Kind string
+
+const (
+	KindVotes      Kind = "votes"
+	KindGeschaefte Kind = "geschaefte"
+)
+
 // PostRef identifies the post a vote went out in, so the log doubles as an
 // audit trail from a vote to what the bot published for it.
 //
@@ -63,7 +74,14 @@ type VoteLog struct {
 // the workflow's restore step, which treats a missing state branch as fatal for
 // exactly this reason.
 func Load(jurisdiction string, platform Platform) (*VoteLog, error) {
-	path := LogFilePath(jurisdiction, platform)
+	return LoadKind(KindVotes, jurisdiction, platform)
+}
+
+// LoadKind is Load for a log of the given kind. The entries are still called
+// votes in the file, whatever they record: the format is shared so every log
+// round-trips through the same code and the same workflow glob.
+func LoadKind(kind Kind, jurisdiction string, platform Platform) (*VoteLog, error) {
+	path := KindFilePath(kind, jurisdiction, platform)
 
 	vl := &VoteLog{
 		Jurisdiction: jurisdiction,
@@ -188,5 +206,20 @@ func NewNoOp(jurisdiction string, platform Platform) *VoteLog {
 // The nesting is what lets the CI workflow round-trip every jurisdiction's
 // logs with one glob instead of an entry per jurisdiction.
 func LogFilePath(jurisdiction string, platform Platform) string {
-	return filepath.Join(dataDir, jurisdiction, fmt.Sprintf("posted_votes_%s.json", platform))
+	return KindFilePath(KindVotes, jurisdiction, platform)
+}
+
+// KindFilePath returns where a jurisdiction's log of the given kind for a
+// platform is stored.
+func KindFilePath(kind Kind, jurisdiction string, platform Platform) string {
+	return filepath.Join(dataDir, jurisdiction, fmt.Sprintf("posted_%s_%s.json", kind, platform))
+}
+
+// Exists reports whether a log file is on disk. Load cannot say: it answers a
+// missing file with an empty log, which is right for a new jurisdiction and
+// wrong for one whose state was lost — callers that must tell the two apart
+// ask here first.
+func Exists(kind Kind, jurisdiction string, platform Platform) bool {
+	_, err := os.Stat(KindFilePath(kind, jurisdiction, platform))
+	return err == nil
 }

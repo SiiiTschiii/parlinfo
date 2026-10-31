@@ -31,4 +31,5 @@ out/
 # them into the checkout at runtime; they must never be committed to main.
 # Both the per-jurisdiction layout and the flat one it replaced are covered.
 data/*/posted_votes_*.json
+data/*/posted_geschaefte_*.json
 data/posted_votes_*.json

@@ -17,6 +17,12 @@ type BlueskyContent struct {
 	thread []*BlueskyPost // [0] = root, [1:] = replies
 }
 
+// NewContent wraps an already formatted thread, so content built outside this
+// package — a Geschäft announcement — posts through the same Post as a vote.
+func NewContent(thread []*BlueskyPost) *BlueskyContent {
+	return &BlueskyContent{thread: thread}
+}
+
 // String returns the text representation for logging/preview
 func (c *BlueskyContent) String() string {
 	var sb strings.Builder

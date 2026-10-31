@@ -4,20 +4,49 @@ import "encoding/xml"
 
 // Geschaeft represents a council business/matter from the Zurich city council
 type Geschaeft struct {
-	GRNr             string `xml:"GRNr"`
-	Titel            string `xml:"Titel"`
-	Geschaeftsart    string `xml:"Geschaeftsart"`
-	Geschaeftsstatus string `xml:"Geschaeftsstatus"`
-	Beginn           struct {
-		Start string `xml:"Start"`
-		Text  string `xml:"Text"`
-	} `xml:"Beginn"`
-	Erstunterzeichner struct {
-		KontaktGremium struct {
-			Name   string `xml:"Name"`
-			Partei string `xml:"Partei"`
-		} `xml:"KontaktGremium"`
-	} `xml:"Erstunterzeichner"`
+	OBJGUID          string   `xml:"OBJ_GUID,attr"`
+	GRNr             string   `xml:"GRNr"`
+	Titel            string   `xml:"Titel"`
+	Geschaeftsart    string   `xml:"Geschaeftsart"`
+	Geschaeftsstatus string   `xml:"Geschaeftsstatus"`
+	Dringlich        bool     `xml:"Dringlich"`
+	Beginn           Zeitraum `xml:"Beginn"`
+	PendentBei       string   `xml:"PendentBei"`
+	// Erstunterzeichner holds one entry in practice, and none on a handful of
+	// older Postulate. A slice keeps "absent" distinguishable from "empty name".
+	Erstunterzeichner []KontaktGremium `xml:"Erstunterzeichner>KontaktGremium"`
+	Mitunterzeichner  []KontaktGremium `xml:"Mitunterzeichner>KontaktGremium"`
+	// AnzahlMitunterzeichnende counts co-signers *beyond* those listed in
+	// Mitunterzeichner — the council's own page shows the named signers and
+	// this number side by side. It is nil-marked on most Vorstösse, which
+	// decodes to 0.
+	AnzahlMitunterzeichnende *int      `xml:"AnzahlMitunterzeichnende"`
+	Ablaufschritte           []Aufgabe `xml:"Ablaufschritte>Aufgabe"`
+}
+
+// Zeitraum is a PARIS date range. Start is ISO-like ("2026-09-30T00:00:00.000"),
+// Text the Swiss rendering of the same day ("30.09.2026").
+type Zeitraum struct {
+	Start string `xml:"Start"`
+	Text  string `xml:"Text"`
+}
+
+// KontaktGremium is a signer of a Vorstoss: either a member, or — when
+// IstGremium is set — a whole Fraktion, in which case Name is the party
+// ("SP") and Partei is empty.
+type KontaktGremium struct {
+	OBJGUID    string `xml:"OBJ_GUID,attr"`
+	Name       string `xml:"Name"`
+	Partei     string `xml:"Partei"`
+	IstGremium bool   `xml:"IstGremium"`
+}
+
+// Aufgabe is one step in a Geschäft's procedure, e.g. "Eingang, Frist 3
+// Monate" or "Stadtrat, Entgegennahme".
+type Aufgabe struct {
+	AblaufschrittName string   `xml:"AblaufschrittName"`
+	Datum             Zeitraum `xml:"Datum"`
+	FristBis          Zeitraum `xml:"FristBis"`
 }
 
 // GeschaeftSearchResponse represents the XML response from the geschaeft API

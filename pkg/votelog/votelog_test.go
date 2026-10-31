@@ -306,3 +306,47 @@ func TestLogFilePath(t *testing.T) {
 		t.Errorf("expected %q, got %q", want, got)
 	}
 }
+
+// A Geschäft log lives beside the vote log, not in it: an ID marked in one must
+// not read as posted in the other.
+func TestLoadKind_SeparateFromVotes(t *testing.T) {
+	defer setupTempDir(t)()
+
+	if got, want := KindFilePath(KindGeschaefte, testJurisdiction, PlatformBluesky),
+		filepath.Join("data", testJurisdiction, "posted_geschaefte_bluesky.json"); got != want {
+		t.Fatalf("KindFilePath = %q, want %q", got, want)
+	}
+
+	if Exists(KindGeschaefte, testJurisdiction, PlatformBluesky) {
+		t.Fatal("Exists reported a log that was never written")
+	}
+
+	gl, err := LoadKind(KindGeschaefte, testJurisdiction, PlatformBluesky)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gl.MarkAsPosted("g1", PostRef{})
+	if err := gl.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	if !Exists(KindGeschaefte, testJurisdiction, PlatformBluesky) {
+		t.Fatal("Exists missed a log that was just written")
+	}
+
+	vl, err := Load(testJurisdiction, PlatformBluesky)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if vl.IsPosted("g1") {
+		t.Error("an ID in the Geschäft log reads as posted in the vote log")
+	}
+
+	reloaded, err := LoadKind(KindGeschaefte, testJurisdiction, PlatformBluesky)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reloaded.IsPosted("g1") {
+		t.Error("Geschäft log lost its entry across a save")
+	}
+}

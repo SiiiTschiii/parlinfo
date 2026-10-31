@@ -16,6 +16,12 @@ type XContent struct {
 	thread []*XPost // [0] = root, [1:] = replies
 }
 
+// NewContent wraps an already formatted thread, so content built outside this
+// package — a Geschäft announcement — posts through the same Post as a vote.
+func NewContent(thread []*XPost) *XContent {
+	return &XContent{thread: thread}
+}
+
 // String returns the text representation for logging/preview
 func (c *XContent) String() string {
 	var sb strings.Builder
