@@ -119,6 +119,54 @@ func TestLayoutTitleCard_WrapsLongSummaryLine(t *testing.T) {
 	}
 }
 
+// A long subtitle is wrapped, not cut, while the card has room for it.
+func TestFitTitleAndSummary_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatalf("loadFontSet failed: %v", err)
+	}
+	group := testfixtures.MultiVoteGroup()
+	group[0].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 4)
+
+	_, titleLines, summaryLines, err := fitTitleAndSummary(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	if err != nil {
+		t.Fatalf("fitTitleAndSummary failed: %v", err)
+	}
+	if got := strings.Join(summaryLines, " "); strings.Contains(got, "…") {
+		t.Fatalf("expected the subtitle to wrap whole, got %q", got)
+	}
+	if len(summaryLines) <= len(group) {
+		t.Fatalf("expected the long subtitle to take extra lines, got %d lines for %d votes", len(summaryLines), len(group))
+	}
+	if strings.Contains(strings.Join(titleLines, " "), "…") {
+		t.Fatalf("title should be whole, got %q", titleLines)
+	}
+}
+
+// When the title cannot be shown whole next to a full summary, the summary is
+// the one that gets cut.
+func TestFitTitleAndSummary_CutsSubtitlesBeforeTheTitle(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatalf("loadFontSet failed: %v", err)
+	}
+	group := testfixtures.MultiVoteGroup()
+	for i := range group {
+		group[i].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 25)
+	}
+	group[0].Title = strings.Repeat("Geschäft des Bundesrates zur Pelzinitiative ", 14)
+	_, titleLines, summaryLines, err := fitTitleAndSummary(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	if err != nil {
+		t.Fatalf("fitTitleAndSummary failed: %v", err)
+	}
+	if !strings.Contains(strings.Join(summaryLines, " "), "…") {
+		t.Fatalf("expected subtitles to be cut to keep the title whole, got %q", summaryLines)
+	}
+	if strings.Contains(strings.Join(titleLines, " "), "…") {
+		t.Fatalf("title should be whole, got %q", titleLines)
+	}
+}
+
 func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	fonts, err := loadFontSet()
 	if err != nil {
@@ -208,7 +256,7 @@ func TestFormatSummaryLine_NumberingAndTruncation(t *testing.T) {
 		Decision: "angenommen",
 	}
 
-	line, ok := formatSummaryLine(2, vote, 3)
+	line, ok := formatSummaryLine(2, vote, 3, summarySubtitleMaxRunes)
 	if !ok {
 		t.Fatal("expected summary line to be generated")
 	}
@@ -231,7 +279,7 @@ func TestFormatSummaryLine_AuswahlVote(t *testing.T) {
 		ChoiceC:  intPtr(40),
 	}
 
-	line, ok := formatSummaryLine(2, vote, 3)
+	line, ok := formatSummaryLine(2, vote, 3, summarySubtitleMaxRunes)
 	if !ok {
 		t.Fatal("expected summary line to be generated")
 	}
