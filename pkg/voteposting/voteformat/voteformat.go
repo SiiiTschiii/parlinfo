@@ -234,10 +234,23 @@ func prefixWithoutAuthors(group []votes.Vote) string {
 // almost always the one that fits, but nothing guarantees the boundary falls
 // exactly there, and a label that is only usually right is worse than one that
 // is always right.
-func SignatoryLine(authors []votes.Author) string {
-	names := AuthorList(authors, 0)
+//
+// When no name fitted at all, there is nobody for them to be further to, and
+// the block carries the label line's own "<type> von …" instead. A federal
+// title is often long enough for that: 20.406's leaves no room for Andri
+// Silberschmidt, its only author. It says no more about roles than the label
+// line would have, which matters where the list holds a member who only took
+// the business over: 17.523 is Luzi Stamm's, continued by Bruno Walliser.
+func SignatoryLine(group []votes.Vote, deferred []votes.Author) string {
+	names := AuthorList(deferred, 0)
 	if names == "" {
 		return ""
+	}
+	if len(group) > 0 && len(deferred) == len(group[0].Affair.Authors) {
+		if t := strings.TrimSpace(group[0].Affair.Type); t != "" {
+			return "✍️ " + t + " von " + names
+		}
+		return "✍️ Von " + names
 	}
 	return "✍️ Weitere Unterzeichnende: " + names
 }
