@@ -826,16 +826,6 @@ contacts:
     x:
       - url: https://x.com/thepacki
         verified: true
-  - name: Patrick Tscherrig
-    facebook:
-      - url: https://www.facebook.com/patrick.tscherrig
-        verified: true
-    linkedin:
-      - url: https://www.linkedin.com/in/patrick-tscherrig-68069027/
-        verified: true
-    x:
-      - url: https://x.com/p_tscherrig
-        verified: true
   - name: Patrik Brunner
     linkedin:
       - url: https://www.linkedin.com/in/patrik-brunner/
@@ -1191,10 +1181,6 @@ contacts:
   - name: Wolfgang Kweitel
     x:
       - url: https://x.com/KweitelZH
-        verified: true
-  - name: Xenia Voellmy
-    linkedin:
-      - url: https://www.linkedin.com/in/xenia-voellmy
         verified: true
   - name: Yves Henz
     bluesky:
