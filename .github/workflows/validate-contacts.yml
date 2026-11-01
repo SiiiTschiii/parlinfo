@@ -5,6 +5,8 @@ on:
     paths:
       - "data/zurich-city/contacts.yaml"
       - "data/zurich-canton/contacts.yaml"
+      - "data/nationalrat/contacts.yaml"
+      - "data/staenderat/contacts.yaml"
       - "cmd/validate_contacts/**"
       - "cmd/platform_stats/**"
       - "README.md"
@@ -13,6 +15,8 @@ on:
     paths:
       - "data/zurich-city/contacts.yaml"
       - "data/zurich-canton/contacts.yaml"
+      - "data/nationalrat/contacts.yaml"
+      - "data/staenderat/contacts.yaml"
       - "cmd/validate_contacts/**"
       - "cmd/platform_stats/**"
       - "README.md"

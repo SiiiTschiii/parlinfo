@@ -40,7 +40,9 @@ type Jurisdiction struct {
 	// unposted, and this value alone bounds the first run.
 	MaxAgeDays int
 
-	// NewSource builds the adapter that fetches this body's votes.
+	// NewSource builds the adapter that fetches this body's votes. Nil for a
+	// body whose contacts are curated but whose votes no source serves; read it
+	// through Source, which says so instead of panicking.
 	NewSource func() votes.Source
 
 	// NewMemberSource builds the adapter that enumerates this body's sitting
@@ -160,6 +162,15 @@ var nationalratSubjects = []string{
 	"Vote sur l'ensemble",
 }
 
+// StaenderatKey identifies the Ständerat.
+const StaenderatKey = "staenderat"
+
+var staenderat = votes.Jurisdiction{
+	Key:       StaenderatKey,
+	Name:      "Ständerat",
+	ShortName: "Ständerat",
+}
+
 // jurisdictions is the registry, keyed by Jurisdiction.Key.
 var jurisdictions = map[string]Jurisdiction{
 	zurichapi.JurisdictionKey: {
@@ -197,6 +208,16 @@ var jurisdictions = map[string]Jurisdiction{
 		},
 		NewMemberSource: func() votes.MemberSource { return parlamentch.New(nationalrat) },
 	},
+	// A roster and no votes. parlament.ch serves the Nationalrat's votes only,
+	// so nothing can post the Ständerat yet; it is registered so its contacts
+	// are kept with the same tools as every other body's, and so prune can tell
+	// a Nationalrat who moved to the Ständerat from one who left.
+	StaenderatKey: {
+		Jurisdiction: staenderat,
+		NewMemberSource: func() votes.MemberSource {
+			return parlamentch.New(staenderat).WithCouncil(parlamentch.CouncilStaenderat)
+		},
+	},
 }
 
 // LookupJurisdiction returns a registered jurisdiction, with MaxAgeDays
@@ -209,6 +230,15 @@ func LookupJurisdiction(key string) (Jurisdiction, error) {
 	j.MaxAgeDays = maxAgeDays(key, j.MaxAgeDays)
 	j.Enabled = enabled(key, j.Enabled)
 	return j, nil
+}
+
+// Source builds the adapter that fetches the body's votes, or says there is
+// none.
+func (j Jurisdiction) Source() (votes.Source, error) {
+	if j.NewSource == nil {
+		return nil, fmt.Errorf("%s has no vote source: its contacts are kept, its votes are not posted", j.Key)
+	}
+	return j.NewSource(), nil
 }
 
 // enabled resolves the posting switch for a jurisdiction.

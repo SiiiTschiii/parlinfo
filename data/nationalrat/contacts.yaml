@@ -1,0 +1,591 @@
+# Social media handles for members of the Nationalrat.
+#
+# The 200 names are seeded from the parliament's own roster and refreshed with:
+#
+#     go run ./cmd/update_contacts -jurisdiction nationalrat
+#
+# The Nationalrat's votes are posted to @chparlinfo; a verified handle here is
+# tagged there.
+#
+# The first candidates came from Wikidata, matched on the member's parlament.ch
+# ID (P1307) rather than on the name. That makes them better leads than a name
+# search, and still not accounts: Wikidata is edited by anyone and lags behind
+# renamed and abandoned handles. Entries carrying `verified: false` are tagged
+# by nothing. To confirm one: open it, check it is the person named above it,
+# then set `verified: true` and delete the `confidence` line. `confidence` is
+# an ordering aid, never evidence.
+#
+# Getting one wrong puts a real person's handle next to a vote they did not cast,
+# which is the failure this whole mapping exists to prevent. A member with no
+# verified handle is fine: the post names them without tagging them.
+#
+# Work through them with the search links:
+#
+#     go run ./cmd/generate_search_urls -jurisdiction nationalrat
+
+version: "1.0"
+contacts:
+  - name: Alex Farinelli
+  - name: Alois Huber
+  - name: Andrea de Meuron
+  - name: Andrea Zryd
+  - name: Andreas Gafner
+  - name: Andreas Glarner
+  - name: Andreas Meier
+  - name: Andri Silberschmidt
+    x:
+      - url: https://x.com/andrisilbi_
+        verified: false
+        confidence: high
+  - name: Anna Giacometti
+  - name: Anna Rosenwasser
+    instagram:
+      - url: https://www.instagram.com/annarosenwasser/
+        verified: false
+        confidence: high
+  - name: Anna-Béatrice Schmaltz
+    instagram:
+      - url: https://www.instagram.com/anna.beatrice.schmaltz/
+        verified: false
+        confidence: high
+  - name: Arbër Bullakaj
+    instagram:
+      - url: https://www.instagram.com/arberbullakaj/
+        verified: false
+        confidence: high
+  - name: Barbara Gysi
+    instagram:
+      - url: https://www.instagram.com/barbara_gysi/
+        verified: false
+        confidence: high
+  - name: Barbara Portmann
+  - name: Barbara Schaffner
+    instagram:
+      - url: https://www.instagram.com/ba.schaffner/
+        verified: false
+        confidence: high
+  - name: Barbara Steinemann
+    x:
+      - url: https://x.com/BabaSteinemann
+        verified: false
+        confidence: high
+  - name: Beat Walti
+  - name: Benjamin Fischer
+  - name: Benjamin Giezendanner
+    facebook:
+      - url: https://www.facebook.com/benjamingiezendannerofficial
+        verified: false
+        confidence: high
+    instagram:
+      - url: https://www.instagram.com/benjamingiezendanner/
+        verified: false
+        confidence: high
+  - name: Benjamin Roduit
+  - name: Benoît Gaillard
+    instagram:
+      - url: https://www.instagram.com/b_gaillard/
+        verified: false
+        confidence: high
+  - name: Bettina Balmer
+  - name: Brenda Tuosto
+  - name: Brigitte Crottaz
+  - name: Bruno Storni
+  - name: Bruno Walliser
+  - name: Christian Dandrès
+  - name: Christian Glur
+  - name: Christian Imark
+    x:
+      - url: https://x.com/ChristianImark
+        verified: false
+        confidence: high
+  - name: Christian Lohr
+  - name: Christian Wasserfallen
+  - name: Christine Badertscher
+    instagram:
+      - url: https://www.instagram.com/christinebadertscher/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/ChBadertscher
+        verified: false
+        confidence: high
+  - name: Christine Bulliard-Marbach
+  - name: Christoph Riner
+  - name: Christophe Clivaz
+    x:
+      - url: https://x.com/ChristopheCliv1
+        verified: false
+        confidence: high
+  - name: Clarence Chollet
+  - name: Corina Gredig
+    instagram:
+      - url: https://www.instagram.com/corinagredig/
+        verified: false
+        confidence: high
+  - name: Cyril Aellen
+  - name: Cédric Wermuth
+  - name: Céline Amaudruz
+  - name: Céline Weber
+    instagram:
+      - url: https://www.instagram.com/celine_weber_koppenburg/
+        verified: false
+        confidence: high
+  - name: Damien Cottier
+  - name: Daniel Ruch
+  - name: Daniel Sormanni
+  - name: Daniela Schneeberger
+  - name: David Roth
+  - name: Delphine Klopfenstein Broggini
+  - name: Diana Gutjahr
+    x:
+      - url: https://x.com/DianaGutjahr1
+        verified: false
+        confidence: high
+  - name: Didier Calame
+  - name: Dominik Blunschy
+  - name: Edgar Bischof
+  - name: Elisabeth Schneider-Schneiter
+  - name: Emmanuel Amoos
+    instagram:
+      - url: https://www.instagram.com/emmanuelamoos/
+        verified: false
+        confidence: high
+  - name: Erich Hess
+    x:
+      - url: https://x.com/Erich_Hess
+        verified: false
+        confidence: high
+  - name: Erich Vontobel
+    instagram:
+      - url: https://www.instagram.com/erichvontobel/
+        verified: false
+        confidence: high
+  - name: Ernst Wandfluh
+  - name: Estelle Revaz
+  - name: Fabian Molina
+    instagram:
+      - url: https://www.instagram.com/fabianmolinanr/
+        verified: false
+        confidence: high
+  - name: Fabienne Stämpfli
+  - name: Farah Rumy
+    facebook:
+      - url: https://www.facebook.com/Farah-Rumy-100008638033294
+        verified: false
+        confidence: high
+    instagram:
+      - url: https://www.instagram.com/farah.rumy/
+        verified: false
+        confidence: high
+    linkedin:
+      - url: https://www.linkedin.com/in/farah-rumy-46841b215
+        verified: false
+        confidence: high
+  - name: Florence Brenzikofer
+    instagram:
+      - url: https://www.instagram.com/florencebrenzikofer/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/flobrenzikofer
+        verified: false
+        confidence: high
+  - name: Franz Grüter
+    x:
+      - url: https://x.com/fgrueter
+        verified: false
+        confidence: high
+  - name: Franziska Ryser
+    instagram:
+      - url: https://www.instagram.com/franziska__ryser/
+        verified: false
+        confidence: high
+  - name: Gabriela Suter
+    instagram:
+      - url: https://www.instagram.com/gabriela.suter/
+        verified: false
+        confidence: high
+  - name: Gerhard Andrey
+    x:
+      - url: https://x.com/anderageru
+        verified: false
+        confidence: medium
+  - name: Gerhard Pfister
+  - name: Giorgio Fonio
+    facebook:
+      - url: https://www.facebook.com/giorgiofonio1984
+        verified: false
+        confidence: high
+    instagram:
+      - url: https://www.instagram.com/giorgiofonio/
+        verified: false
+        confidence: high
+    linkedin:
+      - url: https://www.linkedin.com/in/giorgio-fonio-9ab18329b
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/GiorgioFonio
+        verified: false
+        confidence: high
+  - name: Gregor Rutz
+    linkedin:
+      - url: https://www.linkedin.com/in/gregor-rutz-68844a7a
+        verified: false
+        confidence: high
+  - name: Greta Gysin
+    instagram:
+      - url: https://www.instagram.com/gretagysin/
+        verified: false
+        confidence: high
+  - name: Hans Jörg Rüegsegger
+  - name: Hans-Peter Portmann
+    x:
+      - url: https://x.com/HPPortmann
+        verified: false
+        confidence: high
+  - name: Hasan Candan
+    instagram:
+      - url: https://www.instagram.com/hasan_candan_luzern/
+        verified: false
+        confidence: high
+  - name: Heinz Theiler
+  - name: Irène Kälin
+  - name: Isabelle Chappuis
+  - name: Islam Alijaj
+    instagram:
+      - url: https://www.instagram.com/islamalijaj/
+        verified: false
+        confidence: high
+  - name: Jacqueline Badran
+    x:
+      - url: https://x.com/jaybadran
+        verified: false
+        confidence: high
+  - name: Jacqueline de Quattro
+    facebook:
+      - url: https://www.facebook.com/JacquelineDeQuattro
+        verified: false
+        confidence: high
+  - name: Jacques Nicolet
+  - name: Jean Tschopp
+    instagram:
+      - url: https://www.instagram.com/j_tschopp/
+        verified: false
+        confidence: high
+  - name: Jean-Luc Addor
+    x:
+      - url: https://x.com/udcvr64
+        verified: false
+        confidence: medium
+  - name: Jessica Jaccoud
+  - name: Jon Pult
+    instagram:
+      - url: https://www.instagram.com/jonpult/
+        verified: false
+        confidence: high
+  - name: Jürg Grossen
+    instagram:
+      - url: https://www.instagram.com/juerg.grossen/
+        verified: false
+        confidence: high
+  - name: Katharina Prelicz-Huber
+    instagram:
+      - url: https://www.instagram.com/katharinapreliczhuber/
+        verified: false
+        confidence: high
+  - name: Kathrin Bertschy
+    instagram:
+      - url: https://www.instagram.com/kathrin_bertschy/
+        verified: false
+        confidence: high
+  - name: Katja Christ
+    instagram:
+      - url: https://www.instagram.com/_katja_christ/
+        verified: false
+        confidence: high
+  - name: Katja Stettler-Riem
+  - name: Kilian Baumann
+    instagram:
+      - url: https://www.instagram.com/baumann.kilian/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/Kilian_Baumann
+        verified: false
+        confidence: high
+  - name: Kris Vietze
+  - name: Lars Guggisberg
+  - name: Laura Gantenbein
+    instagram:
+      - url: https://www.instagram.com/lauragantenbeinso/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/LaJuGa
+        verified: false
+        confidence: medium
+  - name: Laurence Fehlmann Rielle
+  - name: Laurent Wehrli
+  - name: Leo Müller
+  - name: Linda De Ventura
+    instagram:
+      - url: https://www.instagram.com/linda_de_ventura/
+        verified: false
+        confidence: high
+  - name: Lorenz Hess
+  - name: Lorenzo Quadri
+  - name: Loïc Dobler
+  - name: Lukas Reimann
+  - name: Léonore Porchet
+    instagram:
+      - url: https://www.instagram.com/leonoreporchet/
+        verified: false
+        confidence: high
+  - name: Magdalena Martullo-Blocher
+  - name: Maja Riniker
+  - name: Manfred Bühler
+  - name: Manuel Strupler
+  - name: Manuela Weichelt
+    instagram:
+      - url: https://www.instagram.com/manuela_weichelt/
+        verified: false
+        confidence: high
+  - name: Marc Jost
+  - name: Marcel Dettling
+  - name: Marcel Dobler
+  - name: Marie-France Roth Pasquier
+    x:
+      - url: https://x.com/MFRP2010
+        verified: false
+        confidence: medium
+  - name: Marionna Schlatter
+    instagram:
+      - url: https://www.instagram.com/marionnaschlatter/
+        verified: false
+        confidence: high
+  - name: Markus Ritter
+  - name: Markus Schnyder
+  - name: Martin Bäumle
+  - name: Martin Candinas
+  - name: Martin Haab
+    x:
+      - url: https://x.com/martin_haab
+        verified: false
+        confidence: high
+  - name: Martin Hübscher
+  - name: Martine Docourt
+  - name: Mattea Meyer
+    instagram:
+      - url: https://www.instagram.com/matteameyer.ch/
+        verified: false
+        confidence: high
+  - name: Matthias Samuel Jauslin
+  - name: Mauro Tuena
+  - name: Maya Bally
+  - name: Meret Schneider
+    x:
+      - url: https://x.com/Schneimere
+        verified: false
+        confidence: medium
+  - name: Michael Graber
+  - name: Michael Götte
+  - name: Michael Töngi
+    x:
+      - url: https://x.com/mtoengi
+        verified: false
+        confidence: high
+  - name: Michaël Buffat
+    x:
+      - url: https://x.com/michael_buffat
+        verified: false
+        confidence: high
+  - name: Michèle Dünki-Bättig
+    instagram:
+      - url: https://www.instagram.com/michele.duenkibaettig/
+        verified: false
+        confidence: high
+  - name: Mike Egger
+  - name: Min Li Marti
+    instagram:
+      - url: https://www.instagram.com/minli.marti/
+        verified: false
+        confidence: high
+  - name: Miriam Locher
+  - name: Monika Rüegger
+  - name: Nadine Gobet
+  - name: Nadine Masshardt
+    instagram:
+      - url: https://www.instagram.com/nadine.masshardt/
+        verified: false
+        confidence: high
+  - name: Nadja Umbricht Pieren
+  - name: Nicolas Kolly
+  - name: Nicole Barandun
+  - name: Nicolò Paganini
+  - name: Niklaus-Samuel Gugger
+  - name: Nina Fehr Düsel
+  - name: Nina Schläfli
+    instagram:
+      - url: https://www.instagram.com/ninaschlaefli/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/NinaSchlaefli
+        verified: false
+        confidence: high
+  - name: Olivier Feller
+  - name: Paolo Pamini
+  - name: Pascal Schmid
+  - name: Patricia von Falkenstein
+  - name: Patrick Hässig
+  - name: Peter Schilliger
+  - name: Philipp Kutter
+    x:
+      - url: https://x.com/PhilippKutter
+        verified: false
+        confidence: high
+  - name: Philipp Matthias Bregy
+    x:
+      - url: https://x.com/pmbregy
+        verified: false
+        confidence: high
+  - name: Philippe Nantermod
+    instagram:
+      - url: https://www.instagram.com/nantermod/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/nantermod
+        verified: false
+        confidence: high
+  - name: Pierre-André Page
+  - name: Pius Kaufmann
+  - name: Priska Seiler Graf
+    instagram:
+      - url: https://www.instagram.com/seilergraf/
+        verified: false
+        confidence: high
+  - name: Priska Wismer-Felder
+  - name: Raphaël Mahaim
+  - name: Regina Durrer-Knobel
+  - name: Regine Sauter
+  - name: Reto Nause
+  - name: Roberta Soldati
+  - name: Roger Golay
+  - name: Roland Rino Büchel
+  - name: Roman Bürgi
+  - name: Roman Hug
+  - name: Rudi Berli
+  - name: Rémy Wyssmann
+  - name: Samira Marti
+    instagram:
+      - url: https://www.instagram.com/marti.samira/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/SamiraMarti
+        verified: false
+        confidence: high
+  - name: Samuel Bendahan
+    linkedin:
+      - url: https://www.linkedin.com/in/bendahan
+        verified: false
+        confidence: high
+  - name: Sandra Sollberger
+  - name: Sarah Wyss
+    instagram:
+      - url: https://www.instagram.com/sarah_d_wyss/
+        verified: false
+        confidence: high
+  - name: Sibel Arslan
+    x:
+      - url: https://x.com/ronkay
+        verified: false
+        confidence: medium
+  - name: Sidney Kamerzin
+  - name: Simon Michel
+  - name: Simon Stadler
+  - name: Simona Brizzi
+    instagram:
+      - url: https://www.instagram.com/simonabrizzi_sp/
+        verified: false
+        confidence: high
+  - name: Simone de Montmollin
+  - name: Simone Gianini
+  - name: Sophie Michaud Gigon
+  - name: Stefan Müller-Altermatt
+  - name: Stefanie Heimgartner
+    instagram:
+      - url: https://www.instagram.com/stefanie_heimgartner/
+        verified: false
+        confidence: high
+    linkedin:
+      - url: https://www.linkedin.com/in/stefanie-heimgartner-6b0339b0
+        verified: false
+        confidence: high
+  - name: Susanne Vincenz-Stauffacher
+  - name: Sylvain Freymond
+  - name: Tamara Funiciello
+    instagram:
+      - url: https://www.instagram.com/tamarafuniciello/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/tamarafuniciell
+        verified: false
+        confidence: high
+  - name: Therese Schläpfer
+    x:
+      - url: https://x.com/SchlaepferThe
+        verified: false
+        confidence: high
+  - name: Thomas Aeschi
+    instagram:
+      - url: https://www.instagram.com/thomasaeschi/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/thomas_aeschi
+        verified: false
+        confidence: high
+  - name: Thomas Bläsi
+  - name: Thomas Burgherr
+    x:
+      - url: https://x.com/ThomasBurgherr
+        verified: false
+        confidence: high
+  - name: Thomas de Courten
+    linkedin:
+      - url: https://www.linkedin.com/in/thomas-de-courten-99b96256
+        verified: false
+        confidence: high
+  - name: Thomas Hurter
+  - name: Thomas Knutti
+  - name: Thomas Matter
+  - name: Thomas Rechsteiner
+  - name: Thomas Stettler
+  - name: Ueli Schmezer
+  - name: Ursula Zybach
+    instagram:
+      - url: https://www.instagram.com/ursulazybach/
+        verified: false
+        confidence: high
+  - name: Valérie Piller Carrard
+    instagram:
+      - url: https://www.instagram.com/valeriepillercarrard/
+        verified: false
+        confidence: high
+  - name: Vincent Maitre
+  - name: Vroni Thalmann-Bieri
+  - name: Walter Gartmann
+    instagram:
+      - url: https://www.instagram.com/waltigartmann/
+        verified: false
+        confidence: high
+  - name: Yvan Pahud
+  - name: Yvonne Bürgin
+    x:
+      - url: https://x.com/YvonneBuergin
+        verified: false
+        confidence: high

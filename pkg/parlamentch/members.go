@@ -16,6 +16,23 @@ var (
 	_ votes.SittingLister = (*Client)(nil)
 )
 
+// The chambers as MemberCouncil's Council column numbers them.
+const (
+	CouncilNationalrat = 1
+	CouncilStaenderat  = 2
+)
+
+// WithCouncil points the roster at another chamber. It returns the client so a
+// jurisdiction can be wired in one expression.
+//
+// It changes FetchMembers and SittingNames only. The vote feed serves the
+// Nationalrat alone — the Ständerat's votes are not in the service — so a
+// Ständerat client has a roster and nothing to post.
+func (c *Client) WithCouncil(council int) *Client {
+	c.council = council
+	return c
+}
+
 // memberDTO is one row of MemberCouncil.
 type memberDTO struct {
 	ID                    int64  `json:"ID"`
@@ -25,8 +42,8 @@ type memberDTO struct {
 	ParlGroupAbbreviation string `json:"ParlGroupAbbreviation"`
 }
 
-// FetchMembers returns the members sitting in the Nationalrat, named the way
-// the vote rows name them so the tagger matches the one against the other.
+// FetchMembers returns the members sitting in the client's chamber, named the
+// way the vote rows name them so the tagger matches the one against the other.
 //
 // It is what lets update_contacts -prune tell a Kantonsrat who moved to Bern
 // from one who left politics: prune asks every other body who sits there, and
@@ -36,7 +53,7 @@ type memberDTO struct {
 func (c *Client) FetchMembers() ([]votes.Member, error) {
 	var rows []memberDTO
 	err := c.get("/MemberCouncil", query{
-		"$filter": "Language eq 'DE' and Active eq true and Council eq 1",
+		"$filter": fmt.Sprintf("Language eq 'DE' and Active eq true and Council eq %d", c.council),
 		"$select": "ID,FirstName,LastName,PartyName,ParlGroupAbbreviation",
 	}, &rows)
 	if err != nil {

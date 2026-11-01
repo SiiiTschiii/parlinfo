@@ -512,3 +512,25 @@ func TestFetchMembers_MapsTheRow(t *testing.T) {
 	}
 	t.Error("Gerhard Pfister not in the roster")
 }
+
+// The roster is the chamber's and no other: a Ständerat contacts file seeded
+// from the Nationalrat would hold 200 people who never sit there.
+func TestFetchMembers_AsksForItsCouncil(t *testing.T) {
+	for _, tc := range []struct {
+		council int
+		want    string
+	}{
+		{CouncilNationalrat, "Council eq 1"},
+		{CouncilStaenderat, "Council eq 2"},
+	} {
+		c, requests := newTestClient(t)
+		c.WithCouncil(tc.council)
+		if _, err := c.FetchMembers(); err != nil {
+			t.Fatal(err)
+		}
+		filter := firstQueryValue(t, (*requests)[len(*requests)-1], "$filter")
+		if !strings.HasSuffix(filter, tc.want) {
+			t.Errorf("council %d: filter = %q, want it to end in %q", tc.council, filter, tc.want)
+		}
+	}
+}

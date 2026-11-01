@@ -1,0 +1,138 @@
+# Social media handles for members of the Ständerat.
+#
+# The 46 names are seeded from the parliament's own roster and refreshed with:
+#
+#     go run ./cmd/update_contacts -jurisdiction staenderat
+#
+# Nothing posts the Ständerat yet — parlament.ch serves the Nationalrat's votes
+# only — so no handle here is tagged. The file is kept so the work is done when
+# that changes, and for outreach in the meantime.
+#
+# The first candidates came from Wikidata, matched on the member's parlament.ch
+# ID (P1307) rather than on the name. That makes them better leads than a name
+# search, and still not accounts: Wikidata is edited by anyone and lags behind
+# renamed and abandoned handles. Entries carrying `verified: false` are tagged
+# by nothing. To confirm one: open it, check it is the person named above it,
+# then set `verified: true` and delete the `confidence` line. `confidence` is
+# an ordering aid, never evidence.
+#
+# Getting one wrong puts a real person's handle next to a vote they did not cast,
+# which is the failure this whole mapping exists to prevent. A member with no
+# verified handle is fine: the post names them without tagging them.
+#
+# Work through them with the search links:
+#
+#     go run ./cmd/generate_search_urls -jurisdiction staenderat
+
+version: "1.0"
+contacts:
+  - name: Andrea Caroni
+    instagram:
+      - url: https://www.instagram.com/andreacaroniar/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/AndreaCaroniAR
+        verified: false
+        confidence: high
+  - name: Andrea Gmür-Schönenberger
+  - name: Baptiste Hurni
+  - name: Beat Rieder
+  - name: Benedikt Würth
+  - name: Benjamin Mühlemann
+  - name: Brigitte Häberli-Koller
+  - name: Carlo Sommaruga
+    facebook:
+      - url: https://www.facebook.com/carlo.sommaruga
+        verified: false
+        confidence: high
+    instagram:
+      - url: https://www.instagram.com/carlo_sommaruga/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/CarloSommaruga
+        verified: false
+        confidence: high
+  - name: Charles Juillard
+  - name: Damian Müller
+  - name: Daniel Fässler
+  - name: Daniel Jositsch
+  - name: Erich Ettlin
+  - name: Esther Friedli
+  - name: Eva Herzog
+  - name: Fabien Fivaz
+  - name: Fabio Regazzi
+  - name: Flavia Wasserfallen
+    instagram:
+      - url: https://www.instagram.com/flaviawasserfallen/
+        verified: false
+        confidence: high
+  - name: Franziska Roth
+    instagram:
+      - url: https://www.instagram.com/franziska_rosso/
+        verified: false
+        confidence: high
+  - name: Hannes Germann
+    linkedin:
+      - url: https://www.linkedin.com/in/hannes-germann-00b3454b
+        verified: false
+        confidence: high
+  - name: Hans Wicki
+  - name: Heidi Z'graggen
+  - name: Isabelle Chassot
+  - name: Jakob Stark
+    x:
+      - url: https://x.com/JakobStark
+        verified: false
+        confidence: high
+  - name: Johanna Gapany
+  - name: Josef Dittli
+  - name: Marco Chiesa
+  - name: Marianne Binder-Keller
+  - name: Marianne Maret
+  - name: Martin Schmid
+  - name: Mathias Zopfi
+    instagram:
+      - url: https://www.instagram.com/mathiaszopfi/
+        verified: false
+        confidence: high
+  - name: Mathilde Crevoisier Crelier
+  - name: Matthias Michel
+  - name: Mauro Poggia
+  - name: Maya Graf
+    instagram:
+      - url: https://www.instagram.com/mayagrafbl/
+        verified: false
+        confidence: high
+  - name: Pascal Broulis
+  - name: Peter Hegglin
+  - name: Petra Gössi
+  - name: Pierre-Yves Maillard
+  - name: Pirmin Bischof
+  - name: Pirmin Schwander
+  - name: Severin Brüngger
+  - name: Stefan Engler
+  - name: Thierry Burkart
+    facebook:
+      - url: https://www.facebook.com/thierryburkart
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/ThierryBurkart
+        verified: false
+        confidence: high
+  - name: Tiana Angelina Moser
+    instagram:
+      - url: https://www.instagram.com/tiana_moser/
+        verified: false
+        confidence: high
+    x:
+      - url: https://x.com/tiana_moser
+        verified: false
+        confidence: high
+  - name: Werner Salzmann
+    x:
+      - url: https://x.com/WernerSalzmann
+        verified: false
+        confidence: high
