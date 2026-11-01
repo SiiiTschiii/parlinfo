@@ -669,6 +669,15 @@ contacts:
       - url: https://www.linkedin.com/in/nicole-wyss-g%C3%B6bel-11623458/
         verified: true
   - name: Nora Ernst
+    facebook:
+      - url: https://www.facebook.com/profile.php?id=100088117307716
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nora.lo.ernst/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/nora-ernst-aa348b9a
+        verified: true
     searched: "2026-11-01"
   - name: Patricia Bernet
     facebook:
