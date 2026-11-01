@@ -298,6 +298,32 @@ func TestFitTitleAndSummary_CutsSubtitlesBeforeTheTitle(t *testing.T) {
 	}
 }
 
+// A title that fits only with its signatories abbreviated is not whole, so the
+// overview retries with shorter subtitles to name everyone.
+func TestCardTitleFully_ReportsDroppedNamesAsNotWhole(t *testing.T) {
+	group := testfixtures.KantonsratCoSignedBusiness()
+	subject := voteformat.CleanVoteTitle(group[0].Title)
+	width := imgWidth - 2*padding
+
+	_, _, whole, err := cardTitleFully(group, subject, width, 900)
+	if err != nil {
+		t.Fatalf("cardTitleFully failed: %v", err)
+	}
+	if !whole {
+		t.Errorf("a roomy budget should name everyone and report whole")
+	}
+
+	// The squeeze TestCardTitleShedsNamesBeforeTheSubject uses: names go, the
+	// subject survives, and that still is not whole.
+	_, lines, whole, err := cardTitleFully(group, subject, width, 100)
+	if err != nil {
+		t.Fatalf("cardTitleFully failed: %v", err)
+	}
+	if whole || !strings.Contains(strings.Join(lines, " "), "u. a.") {
+		t.Errorf("a title with abbreviated names must not report whole: %q", lines)
+	}
+}
+
 func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	fonts, err := loadFontSet()
 	if err != nil {

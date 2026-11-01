@@ -349,8 +349,10 @@ func cardTitle(group []votes.Vote, subject string, maxWidth, available int) (fon
 	return face, lines, err
 }
 
-// cardTitleFully is cardTitle, and also reports whether the title got in whole,
-// every signatory named and no line cut.
+// cardTitleFully is cardTitle, and also reports whether the title got in whole:
+// every signatory named and no line cut. A title that fits only once names have
+// been dropped is not whole, so a caller with something else to give up can
+// still win those names back.
 func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int) (font.Face, []string, bool, error) {
 	// Fullest first, then one name shorter each time, down to a lone name.
 	caps := []int{0}
@@ -372,7 +374,7 @@ func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int)
 		}
 		face, lines = f, ls
 		if whole {
-			return face, lines, true, nil
+			return face, lines, max == 0, nil
 		}
 	}
 	// Even one name does not fit: keep the shortest and let the cut fall where
