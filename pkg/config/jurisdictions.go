@@ -40,6 +40,16 @@ type Jurisdiction struct {
 	// unposted, and this value alone bounds the first run.
 	MaxAgeDays int
 
+	// PostFrom, when set, is the first sitting date posted for this body, on
+	// every platform. It is JURISDICTION_<KEY>_POST_FROM, as YYYY-MM-DD.
+	//
+	// Where MaxAgeDays is a window that slides forward, this is a fixed edge:
+	// the body's vote logs start empty on it and nothing before it is ever
+	// posted. That is what lets a body go live on an empty log without the log
+	// claiming posts that were never made — the log records what was posted
+	// and nothing else may write to it.
+	PostFrom time.Time
+
 	// NewSource builds the adapter that fetches this body's votes.
 	NewSource func() votes.Source
 
@@ -208,7 +218,28 @@ func LookupJurisdiction(key string) (Jurisdiction, error) {
 	}
 	j.MaxAgeDays = maxAgeDays(key, j.MaxAgeDays)
 	j.Enabled = enabled(key, j.Enabled)
+	postFrom, err := postFromDate(key)
+	if err != nil {
+		return Jurisdiction{}, err
+	}
+	j.PostFrom = postFrom
 	return j, nil
+}
+
+// postFromDate resolves a jurisdiction's start date. Unset is no start date; a
+// value that does not parse is an error rather than "no start date", because a
+// mistyped bound would silently re-open the backlog it exists to keep closed.
+func postFromDate(key string) (time.Time, error) {
+	name := "JURISDICTION_" + envKey(key) + "_POST_FROM"
+	raw := os.Getenv(name)
+	if raw == "" {
+		return time.Time{}, nil
+	}
+	d, err := ParseDate(raw)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("%s: %w", name, err)
+	}
+	return d, nil
 }
 
 // enabled resolves the posting switch for a jurisdiction.

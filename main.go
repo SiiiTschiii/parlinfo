@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/config"
@@ -191,14 +192,9 @@ func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction)
 	fbPageID := channel.Env("FB_PAGE_ID")
 	fbAccessToken := channel.Env("FB_ACCESS_TOKEN")
 	if fbPageID != "" && fbAccessToken != "" {
-		// Facebook goes live without a vote log, and a vote log must never be
-		// seeded to make up for that: it would record posts that were never
-		// made. The start date does the same job honestly. It is required, so
-		// that dropping the variable cannot silently re-open the backlog.
-		postFrom, err := config.ParseDate(channel.Env("FB_POST_FROM"))
-		if err != nil || postFrom.IsZero() {
-			log.Fatalf("Channel %q: %sFB_POST_FROM must be the first sitting date Facebook posts, as YYYY-MM-DD: %v",
-				channel.Key, channel.EnvPrefix(), err)
+		postFrom, err := facebookPostFrom(channel, jurisdictions)
+		if err != nil {
+			log.Fatalf("Channel %q: %v", channel.Key, err)
 		}
 		plats = append(plats, channelPlatform{
 			displayName: "Facebook",
@@ -214,6 +210,46 @@ func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction)
 	}
 
 	return plats
+}
+
+// facebookPostFrom resolves the date Facebook starts posting on.
+//
+// Facebook goes live without a vote log, and a vote log must never be seeded to
+// make up for that: it would record posts that were never made. A start date
+// does the same job honestly, so one is required — dropping the variable must
+// not silently re-open the backlog.
+//
+// It may come from Facebook's own FB_POST_FROM, or from the start date of every
+// jurisdiction on the channel. The second is for a channel whose logs start
+// empty on that date for every platform, where a rule for Facebook alone would
+// only be a second copy of the same date.
+func facebookPostFrom(channel config.Channel, jurisdictions []config.Jurisdiction) (time.Time, error) {
+	if raw := channel.Env("FB_POST_FROM"); raw != "" {
+		d, err := config.ParseDate(raw)
+		if err != nil {
+			return time.Time{}, fmt.Errorf("%sFB_POST_FROM: %w", channel.EnvPrefix(), err)
+		}
+		return d, nil
+	}
+	for _, j := range jurisdictions {
+		if j.PostFrom.IsZero() {
+			return time.Time{}, fmt.Errorf("facebook needs a start date: set %sFB_POST_FROM, or JURISDICTION_%s_POST_FROM (YYYY-MM-DD) for every jurisdiction on the channel",
+				channel.EnvPrefix(), strings.ToUpper(strings.ReplaceAll(j.Key, "-", "_")))
+		}
+	}
+	return time.Time{}, nil
+}
+
+// skipBefore drops the groups from before a start date, saying so when it does.
+func skipBefore(groups [][]votes.Vote, from time.Time, jurisdiction string) [][]votes.Vote {
+	if from.IsZero() || len(groups) == 0 {
+		return groups
+	}
+	kept := voteposting.DropBefore(groups, from)
+	if dropped := len(groups) - len(kept); dropped > 0 {
+		fmt.Printf("Skipping %d group(s) from %s sitting before %s\n", dropped, jurisdiction, from.Format("2006-01-02"))
+	}
+	return kept
 }
 
 // loadContacts merges every configured jurisdiction's contacts file. A missing
@@ -273,12 +309,10 @@ func runChannelPlatform(
 			failed = true
 			continue
 		}
-		if before := len(groups); !p.postFrom.IsZero() && before > 0 {
-			groups = voteposting.DropBefore(groups, p.postFrom)
-			if dropped := before - len(groups); dropped > 0 {
-				fmt.Printf("Skipping %d group(s) from %s sitting before %s\n", dropped, j.Key, p.postFrom.Format("2006-01-02"))
-			}
-		}
+		// Both bounds apply: the platform's own, and the body's, which holds for
+		// every platform.
+		groups = skipBefore(groups, p.postFrom, j.Key)
+		groups = skipBefore(groups, j.PostFrom, j.Key)
 		if len(groups) > 0 {
 			fmt.Printf("Found %d group(s) from %s\n", len(groups), j.Key)
 		}

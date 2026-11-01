@@ -294,12 +294,11 @@ channels; what differs is the Page, and so the token.
 gh secret set CHPARL_IG_ACCESS_TOKEN
 gh secret set CHPARL_IG_USER_ID
 gh variable set CHPARL_FB_PAGE_ID --body "<page id>"
-gh variable set CHPARL_FB_POST_FROM --body "<go-live date, YYYY-MM-DD>"
 ```
 
 Facebook uses the same token secret, so a rotation covers both. Leave
-`CHPARL_FB_PAGE_ID` unset to post to Instagram only; set it and
-`CHPARL_FB_POST_FROM` is required too, or the run stops.
+`CHPARL_FB_PAGE_ID` unset to post to Instagram only. Facebook needs no date of
+its own here: the start date in step 5 holds for every platform.
 
 ### 3. X
 
@@ -359,17 +358,21 @@ git worktree remove --force "$tmp"
 
 ### 5. Go live
 
-Check what would be posted, then turn the switch on and run once by hand:
+Choose the first sitting date to post, check what would be posted, then turn the
+switch on and run once by hand:
 
 ```bash
 go run ./cmd/generate_vote_post -jurisdiction nationalrat -n 3
+gh variable set JURISDICTION_NATIONALRAT_POST_FROM --body "<YYYY-MM-DD>"
 gh variable set JURISDICTION_NATIONALRAT_ENABLED --body true
 gh workflow run bot-chparl.yml
 ```
 
-The first run posts the final votes of the last 14 days
-(`MAX_VOTE_AGE_DAYS_NATIONALRAT`), so outside a session it posts nothing and
-the first posts follow the next session's final votes. Until the switch is set,
+`JURISDICTION_NATIONALRAT_POST_FROM` is the first sitting date posted, on every
+platform. The vote logs start empty on that date, so nothing before it is ever
+posted and nothing has to be seeded. Votes also have to be inside the age
+window (`MAX_VOTE_AGE_DAYS_NATIONALRAT`, 14 days unless overridden), so a date
+further back than that posts nothing until the override is raised. Until the switch is set,
 every scheduled run fails with "No jurisdiction is enabled". That is the switch
 working as designed; `gh workflow disable bot-chparl.yml` silences it until
 then. To stop posting again (the runs then fail the same way):

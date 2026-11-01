@@ -101,11 +101,10 @@ jobs:
           CHPARL_IMAGE_HOST_REPO: ${{ github.repository }}
           CHPARL_IMAGE_HOST_TOKEN: ${{ github.token }}
           # Same Page token as Instagram, as on the Zürich bot. The Page ID is
-          # the switch, and the go-live date is required with it: Facebook
-          # posts only sittings from that date on.
+          # the switch. Facebook takes its start date from the jurisdiction's
+          # JURISDICTION_NATIONALRAT_POST_FROM below, like every platform here.
           CHPARL_FB_PAGE_ID: ${{ vars.CHPARL_FB_PAGE_ID }}
           CHPARL_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
-          CHPARL_FB_POST_FROM: ${{ vars.CHPARL_FB_POST_FROM }}
           CHPARL_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_X_MAX_POSTS_PER_RUN }}
           CHPARL_X_MAX_CHARS: ${{ vars.CHPARL_X_MAX_CHARS }}
           CHPARL_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_BLUESKY_MAX_POSTS_PER_RUN }}
@@ -116,6 +115,9 @@ jobs:
           MAX_VOTE_AGE_DAYS_NATIONALRAT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
           # Nothing posts until this is "true". See bot-zhparl.yml.
           JURISDICTION_NATIONALRAT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_ENABLED }}
+          # The first sitting date posted, on every platform (YYYY-MM-DD). The
+          # vote logs start empty on it, so nothing earlier is ever posted.
+          JURISDICTION_NATIONALRAT_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_POST_FROM }}
         run: go run main.go
 
       # Runs even when the bot itself fails, so a partial run still records what
