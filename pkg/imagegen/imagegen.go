@@ -345,6 +345,15 @@ func fitTitleFully(title string, maxWidth, available int) (font.Face, []string, 
 // thing to give way. A card with room names everyone, exactly like the caption
 // beside it.
 func cardTitle(group []votes.Vote, subject string, maxWidth, available int) (font.Face, []string, error) {
+	face, lines, _, err := cardTitleFully(group, subject, maxWidth, available)
+	return face, lines, err
+}
+
+// cardTitleFully is cardTitle, and also reports whether the title got in whole:
+// every signatory named and no line cut. A title that fits only once names have
+// been dropped is not whole, so a caller with something else to give up can
+// still win those names back.
+func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int) (font.Face, []string, bool, error) {
 	// Fullest first, then one name shorter each time, down to a lone name.
 	caps := []int{0}
 	for n := voteformat.CountAuthors(group) - 1; n >= 1; n-- {
@@ -361,16 +370,16 @@ func cardTitle(group []votes.Vote, subject string, maxWidth, available int) (fon
 
 		f, ls, whole, err := fitTitleFully(title, maxWidth, available)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, false, err
 		}
 		face, lines = f, ls
 		if whole {
-			return face, lines, nil
+			return face, lines, max == 0, nil
 		}
 	}
 	// Even one name does not fit: keep the shortest and let the cut fall where
 	// it must.
-	return face, lines, nil
+	return face, lines, false, nil
 }
 
 // ellipsizeLines drops the title lines that do not fit and marks the cut.
@@ -1134,30 +1143,52 @@ func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[st
 	}
 }
 
-func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {
-	v := group[0]
-	maxTextWidth := imgWidth - 2*padding
+// fitTitleAndSummary sizes the title card's title and its Übersicht against
+// each other.
+//
+// The title is what matters most, so the summary gives way to it. The
+// subtitles are set in full first, wrapped over as many lines as they need;
+// only if the title cannot then be shown whole are they cut to
+// summarySubtitleMaxRunes and the title fitted again. The summary is built
+// first either way: it is what the title has to leave room for, and it does not
+// depend on the size the title ends up at.
+func fitTitleAndSummary(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.Face, []string, []string, error) {
+	title := voteformat.CleanVoteTitle(group[0].Title)
 
-	// The summary is built first: it is what the title has to leave room for,
-	// and it does not depend on the size the title ends up at.
-	var summaryLines []string
-	for i, sv := range group {
-		line, ok := formatSummaryLine(i+1, sv, len(group))
-		if ok {
-			summaryLines = append(summaryLines, wrapText(fonts.small, line, maxTextWidth)...)
+	var titleFace font.Face
+	var titleLines, summaryLines []string
+	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
+		summaryLines = nil
+		for i, sv := range group {
+			line, ok := formatSummaryLineWithin(i+1, sv, len(group), maxRunes)
+			if ok {
+				summaryLines = append(summaryLines, wrapText(fonts.small, line, maxWidth)...)
+			}
+		}
+
+		// Reserve: gap after the title, the "Übersicht" header and its gap, one
+		// line per summary line, and the bottom padding.
+		summaryReserve := titleTrailingGap() +
+			lineHeight(fonts.small) + frac(fonts.small, 0.4) +
+			len(summaryLines)*lineHeight(fonts.small) + padding
+
+		var whole bool
+		var err error
+		titleFace, titleLines, whole, err = cardTitleFully(group, title, maxWidth, titleBudget(inset, summaryReserve))
+		if err != nil {
+			return nil, nil, nil, err
+		}
+		if whole {
+			break
 		}
 	}
+	return titleFace, titleLines, summaryLines, nil
+}
 
-	// Reserve: gap after the title, the "Übersicht" header and its gap, one
-	// line per summary line, and the bottom padding.
-	summaryReserve := titleTrailingGap() +
-		lineHeight(fonts.small) + frac(fonts.small, 0.4) +
-		len(summaryLines)*lineHeight(fonts.small) + padding
+func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {
+	maxTextWidth := imgWidth - 2*padding
 
-	// Title: bold, wrapped, centered (no verdict — ambiguous for multi-vote groups)
-	title := voteformat.CleanVoteTitle(v.Title)
-
-	titleFace, titleLines, err := cardTitle(group, title, maxTextWidth, titleBudget(inset, summaryReserve))
+	titleFace, titleLines, summaryLines, err := fitTitleAndSummary(group, inset, maxTextWidth, fonts)
 	if err != nil {
 		return
 	}
@@ -1350,13 +1381,16 @@ func formatSummaryLine(index int, vote votes.Vote, groupSize int) (string, bool)
 }
 
 // formatSummaryLineWithin is formatSummaryLine with the vote label cut to
-// maxRunes instead of the card's summarySubtitleMaxRunes.
+// maxRunes instead of the card's summarySubtitleMaxRunes. Zero leaves the label
+// whole.
 func formatSummaryLineWithin(index int, vote votes.Vote, groupSize, maxRunes int) (string, bool) {
 	subtitle := voteformat.SubVoteLabel(vote, index-1, groupSize)
 	if subtitle == "" {
 		return "", false
 	}
-	subtitle = truncateWithEllipsis(subtitle, maxRunes)
+	if maxRunes > 0 {
+		subtitle = truncateWithEllipsis(subtitle, maxRunes)
+	}
 
 	counts := voteformat.CountsOf(vote)
 	var verdict string
