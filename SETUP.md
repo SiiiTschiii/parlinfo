@@ -171,9 +171,9 @@ go run ./cmd/update_contacts -jurisdiction zurich-canton -dry-run
 go run ./cmd/update_contacts -jurisdiction zurich-canton
 ```
 
-Both chambers are seeded whole, from the mandate register for Stadt Zürich and
-from OpenParlData for the Kantonsrat, so a sitting member with no handle arrives
-as a bare name. For Stadt Zürich it also imports the accounts PARIS publishes;
+Every body is seeded whole, from the mandate register for Stadt Zürich, from
+OpenParlData for the Kantonsrat and from parlament.ch for the Nationalrat and
+the Ständerat, so a sitting member with no handle arrives as a bare name. For Stadt Zürich it also imports the accounts PARIS publishes;
 for the Kantonsrat there are none to import. Each run ends by listing the people on file who no longer sit. Party
 and Fraktion accounts carry `kind: organization` so that list leaves them out.
 

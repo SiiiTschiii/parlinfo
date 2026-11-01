@@ -3,8 +3,10 @@
 Maps politicians to their social media accounts, and tags them in posts.
 
 One curated file per jurisdiction — `data/zurich-city/contacts.yaml`,
-`data/zurich-canton/contacts.yaml` — with an identical schema: a name, and the
-accounts verified for it. A channel serving more than one body loads them
+`data/zurich-canton/contacts.yaml`, `data/nationalrat/contacts.yaml` and
+`data/staenderat/contacts.yaml` — with an identical schema: a name, and the
+accounts verified for it. The Ständerat's is kept but read by nothing yet: no
+source serves its votes. A channel serving more than one body loads them
 together (`LoadContactFiles`).
 
 Tagging is name matching: the mapper looks for a contact's name in the text of a

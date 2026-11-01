@@ -177,7 +177,11 @@ func liveFixtures(jurisdictionKey string, fetchLimit, numGroups, minVotes int) m
 	if err != nil {
 		log.Fatalf("%v. Available: %v", err, config.JurisdictionKeys())
 	}
-	groups, err := voteposting.LatestGroups(jurisdiction.NewSource(), jurisdiction.Key, fetchLimit, 0)
+	source, err := jurisdiction.Source()
+	if err != nil {
+		log.Fatal(err)
+	}
+	groups, err := voteposting.LatestGroups(source, jurisdiction.Key, fetchLimit, 0)
 	if err != nil {
 		log.Fatalf("Error preparing %s votes: %v", jurisdiction.Key, err)
 	}

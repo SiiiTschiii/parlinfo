@@ -90,7 +90,11 @@ func liveGroups(jurisdictionKey string, fetchLimit, numGroups int) (map[string][
 		log.Fatalf("%v. Available: %v", err, config.JurisdictionKeys())
 	}
 
-	groups, err := voteposting.LatestGroups(jurisdiction.NewSource(), jurisdiction.Key, fetchLimit, numGroups)
+	source, err := jurisdiction.Source()
+	if err != nil {
+		log.Fatal(err)
+	}
+	groups, err := voteposting.LatestGroups(source, jurisdiction.Key, fetchLimit, numGroups)
 	if err != nil {
 		log.Fatalf("Error preparing votes: %v", err)
 	}

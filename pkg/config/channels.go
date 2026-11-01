@@ -152,7 +152,11 @@ func Validate() error {
 				return fmt.Errorf("jurisdiction %q is served by both channel %q and channel %q", key, other, c.Key)
 			}
 			seenJurisdiction[key] = c.Key
-			if _, err := LookupJurisdiction(key); err != nil {
+			j, err := LookupJurisdiction(key)
+			if err != nil {
+				return fmt.Errorf("channel %q: %w", c.Key, err)
+			}
+			if _, err := j.Source(); err != nil {
 				return fmt.Errorf("channel %q: %w", c.Key, err)
 			}
 		}

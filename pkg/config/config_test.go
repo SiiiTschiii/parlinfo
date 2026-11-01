@@ -102,19 +102,23 @@ func TestLookupJurisdiction_Unknown(t *testing.T) {
 	}
 }
 
-func TestEveryJurisdictionHasASource(t *testing.T) {
-	for _, key := range JurisdictionKeys() {
-		j, err := LookupJurisdiction(key)
-		if err != nil {
-			t.Fatalf("%s: %v", key, err)
-		}
-		if j.NewSource == nil {
-			t.Errorf("%s has no source constructor", key)
-		}
-		// An unbounded age guard on a jurisdiction whose log may be empty is
-		// how a first run posts years of history at once.
-		if j.MaxAgeDays <= 0 {
-			t.Errorf("%s has no age guard", key)
+// Every body a channel posts has a source and an age guard. A body no channel
+// serves may have neither: Validate refuses it a channel until it has a source.
+func TestEveryPostedJurisdictionHasASource(t *testing.T) {
+	for _, c := range Channels() {
+		for _, key := range c.Jurisdictions {
+			j, err := LookupJurisdiction(key)
+			if err != nil {
+				t.Fatalf("%s: %v", key, err)
+			}
+			if j.NewSource == nil {
+				t.Errorf("%s has no source constructor", key)
+			}
+			// An unbounded age guard on a jurisdiction whose log may be empty
+			// is how a first run posts years of history at once.
+			if j.MaxAgeDays <= 0 {
+				t.Errorf("%s has no age guard", key)
+			}
 		}
 	}
 }
@@ -220,5 +224,17 @@ func TestParseDate(t *testing.T) {
 		if _, err := ParseDate(bad); err == nil {
 			t.Errorf("ParseDate(%q) succeeded, want an error", bad)
 		}
+	}
+}
+
+// A body without a vote source is a contacts file, not something to post:
+// asking it for votes is an error, never a nil function call.
+func TestSourceOfABodyWithoutVotes(t *testing.T) {
+	j, err := LookupJurisdiction(StaenderatKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := j.Source(); err == nil {
+		t.Error("the Ständerat has no vote source, want an error")
 	}
 }
