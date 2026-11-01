@@ -181,35 +181,40 @@ https://www.linkedin.com/in/christof-gerber/
 var facebookConfig = platformConfig{
 	Key:           "facebook",
 	DisplayName:   "Facebook",
-	Subject:       "zuerichratsinfo jetzt auch auf Facebook",
+	Subject:       "zueriratsinfo jetzt auch auf Facebook",
 	SkipIfOn:      []string{"bluesky", "instagram", "x"},
 	IncludeCanton: true,
-	Body:          func(url string) string { return facebookBody(url, false) },
-	FormalBody:    func(url string) string { return facebookBody(url, true) },
+	Body:          func(string) string { return facebookBody(false) },
+	FormalBody:    func(string) string { return facebookBody(true) },
 }
 
-// facebookBody renders the Facebook announcement in du or Sie form.
-func facebookBody(url string, formal bool) string {
-	you, follow, share, ideas, thanks := "dich", "du dem Account folgst", "Und vielleicht hast du ja mal Lust einen Abstimmungspost mit deinen Followern zu teilen.", "Falls du Ideen oder Feedback hast", "Vielen Dank und liebe Grüsse"
+// facebookBody renders the Facebook announcement in du or Sie form. It does not
+// quote the recipient's own Facebook account: the posts name members on
+// Facebook without tagging them, so the account changes nothing they would see.
+func facebookBody(formal bool) string {
+	follow, feedback, thanks := "du den Accounts folgst", "Und ich bin gespannt auf dein Feedback: Was fehlt dir in den Posts, oder was würde sie für dich nützlicher machen?", "Liebe Grüsse"
 	if formal {
-		you, follow, share, ideas, thanks = "Sie", "Sie dem Account folgen", "Und vielleicht haben Sie ja Lust, einen Abstimmungspost mit Ihren Followern zu teilen.", "Falls Sie Ideen oder Feedback haben", "Vielen Dank und freundliche Grüsse"
+		follow, feedback, thanks = "Sie den Accounts folgen", "Und ich bin gespannt auf Ihr Feedback: Was fehlt Ihnen in den Posts, oder was würde sie für Sie nützlicher machen?", "Freundliche Grüsse"
 	}
-	return fmt.Sprintf(`zuerichratsinfo ist jetzt auch auf Facebook verfügbar:
+	return fmt.Sprintf(`zueriratsinfo ist jetzt auch auf Facebook:
 👉 https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
 
-Der Account publiziert die Abstimmungsresultate aus dem Gemeinderat der Stadt Zürich, dem Kantonsrat und dem Nationalrat auf X (https://x.com/zuerichratsinfo), Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social), Instagram (https://www.instagram.com/zueriratsinfo) und neu auch auf Facebook, und nennt jeweils die Politikerinnen und Politiker, welche die entsprechenden Vorstösse etc. eingereicht haben, beim Namen (wie %s: %s). Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
+zueriratsinfo ist Teil von parlinfo, einem ehrenamtlichen Civic-Tech-Projekt, das Abstimmungsresultate aus Parlamenten automatisiert auf Social Media bringt. Für Zürich veröffentlicht es die Abstimmungen aus dem Gemeinderat der Stadt Zürich und dem Kantonsrat, bisher auf Instagram (https://www.instagram.com/zueriratsinfo), X (https://x.com/zuerichratsinfo) und Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social) und neu auch auf Facebook. Zu jeder Abstimmung zeigen wir, wie die Fraktionen gestimmt haben, und nennen die Politikerinnen und Politiker, die den Vorstoss eingereicht haben. Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
 
-Als Nächstes geplant sind die eingereichten Motionen und Postulate. %s, würde ich mich sehr darüber freuen!
+Neu gibt es parlinfo auch für den Nationalrat, als CH Parl Info, ebenfalls auf Facebook:
+👉 https://www.facebook.com/profile.php?id=61595771216866
+
+Als Nächstes sind die eingereichten Motionen und Postulate geplant.
 
 Ich würde mich freuen, wenn %s. %s
 
 Weitere Informationen zum Projekt:
-https://github.com/SiiiTschiii/zuerichratsinfo
+https://github.com/SiiiTschiii/parlinfo
 
 %s
 Christof
 https://www.linkedin.com/in/christof-gerber/
-`, you, url, ideas, follow, share, thanks)
+`, follow, feedback, thanks)
 }
 
 type Recipient struct {
