@@ -1079,7 +1079,7 @@ func TestSignatoryLine(t *testing.T) {
 		{Name: "Silvia Rigoni", Party: "Grüne"},
 		{Name: "Judith Anna Stofer", Party: "AL"},
 	}
-	group := []votes.Vote{{Affair: votes.Affair{Authors: authors}}}
+	group := []votes.Vote{{Affair: votes.Affair{Type: "Postulat", Authors: authors}}}
 
 	if got := SignatoryLine(group, nil); got != "" {
 		t.Errorf("nothing deferred: %q, want nothing to post", got)
@@ -1091,9 +1091,13 @@ func TestSignatoryLine(t *testing.T) {
 	}
 	// Nobody was named beside the title, so nobody is "further".
 	got = SignatoryLine(group, authors)
-	want = "✍️ Eingereicht von: Ivo Bieri (SP), Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
+	want = "✍️ Postulat von Ivo Bieri (SP), Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
 	if got != want {
 		t.Errorf("all deferred: %q, want %q", got, want)
+	}
+	untyped := []votes.Vote{{Affair: votes.Affair{Authors: authors[:1]}}}
+	if got, want := SignatoryLine(untyped, authors[:1]), "✍️ Von Ivo Bieri (SP)"; got != want {
+		t.Errorf("all deferred, no type: %q, want %q", got, want)
 	}
 }
 

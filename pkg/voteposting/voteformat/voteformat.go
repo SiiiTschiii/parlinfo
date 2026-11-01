@@ -236,16 +236,21 @@ func prefixWithoutAuthors(group []votes.Vote) string {
 // is always right.
 //
 // When no name fitted at all, there is nobody for them to be further to, and
-// the block says who filed the business instead. A federal title is often long
-// enough for that: 20.406's leaves no room for Andri Silberschmidt, its only
-// author.
+// the block carries the label line's own "<type> von …" instead. A federal
+// title is often long enough for that: 20.406's leaves no room for Andri
+// Silberschmidt, its only author. It says no more about roles than the label
+// line would have, which matters where the list holds a member who only took
+// the business over: 17.523 is Luzi Stamm's, continued by Bruno Walliser.
 func SignatoryLine(group []votes.Vote, deferred []votes.Author) string {
 	names := AuthorList(deferred, 0)
 	if names == "" {
 		return ""
 	}
 	if len(group) > 0 && len(deferred) == len(group[0].Affair.Authors) {
-		return "✍️ Eingereicht von: " + names
+		if t := strings.TrimSpace(group[0].Affair.Type); t != "" {
+			return "✍️ " + t + " von " + names
+		}
+		return "✍️ Von " + names
 	}
 	return "✍️ Weitere Unterzeichnende: " + names
 }
