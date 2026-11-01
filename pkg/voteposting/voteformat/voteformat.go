@@ -234,10 +234,18 @@ func prefixWithoutAuthors(group []votes.Vote) string {
 // almost always the one that fits, but nothing guarantees the boundary falls
 // exactly there, and a label that is only usually right is worse than one that
 // is always right.
-func SignatoryLine(authors []votes.Author) string {
-	names := AuthorList(authors, 0)
+//
+// When no name fitted at all, there is nobody for them to be further to, and
+// the block says who filed the business instead. A federal title is often long
+// enough for that: 20.406's leaves no room for Andri Silberschmidt, its only
+// author.
+func SignatoryLine(group []votes.Vote, deferred []votes.Author) string {
+	names := AuthorList(deferred, 0)
 	if names == "" {
 		return ""
+	}
+	if len(group) > 0 && len(deferred) == len(group[0].Affair.Authors) {
+		return "✍️ Eingereicht von: " + names
 	}
 	return "✍️ Weitere Unterzeichnende: " + names
 }

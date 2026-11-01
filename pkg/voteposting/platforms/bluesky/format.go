@@ -66,7 +66,7 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	// Signatories the root had no room for lead the thread: naming them costs a
 	// line here, where truncating the title to keep them would have cost the
 	// subject of the vote.
-	replies, voteStarts := buildReplyPosts(group, voteformat.SignatoryLine(deferred),
+	replies, voteStarts := buildReplyPosts(group, voteformat.SignatoryLine(group, deferred),
 		voteformat.LinkLine(group), linkURLs(group))
 
 	thread := make([]*BlueskyPost, 0, 1+len(replies))

@@ -1074,16 +1074,26 @@ func TestFitAuthorPrefix(t *testing.T) {
 }
 
 func TestSignatoryLine(t *testing.T) {
-	if got := SignatoryLine(nil); got != "" {
-		t.Errorf("SignatoryLine(nil) = %q, want nothing to post", got)
-	}
-	got := SignatoryLine([]votes.Author{
+	authors := []votes.Author{
+		{Name: "Ivo Bieri", Party: "SP"},
 		{Name: "Silvia Rigoni", Party: "Grüne"},
 		{Name: "Judith Anna Stofer", Party: "AL"},
-	})
+	}
+	group := []votes.Vote{{Affair: votes.Affair{Authors: authors}}}
+
+	if got := SignatoryLine(group, nil); got != "" {
+		t.Errorf("nothing deferred: %q, want nothing to post", got)
+	}
+	got := SignatoryLine(group, authors[1:])
 	want := "✍️ Weitere Unterzeichnende: Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
 	if got != want {
-		t.Errorf("SignatoryLine() = %q, want %q", got, want)
+		t.Errorf("some deferred: %q, want %q", got, want)
+	}
+	// Nobody was named beside the title, so nobody is "further".
+	got = SignatoryLine(group, authors)
+	want = "✍️ Eingereicht von: Ivo Bieri (SP), Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
+	if got != want {
+		t.Errorf("all deferred: %q, want %q", got, want)
 	}
 }
 

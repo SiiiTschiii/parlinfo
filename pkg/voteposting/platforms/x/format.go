@@ -73,7 +73,7 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	// Tagged like the root's own line. X finds no mentions on its own, so a
 	// handle only exists where this puts one — and a member shed from the root
 	// for length has done nothing to deserve losing their tag.
-	signatories := voteformat.SignatoryLine(deferred)
+	signatories := voteformat.SignatoryLine(group, deferred)
 	if contactMapper != nil {
 		signatories = contactMapper.TagXHandlesInText(signatories)
 	}
