@@ -351,7 +351,12 @@ func PackNames(b NameBlock, tag func(string) string, limit int, measure func(str
 		if i < len(names)-1 {
 			reserve = measure(more)
 		}
-		if count > 0 && measure(next)+reserve > limit {
+		// Past the limit, the entry so far is closed and the name opens the
+		// next. That includes a first name with only the label before it: the
+		// label then stands alone rather than overrunning by its marker. A
+		// continuation that cannot hold even one name keeps it regardless,
+		// since there is nowhere smaller to put it.
+		if measure(next)+reserve > limit && (count > 0 || cur == b.Label) {
 			entries = append(entries, cur+more)
 			cur, count = "…", 0
 			next = cur + " " + name

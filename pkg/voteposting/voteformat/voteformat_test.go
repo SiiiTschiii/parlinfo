@@ -1182,8 +1182,9 @@ func TestPackNames(t *testing.T) {
 		t.Errorf("split: %q, want %q", got, want)
 	}
 	// No entry overruns, the "…" that marks the cut included, at any limit
-	// that holds the label and one name.
-	for limit := 37; limit <= 70; limit++ {
+	// that holds the label with its marker and the longest continuation. Below
+	// 35 the label and first name fit only without the marker.
+	for limit := measure("✍️ Mitunterzeichnet von …"); limit <= 70; limit++ {
 		for _, e := range PackNames(b, tag, limit, measure) {
 			if measure(e) > limit {
 				t.Errorf("limit %d: entry %q is %d long", limit, e, measure(e))
