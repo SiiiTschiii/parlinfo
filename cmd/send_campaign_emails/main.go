@@ -191,20 +191,46 @@ var facebookConfig = platformConfig{
 // facebookBody renders the Facebook announcement in du or Sie form. It does not
 // quote the recipient's own Facebook account: the posts name members on
 // Facebook without tagging them, so the account changes nothing they would see.
+//
+// It follows the welcome email to new members: what parlinfo is, why it
+// exists, what it does for the reader, and every account of both channels, so
+// the Facebook news arrives as part of the project rather than on its own.
 func facebookBody(formal bool) string {
-	follow, feedback, thanks := "du den Accounts folgst", "Und ich bin gespannt auf dein Feedback: Was fehlt dir in den Posts, oder was würde sie für dich nützlicher machen?", "Liebe Grüsse"
-	if formal {
-		follow, feedback, thanks = "Sie den Accounts folgen", "Und ich bin gespannt auf Ihr Feedback: Was fehlt Ihnen in den Posts, oder was würde sie für Sie nützlicher machen?", "Freundliche Grüsse"
+	w := struct{ Intro, Find, ForYou, Yours, You, Follow, Feedback, Thanks string }{
+		"dir",
+		"zueriratsinfo findest du auf:",
+		"Für dich",
+		"Deine Vorstösse",
+		"du siehst",
+		"du den Accounts folgst",
+		"Und ich bin gespannt auf dein Feedback: Was fehlt dir in den Posts, oder was würde sie für dich nützlicher machen?",
+		"Liebe Grüsse",
 	}
-	return fmt.Sprintf(`zueriratsinfo ist jetzt auch auf Facebook:
-👉 https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
+	if formal {
+		w.Intro, w.Find, w.ForYou, w.Yours, w.You = "Ihnen", "zueriratsinfo finden Sie auf:", "Für Sie", "Ihre Vorstösse", "Sie sehen"
+		w.Follow = "Sie den Accounts folgen"
+		w.Feedback = "Und ich bin gespannt auf Ihr Feedback: Was fehlt Ihnen in den Posts, oder was würde sie für Sie nützlicher machen?"
+		w.Thanks = "Freundliche Grüsse"
+	}
+	return fmt.Sprintf(`zueriratsinfo gibt es jetzt auch auf Facebook. Ich möchte %s bei dieser Gelegenheit kurz parlinfo und zueriratsinfo vorstellen.
 
-zueriratsinfo ist Teil von parlinfo, einem ehrenamtlichen Civic-Tech-Projekt, das Abstimmungsresultate aus Parlamenten automatisiert auf Social Media bringt. Für Zürich veröffentlicht es die Abstimmungen aus dem Gemeinderat der Stadt Zürich und dem Kantonsrat, bisher auf Instagram (https://www.instagram.com/zueriratsinfo), X (https://x.com/zuerichratsinfo) und Bluesky (https://bsky.app/profile/zuerichratsinfo.bsky.social) und neu auch auf Facebook. Zu jeder Abstimmung zeigen wir, wie die Fraktionen gestimmt haben, und nennen die Politikerinnen und Politiker, die den Vorstoss eingereicht haben. Ziel ist es, politische Arbeit transparenter und für die Öffentlichkeit besser nachvollziehbar zu machen.
+parlinfo ist ein ehrenamtliches Civic-Tech-Projekt, das Abstimmungsresultate aus Parlamenten automatisiert auf Social Media bringt. Für Zürich läuft es als zueriratsinfo und veröffentlicht die Abstimmungen aus dem Kantonsrat und dem Gemeinderat der Stadt Zürich. Zu jeder Abstimmung zeigen wir, wie die einzelnen Fraktionen gestimmt haben, und nennen die Politikerinnen und Politiker, die den Vorstoss eingereicht haben.
 
-Neu gibt es parlinfo auch für den Nationalrat, als CH Parl Info, ebenfalls auf Facebook:
-👉 https://www.facebook.com/profile.php?id=61595771216866
+Unser Antrieb ist einfach: Eine gesunde Demokratie braucht Partizipation, also Bürgerinnen und Bürger, die Entscheide mitverfolgen und mitgestalten können. Und sie braucht Transparenz darüber, was Politikerinnen und Politiker tatsächlich tun, sichtbar dort, wo die Menschen ohnehin schon sind.
 
-Als Nächstes sind die eingereichten Motionen und Postulate geplant.
+%s kann das in zwei Richtungen nützlich sein: %s und ihr Ausgang erreichen Leute, die nie ins Ratsportal schauen würden. Und %s auf einen Blick, wie die Fraktionen zu einem Geschäft abgestimmt haben, ohne Protokolle durchzugehen.
+
+%s
+📘 Facebook (neu): https://www.facebook.com/profile.php?id=1063164230212573
+📸 Instagram: https://www.instagram.com/zueriratsinfo
+✖️ X: https://x.com/zuerichratsinfo
+🔵 Bluesky: https://bsky.app/profile/zuerichratsinfo.bsky.social
+
+Neu gibt es parlinfo auch für den Nationalrat, als CH Parl Info:
+📘 Facebook: https://www.facebook.com/profile.php?id=61595771216866
+📸 Instagram: https://www.instagram.com/chparlinfo
+✖️ X: https://x.com/chparlinfo
+🔵 Bluesky: https://bsky.app/profile/chparlinfo.bsky.social
 
 Ich würde mich freuen, wenn %s. %s
 
@@ -214,7 +240,7 @@ https://github.com/SiiiTschiii/parlinfo
 %s
 Christof
 https://www.linkedin.com/in/christof-gerber/
-`, follow, feedback, thanks)
+`, w.Intro, w.ForYou, w.Yours, w.You, w.Find, w.Follow, w.Feedback, w.Thanks)
 }
 
 type Recipient struct {
