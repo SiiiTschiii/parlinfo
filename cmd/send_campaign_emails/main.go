@@ -365,7 +365,7 @@ func buildCampaign() Campaign {
 			file = *recipientsPath
 		}
 		return Campaign{
-			Recipients:    loadAudienceRecipients(file),
+			Recipients:    loadAudienceRecipients(file, true),
 			RenderSubject: func(Recipient) string { return ac.Subject },
 			RenderBody:    generalBody,
 		}
@@ -470,8 +470,13 @@ func loadCustomMessages(path string) []Recipient {
 }
 
 // loadAudienceRecipients reads a curated recipient YAML file for an audience
-// campaign. Entries with an empty email are skipped with a warning.
-func loadAudienceRecipients(path string) []Recipient {
+// campaign. Entries with an empty email are skipped.
+//
+// report prints what was loaded and warns about each skipped entry. An
+// audience campaign mails the whole file, so each one is someone it drops. A
+// platform campaign only looks names up in the file, passes false, and warns
+// about the names it needed and did not find instead.
+func loadAudienceRecipients(path string, report bool) []Recipient {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalf("Failed to read recipients file %s: %v", path, err)
@@ -488,7 +493,9 @@ func loadAudienceRecipients(path string) []Recipient {
 			typ = "person"
 		}
 		if strings.TrimSpace(e.Email) == "" {
-			fmt.Fprintf(os.Stderr, "  ⚠️  Skipping (no email): %s\n", e.Name)
+			if report {
+				fmt.Fprintf(os.Stderr, "  ⚠️  Skipping (no email): %s\n", e.Name)
+			}
 			continue
 		}
 		sal := ""
@@ -509,7 +516,9 @@ func loadAudienceRecipients(path string) []Recipient {
 			Lastname:   e.Lastname,
 		})
 	}
-	fmt.Fprintf(os.Stderr, "Loaded %d recipients from %s\n", len(recipients), path)
+	if report {
+		fmt.Fprintf(os.Stderr, "Loaded %d recipients from %s\n", len(recipients), path)
+	}
 	return recipients
 }
 
@@ -527,13 +536,16 @@ func buildPlatformRecipientList(cfg platformConfig) []Recipient {
 			continue
 		}
 		if hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) {
-			skipped++
+			// Counted as the Kantonsrat pass counts them: members, not the
+			// party accounts in the same file.
+			if !c.IsOrganization() {
+				skipped++
+			}
 			continue
 		}
 		matchingContacts = append(matchingContacts, c)
 	}
-	fmt.Fprintf(os.Stderr, "Found %d contacts with %s accounts (%d skipped for also being on %s)\n",
-		len(matchingContacts), cfg.DisplayName, skipped, strings.Join(cfg.SkipIfOn, "/"))
+	fmt.Fprintf(os.Stderr, "Gemeinderat: %s\n", selectionSummary(cfg, len(matchingContacts), skipped))
 
 	fmt.Fprintf(os.Stderr, "Fetching contact data from API...\n")
 	client := zurichapi.NewClient()
@@ -627,21 +639,33 @@ func buildCantonRecipients(cfg platformConfig, existing []Recipient) []Recipient
 		fmt.Fprintf(os.Stderr, "  ⚠️  %s not found: SKIPPING all Kantonsrat contacts (pass --canton-recipients <file> to include them)\n", *cantonRecipientsPath)
 		return nil
 	}
-	byName := make(map[string]Recipient)
-	for _, r := range loadAudienceRecipients(*cantonRecipientsPath) {
-		byName[normalize(r.Name)] = r
-	}
 	seen := make(map[string]bool)
 	for _, r := range existing {
 		seen[normalize(r.Name)] = true
 	}
 
-	var out []Recipient
+	var matching []contacts.Contact
+	skipped := 0
 	for _, c := range mapper.GetAllContacts() {
-		urls := mapper.GetPlatformURLs(c.Name, cfg.Key)
-		if c.IsOrganization() || len(urls) == 0 || hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) || seen[normalize(c.Name)] {
+		if c.IsOrganization() || len(mapper.GetPlatformURLs(c.Name, cfg.Key)) == 0 || seen[normalize(c.Name)] {
 			continue
 		}
+		if hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) {
+			skipped++
+			continue
+		}
+		matching = append(matching, c)
+	}
+	fmt.Fprintf(os.Stderr, "Kantonsrat: %s; emails from %s\n", selectionSummary(cfg, len(matching), skipped), *cantonRecipientsPath)
+
+	byName := make(map[string]Recipient)
+	for _, r := range loadAudienceRecipients(*cantonRecipientsPath, false) {
+		byName[normalize(r.Name)] = r
+	}
+
+	var out []Recipient
+	for _, c := range matching {
+		urls := mapper.GetPlatformURLs(c.Name, cfg.Key)
 		r, ok := byName[normalize(c.Name)]
 		if !ok {
 			fmt.Fprintf(os.Stderr, "  ⚠️  Kantonsrat contact not in %s (or no email): %s\n", *cantonRecipientsPath, c.Name)
@@ -652,6 +676,16 @@ func buildCantonRecipients(cfg platformConfig, existing []Recipient) []Recipient
 		out = append(out, r)
 	}
 	return out
+}
+
+// selectionSummary says how many contacts a platform campaign picked from one
+// contacts file, and how many it left out for being reachable elsewhere.
+func selectionSummary(cfg platformConfig, found, skipped int) string {
+	s := fmt.Sprintf("%d contacts with a verified %s account", found, cfg.DisplayName)
+	if len(cfg.SkipIfOn) > 0 {
+		s += fmt.Sprintf(" and none on %s (%d more skipped for being on one)", strings.Join(cfg.SkipIfOn, "/"), skipped)
+	}
+	return s
 }
 
 func hasAnyPlatform(mapper *contacts.Mapper, name string, platforms []string) bool {
