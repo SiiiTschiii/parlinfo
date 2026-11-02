@@ -212,6 +212,7 @@ func facebookBody(formal bool) string {
 		w.Feedback = "Und ich bin gespannt auf Ihr Feedback: Was fehlt Ihnen in den Posts, oder was würde sie für Sie nützlicher machen?"
 		w.Thanks = "Freundliche Grüsse"
 	}
+	//nolint:misspell // German: "Partizipation"
 	return fmt.Sprintf(`zueriratsinfo gibt es jetzt auch auf Facebook. Ich möchte %s bei dieser Gelegenheit kurz parlinfo und zueriratsinfo vorstellen.
 
 parlinfo ist ein ehrenamtliches Civic-Tech-Projekt, das Abstimmungsresultate aus Parlamenten automatisiert auf Social Media bringt. Für Zürich läuft es als zueriratsinfo und veröffentlicht die Abstimmungen aus dem Kantonsrat und dem Gemeinderat der Stadt Zürich. Zu jeder Abstimmung zeigen wir, wie die einzelnen Fraktionen gestimmt haben, und nennen die Politikerinnen und Politiker, die den Vorstoss eingereicht haben.
