@@ -99,7 +99,8 @@ func FormatPost(group []votes.Vote) (*FacebookContent, error) {
 			}
 			uncovered.WriteString("\n\n" + block)
 		}
-		heading := strings.TrimRight(voteformat.LongFormHeading(group, voteformat.Tags{}), "\n")
+		heading := strings.TrimRight(voteformat.LongFormHeading(group, voteformat.Tags{})+
+			voteformat.LongFormCoSigners(group, voteformat.Tags{}), "\n")
 		message = heading + uncovered.String() + "\n\n" + links
 	}
 	message = strings.TrimRight(message, "\n")

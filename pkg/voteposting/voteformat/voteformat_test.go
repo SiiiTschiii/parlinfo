@@ -1073,17 +1073,140 @@ func TestFitAuthorPrefix(t *testing.T) {
 	})
 }
 
-func TestSignatoryLine(t *testing.T) {
-	if got := SignatoryLine(nil); got != "" {
-		t.Errorf("SignatoryLine(nil) = %q, want nothing to post", got)
+// blockTexts renders blocks the way a thread shows them, without a limit.
+func blockTexts(blocks []NameBlock) []string {
+	var out []string
+	for _, b := range blocks {
+		out = append(out, PackNames(b, nil, 10000, func(s string) int { return len(s) })...)
 	}
-	got := SignatoryLine([]votes.Author{
+	return out
+}
+
+func TestSignatoryBlocks_Zurich(t *testing.T) {
+	authors := []votes.Author{
+		{Name: "Ivo Bieri", Party: "SP"},
 		{Name: "Silvia Rigoni", Party: "Grüne"},
 		{Name: "Judith Anna Stofer", Party: "AL"},
-	})
-	want := "✍️ Weitere Unterzeichnende: Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
-	if got != want {
-		t.Errorf("SignatoryLine() = %q, want %q", got, want)
+	}
+	group := []votes.Vote{{Affair: votes.Affair{Type: "Postulat", Authors: authors}}}
+
+	if got := SignatoryBlocks(group, nil); len(got) != 0 {
+		t.Errorf("nothing deferred: %v, want nothing to post", got)
+	}
+	got := blockTexts(SignatoryBlocks(group, authors[1:]))
+	want := []string{"✍️ Weitere Unterzeichnende: Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("some deferred: %q, want %q", got, want)
+	}
+	// Nobody was named beside the title, so nobody is "further".
+	got = blockTexts(SignatoryBlocks(group, authors))
+	want = []string{"✍️ Postulat von Ivo Bieri (SP), Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("all deferred: %q, want %q", got, want)
+	}
+	untyped := []votes.Vote{{Affair: votes.Affair{Authors: authors[:1]}}}
+	if got, want := blockTexts(SignatoryBlocks(untyped, authors[:1])), []string{"✍️ Von Ivo Bieri (SP)"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("all deferred, no type: %q, want %q", got, want)
+	}
+}
+
+// A member who took a business over is never listed as one of its
+// signatories, wherever the cut falls, and the co-signers are always named.
+func TestSignatoryBlocks_Roles(t *testing.T) {
+	filer := votes.Author{Name: "Stefania Prezioso Batou", Party: "EàG"}
+	took := votes.Author{Name: "Fabien Fivaz", Party: "Grüne", Role: votes.RoleTookOver}
+	co := []votes.Author{
+		{Name: "Tamara Funiciello", Party: "SP", Role: votes.RoleCoSigned},
+		{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+	}
+	group := []votes.Vote{{Affair: votes.Affair{
+		Type:    "Parlamentarische Initiative",
+		Authors: append([]votes.Author{filer, took}, co...),
+	}}}
+	coLine := "✍️ Mitunterzeichnet von Tamara Funiciello (SP) und Greta Gysin (Grüne)"
+
+	for _, tc := range []struct {
+		name     string
+		deferred []votes.Author
+		want     []string
+	}{
+		{"everyone fitted", nil, []string{coLine}},
+		{"the takeover shed", []votes.Author{took}, []string{"↪️ Übernommen von Fabien Fivaz (Grüne)", coLine}},
+		{"both shed", []votes.Author{filer, took}, []string{
+			"✍️ Parlamentarische Initiative von Stefania Prezioso Batou (EàG)",
+			"↪️ Übernommen von Fabien Fivaz (Grüne)",
+			coLine,
+		}},
+	} {
+		if got := blockTexts(SignatoryBlocks(group, tc.deferred)); !reflect.DeepEqual(got, tc.want) {
+			t.Errorf("%s:\n got %q\nwant %q", tc.name, got, tc.want)
+		}
+	}
+}
+
+// Co-signers never reach the label line, the card's title or its count.
+func TestLeadAuthorsOnly_OnTheLabelLine(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{
+		Type: "Parlamentarische Initiative",
+		Authors: []votes.Author{
+			{Name: "Andri Silberschmidt", Party: "FDP"},
+			{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+		},
+	}}}
+	if got, want := GroupPrefixLine(group), "Parlamentarische Initiative von Andri Silberschmidt (FDP)"; got != want {
+		t.Errorf("label line = %q, want %q", got, want)
+	}
+	if got := CountAuthors(group); got != 1 {
+		t.Errorf("CountAuthors = %d, want 1", got)
+	}
+	line, deferred := FitAuthorPrefix(group, 1000, func(s string) int { return len(s) })
+	if strings.Contains(line, "Gysin") || len(deferred) != 0 {
+		t.Errorf("FitAuthorPrefix = %q, %v; want no co-signer on the line or deferred", line, deferred)
+	}
+}
+
+func TestPackNames(t *testing.T) {
+	b := NameBlock{"✍️ Mitunterzeichnet von", []votes.Author{
+		{Name: "A", Party: "SP"}, {Name: "B", Party: "FDP"}, {Name: "C", Party: "AL"},
+	}}
+	measure := func(s string) int { return len([]rune(s)) }
+	tag := func(s string) string { return s + " @x" }
+
+	if got, want := PackNames(b, tag, 1000, measure), []string{"✍️ Mitunterzeichnet von A (SP) @x, B (FDP) @x und C (AL) @x"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("roomy: %q, want %q", got, want)
+	}
+	// Room for the label and two names: the third moves on, and the cut is marked.
+	got := PackNames(b, tag, 47, measure)
+	want := []string{"✍️ Mitunterzeichnet von A (SP) @x, B (FDP) @x …", "… C (AL) @x"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("split: %q, want %q", got, want)
+	}
+	// No entry overruns, the "…" that marks the cut included, at any limit
+	// that holds the label with its marker and the longest continuation. Below
+	// 35 the label and first name fit only without the marker.
+	for limit := measure("✍️ Mitunterzeichnet von …"); limit <= 70; limit++ {
+		for _, e := range PackNames(b, tag, limit, measure) {
+			if measure(e) > limit {
+				t.Errorf("limit %d: entry %q is %d long", limit, e, measure(e))
+			}
+		}
+	}
+	if got := PackNames(NameBlock{"✍️ Von", nil}, nil, 100, measure); got != nil {
+		t.Errorf("no names: %q, want nothing", got)
+	}
+}
+
+func TestCoSignerLine(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{Authors: []votes.Author{
+		{Name: "Andri Silberschmidt", Party: "FDP"},
+		{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+	}}}}
+	if got, want := CoSignerLine(group), "✍️ Mitunterzeichnet von Greta Gysin (Grüne)"; got != want {
+		t.Errorf("CoSignerLine = %q, want %q", got, want)
+	}
+	group[0].Affair.Authors = group[0].Affair.Authors[:1]
+	if got := CoSignerLine(group); got != "" {
+		t.Errorf("no co-signers: %q, want empty", got)
 	}
 }
 

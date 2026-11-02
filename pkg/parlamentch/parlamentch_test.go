@@ -30,8 +30,9 @@ var finalAndOverall = []string{"Schlussabstimmung", "Vote final", "Gesamtabstimm
 // Abstimmungsprotokoll (Ref. 33215 and 33233); the fourth, 26.033, is a lone
 // vote on its business.
 var (
-	idVoting   = regexp.MustCompile(`IdVote eq (\d+)`)
-	idBusiness = regexp.MustCompile(`^/Business\(ID=(\d+),`)
+	idVoting       = regexp.MustCompile(`IdVote eq (\d+)`)
+	idBusiness     = regexp.MustCompile(`^/Business\(ID=(\d+),`)
+	businessNumber = regexp.MustCompile(`BusinessNumber eq (\d+)`)
 )
 
 // newTestClient serves recorded responses so the suite never touches the live
@@ -55,8 +56,23 @@ func newTestClient(t *testing.T) (*Client, *[]string) {
 			}
 			_, _ = w.Write([]byte(n))
 			return
+		case "/BusinessRole":
+			// Only 17.523 and 21.472 are recorded. The others are Federal
+			// Council business, for which the service answers with no rows.
+			m := businessNumber.FindStringSubmatch(r.URL.Query().Get("$filter"))
+			if m == nil || (m[1] != "20170523" && m[1] != "20210472") {
+				_, _ = w.Write([]byte(`{"d":{"results":[]}}`))
+				return
+			}
+			name = "roles_" + m[1] + ".json"
 		case "/MemberCouncil":
 			name = "members.json"
+			switch f := r.URL.Query().Get("$filter"); {
+			case strings.Contains(f, "ID eq 214 "):
+				name = "authors_20170523.json"
+			case strings.Contains(f, "ID eq 4301 "):
+				name = "authors_20210472.json"
+			}
 		case "/Voting":
 			m := idVoting.FindStringSubmatch(r.URL.Query().Get("$filter"))
 			if m == nil {

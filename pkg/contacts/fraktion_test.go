@@ -129,6 +129,17 @@ func TestPathsForLoadsCantonFallbackForCityOnly(t *testing.T) {
 	}
 }
 
+// A Nationalrat post names Ständerat members who filed the business, so their
+// file is loaded too; a Ständerat preview needs nothing from the Nationalrat.
+func TestPathsForLoadsStaenderatForNationalrat(t *testing.T) {
+	if got, want := PathsFor("nationalrat"), []string{PathFor("nationalrat"), PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("nationalrat: got %v, want %v", got, want)
+	}
+	if got, want := PathsFor("staenderat"), []string{PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("staenderat: got %v, want %v", got, want)
+	}
+}
+
 // Titles as the Gemeinderat has actually written them, so the patterns are
 // pinned to the real spellings rather than the ones we would have guessed.
 func TestFraktionPhrasesFromRealTitles(t *testing.T) {

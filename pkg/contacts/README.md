@@ -13,9 +13,10 @@ Tagging is name matching: the mapper looks for a contact's name in the text of a
 post and appends their handle. Two things follow from that.
 
 - A post that names nobody tags nobody. Stadt Zürich's titles carry their
-  submitters, so the city has always worked; Kanton Zürich's do not, and its
-  authorship is put back onto the label line by the formatters — see
-  `votes.Affair.Authors`.
+  submitters, so the city has always worked; Kanton Zürich's and the
+  Nationalrat's do not, and their authorship is put back onto the label line by
+  the formatters — see `votes.Affair.Authors`. A Nationalrat post can name a
+  Ständerat member who filed the business, so it loads both files.
 - An entry with no handles is valid and useful. It costs nothing, and it marks
   a member as known-but-not-yet-found.
 

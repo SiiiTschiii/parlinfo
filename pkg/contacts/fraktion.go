@@ -43,8 +43,19 @@ var partyFallbacks = map[string][]string{
 	"zurich-city": {"zurich-canton"},
 }
 
+// authorFallbacks are the jurisdictions whose members can file business that
+// another jurisdiction votes on. A parliamentary initiative filed in the
+// Ständerat goes to the Nationalrat too, and its post names the Ständerat
+// member who filed it: 23.439, Andrea Caroni's, came to the Nationalrat's
+// overall vote in September 2026. Without the Ständerat's file that name goes
+// untagged however well it is curated.
+var authorFallbacks = map[string][]string{
+	"nationalrat": {"staenderat"},
+}
+
 // PathsFor returns the contacts files needed to tag the given jurisdictions:
-// their own, then the files their party accounts fall back to, each once.
+// their own, then the files their party accounts and their business's authors
+// fall back to, each once.
 func PathsFor(jurisdictions ...string) []string {
 	var paths []string
 	seen := map[string]bool{}
@@ -59,6 +70,9 @@ func PathsFor(jurisdictions ...string) []string {
 	}
 	for _, key := range jurisdictions {
 		for _, fb := range partyFallbacks[key] {
+			add(fb)
+		}
+		for _, fb := range authorFallbacks[key] {
 			add(fb)
 		}
 	}

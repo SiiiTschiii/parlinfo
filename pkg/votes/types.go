@@ -161,9 +161,9 @@ type Affair struct {
 
 // Author is a member who signed a business matter into the chamber: the
 // Erstunterzeichnende first, then the Mitunterzeichnende in the order the
-// parliament lists them. Formatters render as many as a post can carry and
-// name the rest in their own block, so consumers should expect the whole list
-// rather than a lead alone.
+// parliament lists them, each with their Role where the source says.
+// Formatters render as many as a post can carry and name the rest in their own
+// block, so consumers should expect the whole list rather than a lead alone.
 //
 // Party is required rather than decorative: it is what distinguishes a member
 // acting in the chamber from a private person exercising a right of initiative,
@@ -172,7 +172,28 @@ type Affair struct {
 type Author struct {
 	Name  string
 	Party string
+	Role  AuthorRole
 }
+
+// AuthorRole is the part a member had in a business, where the source says.
+//
+// The zero value is what Stadt and Kanton Zürich give: a signatory, without
+// telling the one who filed from the ones who signed with them. parlament.ch
+// does tell, and the difference decides where a name goes: the label line
+// names who filed and who took the business over, while co-signers — up to
+// twenty on a federal initiative — would bury the subject of the vote there,
+// and are named only in the text below it.
+type AuthorRole int
+
+const (
+	// RoleSigned filed or signed the business; the label line names them.
+	RoleSigned AuthorRole = iota
+	// RoleTookOver continued a business whose filer left the chamber.
+	RoleTookOver
+	// RoleCoSigned signed beside the filer. Named in the text posts, where a
+	// handle can be tagged, never on the label line or the card.
+	RoleCoSigned
+)
 
 // MemberVote is one member's recorded vote.
 //
