@@ -181,7 +181,7 @@ https://www.linkedin.com/in/christof-gerber/
 var facebookConfig = platformConfig{
 	Key:           "facebook",
 	DisplayName:   "Facebook",
-	Subject:       "zueriratsinfo jetzt auch auf Facebook",
+	Subject:       "Neu: zueriratsinfo auf Facebook und CH Parl Info für den Nationalrat",
 	SkipIfOn:      []string{"bluesky", "instagram", "x"},
 	IncludeCanton: true,
 	Body:          func(string) string { return facebookBody(false) },
