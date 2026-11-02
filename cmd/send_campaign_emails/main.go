@@ -17,17 +17,18 @@ import (
 )
 
 var (
-	contactsPath   = flag.String("contacts", contacts.PathFor("zurich-city"), "Path to contacts YAML file")
-	overridesPath  = flag.String("overrides", "data/email_overrides.yaml", "Path to email overrides YAML file")
-	platform       = flag.String("platform", "", "Platform campaign: bluesky | instagram (mutually exclusive with --audience/--custom)")
-	audience       = flag.String("audience", "", "Audience campaign: city-parties | cantonal-national-parties | cantonal-zh | federal-zh (mutually exclusive with --platform/--custom)")
-	custom         = flag.String("custom", "", "Custom campaign: path to a messages YAML file (per-message to/subject/body; mutually exclusive with --platform/--audience)")
-	recipientsPath = flag.String("recipients", "", "Override the recipient YAML file for --audience (default: the audience's data/campaign_recipients/*.yaml)")
-	preview        = flag.Bool("preview", false, "Preview: render all emails")
-	outputFile     = flag.String("output", "", "Output file for preview (default: stdout)")
-	testAddr       = flag.String("test", "", "Test mode: send all emails to this address")
-	send           = flag.Bool("send", false, "Send emails to actual recipients")
-	delay          = flag.Int("delay", 2, "Seconds between sends")
+	contactsPath         = flag.String("contacts", contacts.PathFor("zurich-city"), "Path to contacts YAML file")
+	overridesPath        = flag.String("overrides", "data/email_overrides.yaml", "Path to email overrides YAML file")
+	platform             = flag.String("platform", "", "Platform campaign: bluesky | instagram | facebook (mutually exclusive with --audience/--custom)")
+	audience             = flag.String("audience", "", "Audience campaign: city-parties | cantonal-national-parties | cantonal-zh | federal-zh (mutually exclusive with --platform/--custom)")
+	custom               = flag.String("custom", "", "Custom campaign: path to a messages YAML file (per-message to/subject/body; mutually exclusive with --platform/--audience)")
+	cantonRecipientsPath = flag.String("canton-recipients", "data/campaign_recipients/cantonal_zh_politicians.yaml", "Kantonsrat email source for platforms that include the canton (gitignored local file; matched to contacts by name)")
+	recipientsPath       = flag.String("recipients", "", "Override the recipient YAML file for --audience (default: the audience's data/campaign_recipients/*.yaml)")
+	preview              = flag.Bool("preview", false, "Preview: render all emails")
+	outputFile           = flag.String("output", "", "Output file for preview (default: stdout)")
+	testAddr             = flag.String("test", "", "Test mode: send all emails to this address")
+	send                 = flag.Bool("send", false, "Send emails to actual recipients")
+	delay                = flag.Int("delay", 2, "Seconds between sends")
 )
 
 type platformConfig struct {
@@ -35,11 +36,21 @@ type platformConfig struct {
 	DisplayName string
 	Subject     string
 	Body        func(platformURL string) string
+	// SkipIfOn lists platforms whose holders are left out: they already heard
+	// about the project through that channel, so this email would be a repeat.
+	SkipIfOn []string
+	// IncludeCanton also mails the Kantonsrat contacts, whose emails come from
+	// --canton-recipients since the Gemeinderat API does not know them.
+	IncludeCanton bool
+	// FormalBody is the Sie variant, used for recipients flagged formal in the
+	// recipients file. Without it everyone gets Body (du).
+	FormalBody func(platformURL string) string
 }
 
 var platformConfigs = map[string]platformConfig{
 	"bluesky":   blueskyConfig,
 	"instagram": instagramConfig,
+	"facebook":  facebookConfig,
 }
 
 // audienceConfig describes an outreach campaign to a whole audience (parties,
@@ -165,6 +176,74 @@ https://www.linkedin.com/in/christof-gerber/
 	},
 }
 
+// facebookConfig only targets contacts whose sole project-relevant channel is
+// Facebook: anyone on Bluesky, Instagram or X is reached through those already.
+var facebookConfig = platformConfig{
+	Key:           "facebook",
+	DisplayName:   "Facebook",
+	Subject:       "zueriratsinfo jetzt auch auf Facebook",
+	SkipIfOn:      []string{"bluesky", "instagram", "x"},
+	IncludeCanton: true,
+	Body:          func(string) string { return facebookBody(false) },
+	FormalBody:    func(string) string { return facebookBody(true) },
+}
+
+// facebookBody renders the Facebook announcement in du or Sie form. It does not
+// quote the recipient's own Facebook account: the posts name members on
+// Facebook without tagging them, so the account changes nothing they would see.
+//
+// It follows the welcome email to new members: what parlinfo is, why it
+// exists, what it does for the reader, and every account of both channels, so
+// the Facebook news arrives as part of the project rather than on its own.
+func facebookBody(formal bool) string {
+	w := struct{ Intro, Find, ForYou, Yours, You, Follow, Feedback, Thanks string }{
+		"dir",
+		"zueriratsinfo findest du auf:",
+		"Für dich",
+		"Deine Vorstösse",
+		"du siehst",
+		"du den Accounts folgst",
+		"Und ich bin gespannt auf dein Feedback: Was fehlt dir in den Posts, oder was würde sie für dich nützlicher machen?",
+		"Liebe Grüsse",
+	}
+	if formal {
+		w.Intro, w.Find, w.ForYou, w.Yours, w.You = "Ihnen", "zueriratsinfo finden Sie auf:", "Für Sie", "Ihre Vorstösse", "Sie sehen"
+		w.Follow = "Sie den Accounts folgen"
+		w.Feedback = "Und ich bin gespannt auf Ihr Feedback: Was fehlt Ihnen in den Posts, oder was würde sie für Sie nützlicher machen?"
+		w.Thanks = "Freundliche Grüsse"
+	}
+	//nolint:misspell // German: "Partizipation"
+	return fmt.Sprintf(`zueriratsinfo gibt es jetzt auch auf Facebook. Ich möchte %s bei dieser Gelegenheit kurz parlinfo und zueriratsinfo vorstellen.
+
+parlinfo ist ein ehrenamtliches Civic-Tech-Projekt, das Abstimmungsresultate aus Parlamenten automatisiert auf Social Media bringt. Für Zürich läuft es als zueriratsinfo und veröffentlicht die Abstimmungen aus dem Kantonsrat und dem Gemeinderat der Stadt Zürich. Zu jeder Abstimmung zeigen wir, wie die einzelnen Fraktionen gestimmt haben, und nennen die Politikerinnen und Politiker, die den Vorstoss eingereicht haben.
+
+Unser Antrieb ist einfach: Eine gesunde Demokratie braucht Partizipation, also Bürgerinnen und Bürger, die Entscheide mitverfolgen und mitgestalten können. Und sie braucht Transparenz darüber, was Politikerinnen und Politiker tatsächlich tun, sichtbar dort, wo die Menschen ohnehin schon sind.
+
+%s kann das in zwei Richtungen nützlich sein: %s und ihr Ausgang erreichen Leute, die nie ins Ratsportal schauen würden. Und %s auf einen Blick, wie die Fraktionen zu einem Geschäft abgestimmt haben, ohne Protokolle durchzugehen.
+
+%s
+📘 Facebook (neu): https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
+📸 Instagram: https://www.instagram.com/zueriratsinfo
+✖️ X: https://x.com/zuerichratsinfo
+🔵 Bluesky: https://bsky.app/profile/zuerichratsinfo.bsky.social
+
+Neu gibt es parlinfo auch für den Nationalrat, als CH Parl Info:
+📘 Facebook: https://www.facebook.com/profile.php?id=61595771216866
+📸 Instagram: https://www.instagram.com/chparlinfo
+✖️ X: https://x.com/chparlinfo
+🔵 Bluesky: https://bsky.app/profile/chparlinfo.bsky.social
+
+Ich würde mich freuen, wenn %s. %s
+
+Weitere Informationen zum Projekt:
+https://github.com/SiiiTschiii/parlinfo
+
+%s
+Christof
+https://www.linkedin.com/in/christof-gerber/
+`, w.Intro, w.ForYou, w.Yours, w.You, w.Find, w.Follow, w.Feedback, w.Thanks)
+}
+
 type Recipient struct {
 	Name        string
 	Email       string
@@ -251,7 +330,7 @@ func buildCampaign() Campaign {
 		}
 	}
 	if modes == 0 {
-		log.Fatal("One of --platform (bluesky|instagram), --audience (city-parties|…) or --custom <file> is required")
+		log.Fatal("One of --platform (bluesky|instagram|facebook), --audience (city-parties|…) or --custom <file> is required")
 	}
 	if modes > 1 {
 		log.Fatal("Use only one of --platform, --audience or --custom")
@@ -263,13 +342,17 @@ func buildCampaign() Campaign {
 	case *platform != "":
 		cfg, ok := platformConfigs[strings.ToLower(*platform)]
 		if !ok {
-			log.Fatalf("Unknown --platform %q; supported: bluesky, instagram", *platform)
+			log.Fatalf("Unknown --platform %q; supported: bluesky, instagram, facebook", *platform)
 		}
 		return Campaign{
 			Recipients:    buildPlatformRecipientList(cfg),
 			RenderSubject: func(Recipient) string { return cfg.Subject },
 			RenderBody: func(r Recipient) string {
-				return fmt.Sprintf("%s %s\n\n%s", r.Salutation, r.Name, cfg.Body(r.PlatformURL))
+				body := cfg.Body
+				if r.Formal && cfg.FormalBody != nil {
+					body = cfg.FormalBody
+				}
+				return greetingFor(r) + "\n\n" + body(r.PlatformURL)
 			},
 		}
 	case *audience != "":
@@ -438,12 +521,19 @@ func buildPlatformRecipientList(cfg platformConfig) []Recipient {
 
 	allContacts := mapper.GetAllContacts()
 	var matchingContacts []contacts.Contact
+	skipped := 0
 	for _, c := range allContacts {
-		if len(mapper.GetPlatformURLs(c.Name, cfg.Key)) > 0 {
-			matchingContacts = append(matchingContacts, c)
+		if len(mapper.GetPlatformURLs(c.Name, cfg.Key)) == 0 {
+			continue
 		}
+		if hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) {
+			skipped++
+			continue
+		}
+		matchingContacts = append(matchingContacts, c)
 	}
-	fmt.Fprintf(os.Stderr, "Found %d contacts with %s accounts\n", len(matchingContacts), cfg.DisplayName)
+	fmt.Fprintf(os.Stderr, "Found %d contacts with %s accounts (%d skipped for also being on %s)\n",
+		len(matchingContacts), cfg.DisplayName, skipped, strings.Join(cfg.SkipIfOn, "/"))
 
 	fmt.Fprintf(os.Stderr, "Fetching contact data from API...\n")
 	client := zurichapi.NewClient()
@@ -503,12 +593,74 @@ func buildPlatformRecipientList(cfg platformConfig) []Recipient {
 		})
 	}
 
-	fmt.Fprintf(os.Stderr, "Total: %d recipients (%d from API, %d from overrides)\n",
+	if cfg.IncludeCanton {
+		recipients = append(recipients, buildCantonRecipients(cfg, recipients)...)
+	}
+
+	fmt.Fprintf(os.Stderr, "Total: %d recipients (%d from API, %d from overrides, %d from Kantonsrat file)\n",
 		len(recipients),
 		countBySource(recipients, "api"),
-		countBySource(recipients, "override"))
+		countBySource(recipients, "override"),
+		countBySource(recipients, "kantonsrat"))
 
 	return recipients
+}
+
+// buildCantonRecipients adds the Kantonsrat contacts that qualify for the
+// platform (same SkipIfOn rule as the city list). Their emails are not in the
+// Gemeinderat API, so they are matched by name against the cantonal recipients
+// file, which also supplies gender and the du/Sie flag. Contacts already in
+// existing (a person sitting in both bodies) or without an email are skipped.
+func buildCantonRecipients(cfg platformConfig, existing []Recipient) []Recipient {
+	mapper, err := contacts.LoadContacts(contacts.PathFor("zurich-canton"))
+	if err != nil {
+		log.Fatalf("Failed to load canton contacts: %v", err)
+	}
+	if _, err := os.Stat(*cantonRecipientsPath); os.IsNotExist(err) {
+		// The file is gitignored, so a fresh checkout or worktree lacks it. An
+		// explicitly named file that is missing is a typo; the default is not.
+		explicit := false
+		flag.Visit(func(f *flag.Flag) { explicit = explicit || f.Name == "canton-recipients" })
+		if explicit {
+			log.Fatalf("Kantonsrat recipients file %s does not exist", *cantonRecipientsPath)
+		}
+		fmt.Fprintf(os.Stderr, "  ⚠️  %s not found: SKIPPING all Kantonsrat contacts (pass --canton-recipients <file> to include them)\n", *cantonRecipientsPath)
+		return nil
+	}
+	byName := make(map[string]Recipient)
+	for _, r := range loadAudienceRecipients(*cantonRecipientsPath) {
+		byName[normalize(r.Name)] = r
+	}
+	seen := make(map[string]bool)
+	for _, r := range existing {
+		seen[normalize(r.Name)] = true
+	}
+
+	var out []Recipient
+	for _, c := range mapper.GetAllContacts() {
+		urls := mapper.GetPlatformURLs(c.Name, cfg.Key)
+		if c.IsOrganization() || len(urls) == 0 || hasAnyPlatform(mapper, c.Name, cfg.SkipIfOn) || seen[normalize(c.Name)] {
+			continue
+		}
+		r, ok := byName[normalize(c.Name)]
+		if !ok {
+			fmt.Fprintf(os.Stderr, "  ⚠️  Kantonsrat contact not in %s (or no email): %s\n", *cantonRecipientsPath, c.Name)
+			continue
+		}
+		r.PlatformURL = urls[0]
+		r.Source = "kantonsrat"
+		out = append(out, r)
+	}
+	return out
+}
+
+func hasAnyPlatform(mapper *contacts.Mapper, name string, platforms []string) bool {
+	for _, p := range platforms {
+		if len(mapper.GetPlatformURLs(name, p)) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func countBySource(recipients []Recipient, source string) int {
