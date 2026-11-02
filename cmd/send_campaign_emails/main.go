@@ -221,7 +221,7 @@ Unser Antrieb ist einfach: Eine gesunde Demokratie braucht Partizipation, also B
 %s kann das in zwei Richtungen nützlich sein: %s und ihr Ausgang erreichen Leute, die nie ins Ratsportal schauen würden. Und %s auf einen Blick, wie die Fraktionen zu einem Geschäft abgestimmt haben, ohne Protokolle durchzugehen.
 
 %s
-📘 Facebook (neu): https://www.facebook.com/profile.php?id=1063164230212573
+📘 Facebook (neu): https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/
 📸 Instagram: https://www.instagram.com/zueriratsinfo
 ✖️ X: https://x.com/zuerichratsinfo
 🔵 Bluesky: https://bsky.app/profile/zuerichratsinfo.bsky.social
