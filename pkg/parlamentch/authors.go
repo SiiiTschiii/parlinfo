@@ -3,6 +3,7 @@ package parlamentch
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/votes"
@@ -15,15 +16,26 @@ import (
 // outlives its author's term — 17.523 was filed by Luzi Stamm in 2017 and came
 // to its final vote in 2026 under Bruno Walliser.
 //
-// 3, the Mitunterzeichner(-in), is left out, unlike in Kanton Zürich where every
-// signatory is named. A cantonal Postulat carries a handful of names; a federal
-// initiative carries up to eighteen, which fill half the card and push the
-// filer of the business into a reply on X. The filer is the fact a reader
-// needs; the co-signers are on the business page the post links.
+// 3, the Mitunterzeichner(-in), signed beside the filer. A federal initiative
+// carries up to twenty, which would fill half the card, so they keep
+// votes.RoleCoSigned and the formatters name them only in the text, where each
+// is a handle that can be tagged.
 const (
+	roleCoSigned  = 3
 	roleTakenOver = 4
 	roleAuthor    = 7
 )
+
+// authorRoles maps the service's codes onto the roles posts distinguish, in
+// the order they are named: who filed, who took over, who co-signed.
+var authorRoles = []struct {
+	code int
+	role votes.AuthorRole
+}{
+	{roleAuthor, votes.RoleSigned},
+	{roleTakenOver, votes.RoleTookOver},
+	{roleCoSigned, votes.RoleCoSigned},
+}
 
 // businessRoleDTO is one row of BusinessRole: a person, group, committee or
 // canton with a role on a business. MemberCouncilNumber is null unless the
@@ -60,7 +72,8 @@ func partyLabel(abbreviation string) string {
 	return abbreviation
 }
 
-// authorsOf returns the members who filed a business, remembering them for the
+// authorsOf returns the members who filed, took over or co-signed a business,
+// remembering them for the
 // rest of the run, since every vote of a group asks.
 //
 // Authorship is enrichment, so a failure costs the names and nothing else: the
@@ -79,8 +92,8 @@ func (c *Client) authorsOf(businessNumber int64) []votes.Author {
 	return authors
 }
 
-// businessAuthors asks who filed a business and who took it over, then looks
-// their names and parties up.
+// businessAuthors asks who filed a business, who took it over and who
+// co-signed it, then looks their names and parties up in one request.
 //
 // Most business the Nationalrat takes a final vote on comes from the Federal
 // Council or a committee, and has no member in either role: in the year to
@@ -88,21 +101,21 @@ func (c *Client) authorsOf(businessNumber int64) []votes.Author {
 func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
 	var roles []businessRoleDTO
 	err := c.get("/BusinessRole", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d and (Role eq %d or Role eq %d)",
-			businessNumber, roleAuthor, roleTakenOver),
+		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
+			businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
 		"$select": "Role,MemberCouncilNumber",
 	}, &roles)
 	if err != nil {
 		return nil, err
 	}
-	ids := authorOrder(roles)
-	if len(ids) == 0 {
+	held := authorOrder(roles)
+	if len(held) == 0 {
 		return nil, nil
 	}
 
-	clauses := make([]string, len(ids))
-	for i, id := range ids {
-		clauses[i] = fmt.Sprintf("ID eq %d", id)
+	clauses := make([]string, len(held))
+	for i, h := range held {
+		clauses[i] = fmt.Sprintf("ID eq %d", h.id)
 	}
 	var members []authorDTO
 	err = c.get("/MemberCouncil", query{
@@ -112,49 +125,76 @@ func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
 	if err != nil {
 		return nil, err
 	}
-	return namedAuthors(ids, members), nil
+	return namedAuthors(held, members), nil
+}
+
+// heldRole is a member and the role they hold on a business.
+type heldRole struct {
+	id   int64
+	role votes.AuthorRole
 }
 
 // authorOrder returns the members holding a role, filer first: the business is
-// theirs, and the one who took it over is named after them. Rows held by a
-// committee or a canton have no member number and are skipped; a committee's
-// business is posted as the committee's, without names.
-func authorOrder(roles []businessRoleDTO) []int64 {
-	var ids []int64
+// theirs, then whoever took it over, then the co-signers. A member holding two
+// roles is named once, in the first. Rows held by a committee or a canton have
+// no member number and are skipped; a committee's business is posted as the
+// committee's, without names.
+func authorOrder(roles []businessRoleDTO) []heldRole {
+	var held []heldRole
 	seen := map[int64]bool{}
-	for _, want := range []int{roleAuthor, roleTakenOver} {
+	for _, want := range authorRoles {
 		for _, r := range roles {
-			if r.Role != want || r.MemberCouncilNumber == nil || seen[*r.MemberCouncilNumber] {
+			if r.Role != want.code || r.MemberCouncilNumber == nil || seen[*r.MemberCouncilNumber] {
 				continue
 			}
 			seen[*r.MemberCouncilNumber] = true
-			ids = append(ids, *r.MemberCouncilNumber)
+			held = append(held, heldRole{*r.MemberCouncilNumber, want.role})
 		}
 	}
-	return ids
+	return held
 }
 
-// namedAuthors puts the looked-up members in the order of ids. A member the
-// lookup did not return, or one without a name or party, is left out: the
-// formatters treat the party as what marks a member acting in the chamber, and
-// a filer who has left is still a member of record with their party.
-func namedAuthors(ids []int64, members []authorDTO) []votes.Author {
+// namedAuthors puts the looked-up members in the order of held, with the
+// co-signers sorted by surname: the service returns them in no stated order,
+// and a list that reshuffled between runs would read as a different list. A
+// member the lookup did not return, or one without a name or party, is left
+// out: the formatters treat the party as what marks a member acting in the
+// chamber, and a filer who has left is still a member of record with their
+// party.
+func namedAuthors(held []heldRole, members []authorDTO) []votes.Author {
 	byID := make(map[int64]authorDTO, len(members))
 	for _, m := range members {
 		byID[m.ID] = m
 	}
-	authors := make([]votes.Author, 0, len(ids))
-	for _, id := range ids {
-		m, ok := byID[id]
+	type named struct {
+		author  votes.Author
+		surname string
+	}
+	list := make([]named, 0, len(held))
+	for _, h := range held {
+		m, ok := byID[h.id]
 		if !ok {
 			continue
 		}
-		name := strings.TrimSpace(strings.TrimSpace(m.FirstName) + " " + strings.TrimSpace(m.LastName))
+		first, last := strings.TrimSpace(m.FirstName), strings.TrimSpace(m.LastName)
+		name := strings.TrimSpace(first + " " + last)
 		party := partyLabel(m.PartyAbbreviation)
 		if name == "" || party == "" {
 			continue
 		}
-		authors = append(authors, votes.Author{Name: name, Party: party})
+		list = append(list, named{votes.Author{Name: name, Party: party, Role: h.role}, strings.ToLower(last + " " + first)})
+	}
+	// held puts the co-signers last, so only that tail is sorted.
+	tail := len(list)
+	for tail > 0 && list[tail-1].author.Role == votes.RoleCoSigned {
+		tail--
+	}
+	coSigners := list[tail:]
+	sort.SliceStable(coSigners, func(i, j int) bool { return coSigners[i].surname < coSigners[j].surname })
+
+	authors := make([]votes.Author, len(list))
+	for i, n := range list {
+		authors[i] = n.author
 	}
 	return authors
 }

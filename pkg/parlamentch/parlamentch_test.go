@@ -57,18 +57,21 @@ func newTestClient(t *testing.T) (*Client, *[]string) {
 			_, _ = w.Write([]byte(n))
 			return
 		case "/BusinessRole":
-			// Only 17.523 is recorded. The others are Federal Council
-			// business, for which the service answers with no rows.
+			// Only 17.523 and 21.472 are recorded. The others are Federal
+			// Council business, for which the service answers with no rows.
 			m := businessNumber.FindStringSubmatch(r.URL.Query().Get("$filter"))
-			if m == nil || m[1] != "20170523" {
+			if m == nil || (m[1] != "20170523" && m[1] != "20210472") {
 				_, _ = w.Write([]byte(`{"d":{"results":[]}}`))
 				return
 			}
 			name = "roles_" + m[1] + ".json"
 		case "/MemberCouncil":
 			name = "members.json"
-			if strings.Contains(r.URL.Query().Get("$filter"), "ID eq 214 ") {
+			switch f := r.URL.Query().Get("$filter"); {
+			case strings.Contains(f, "ID eq 214 "):
 				name = "authors_20170523.json"
+			case strings.Contains(f, "ID eq 4301 "):
+				name = "authors_20210472.json"
 			}
 		case "/Voting":
 			m := idVoting.FindStringSubmatch(r.URL.Query().Get("$filter"))

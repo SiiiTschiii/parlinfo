@@ -66,16 +66,20 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	root, deferred := buildRootPost(group, title, contactMapper, charLimit)
 
 	// --- Build reply posts ---
-	// Signatories the root had no room for lead the thread: naming them costs a
-	// line here, where truncating the title to keep them would have cost the
-	// subject of the vote.
+	// Members the root had no room for lead the thread, then the co-signers:
+	// naming them costs a line here, where truncating the title to keep them
+	// would have cost the subject of the vote.
 	//
 	// Tagged like the root's own line. X finds no mentions on its own, so a
 	// handle only exists where this puts one — and a member shed from the root
 	// for length has done nothing to deserve losing their tag.
-	signatories := voteformat.SignatoryLine(group, deferred)
+	var tag func(string) string
 	if contactMapper != nil {
-		signatories = contactMapper.TagXHandlesInText(signatories)
+		tag = contactMapper.TagXHandlesInText
+	}
+	var signatories []string
+	for _, b := range voteformat.SignatoryBlocks(group, deferred) {
+		signatories = append(signatories, voteformat.PackNames(b, tag, charLimit, weightedLen)...)
 	}
 	replies, voteStarts := buildReplyPosts(group, signatories, voteformat.LinkLine(group), contactMapper, charLimit)
 
@@ -86,8 +90,8 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
 }
 
-// replyEntry is one block of reply text: a link block (link) or the signatory
-// line, both with vote -1, or a vote's counts (starts) or its Fraktion
+// replyEntry is one block of reply text: a link block (link) or a block of
+// names, both with vote -1, or a vote's counts (starts) or its Fraktion
 // breakdown.
 type replyEntry struct {
 	text   string
@@ -202,7 +206,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs entries into replies (≤charLimit).
 // The link block leads, and each vote opens a reply of its own.
-func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contactMapper *contacts.Mapper, charLimit int) ([]*XPost, []int) {
+func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, contactMapper *contacts.Mapper, charLimit int) ([]*XPost, []int) {
 
 	// Build individual vote entries
 	var entries []replyEntry
@@ -214,10 +218,10 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contact
 	if link := strings.Trim(linkLine, "\n"); link != "" {
 		entries = append(entries, replyEntry{text: link, vote: -1, link: true})
 	}
-	// The signatories the root could not hold come next, so a reader meets
-	// them before the tallies rather than after them.
-	if signatoryLine != "" {
-		entries = append(entries, replyEntry{text: signatoryLine, vote: -1})
+	// The names the root could not hold come next, so a reader meets them
+	// before the tallies rather than after them. Each is at most one post long.
+	for _, s := range signatories {
+		entries = append(entries, replyEntry{text: s, vote: -1})
 	}
 
 	for i, vote := range group {
