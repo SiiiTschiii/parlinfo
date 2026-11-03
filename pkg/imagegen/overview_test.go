@@ -238,3 +238,22 @@ func TestTitleAlt_CountsVotesWithoutTotals(t *testing.T) {
 		t.Errorf("alt text states pass/fail totals the card does not:\n%s", alt)
 	}
 }
+
+// A row without a verdict draws no mark, and a group where no row has one
+// gives the mark column to the labels; a group with any verdict keeps the
+// column, so its labels still line up.
+func TestBuildOverview_MarkColumnOnlyWhenSomeRowHasAVerdict(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	faces := fonts.overviewRows[0]
+	none := buildOverview(testfixtures.KantonsratMultiVote(), faces, 0)
+	some := buildOverview(testfixtures.MultiVoteGroup(), faces, 0)
+	if none.markW != 0 {
+		t.Errorf("group without verdicts reserves a %dpx mark column", none.markW)
+	}
+	if some.markW == 0 || some.labelX <= none.labelX {
+		t.Errorf("group with verdicts lost its mark column (markW=%d, labelX=%d vs %d)", some.markW, some.labelX, none.labelX)
+	}
+}

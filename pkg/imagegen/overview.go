@@ -84,7 +84,7 @@ const rowRuleAlpha = 0x48
 type markKind int
 
 const (
-	markNone     markKind = iota // no verdict to state: an outline with a dash
+	markNone     markKind = iota // no verdict to state: no mark at all
 	markAccepted                 // white box, check
 	markRejected                 // white box, cross
 	markAuswahl                  // white box, the chosen option's letter
@@ -178,8 +178,17 @@ func auswahlParts(c voteformat.VoteCounts, sep string) []string {
 func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLayout {
 	ol := overviewLayout{faces: faces, tallyRight: imgWidth - padding}
 	ol.numW = font.MeasureString(faces.bold, strconv.Itoa(len(group))).Ceil()
-	ol.markW = markSize(faces.text)
-	ol.labelX = padding + ol.numW + overviewNumGap + ol.markW + overviewMarkGap
+	// A row that states no verdict draws no mark, so a group where no row
+	// states one — most Kantonsrat votes — gives the mark column's width to
+	// the labels rather than leaving it empty down the card.
+	ol.labelX = padding + ol.numW + overviewNumGap
+	for _, v := range group {
+		if kind, _ := voteMark(v); kind != markNone {
+			ol.markW = markSize(faces.text)
+			ol.labelX += ol.markW + overviewMarkGap
+			break
+		}
+	}
 
 	tallyW := 0
 	for _, v := range group {
@@ -440,7 +449,7 @@ func drawOverviewRow(img *image.RGBA, cur *layoutCursor, ol overviewLayout, r ov
 		capTop := base - text.Metrics().Ascent.Ceil()*72/100
 		markX := padding + ol.numW + overviewNumGap
 		markY := (capTop+base)/2 - ol.markW/2
-		if r.mark != markOmitted {
+		if r.mark != markNone && r.mark != markOmitted {
 			drawMark(img, markX, markY, ol.markW, r, bold, bg)
 		}
 
@@ -462,56 +471,34 @@ func drawOverviewRow(img *image.RGBA, cur *layoutCursor, ol overviewLayout, r ov
 // ✅ and ❌ are outline glyphs of different weights, and the rows read better
 // with one solid shape that differs only in its stroke.
 func drawMark(img *image.RGBA, x, y, size int, r overviewRow, letterFace font.Face, bg color.RGBA) {
-	box := markMask(r.mark, size)
+	box := markMask(size)
 	drawMask(img, box, x+shadowOff, y+shadowOff, darken(bg))
-
-	switch r.mark {
-	case markNone:
-		drawMask(img, box, x, y, blend(bg, rowNoneAlpha))
-	default:
-		drawMask(img, box, x, y, color.RGBA{0xFF, 0xFF, 0xFF, 0xFF})
-		if r.mark == markAuswahl {
-			w := font.MeasureString(letterFace, r.letter).Ceil()
-			m := letterFace.Metrics()
-			capH := m.Ascent.Ceil() * 72 / 100
-			d := &font.Drawer{Dst: img, Src: image.NewUniform(bg), Face: letterFace,
-				Dot: fixed.P(x+(size-w)/2, y+(size+capH)/2)}
-			d.DrawString(r.letter)
-			return
-		}
-		drawMask(img, strokeMask(r.mark, size), x, y, bg)
+	drawMask(img, box, x, y, color.RGBA{0xFF, 0xFF, 0xFF, 0xFF})
+	if r.mark == markAuswahl {
+		w := font.MeasureString(letterFace, r.letter).Ceil()
+		m := letterFace.Metrics()
+		capH := m.Ascent.Ceil() * 72 / 100
+		d := &font.Drawer{Dst: img, Src: image.NewUniform(bg), Face: letterFace,
+			Dot: fixed.P(x+(size-w)/2, y+(size+capH)/2)}
+		d.DrawString(r.letter)
+		return
 	}
+	drawMask(img, strokeMask(r.mark, size), x, y, bg)
 }
-
-// rowNoneAlpha is how strongly the no-verdict outline shows: dimmer than a
-// verdict, so a row that claims nothing does not look like one that does.
-const rowNoneAlpha = 0xA8
 
 const markSupersample = 4
 
-// markMask is the box of a mark as an alpha mask: filled for a verdict, an
-// outline with a dash for markNone.
-func markMask(kind markKind, size int) *image.Alpha {
+// markMask is the filled rounded box of a mark as an alpha mask.
+func markMask(size int) *image.Alpha {
 	s := float64(size * markSupersample)
 	hi := image.NewAlpha(image.Rect(0, 0, size*markSupersample, size*markSupersample))
 	radius := s * 0.18
-	stroke := s * 0.08
 	for py := 0; py < hi.Rect.Dy(); py++ {
 		for px := 0; px < hi.Rect.Dx(); px++ {
-			fx, fy := float64(px)+0.5, float64(py)+0.5
-			d := roundedBoxDist(fx, fy, s, radius)
-			in := d <= 0
-			if kind == markNone {
-				in = in && d > -stroke
-			}
-			if in {
+			if roundedBoxDist(float64(px)+0.5, float64(py)+0.5, s, radius) <= 0 {
 				hi.SetAlpha(px, py, color.Alpha{0xFF})
 			}
 		}
-	}
-	if kind == markNone {
-		// The dash.
-		strokeLine(hi, s*0.32, s*0.5, s*0.68, s*0.5, s*0.11)
 	}
 	return downsample(hi, size)
 }
