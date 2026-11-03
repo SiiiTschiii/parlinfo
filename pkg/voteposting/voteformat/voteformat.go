@@ -579,6 +579,25 @@ func IsUnsupportedVoteType(c VoteCounts) bool {
 	return true
 }
 
+// IsEmptyNormalVote reports whether these counts belong to an ordinary
+// Ja/Nein vote with nothing recorded at all: type "Normal" exactly and every
+// count, Abwesend included, nil or zero. A real vote seats a chamber, so even a
+// unanimous one carries a non-zero Ja or Abwesend; a record with none is a
+// placeholder the source never filled in. The Gemeinderat Zürich page for one
+// shows no title, no Geschäft and a Stimmen Total of 0. A negative count is a
+// fault in the source, not an empty record.
+func IsEmptyNormalVote(c VoteCounts) bool {
+	if strings.TrimSpace(c.Type) != "Normal" {
+		return false
+	}
+	for _, f := range []*int{c.Ja, c.Nein, c.Enthaltung, c.Abwesend, c.A, c.B, c.C, c.D, c.E} {
+		if f != nil && *f != 0 {
+			return false
+		}
+	}
+	return true
+}
+
 // IsEmptyQuorumRound reports whether these counts belong to a quorum round in
 // which nobody voted: type "Quorum" exactly (not the Ausgabenbremse, which
 // shares its rendering but not its history) and every count nil or zero. A
