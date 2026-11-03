@@ -74,6 +74,7 @@ const (
 	markAccepted                 // white box, check
 	markRejected                 // white box, cross
 	markAuswahl                  // white box, the chosen option's letter
+	markOmitted                  // no mark: the "… und N weitere" row
 )
 
 type overviewRow struct {
@@ -291,10 +292,58 @@ func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.
 			}
 		}
 	}
-	if fallback == nil {
-		fallback = last
+	if fallback != nil {
+		return fallback.face, fallback.lines, fallback.ol, nil
 	}
-	return fallback.face, fallback.lines, fallback.ol, nil
+	if overviewFits(last.face, last.lines, last.ol, inset, fonts, withTotals) {
+		return last.face, last.lines, last.ol, nil
+	}
+	return squeezeOverview(group, title, inset, maxWidth, fonts, withTotals)
+}
+
+// overviewLabelFloor is the length labels are cut to when even the smallest
+// rows with summarySubtitleMaxRunes labels overrun the card: short enough to
+// set on one line at the smallest size.
+const overviewLabelFloor = 36
+
+// overviewFits reports whether a title and rows fit between the card's inset
+// and its bottom margin. Ellipsising the title cannot make room the rows
+// themselves take, so a layout that overruns has to lose rows instead.
+func overviewFits(face font.Face, lines []string, ol overviewLayout, inset int, fonts *fontSet, withTotals bool) bool {
+	h := titleBlockHeight(face, len(lines)) + titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height()
+	return len(lines) > 0 && h <= imgHeight-inset-2*padding
+}
+
+// squeezeOverview is the last resort for a group too long for the card at any
+// size: labels cut to one line, then rows dropped from the end in favour of a
+// closing "… und N weitere Abstimmungen" row, until the rest fits. Every
+// vote still has its own result card, and the dropped rows' results are in the
+// caption and the alt text.
+func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, overviewLayout, error) {
+	full := buildOverview(group, fonts.overviewRows[len(fonts.overviewRows)-1], overviewLabelFloor)
+	var face font.Face
+	var lines []string
+	var ol overviewLayout
+	for keep := len(group); keep >= 1; keep-- {
+		ol = full
+		ol.rows = append([]overviewRow(nil), full.rows[:keep]...)
+		if dropped := len(group) - keep; dropped > 0 {
+			ol.rows = append(ol.rows, overviewRow{
+				mark:  markOmitted,
+				lines: []string{fmt.Sprintf("… und %d weitere Abstimmungen", dropped)},
+			})
+		}
+		reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
+		var err error
+		face, lines, err = cardTitle(group, title, maxWidth, titleBudget(inset, reserve))
+		if err != nil {
+			return nil, nil, overviewLayout{}, err
+		}
+		if overviewFits(face, lines, ol, inset, fonts, withTotals) {
+			break
+		}
+	}
+	return face, lines, ol, nil
 }
 
 func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {
@@ -390,7 +439,9 @@ func drawOverviewRow(img *image.RGBA, cur *layoutCursor, ol overviewLayout, r ov
 		capTop := base - text.Metrics().Ascent.Ceil()*72/100
 		markX := padding + ol.numW + overviewNumGap
 		markY := (capTop+base)/2 - ol.markW/2
-		drawMark(img, markX, markY, ol.markW, r, bold, bg)
+		if r.mark != markOmitted {
+			drawMark(img, markX, markY, ol.markW, r, bold, bg)
+		}
 
 		for i, line := range r.lines {
 			drawShadowedText(img, text, nil, ol.labelX, base+i*lineHeight(text), line, bg)
