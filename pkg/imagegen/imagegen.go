@@ -314,9 +314,15 @@ func fitTitle(title string, maxWidth, available int) (font.Face, []string, error
 // fitTitleFully is fitTitle, and also reports whether the title got in whole.
 // False means the font ladder ran out and the last lines were cut.
 func fitTitleFully(title string, maxWidth, available int) (font.Face, []string, bool, error) {
+	return fitTitleFullyFrom(title, maxWidth, available, titleFontMax)
+}
+
+// fitTitleFullyFrom is fitTitleFully with the ladder starting at maxSize
+// rather than titleFontMax.
+func fitTitleFullyFrom(title string, maxWidth, available int, maxSize float64) (font.Face, []string, bool, error) {
 	var face font.Face
 	var lines []string
-	for size := titleFontMax; size >= titleFontMin; size -= titleFontStep {
+	for size := maxSize; size >= titleFontMin; size -= titleFontStep {
 		f, err := loadFace(goregular.TTF, size)
 		if err != nil {
 			return nil, nil, false, err
@@ -354,6 +360,12 @@ func cardTitle(group []votes.Vote, subject string, maxWidth, available int) (fon
 // been dropped is not whole, so a caller with something else to give up can
 // still win those names back.
 func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int) (font.Face, []string, bool, error) {
+	return cardTitleFullyFrom(group, subject, maxWidth, available, titleFontMax)
+}
+
+// cardTitleFullyFrom is cardTitleFully with the font ladder starting at
+// maxSize rather than titleFontMax.
+func cardTitleFullyFrom(group []votes.Vote, subject string, maxWidth, available int, maxSize float64) (font.Face, []string, bool, error) {
 	// Fullest first, then one name shorter each time, down to a lone name.
 	caps := []int{0}
 	for n := voteformat.CountAuthors(group) - 1; n >= 1; n-- {
@@ -368,7 +380,7 @@ func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int)
 			title = prefix + ": " + subject
 		}
 
-		f, ls, whole, err := fitTitleFully(title, maxWidth, available)
+		f, ls, whole, err := fitTitleFullyFrom(title, maxWidth, available, maxSize)
 		if err != nil {
 			return nil, nil, false, err
 		}
@@ -684,6 +696,7 @@ type fontSet struct {
 	emojiVerdict font.Face // notoEmoji 72
 
 	overviewRows       []rowFaces // overviewRowSpecs, largest first
+	overviewRowsShort  []rowFaces // overviewShortRowSpecs then overviewRowSpecs
 	overviewTitleFloor font.Face  // goregular at overviewTitleFloor
 }
 
@@ -740,7 +753,7 @@ func loadFontSet() (*fontSet, error) {
 	if fs.overviewTitleFloor, err = load(goregular.TTF, overviewTitleFloor); err != nil {
 		return nil, fmt.Errorf("overview title floor font: %w", err)
 	}
-	for _, spec := range overviewRowSpecs {
+	for i, spec := range append(append([]overviewRowSpec(nil), overviewShortRowSpecs...), overviewRowSpecs...) {
 		var rf rowFaces
 		if rf.text, err = load(goregular.TTF, spec.size); err != nil {
 			return nil, fmt.Errorf("overview row font: %w", err)
@@ -749,7 +762,10 @@ func loadFontSet() (*fontSet, error) {
 			return nil, fmt.Errorf("overview row bold font: %w", err)
 		}
 		rf.pad = spec.pad
-		fs.overviewRows = append(fs.overviewRows, rf)
+		fs.overviewRowsShort = append(fs.overviewRowsShort, rf)
+		if i >= len(overviewShortRowSpecs) {
+			fs.overviewRows = append(fs.overviewRows, rf)
+		}
 	}
 
 	return &fs, nil

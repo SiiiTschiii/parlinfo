@@ -2,6 +2,8 @@ package imagegen
 
 import (
 	"fmt"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
+	"golang.org/x/image/font"
 	"strings"
 	"testing"
 
@@ -195,5 +197,48 @@ func TestTitleAlt_KeepsEveryTally(t *testing.T) {
 	if !strings.HasSuffix(alt, "12. – 129 Zustimmungen, 51 ohne Zustimmung") &&
 		!strings.HasSuffix(alt, "12. – 129 Zust. · 51 ohne") {
 		t.Fatalf("last vote's tally was cut:\n%s", alt)
+	}
+}
+
+// A quorum row's tally already says it was a quorum vote; an Ausgabenbremse
+// is tallied the same way but keeps its label, which is the only place that
+// says which procedure it was.
+func TestOverviewLabel_DropsOnlyTheQuorumSuffix(t *testing.T) {
+	quorum := votes.Vote{Type: "Quorum", Subtitle: "Antrag"}
+	if got := overviewLabel(quorum, 0, 2); strings.Contains(got, "Quorum") {
+		t.Errorf("quorum label = %q, want no type suffix", got)
+	}
+	brake := votes.Vote{Type: "Ausgabenbremse", Subtitle: "Antrag"}
+	if got, want := overviewLabel(brake, 0, 2), voteformat.SubVoteLabel(brake, 0, 2); got != want {
+		t.Errorf("Ausgabenbremse label = %q, want %q", got, want)
+	}
+}
+
+// A two-vote group is set larger than a group past overviewShortGroup: the
+// rows a long group needs would leave a short one half empty.
+func TestFitOverview_ShortGroupIsSetLarger(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	short := testfixtures.MultiVoteGroup()
+	long := testfixtures.KantonsratMultiVote()
+	fit := func(g []votes.Vote) (font.Face, overviewLayout) {
+		face, _, ol, err := fitOverview(g, bandInset(g[0]), imgWidth-2*padding, fonts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return face, ol
+	}
+	sFace, sRows := fit(short)
+	_, lRows := fit(long)
+	if lineHeight(sRows.faces.text) <= lineHeight(fonts.overviewRows[0].text) {
+		t.Errorf("short group's rows (%d) not above the long-group sizes (%d)", lineHeight(sRows.faces.text), lineHeight(fonts.overviewRows[0].text))
+	}
+	if lineHeight(lRows.faces.text) > lineHeight(fonts.overviewRows[0].text) {
+		t.Errorf("five-vote group took a short-group row size (%d)", lineHeight(lRows.faces.text))
+	}
+	if lineHeight(sFace) <= lineHeight(fonts.overviewTitleFloor) {
+		t.Errorf("short group's title (%d) not set above the floor", lineHeight(sFace))
 	}
 }

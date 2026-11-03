@@ -45,6 +45,21 @@ var overviewRowSpecs = []overviewRowSpec{
 	{28, 0.24},
 }
 
+// A short group — a business with two or three votes — would leave half the
+// card empty at the sizes that suit a long one. It gets larger rows to try
+// first, and a title ladder that starts at overviewShortTitleMax rather than
+// titleFontMax, so the card is filled by the same content set larger rather
+// than by space.
+const (
+	overviewShortGroup    = 3
+	overviewShortTitleMax = 52.0
+)
+
+var overviewShortRowSpecs = []overviewRowSpec{
+	{42, 0.5},
+	{38, 0.45},
+}
+
 // rowFaces is one overviewRowSpec loaded: the label face, the bold face the
 // number and the tally are set in, and the row padding.
 type rowFaces struct {
@@ -194,7 +209,7 @@ func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLay
 	}
 
 	for i, v := range group {
-		label := voteformat.SubVoteLabel(v, i, len(group))
+		label := overviewLabel(v, i, len(group))
 		if maxRunes > 0 {
 			label = truncateWithEllipsis(label, maxRunes)
 		}
@@ -208,6 +223,19 @@ func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLay
 		})
 	}
 	return ol
+}
+
+// overviewLabel is the vote's label as its row prints it: SubVoteLabel without
+// the " · Quorum" suffix, which the row's tally ("129 Zust. · 51 ohne")
+// already says. Other type labels stay: an Ausgabenbremse is tallied the same
+// way as a quorum vote but is a different procedure, and only the label says
+// which.
+func overviewLabel(v votes.Vote, index, groupSize int) string {
+	label := voteformat.SubVoteLabel(v, index, groupSize)
+	if strings.TrimSpace(v.Type) == "Quorum" {
+		label = strings.TrimSuffix(label, " · "+voteformat.TypeLabel(v.Type))
+	}
+	return label
 }
 
 // markSize is the side of a row's mark: a little taller than the label's
@@ -264,10 +292,14 @@ func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.
 	title := voteformat.CleanVoteTitle(group[0].Title)
 	_, _, withTotals := verdictTotals(group)
 
+	rows, titleMax := fonts.overviewRows, titleFontMax
+	if len(group) <= overviewShortGroup {
+		rows, titleMax = fonts.overviewRowsShort, overviewShortTitleMax
+	}
 	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
-		for _, faces := range fonts.overviewRows {
+		for _, faces := range rows {
 			ol := buildOverview(group, faces, maxRunes)
-			face, lines, whole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
+			face, lines, whole, err := fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, withTotals, titleMax)
 			if err != nil {
 				return nil, nil, overviewLayout{}, err
 			}
@@ -281,8 +313,14 @@ func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.
 
 // fitOverviewTitle fits the title to the space ol leaves it.
 func fitOverviewTitle(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, bool, error) {
+	return fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, withTotals, titleFontMax)
+}
+
+// fitOverviewTitleFrom is fitOverviewTitle with the title's font ladder
+// starting at maxSize.
+func fitOverviewTitleFrom(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, withTotals bool, maxSize float64) (font.Face, []string, bool, error) {
 	reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
-	return cardTitleFully(group, title, maxWidth, titleBudget(inset, reserve))
+	return cardTitleFullyFrom(group, title, maxWidth, titleBudget(inset, reserve), maxSize)
 }
 
 // overviewTitleFloor is the smallest size the overview sets the business title
