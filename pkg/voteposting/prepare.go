@@ -281,10 +281,14 @@ func PostToPlatform(
 				fmt.Printf("   %s\n", v.SourceURL)
 			}
 
-			post, shouldContinue, err := platform.Post(content)
-			if err != nil {
-				return posted, err
+			post, shouldContinue, postErr := platform.Post(content)
+			if postErr != nil && post == (votelog.PostRef{}) {
+				return posted, postErr
 			}
+			// A ref with an error means the post is live but incomplete (a
+			// thread whose reply failed). It is logged all the same: the log is
+			// the only thing standing between a vote and its being published
+			// again by the next run. The error is returned after the save.
 
 			// Mark the posted votes. Any vote dropped above is deliberately
 			// absent from this slice, so it is retried rather than buried.
@@ -294,7 +298,11 @@ func PostToPlatform(
 
 			// Save vote log after each successful post
 			if err := voteLog.Save(); err != nil {
-				return posted, err
+				return posted, errors.Join(err, postErr)
+			}
+
+			if postErr != nil {
+				return posted + 1, postErr
 			}
 
 			posted++
