@@ -682,6 +682,8 @@ type fontSet struct {
 	emojiSmall   font.Face // notoEmoji 28
 	emojiLarge   font.Face // notoEmoji 48
 	emojiVerdict font.Face // notoEmoji 72
+
+	overviewRows []rowFaces // overviewRowSpecs, largest first
 }
 
 func loadFontSet() (*fontSet, error) {
@@ -732,6 +734,18 @@ func loadFontSet() (*fontSet, error) {
 	}
 	if fs.emojiVerdict, err = load(notoEmojiTTF, 72); err != nil {
 		return nil, fmt.Errorf("emojiVerdict font: %w", err)
+	}
+
+	for _, spec := range overviewRowSpecs {
+		var rf rowFaces
+		if rf.text, err = load(goregular.TTF, spec.size); err != nil {
+			return nil, fmt.Errorf("overview row font: %w", err)
+		}
+		if rf.bold, err = load(gobold.TTF, spec.size); err != nil {
+			return nil, fmt.Errorf("overview row bold font: %w", err)
+		}
+		rf.pad = spec.pad
+		fs.overviewRows = append(fs.overviewRows, rf)
 	}
 
 	return &fs, nil
@@ -1140,93 +1154,6 @@ func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[st
 		if i < maxRows-1 {
 			cur.gap(numFace, fraktionRowGapFactor)
 		}
-	}
-}
-
-// fitTitleAndSummary sizes the title card's title and its Übersicht against
-// each other.
-//
-// The title is what matters most, so the summary gives way to it. The
-// subtitles are set in full first, wrapped over as many lines as they need;
-// only if the title cannot then be shown whole are they cut to
-// summarySubtitleMaxRunes and the title fitted again. The summary is built
-// first either way: it is what the title has to leave room for, and it does not
-// depend on the size the title ends up at.
-func fitTitleAndSummary(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.Face, []string, []string, error) {
-	title := voteformat.CleanVoteTitle(group[0].Title)
-
-	var titleFace font.Face
-	var titleLines, summaryLines []string
-	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
-		summaryLines = nil
-		for i, sv := range group {
-			line, ok := formatSummaryLineWithin(i+1, sv, len(group), maxRunes)
-			if ok {
-				summaryLines = append(summaryLines, wrapText(fonts.small, line, maxWidth)...)
-			}
-		}
-
-		// Reserve: gap after the title, the "Übersicht" header and its gap, one
-		// line per summary line, and the bottom padding.
-		summaryReserve := titleTrailingGap() +
-			lineHeight(fonts.small) + frac(fonts.small, 0.4) +
-			len(summaryLines)*lineHeight(fonts.small) + padding
-
-		var whole bool
-		var err error
-		titleFace, titleLines, whole, err = cardTitleFully(group, title, maxWidth, titleBudget(inset, summaryReserve))
-		if err != nil {
-			return nil, nil, nil, err
-		}
-		if whole {
-			break
-		}
-	}
-	return titleFace, titleLines, summaryLines, nil
-}
-
-func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {
-	maxTextWidth := imgWidth - 2*padding
-
-	titleFace, titleLines, summaryLines, err := fitTitleAndSummary(group, inset, maxTextWidth, fonts)
-	if err != nil {
-		return
-	}
-
-	for _, line := range titleLines {
-		if img != nil {
-			drawCenteredText(img, titleFace, nil, cur.baseline(titleFace), line, bg)
-		}
-		cur.advance(titleFace)
-		cur.gap(titleFace, titleLineGapFactor)
-	}
-
-	// Summary: list each sub-vote with number + emoji + short subtitle.
-	cur.gap(fonts.regular, 0.75)
-	if img != nil {
-		header := fmt.Sprintf("Übersicht (%d Teilabstimmungen)", len(group))
-		drawCenteredText(img, fonts.small, nil, cur.baseline(fonts.small), header, bg)
-	}
-	cur.advance(fonts.small)
-	cur.gap(fonts.small, 0.4)
-
-	// Find widest line and center the block, then left-align all lines within it
-	maxW := 0
-	for _, line := range summaryLines {
-		// Measured with the same pair of faces it is drawn with below; a
-		// summary line carrying an emoji would otherwise centre off its true
-		// width.
-		w := measureMixedText(fonts.small, fonts.emojiSmall, line)
-		if w > maxW {
-			maxW = w
-		}
-	}
-	blockX := (imgWidth - maxW) / 2
-	for _, line := range summaryLines {
-		if img != nil {
-			drawShadowedText(img, fonts.small, fonts.emojiSmall, blockX, cur.baseline(fonts.small), line, bg)
-		}
-		cur.advance(fonts.small)
 	}
 }
 

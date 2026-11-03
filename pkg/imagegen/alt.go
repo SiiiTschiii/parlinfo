@@ -57,24 +57,29 @@ func combinedAlt(group []votes.Vote) string {
 	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
 }
 
-// titleAlt describes the overview card: the heading, then the same one-line
-// result per vote that the card lists. The results are what a reader of this
-// card learns that the heading does not say, and the cards with the details may
-// sit several replies further down the thread.
+// titleAlt describes the overview card: the heading, then what the card
+// shows below the title — how many votes passed and failed, and one line per
+// vote with its result and tally. The results are what a reader of this card
+// learns that the heading does not say, and the cards with the details may sit
+// several replies further down the thread.
 //
 // Every vote keeps its line. Where the lines at the card's label length would
 // not fit beside the heading, the labels are cut shorter, down to the last step,
 // rather than the list losing its tail.
 func titleAlt(group []votes.Vote) string {
+	var head string
+	if accepted, rejected, ok := verdictTotals(group); ok {
+		head = fmt.Sprintf("%d angenommen, %d abgelehnt\n", accepted, rejected)
+	}
 	var result string
 	for _, maxRunes := range []int{summarySubtitleMaxRunes, 60, 40, 20} {
 		var lines []string
 		for i, v := range group {
 			if line, ok := formatSummaryLineWithin(i+1, v, len(group), maxRunes); ok {
-				lines = append(lines, line)
+				lines = append(lines, line+" – "+overviewTallyLong(v))
 			}
 		}
-		result = strings.Join(lines, "\n")
+		result = head + strings.Join(lines, "\n")
 		if len([]rune(result)) <= maxAltRunes-altLabelFloor-2 {
 			break
 		}
