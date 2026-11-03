@@ -588,6 +588,9 @@ contacts:
     facebook:
       - url: https://www.facebook.com/MarioSennPolitik/
         verified: true
+    instagram:
+      - url: https://www.instagram.com/mario_senn_zh/
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/mario-senn-8482ba78/
         verified: true
