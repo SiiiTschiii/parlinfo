@@ -66,21 +66,6 @@ func TestVoteMark(t *testing.T) {
 	}
 }
 
-// A group with no verdict at all — the Kantonsrat reports none for most votes —
-// must not print "0 angenommen, 0 abgelehnt".
-func TestVerdictTotals_NoVerdictMeansNoTotals(t *testing.T) {
-	if _, _, ok := verdictTotals(testfixtures.KantonsratMultiVote()); ok {
-		t.Fatal("expected no totals for a group without decisions")
-	}
-	a, r, ok := verdictTotals(testfixtures.MultiVoteGroup())
-	if !ok || a != 1 || r != 1 {
-		t.Fatalf("verdictTotals = (%d, %d, %v), want (1, 1, true)", a, r, ok)
-	}
-	if alt := titleAlt(testfixtures.KantonsratMultiVote()); strings.Contains(alt, "angenommen, ") {
-		t.Fatalf("alt text states totals the card does not:\n%s", alt)
-	}
-}
-
 // Every multi-vote fixture's overview fits inside the frame: the rows end above
 // the bottom margin and the title is whole.
 func TestOverview_FitsEveryFixture(t *testing.T) {
@@ -168,8 +153,7 @@ func TestFitOverview_TooManyVotesEndsInSummaryRow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, _, withTotals := verdictTotals(group)
-	if !overviewFits(face, lines, ol, inset, fonts, withTotals) {
+	if !overviewFits(face, lines, ol, inset, fonts) {
 		t.Fatal("overview overruns the card")
 	}
 	// The title wins over the list: it stays whole and larger than the rows.
@@ -240,5 +224,17 @@ func TestFitOverview_ShortGroupIsSetLarger(t *testing.T) {
 	}
 	if lineHeight(sFace) <= lineHeight(fonts.overviewTitleFloor) {
 		t.Errorf("short group's title (%d) not set above the floor", lineHeight(sFace))
+	}
+}
+
+// The overview says how many votes it lists, and no pass/fail totals: the
+// card does not print them, so its description must not either.
+func TestTitleAlt_CountsVotesWithoutTotals(t *testing.T) {
+	alt := titleAlt(testfixtures.MultiVoteGroup())
+	if !strings.Contains(alt, "2 Abstimmungen\n1. ") {
+		t.Errorf("alt text lacks the vote count before the list:\n%s", alt)
+	}
+	if strings.Contains(alt, "angenommen, ") {
+		t.Errorf("alt text states pass/fail totals the card does not:\n%s", alt)
 	}
 }

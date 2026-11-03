@@ -58,8 +58,8 @@ func combinedAlt(group []votes.Vote) string {
 }
 
 // titleAlt describes the overview card: the heading, then what the card
-// shows below the title — how many votes passed and failed, and one line per
-// vote with its result and tally. The results are what a reader of this card
+// shows below the title — how many votes there were, and one line per vote
+// with its result and tally. The results are what a reader of this card
 // learns that the heading does not say, and the cards with the details may sit
 // several replies further down the thread.
 //
@@ -67,10 +67,7 @@ func combinedAlt(group []votes.Vote) string {
 // length would not fit beside the heading, the labels are cut shorter, then
 // left out, rather than the list losing its tail.
 func titleAlt(group []votes.Vote) string {
-	var head string
-	if accepted, rejected, ok := verdictTotals(group); ok {
-		head = fmt.Sprintf("%d angenommen, %d abgelehnt\n", accepted, rejected)
-	}
+	head := fmt.Sprintf("%d Abstimmungen\n", len(group))
 	// Labels shorten first, then go, then the tallies take their short form:
 	// what a vote is called can be found on its own card, its result is what
 	// this description is for.

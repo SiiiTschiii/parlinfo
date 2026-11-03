@@ -18,16 +18,15 @@ import (
 )
 
 // The overview card opens a multi-vote carousel: the business title, how many
-// of its votes passed and failed, then one row per vote with its number, a
-// verdict mark, its label and its tally.
+// votes it holds, then one row per vote with its number, a verdict mark, its
+// label and its tally.
 //
 // It used to be the business title over a 28px list of "1. ✅ label" lines,
 // and was the one card in the carousel with nothing to anchor it: every other
 // card leads with a large verdict and a row of numbers between rules, while
 // the overview floated a small list in the middle of an empty card and said
 // nothing about how close any vote had been. The rows now carry the same rules
-// and the same bold tallies as the result cards, and the counts above them give
-// the card the large figures the others have.
+// and the same bold tallies as the result cards.
 
 // overviewRowSpec is one size the rows can be set at, largest first: the face
 // size and the space above and below each row as a fraction of its line
@@ -174,21 +173,6 @@ func auswahlParts(c voteformat.VoteCounts, sep string) []string {
 	return parts
 }
 
-// verdictTotals counts the group's accepted and rejected votes. ok is false
-// when no vote states a verdict, and the card then says how many votes there
-// were instead of printing two zeros it has no grounds for.
-func verdictTotals(group []votes.Vote) (accepted, rejected int, ok bool) {
-	for _, v := range group {
-		switch k, _ := voteMark(v); k {
-		case markAccepted:
-			accepted++
-		case markRejected:
-			rejected++
-		}
-	}
-	return accepted, rejected, accepted+rejected > 0
-}
-
 // buildOverview sets the group's rows in faces, with labels cut to maxRunes
 // (zero leaves them whole).
 func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLayout {
@@ -265,14 +249,14 @@ func (ol overviewLayout) height() int {
 }
 
 // overviewHeadHeight is the space between the gap after the title and the
-// first row's rule: the counts (or the "N Abstimmungen" line that stands in for
-// them) and the gap under them.
-func overviewHeadHeight(fonts *fontSet, withTotals bool) int {
-	h := lineHeight(fonts.partyBold)
-	if withTotals {
-		h = lineHeight(fonts.statNum) + lineHeight(fonts.statLabel)
-	}
-	return h + frac(fonts.statLabel, 0.9)
+// first row's rule: the "N Abstimmungen" line and the gap under it.
+//
+// The line says how many votes the list holds and no more. A tally of how
+// many passed and failed was tried here and dropped: "10 angenommen,
+// 0 abgelehnt" says little about a business, where which vote passed matters
+// and the rows already show that one by one.
+func overviewHeadHeight(fonts *fontSet) int {
+	return lineHeight(fonts.partyBold) + frac(fonts.statLabel, 0.9)
 }
 
 // fitOverview sizes the title and the rows against each other.
@@ -290,7 +274,6 @@ func overviewHeadHeight(fonts *fontSet, withTotals bool) int {
 // title too long for that even above a single row settles for less.
 func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.Face, []string, overviewLayout, error) {
 	title := voteformat.CleanVoteTitle(group[0].Title)
-	_, _, withTotals := verdictTotals(group)
 
 	rows, titleMax := fonts.overviewRows, titleFontMax
 	if len(group) <= overviewShortGroup {
@@ -299,7 +282,7 @@ func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.
 	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
 		for _, faces := range rows {
 			ol := buildOverview(group, faces, maxRunes)
-			face, lines, whole, err := fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, withTotals, titleMax)
+			face, lines, whole, err := fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, titleMax)
 			if err != nil {
 				return nil, nil, overviewLayout{}, err
 			}
@@ -308,18 +291,18 @@ func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.
 			}
 		}
 	}
-	return squeezeOverview(group, title, inset, maxWidth, fonts, withTotals)
+	return squeezeOverview(group, title, inset, maxWidth, fonts)
 }
 
 // fitOverviewTitle fits the title to the space ol leaves it.
-func fitOverviewTitle(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, bool, error) {
-	return fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, withTotals, titleFontMax)
+func fitOverviewTitle(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet) (font.Face, []string, bool, error) {
+	return fitOverviewTitleFrom(group, title, ol, inset, maxWidth, fonts, titleFontMax)
 }
 
 // fitOverviewTitleFrom is fitOverviewTitle with the title's font ladder
 // starting at maxSize.
-func fitOverviewTitleFrom(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, withTotals bool, maxSize float64) (font.Face, []string, bool, error) {
-	reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
+func fitOverviewTitleFrom(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, maxSize float64) (font.Face, []string, bool, error) {
+	reserve := titleTrailingGap() + overviewHeadHeight(fonts) + ol.height() + padding
 	return cardTitleFullyFrom(group, title, maxWidth, titleBudget(inset, reserve), maxSize)
 }
 
@@ -344,8 +327,8 @@ const overviewLabelFloor = 36
 // overviewFits reports whether a title and rows fit between the card's inset
 // and its bottom margin. Ellipsising the title cannot make room the rows
 // themselves take, so a layout that overruns has to lose rows instead.
-func overviewFits(face font.Face, lines []string, ol overviewLayout, inset int, fonts *fontSet, withTotals bool) bool {
-	h := titleBlockHeight(face, len(lines)) + titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height()
+func overviewFits(face font.Face, lines []string, ol overviewLayout, inset int, fonts *fontSet) bool {
+	h := titleBlockHeight(face, len(lines)) + titleTrailingGap() + overviewHeadHeight(fonts) + ol.height()
 	return len(lines) > 0 && h <= imgHeight-inset-2*padding
 }
 
@@ -358,7 +341,7 @@ func overviewFits(face font.Face, lines []string, ol overviewLayout, inset int, 
 //
 // A title too long for that even above one row keeps the most rows that leave
 // it whole at all, and failing that the most rows that fit with it cut.
-func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, overviewLayout, error) {
+func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, fonts *fontSet) (font.Face, []string, overviewLayout, error) {
 	full := buildOverview(group, fonts.overviewRows[len(fonts.overviewRows)-1], overviewLabelFloor)
 	type attempt struct {
 		face  font.Face
@@ -375,7 +358,7 @@ func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, font
 				lines: []string{fmt.Sprintf("… und %d weitere Abstimmungen", dropped)},
 			})
 		}
-		face, lines, isWhole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
+		face, lines, isWhole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts)
 		if err != nil {
 			return nil, nil, overviewLayout{}, err
 		}
@@ -386,7 +369,7 @@ func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, font
 		if isWhole && whole == nil {
 			whole = a
 		}
-		if fits == nil && overviewFits(face, lines, ol, inset, fonts, withTotals) {
+		if fits == nil && overviewFits(face, lines, ol, inset, fonts) {
 			fits = a
 		}
 	}
@@ -398,7 +381,7 @@ func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, font
 	}
 	ol := full
 	ol.rows = full.rows[:1]
-	face, lines, _, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
+	face, lines, _, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts)
 	return face, lines, ol, err
 }
 
@@ -418,16 +401,11 @@ func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []vote
 
 	// The gap titleTrailingGap reserves.
 	cur.gap(fonts.regular, 0.75)
-	accepted, rejected, withTotals := verdictTotals(group)
-	if withTotals {
-		drawVerdictTotals(img, cur, accepted, rejected, bg, fonts)
-	} else {
-		if img != nil {
-			drawCenteredText(img, fonts.partyBold, nil, cur.baseline(fonts.partyBold),
-				fmt.Sprintf("%d Abstimmungen", len(group)), bg)
-		}
-		cur.advance(fonts.partyBold)
+	if img != nil {
+		drawCenteredText(img, fonts.partyBold, nil, cur.baseline(fonts.partyBold),
+			fmt.Sprintf("%d Abstimmungen", len(group)), bg)
 	}
+	cur.advance(fonts.partyBold)
 	cur.gap(fonts.statLabel, 0.9)
 
 	if img != nil {
@@ -441,39 +419,6 @@ func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []vote
 	}
 	if img != nil {
 		drawHLine(img, cur.y, padding, imgWidth-padding, semiWhite)
-	}
-}
-
-// drawVerdictTotals draws "N angenommen | M abgelehnt" as two stat columns
-// either side of a short vertical rule, in the faces the result cards use for
-// their Ja/Nein/Enth. dashboard.
-func drawVerdictTotals(img *image.RGBA, cur *layoutCursor, accepted, rejected int, bg color.RGBA, fonts *fontSet) {
-	const halfSpan = 170
-	cols := []struct {
-		cx           int
-		value, label string
-	}{
-		{imgWidth/2 - halfSpan, strconv.Itoa(accepted), "angenommen"},
-		{imgWidth/2 + halfSpan, strconv.Itoa(rejected), "abgelehnt"},
-	}
-	top := cur.y
-	if img != nil {
-		for _, c := range cols {
-			w := font.MeasureString(fonts.statNum, c.value).Ceil()
-			drawShadowedText(img, fonts.statNum, nil, c.cx-w/2, cur.baseline(fonts.statNum), c.value, bg)
-		}
-	}
-	cur.advance(fonts.statNum)
-	if img != nil {
-		for _, c := range cols {
-			w := font.MeasureString(fonts.statLabel, c.label).Ceil()
-			drawShadowedText(img, fonts.statLabel, nil, c.cx-w/2, cur.baseline(fonts.statLabel), c.label, bg)
-		}
-	}
-	cur.advance(fonts.statLabel)
-	if img != nil {
-		inset := (cur.y - top) / 8
-		drawBlendedVLine(img, imgWidth/2, top+inset, cur.y-inset, bg, 0xA0)
 	}
 }
 
@@ -640,13 +585,5 @@ func drawBlendedLine(img *image.RGBA, y, x1, x2 int, bg color.RGBA, a uint8) {
 	c := blend(bg, a)
 	for x := x1; x <= x2; x++ {
 		img.SetRGBA(x, y, c)
-	}
-}
-
-func drawBlendedVLine(img *image.RGBA, x, y1, y2 int, bg color.RGBA, a uint8) {
-	c := blend(bg, a)
-	for y := y1; y <= y2; y++ {
-		img.SetRGBA(x, y, c)
-		img.SetRGBA(x+1, y, c)
 	}
 }
