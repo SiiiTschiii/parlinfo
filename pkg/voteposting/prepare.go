@@ -458,6 +458,14 @@ func validateVote(v votes.Vote) error {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) is a quorum round with no votes cast",
 			ErrUnpostableVoteType, v.SourceID, v.Subtitle, v.Type)
 	}
+	// The same holds for an ordinary vote with no counts at all: the source
+	// served a placeholder, and the run has nothing to report. On 2026-11-03 the
+	// Gemeinderat Zürich served 2026_0212 Änderungsantrag as one — its own page
+	// is blank — and reddened every run for it.
+	if voteformat.IsEmptyNormalVote(voteformat.CountsOf(v)) {
+		return withVoteLink(v, "%w: vote %s (%q, type=%q) has no counts recorded at all",
+			ErrUnpostableVoteType, v.SourceID, voteDescription(v), v.Type)
+	}
 	if voteformat.IsUnsupportedVoteType(voteformat.CountsOf(v)) {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) has all-zero counts",
 			ErrUnsupportedVoteType, v.SourceID, v.Subtitle, v.Type)
