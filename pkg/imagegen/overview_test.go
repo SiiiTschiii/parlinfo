@@ -1,6 +1,7 @@
 package imagegen
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -131,5 +132,63 @@ func TestFitOverview_ShrinksRowsBeforeCuttingLabels(t *testing.T) {
 	}
 	if strings.Contains(strings.Join(overviewLines(ol), " "), "…") {
 		t.Errorf("labels were cut: %q", overviewLines(ol))
+	}
+}
+
+// longGroup is n votes of the given type, each with a label that wraps.
+func longGroup(n int, voteType string) []votes.Vote {
+	base := testfixtures.TenVoteStressTest()
+	group := make([]votes.Vote, n)
+	for i := range group {
+		v := base[0]
+		v.Subtitle = strings.Repeat("Änderungsantrag zu Art. 12 Abs. 2 der Bau- und Zonenordnung ", 3)
+		v.Type = voteType
+		if voteType == "Quorum" {
+			v.Decision = ""
+		}
+		group[i] = v
+	}
+	group[0].Title = strings.Repeat("Totalrevision der Bau- und Zonenordnung der Stadt Zürich ", 6)
+	return group
+}
+
+// A group too long for the card at any row size keeps the rows that fit and
+// says how many it left out, rather than drawing the rest below the frame.
+func TestFitOverview_TooManyVotesEndsInSummaryRow(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	group := longGroup(24, "")
+	inset := bandInset(group[0]) + dateCorner(group[0]).height(fonts)
+	face, lines, ol, err := fitOverview(group, inset, imgWidth-2*padding, fonts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _, withTotals := verdictTotals(group)
+	if !overviewFits(face, lines, ol, inset, fonts, withTotals) {
+		t.Fatal("overview overruns the card")
+	}
+	last := ol.rows[len(ol.rows)-1]
+	shown := len(ol.rows) - 1
+	if last.mark != markOmitted || !strings.Contains(last.lines[0], fmt.Sprintf("%d weitere", len(group)-shown)) {
+		t.Fatalf("expected a closing row naming the %d omitted votes, got %+v", len(group)-shown, last)
+	}
+}
+
+// However long the heading and the labels, every vote's tally survives the
+// alt text's cap.
+func TestTitleAlt_KeepsEveryTally(t *testing.T) {
+	group := longGroup(12, "Quorum")
+	for i := range group {
+		group[i].Yes, group[i].No, group[i].Absent = intPtr(129), intPtr(0), intPtr(51)
+	}
+	alt := titleAlt(group)
+	if n := len([]rune(alt)); n > maxAltRunes {
+		t.Fatalf("alt text is %d runes, over the cap", n)
+	}
+	if !strings.HasSuffix(alt, "12. – 129 Zustimmungen, 51 ohne Zustimmung") &&
+		!strings.HasSuffix(alt, "12. – 129 Zust. · 51 ohne") {
+		t.Fatalf("last vote's tally was cut:\n%s", alt)
 	}
 }

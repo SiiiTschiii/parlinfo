@@ -63,20 +63,38 @@ func combinedAlt(group []votes.Vote) string {
 // learns that the heading does not say, and the cards with the details may sit
 // several replies further down the thread.
 //
-// Every vote keeps its line. Where the lines at the card's label length would
-// not fit beside the heading, the labels are cut shorter, down to the last step,
-// rather than the list losing its tail.
+// Every vote keeps its line and its tally. Where the lines at the card's label
+// length would not fit beside the heading, the labels are cut shorter, then
+// left out, rather than the list losing its tail.
 func titleAlt(group []votes.Vote) string {
 	var head string
 	if accepted, rejected, ok := verdictTotals(group); ok {
 		head = fmt.Sprintf("%d angenommen, %d abgelehnt\n", accepted, rejected)
 	}
+	// Labels shorten first, then go, then the tallies take their short form:
+	// what a vote is called can be found on its own card, its result is what
+	// this description is for.
+	steps := []struct {
+		maxRunes int // 0: no label
+		long     bool
+	}{
+		{summarySubtitleMaxRunes, true}, {60, true}, {40, true}, {20, true},
+		{0, true}, {0, false},
+	}
 	var result string
-	for _, maxRunes := range []int{summarySubtitleMaxRunes, 60, 40, 20} {
+	for _, step := range steps {
 		var lines []string
 		for i, v := range group {
-			if line, ok := formatSummaryLineWithin(i+1, v, len(group), maxRunes); ok {
-				lines = append(lines, line+" – "+overviewTallyLong(v))
+			tally := overviewTally(v)
+			if step.long {
+				tally = overviewTallyLong(v)
+			}
+			if step.maxRunes == 0 {
+				lines = append(lines, overviewAltPrefix(i+1, v)+" – "+tally)
+				continue
+			}
+			if line, ok := formatSummaryLineWithin(i+1, v, len(group), step.maxRunes); ok {
+				lines = append(lines, line+" – "+tally)
 			}
 		}
 		result = head + strings.Join(lines, "\n")
@@ -85,6 +103,18 @@ func titleAlt(group []votes.Vote) string {
 		}
 	}
 	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
+}
+
+// overviewAltPrefix is a vote's number and verdict without its label, for an
+// overview description too long to name each vote.
+func overviewAltPrefix(index int, v votes.Vote) string {
+	switch {
+	case auswahlOutcome(v) != "":
+		return fmt.Sprintf("%d. %s", index, auswahlResultLabel(v.Decision))
+	case voteformat.HasVerdict(v):
+		return fmt.Sprintf("%d. %s", index, voteformat.GetVoteResultEmoji(v.Decision))
+	}
+	return fmt.Sprintf("%d.", index)
 }
 
 // resultAlt describes vote i's result card: when it was taken, its label and
