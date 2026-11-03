@@ -69,9 +69,34 @@ func PrepareVoteGroups(
 		return nil, err
 	}
 
+	groups = withoutPostedVotes(groups, voteLog)
+
 	applyCompletenessGate(groups)
 
 	return groups, nil
+}
+
+// withoutPostedVotes drops votes the log already has from grouped output.
+//
+// Filtering before grouping is not enough, because a source may widen a group
+// while grouping it: the Zürich source back-fills every vote of a business from
+// the whole sitting, posted or not, so that a group is not published partial
+// just because its earlier votes fell outside the fetch window. That makes any
+// vote that stays unposted — one rejected as unpublishable is never logged, by
+// design — a standing invitation to publish its already-posted siblings again,
+// on every run until it ages out. On 2026-11-03 a zero-count Änderungsantrag
+// did exactly that to the two votes beside it on every platform, hourly.
+//
+// A group left empty is dropped, and a group left smaller is posted smaller:
+// the votes that were already out stay out.
+func withoutPostedVotes(groups [][]votes.Vote, voteLog *votelog.VoteLog) [][]votes.Vote {
+	kept := make([][]votes.Vote, 0, len(groups))
+	for _, group := range groups {
+		if remaining := filterUnpostedVotes(group, voteLog); len(remaining) > 0 {
+			kept = append(kept, remaining)
+		}
+	}
+	return kept
 }
 
 // applyCompletenessGate drops the member list from any vote whose recorded
