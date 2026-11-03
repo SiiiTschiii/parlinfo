@@ -96,7 +96,7 @@ type overviewRow struct {
 	mark   markKind
 	letter string
 	lines  []string
-	tally  string
+	tally  []string // one line, or two for an Auswahl vote with three or more options
 }
 
 // overviewLayout is the rows set at one size: the faces, the columns and the
@@ -129,6 +129,20 @@ func voteMark(v votes.Vote) (markKind, string) {
 		return markAccepted, ""
 	}
 	return markRejected, ""
+}
+
+// overviewTallyLines is overviewTally as the row draws it. An Auswahl vote
+// with three or more options is split over two lines, the first taking the
+// larger half: such a vote's label nearly always wraps to two lines anyway,
+// so the second tally line costs no height, and the label gets back the
+// width a one-line "A 50 · B 24 · C 40" would take from it.
+func overviewTallyLines(v votes.Vote) []string {
+	c := voteformat.CountsOf(v)
+	if parts := auswahlParts(c, " "); voteformat.IsAuswahlVote(c) && len(parts) >= 3 {
+		split := (len(parts) + 1) / 2
+		return []string{strings.Join(parts[:split], " · "), strings.Join(parts[split:], " · ")}
+	}
+	return []string{overviewTally(v)}
 }
 
 // overviewTally is a vote's counts as its overview row prints them: Ja to Nein
@@ -192,8 +206,10 @@ func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLay
 
 	tallyW := 0
 	for _, v := range group {
-		if w := font.MeasureString(faces.bold, overviewTally(v)).Ceil(); w > tallyW {
-			tallyW = w
+		for _, line := range overviewTallyLines(v) {
+			if w := font.MeasureString(faces.bold, line).Ceil(); w > tallyW {
+				tallyW = w
+			}
 		}
 	}
 	ol.labelW = ol.tallyRight - tallyW - overviewTallyGap - ol.labelX
@@ -212,7 +228,7 @@ func buildOverview(group []votes.Vote, faces rowFaces, maxRunes int) overviewLay
 			mark:   kind,
 			letter: letter,
 			lines:  wrapText(faces.text, label, ol.labelW),
-			tally:  overviewTally(v),
+			tally:  overviewTallyLines(v),
 		})
 	}
 	return ol
@@ -242,10 +258,7 @@ func (ol overviewLayout) rowPad() int {
 }
 
 func (ol overviewLayout) rowHeight(r overviewRow) int {
-	lines := len(r.lines)
-	if lines == 0 {
-		lines = 1
-	}
+	lines := max(len(r.lines), len(r.tally), 1)
 	return 2*ol.rowPad() + lines*lineHeight(ol.faces.text)
 }
 
@@ -432,8 +445,8 @@ func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []vote
 }
 
 // drawOverviewRow draws one row: the number right-aligned in its column, the
-// mark, the wrapped label and the tally right-aligned to the margin, all on
-// the label's first line.
+// mark, the wrapped label and the tally right-aligned to the margin, all
+// starting on the label's first line.
 func drawOverviewRow(img *image.RGBA, cur *layoutCursor, ol overviewLayout, r overviewRow, bg color.RGBA) {
 	top := cur.y
 	cur.y += ol.rowPad()
@@ -457,8 +470,10 @@ func drawOverviewRow(img *image.RGBA, cur *layoutCursor, ol overviewLayout, r ov
 			drawShadowedText(img, text, nil, ol.labelX, base+i*lineHeight(text), line, bg)
 		}
 
-		tallyW := font.MeasureString(bold, r.tally).Ceil()
-		drawShadowedText(img, bold, nil, ol.tallyRight-tallyW, base, r.tally, bg)
+		for i, line := range r.tally {
+			w := font.MeasureString(bold, line).Ceil()
+			drawShadowedText(img, bold, nil, ol.tallyRight-w, base+i*lineHeight(text), line, bg)
+		}
 	}
 	cur.y = top + ol.rowHeight(r)
 }

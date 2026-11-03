@@ -257,3 +257,23 @@ func TestBuildOverview_MarkColumnOnlyWhenSomeRowHasAVerdict(t *testing.T) {
 		t.Errorf("group with verdicts lost its mark column (markW=%d, labelX=%d vs %d)", some.markW, some.labelX, none.labelX)
 	}
 }
+
+// An Auswahl tally with three or more options takes two lines, the first
+// the larger half, so the label keeps the width; two options stay on one.
+func TestOverviewTallyLines_SplitsLongAuswahl(t *testing.T) {
+	cases := []struct {
+		v    votes.Vote
+		want []string
+	}{
+		{votes.Vote{ChoiceA: intPtr(40), ChoiceB: intPtr(20), ChoiceC: intPtr(60)}, []string{"A 40 · B 20", "C 60"}},
+		{votes.Vote{ChoiceA: intPtr(1), ChoiceB: intPtr(2), ChoiceC: intPtr(3), ChoiceD: intPtr(4)}, []string{"A 1 · B 2", "C 3 · D 4"}},
+		{votes.Vote{ChoiceA: intPtr(40), ChoiceB: intPtr(20)}, []string{"A 40 · B 20"}},
+		{votes.Vote{Yes: intPtr(62), No: intPtr(51)}, []string{"62 : 51"}},
+	}
+	for _, c := range cases {
+		got := overviewTallyLines(c.v)
+		if strings.Join(got, "|") != strings.Join(c.want, "|") {
+			t.Errorf("overviewTallyLines = %q, want %q", got, c.want)
+		}
+	}
+}
