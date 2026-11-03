@@ -45,6 +45,9 @@ type MockPlatform struct {
 	postCalls      int
 	maxPosts       int
 	shouldFailPost bool
+	// partialPost makes Post fail after publishing: it returns a ref and an
+	// error, as a thread does when the root goes out and a reply is refused.
+	partialPost bool
 	// lastGroup records what the formatter was actually handed, so tests can
 	// assert on votes dropped before formatting.
 	lastGroup []votes.Vote
@@ -71,6 +74,9 @@ func (p *MockPlatform) Post(content platforms.Content) (votelog.PostRef, bool, e
 	p.postCalls++
 	shouldContinue := p.postCalls < p.maxPosts
 	id := fmt.Sprintf("post%d", p.postCalls)
+	if p.partialPost {
+		return votelog.PostRef{ID: id, URL: "https://example.test/" + id}, false, errors.New("mock reply error")
+	}
 	return votelog.PostRef{ID: id, URL: "https://example.test/" + id}, shouldContinue, nil
 }
 
@@ -867,5 +873,46 @@ func TestValidateVoteEmptyQuorumRoundIsRoutine(t *testing.T) {
 		if err := validateVote(w); !errors.Is(err, ErrUnsupportedVoteType) {
 			t.Errorf("%s: validateVote() = %v, want ErrUnsupportedVoteType", tc.name, err)
 		}
+	}
+}
+
+// A thread whose root went out and whose reply failed is live, so the vote must
+// be logged — and persisted — even though the run fails. Otherwise the next run
+// publishes it a second time.
+func TestPostToPlatform_PartiallyPostedThreadIsStillLogged(t *testing.T) {
+	cleanup := setupTempDir(t)
+	defer cleanup()
+
+	mockPlatform := &MockPlatform{maxPosts: 10, partialPost: true}
+	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
+
+	groups := [][]votes.Vote{
+		{createVote("vote1", "2025/369", "2025-11-19")},
+		{createVote("vote2", "2025/370", "2025-11-19")},
+	}
+
+	posted, err := PostToPlatform(groups, mockPlatform, SingleLog(testJurisdiction, voteLog), false)
+	if err == nil {
+		t.Fatal("expected the reply failure to be reported")
+	}
+	if posted != 1 {
+		t.Errorf("expected the live post to count as posted, got %d", posted)
+	}
+	if mockPlatform.postCalls != 1 {
+		t.Errorf("expected the run to stop after the failure, got %d post calls", mockPlatform.postCalls)
+	}
+	if !voteLog.IsPosted("vote1") {
+		t.Error("vote1 went out but was not marked as posted")
+	}
+	if voteLog.IsPosted("vote2") {
+		t.Error("vote2 was never posted but is marked as posted")
+	}
+
+	reloaded, err := votelog.Load(testJurisdiction, votelog.PlatformX)
+	if err != nil {
+		t.Fatalf("reload: %v", err)
+	}
+	if !reloaded.IsPosted("vote1") {
+		t.Error("the log was not saved to disk before the error was returned")
 	}
 }

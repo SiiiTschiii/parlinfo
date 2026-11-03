@@ -431,3 +431,31 @@ func TestFormat_RenderFailureKeepsText(t *testing.T) {
 		}
 	}
 }
+
+// A reply that fails after the root is live must hand back the root's ref, so
+// the caller logs the vote instead of publishing it again on the next run.
+func TestPost_FailedReplyStillReturnsTheLiveRoot(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	ok := mockCreateRecord(&recordCalls)
+	p.createRecordFunc = func(s *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error) {
+		if replyTo != nil {
+			return nil, fmt.Errorf("rate limited")
+		}
+		return ok(s, text, facets, replyTo, images)
+	}
+
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+
+	post, _, err := p.Post(content)
+	if err == nil {
+		t.Fatal("expected the reply failure to be returned")
+	}
+	if post.ID != "at://did:fake/app.bsky.feed.post/1" || post.URL == "" {
+		t.Errorf("expected the root's ref alongside the error, got %+v", post)
+	}
+}
