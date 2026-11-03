@@ -683,7 +683,8 @@ type fontSet struct {
 	emojiLarge   font.Face // notoEmoji 48
 	emojiVerdict font.Face // notoEmoji 72
 
-	overviewRows []rowFaces // overviewRowSpecs, largest first
+	overviewRows       []rowFaces // overviewRowSpecs, largest first
+	overviewTitleFloor font.Face  // goregular at overviewTitleFloor
 }
 
 func loadFontSet() (*fontSet, error) {
@@ -736,6 +737,9 @@ func loadFontSet() (*fontSet, error) {
 		return nil, fmt.Errorf("emojiVerdict font: %w", err)
 	}
 
+	if fs.overviewTitleFloor, err = load(goregular.TTF, overviewTitleFloor); err != nil {
+		return nil, fmt.Errorf("overview title floor font: %w", err)
+	}
 	for _, spec := range overviewRowSpecs {
 		var rf rowFaces
 		if rf.text, err = load(goregular.TTF, spec.size); err != nil {

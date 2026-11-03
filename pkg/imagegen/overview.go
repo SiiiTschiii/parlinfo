@@ -249,61 +249,58 @@ func overviewHeadHeight(fonts *fontSet, withTotals bool) int {
 
 // fitOverview sizes the title and the rows against each other.
 //
-// The title is what matters most, so the rows give way to it, in two steps:
+// The title is what matters most, so the rows give way to it, in three steps:
 // first the rows shrink, through overviewRowSpecs, with every label whole;
-// only if the title still cannot be shown whole at the smallest are the labels
-// cut to summarySubtitleMaxRunes. If even that leaves no room, the last
-// attempt is used, title ellipsised.
+// then the labels are cut to summarySubtitleMaxRunes; and then, for a group
+// too long for both, rows are dropped from the end in favour of a closing
+// "… und N weitere Abstimmungen" row (see squeezeOverview).
 //
 // "Whole" is not quite enough on its own: the ladder will happily set a long
-// title at 26pt above rows at 34pt, and a card whose list outshouts its subject
-// reads upside down. So the first choice is the largest rows that leave the
-// title whole and visibly larger than they are; failing that, the largest that
-// leave it whole at all.
+// title at 26pt above rows at 28pt, and a card whose list outshouts its
+// subject reads upside down. So at every step the title has to come out whole,
+// visibly larger than the rows and at least at the largest row size; only a
+// title too long for that even above a single row settles for less.
 func fitOverview(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.Face, []string, overviewLayout, error) {
 	title := voteformat.CleanVoteTitle(group[0].Title)
 	_, _, withTotals := verdictTotals(group)
 
-	type attempt struct {
-		face  font.Face
-		lines []string
-		ol    overviewLayout
-	}
-	var fallback, last *attempt
 	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
 		for _, faces := range fonts.overviewRows {
 			ol := buildOverview(group, faces, maxRunes)
-			reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
-
-			face, lines, whole, err := cardTitleFully(group, title, maxWidth, titleBudget(inset, reserve))
+			face, lines, whole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
 			if err != nil {
 				return nil, nil, overviewLayout{}, err
 			}
-			a := &attempt{face, lines, ol}
-			last = a
-			if !whole {
-				continue
-			}
-			if lineHeight(face)*10 >= lineHeight(faces.text)*11 {
-				return a.face, a.lines, a.ol, nil
-			}
-			if fallback == nil {
-				fallback = a
+			if whole && titleOutranksRows(face, ol, fonts) {
+				return face, lines, ol, nil
 			}
 		}
-	}
-	if fallback != nil {
-		return fallback.face, fallback.lines, fallback.ol, nil
-	}
-	if overviewFits(last.face, last.lines, last.ol, inset, fonts, withTotals) {
-		return last.face, last.lines, last.ol, nil
 	}
 	return squeezeOverview(group, title, inset, maxWidth, fonts, withTotals)
 }
 
-// overviewLabelFloor is the length labels are cut to when even the smallest
-// rows with summarySubtitleMaxRunes labels overrun the card: short enough to
-// set on one line at the smallest size.
+// fitOverviewTitle fits the title to the space ol leaves it.
+func fitOverviewTitle(group []votes.Vote, title string, ol overviewLayout, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, bool, error) {
+	reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
+	return cardTitleFully(group, title, maxWidth, titleBudget(inset, reserve))
+}
+
+// overviewTitleFloor is the smallest size the overview sets the business title
+// at while it still has rows to give up. The title is what the card is about,
+// and dropping a few rows into "… und N weitere" costs less than setting it in
+// small print; 38pt keeps it within a step or two of titleFontMax.
+const overviewTitleFloor = 38.0
+
+// titleOutranksRows reports whether the title is set visibly larger than the
+// rows under it, and at overviewTitleFloor or above.
+func titleOutranksRows(face font.Face, ol overviewLayout, fonts *fontSet) bool {
+	h := lineHeight(face)
+	return h*10 >= lineHeight(ol.faces.text)*11 && h >= lineHeight(fonts.overviewTitleFloor)
+}
+
+// overviewLabelFloor is the length labels are cut to once rows are being
+// dropped: short enough to set on one line at the smallest size, so each row
+// kept costs as little of the title's room as it can.
 const overviewLabelFloor = 36
 
 // overviewFits reports whether a title and rows fit between the card's inset
@@ -314,18 +311,25 @@ func overviewFits(face font.Face, lines []string, ol overviewLayout, inset int, 
 	return len(lines) > 0 && h <= imgHeight-inset-2*padding
 }
 
-// squeezeOverview is the last resort for a group too long for the card at any
-// size: labels cut to one line, then rows dropped from the end in favour of a
-// closing "… und N weitere Abstimmungen" row, until the rest fits. Every
-// vote still has its own result card, and the dropped rows' results are in the
-// caption and the alt text.
+// squeezeOverview is the last resort for a group whose rows leave the title too
+// little room at any size: labels cut to one line, then rows dropped from the
+// end in favour of a closing "… und N weitere Abstimmungen" row, keeping as
+// many as leave the title whole and larger than them. Every vote still has its
+// own result card, and the dropped rows' results are in the caption and the
+// alt text.
+//
+// A title too long for that even above one row keeps the most rows that leave
+// it whole at all, and failing that the most rows that fit with it cut.
 func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, fonts *fontSet, withTotals bool) (font.Face, []string, overviewLayout, error) {
 	full := buildOverview(group, fonts.overviewRows[len(fonts.overviewRows)-1], overviewLabelFloor)
-	var face font.Face
-	var lines []string
-	var ol overviewLayout
+	type attempt struct {
+		face  font.Face
+		lines []string
+		ol    overviewLayout
+	}
+	var whole, fits *attempt
 	for keep := len(group); keep >= 1; keep-- {
-		ol = full
+		ol := full
 		ol.rows = append([]overviewRow(nil), full.rows[:keep]...)
 		if dropped := len(group) - keep; dropped > 0 {
 			ol.rows = append(ol.rows, overviewRow{
@@ -333,17 +337,31 @@ func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, font
 				lines: []string{fmt.Sprintf("… und %d weitere Abstimmungen", dropped)},
 			})
 		}
-		reserve := titleTrailingGap() + overviewHeadHeight(fonts, withTotals) + ol.height() + padding
-		var err error
-		face, lines, err = cardTitle(group, title, maxWidth, titleBudget(inset, reserve))
+		face, lines, isWhole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
 		if err != nil {
 			return nil, nil, overviewLayout{}, err
 		}
-		if overviewFits(face, lines, ol, inset, fonts, withTotals) {
-			break
+		if isWhole && titleOutranksRows(face, ol, fonts) {
+			return face, lines, ol, nil
+		}
+		a := &attempt{face, lines, ol}
+		if isWhole && whole == nil {
+			whole = a
+		}
+		if fits == nil && overviewFits(face, lines, ol, inset, fonts, withTotals) {
+			fits = a
 		}
 	}
-	return face, lines, ol, nil
+	switch {
+	case whole != nil:
+		return whole.face, whole.lines, whole.ol, nil
+	case fits != nil:
+		return fits.face, fits.lines, fits.ol, nil
+	}
+	ol := full
+	ol.rows = full.rows[:1]
+	face, lines, _, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts, withTotals)
+	return face, lines, ol, err
 }
 
 func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {

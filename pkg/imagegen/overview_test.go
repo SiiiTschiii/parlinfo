@@ -152,8 +152,9 @@ func longGroup(n int, voteType string) []votes.Vote {
 	return group
 }
 
-// A group too long for the card at any row size keeps the rows that fit and
-// says how many it left out, rather than drawing the rest below the frame.
+// A group too long for the card at any row size keeps the rows that leave the
+// title whole and says how many it left out, rather than shrinking or cutting
+// the title or drawing the rest below the frame.
 func TestFitOverview_TooManyVotesEndsInSummaryRow(t *testing.T) {
 	fonts, err := loadFontSet()
 	if err != nil {
@@ -168,6 +169,10 @@ func TestFitOverview_TooManyVotesEndsInSummaryRow(t *testing.T) {
 	_, _, withTotals := verdictTotals(group)
 	if !overviewFits(face, lines, ol, inset, fonts, withTotals) {
 		t.Fatal("overview overruns the card")
+	}
+	// The title wins over the list: it stays whole and larger than the rows.
+	if strings.Contains(strings.Join(lines, " "), "…") || !titleOutranksRows(face, ol, fonts) {
+		t.Errorf("title gave way to the rows: %q", lines)
 	}
 	last := ol.rows[len(ol.rows)-1]
 	shown := len(ol.rows) - 1
