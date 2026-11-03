@@ -277,3 +277,24 @@ func TestOverviewTallyLines_SplitsLongAuswahl(t *testing.T) {
 		}
 	}
 }
+
+// When even label-free results overrun the result budget, the heading gives
+// up room beyond altLabelFloor instead of the last vote losing its tally.
+func TestTitleAlt_HeadingYieldsToResults(t *testing.T) {
+	group := longGroup(24, "")
+	for i := range group {
+		group[i].Yes, group[i].No = nil, nil
+		group[i].ChoiceA, group[i].ChoiceB, group[i].ChoiceC = intPtr(50), intPtr(24), intPtr(40)
+		group[i].Decision = "Auswahl A"
+	}
+	alt := titleAlt(group)
+	if n := len([]rune(alt)); n > maxAltRunes {
+		t.Fatalf("alt text is %d runes, over the cap", n)
+	}
+	if !strings.HasSuffix(alt, "24. [A] – A 50 · B 24 · C 40") {
+		t.Fatalf("last vote's tally was cut:\n%s", alt)
+	}
+	if !strings.Contains(alt, "Totalrevision") {
+		t.Fatalf("heading no longer names the business:\n%s", alt)
+	}
+}

@@ -26,14 +26,20 @@ const altLabelFloor = 300
 // assembleAlt joins label and result within maxAltRunes, shortening the label
 // down to altLabelFloor before the result loses anything.
 func assembleAlt(label, result string) string {
+	return assembleAltWithFloor(label, result, altLabelFloor)
+}
+
+// assembleAltWithFloor is assembleAlt with the label shortened down to floor
+// rather than altLabelFloor.
+func assembleAltWithFloor(label, result string, floor int) string {
 	label = strings.TrimSpace(label)
 	result = strings.TrimSpace(result)
 	if label == "" || result == "" {
 		return capRunes(label+result, maxAltRunes)
 	}
 	labelRoom := maxAltRunes - len([]rune(result)) - 2 // "\n\n"
-	if labelRoom < altLabelFloor {
-		labelRoom = altLabelFloor
+	if labelRoom < floor {
+		labelRoom = floor
 	}
 	label = capRunes(label, labelRoom)
 	return label + "\n\n" + capRunes(result, maxAltRunes-len([]rune(label))-2)
@@ -65,7 +71,10 @@ func combinedAlt(group []votes.Vote) string {
 //
 // Every vote keeps its line and its tally. Where the lines at the card's label
 // length would not fit beside the heading, the labels are cut shorter, then
-// left out, rather than the list losing its tail.
+// left out, rather than the list losing its tail. If the results still do not
+// fit, the heading gives up room beyond altLabelFloor, down to
+// overviewAltHeadingFloor: a group that long is named by its business number
+// and the start of its title, and every result stays.
 func titleAlt(group []votes.Vote) string {
 	head := fmt.Sprintf("%d Abstimmungen\n", len(group))
 	// Labels shorten first, then go, then the tallies take their short form:
@@ -99,8 +108,14 @@ func titleAlt(group []votes.Vote) string {
 			break
 		}
 	}
-	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
+	floor := maxAltRunes - len([]rune(result)) - 2
+	floor = max(min(floor, altLabelFloor), overviewAltHeadingFloor)
+	return assembleAltWithFloor(voteformat.LongFormHeading(group, voteformat.Tags{}), result, floor)
 }
+
+// overviewAltHeadingFloor is the least of the heading an overview description
+// keeps however many results it lists.
+const overviewAltHeadingFloor = 80
 
 // overviewAltPrefix is a vote's number and verdict without its label, for an
 // overview description too long to name each vote.
