@@ -1623,6 +1623,9 @@ contacts:
       - url: https://www.instagram.com/tamarafuniciello/
         verified: false
         confidence: high
+    tiktok:
+      - url: https://www.tiktok.com/@t.funiciello
+        verified: true
     x:
       - url: https://x.com/tamarafuniciell
         verified: false
