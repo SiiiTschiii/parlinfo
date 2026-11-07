@@ -1443,3 +1443,18 @@ func TestGroupPrefixLineNamesTheFilingCanton(t *testing.T) {
 		t.Errorf("got %q", got)
 	}
 }
+
+// What Ja supported is printed on its own line below the title, so a ✕ above a
+// Ja majority reads as what it is.
+func TestLongFormHeadingPrintsTheQuestionBelowTheTitle(t *testing.T) {
+	v := votes.Vote{Title: "Der Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!", Question: "Ja: keine Folge geben",
+		Affair: votes.Affair{Type: "Parlamentarische Initiative"}}
+	got := LongFormHeading([]votes.Vote{v}, Tags{})
+	if !strings.Contains(got, "Parlamentarische Initiative\nDer Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!\nJa: keine Folge geben\n\n") {
+		t.Errorf("heading %q", got)
+	}
+	// A group's votes are each labelled by their own heading.
+	if QuestionLine([]votes.Vote{v, v}) != "" {
+		t.Error("a group printed a question line")
+	}
+}

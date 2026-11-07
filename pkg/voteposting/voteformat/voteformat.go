@@ -501,6 +501,16 @@ func Verdict(v votes.Vote) string {
 	return v.Decision
 }
 
+// QuestionLine is the line a post prints below the title saying what a Ja
+// supported, or "" when there is none. Only a lone vote has one: a group's
+// votes are each labelled by their own heading.
+func QuestionLine(group []votes.Vote) string {
+	if len(group) != 1 {
+		return ""
+	}
+	return strings.TrimSpace(group[0].Question)
+}
+
 func HasVerdict(v votes.Vote) bool {
 	if IsAuswahlVote(CountsOf(v)) {
 		return false

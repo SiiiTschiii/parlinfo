@@ -225,6 +225,14 @@ func splitEmojiText(text string) []textSegment {
 // and an over-wide line is drawn centred — bleeding past the text column on
 // both sides, with the height accounting none the wiser.
 func wrapText(face font.Face, text string, maxWidth int) []string {
+	// A line break starts a new paragraph on a line of its own.
+	if paras := strings.Split(text, "\n"); len(paras) > 1 {
+		var lines []string
+		for _, p := range paras {
+			lines = append(lines, wrapText(face, p, maxWidth)...)
+		}
+		return lines
+	}
 	var words []string
 	for _, w := range strings.Fields(text) {
 		words = append(words, splitToWidth(face, w, maxWidth)...)
@@ -780,8 +788,12 @@ func layoutCombinedCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.
 	counts := voteformat.CountsOf(*v)
 	isAuswahl := voteformat.IsAuswahlVote(counts)
 
-	// Title first: bold, wrapped, centered
+	// Title first: bold, wrapped, centered, with what Ja supported as its own
+	// paragraph below it, where the verdict needs it.
 	title := voteformat.CleanVoteTitle(v.Title)
+	if q := voteformat.QuestionLine([]votes.Vote{*v}); q != "" {
+		title += "\n" + q
+	}
 
 	// When the vote was taken goes in the corner, as on every other card. The
 	// line above the counts is left to say what kind of ballot it was, and is

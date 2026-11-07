@@ -59,9 +59,10 @@ func TestOutcomeOf(t *testing.T) {
 	}
 }
 
-// A filed vote states what it did to the business and drops the meaning of
-// Ja; one whose meanings cannot be read keeps the meaning and loses the
-// verdict, since its Ja/Nein result would say nothing a reader can trust.
+// A filed vote states what it did to the business, and below the title, in
+// German, what Ja supported. One whose meanings cannot be read loses the
+// verdict, since its Ja/Nein result would say nothing a reader can trust, and
+// prints the meaning of Ja as served, plain ones included.
 func TestLabel_FiledVote(t *testing.T) {
 	c := New(testJurisdiction)
 	read := votes.Vote{SourceID: "1", Decision: "angenommen", Affair: votes.Affair{Type: typeParlIv}}
@@ -75,18 +76,17 @@ func TestLabel_FiledVote(t *testing.T) {
 	group := []votes.Vote{read, unread, bill, plain}
 	c.label(group)
 
-	if group[0].Outcome != outcomeNoLeave || group[0].Subtitle != "" || group[0].Decision != "angenommen" {
-		t.Errorf("read: Outcome %q, Subtitle %q, Decision %q", group[0].Outcome, group[0].Subtitle, group[0].Decision)
+	if g := group[0]; g.Outcome != outcomeNoLeave || g.Question != "Ja: keine Folge geben" || g.Subtitle != "" || g.Decision != "angenommen" {
+		t.Errorf("read: Outcome %q, Question %q, Subtitle %q, Decision %q", g.Outcome, g.Question, g.Subtitle, g.Decision)
 	}
-	if group[1].Outcome != "" || group[1].Decision != "" || !strings.Contains(group[1].Subtitle, "(Ja: Proposition de la majorité (aprouver la motion))") {
-		t.Errorf("unread: Outcome %q, Subtitle %q, Decision %q", group[1].Outcome, group[1].Subtitle, group[1].Decision)
+	if g := group[1]; g.Outcome != "" || g.Decision != "" || g.Question != "Ja: Proposition de la majorité (aprouver la motion)" || g.Subtitle != "" {
+		t.Errorf("unread: Outcome %q, Question %q, Subtitle %q, Decision %q", g.Outcome, g.Question, g.Subtitle, g.Decision)
 	}
-	// No verdict, so even a plain meaning is kept: it alone says what Ja was.
-	if group[3].Decision != "" || group[3].Subtitle != "(Ja: Annahme der Vorlage)" {
-		t.Errorf("plain: Subtitle %q, Decision %q", group[3].Subtitle, group[3].Decision)
+	if g := group[3]; g.Decision != "" || g.Question != "Ja: Annahme der Vorlage" {
+		t.Errorf("plain: Question %q, Decision %q", g.Question, g.Decision)
 	}
 	// A vote with a Subject is a bill's, labelled as before.
-	if group[2].Outcome != "" || group[2].Subtitle != "Gesamtabstimmung" || group[2].Decision != "angenommen" {
+	if group[2].Outcome != "" || group[2].Question != "" || group[2].Subtitle != "Gesamtabstimmung" || group[2].Decision != "angenommen" {
 		t.Errorf("bill: Outcome %q, Subtitle %q, Decision %q", group[2].Outcome, group[2].Subtitle, group[2].Decision)
 	}
 }
@@ -138,5 +138,20 @@ func TestGroupByAffair_FiledVoteType(t *testing.T) {
 	unknown := votes.Vote{SourceID: "38953", Affair: votes.Affair{ID: "20264038", Number: "26.4038"}}
 	if _, err := c.GroupByAffair([]votes.Vote{unknown}); err == nil || !strings.Contains(err.Error(), "26.4038") {
 		t.Errorf("unknown type: err %v, want one naming 26.4038", err)
+	}
+}
+
+func TestJaPhrase(t *testing.T) {
+	for _, tt := range []struct{ typ, yes, want string }{
+		{typeMotion, "Antrag der Mehrheit und des Bundesrates (Ablehnung der Motion)", "Ablehnung der Motion"},
+		{typeMotion, "Adopter la motion", "Annahme der Motion"},
+		{typePostulat, "Antrag der Kommission (Annahme des Postulates)", "Annahme des Postulats"},
+		{typeParlIv, "Proposition de la majorité (ne pas donner suite)", "keine Folge geben"},
+		{typeStandesIv, "Proposition de la majorité (donner suite)", "Folge geben"},
+		{typeMotion, "Proposition de la commission (classer)", ""},
+	} {
+		if got := jaPhrase(tt.typ, tt.yes); got != tt.want {
+			t.Errorf("jaPhrase(%q) = %q, want %q", tt.yes, got, tt.want)
+		}
 	}
 }

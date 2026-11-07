@@ -72,6 +72,9 @@ func LongFormHeading(group []votes.Vote, tags Tags) string {
 		sb.WriteString("\n")
 	}
 	sb.WriteString(tagHeading(CleanVoteTitle(group[0].Title), jurisdiction))
+	if q := QuestionLine(group); q != "" {
+		sb.WriteString("\n" + q)
+	}
 	sb.WriteString("\n\n")
 	return sb.String()
 }

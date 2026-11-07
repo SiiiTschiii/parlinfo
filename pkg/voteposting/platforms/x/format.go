@@ -139,6 +139,11 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
 	threadHint := "\n\n👇 Details im Thread"
+	// What Ja supported sits below the title. Carried with the hint, so the
+	// truncation below reserves room for it and shortens the title instead.
+	if q := voteformat.QuestionLine(group); q != "" {
+		threadHint = "\n" + q + threadHint
+	}
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.

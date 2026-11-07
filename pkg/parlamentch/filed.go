@@ -122,6 +122,29 @@ func meaningSide(meaning, businessType string) side {
 	return sideUnknown
 }
 
+// jaPhrase says in German what a Ja supported, read from its meaning: "Annahme
+// der Motion", "keine Folge geben". Empty where the meaning cannot be read.
+func jaPhrase(businessType, meaningYes string) string {
+	s := meaningSide(meaningYes, businessType)
+	switch {
+	case s == sideUnknown:
+		return ""
+	case businessType == typeParlIv || businessType == typeStandesIv:
+		if s == sideFor {
+			return "Folge geben"
+		}
+		return "keine Folge geben"
+	}
+	object := "der Motion"
+	if businessType == typePostulat {
+		object = "des Postulats"
+	}
+	if s == sideFor {
+		return "Annahme " + object
+	}
+	return "Ablehnung " + object
+}
+
 // outcomeOf returns what a vote did to its business, or "" when the meanings
 // do not say so unambiguously: both Ja and Nein must be read, and must stand
 // for opposite sides. decision is whether Ja carried, as decisionFor states it.

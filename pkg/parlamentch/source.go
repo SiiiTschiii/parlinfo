@@ -197,22 +197,22 @@ func (c *Client) label(group []votes.Vote) {
 		}
 		sub := strings.Join(parts, ": ")
 		if isFiledVote(group[i]) {
-			// What the vote did to the business is stated as its verdict,
-			// which makes the meaning of Ja redundant. Where the meanings
-			// cannot be read, there is no verdict, and the meaning stays: it
-			// is then the only thing that says what the counts decided.
+			// What the vote did to the business is stated as its verdict, and
+			// what Ja stood for below the title, in German: the verdict alone
+			// reads as a contradiction where Ja was a proposal to reject.
+			// Where the meanings cannot be read there is no verdict, and the
+			// meaning is printed as served, plain ones included, since it is
+			// then all that says what the counts decided.
+			group[i].Subtitle = strings.TrimSpace(sub)
 			group[i].Outcome = outcomeOf(group[i].Affair.Type, l.meaningYes, l.meaningNo, group[i].Decision)
 			if group[i].Outcome != "" {
-				group[i].Subtitle = strings.TrimSpace(sub)
+				group[i].Question = "Ja: " + jaPhrase(group[i].Affair.Type, l.meaningYes)
 				continue
 			}
 			group[i].Decision = ""
-			// Even a plain meaning, "Annahme der Vorlage": without a
-			// verdict it is all that says what Ja was for.
 			if l.meaningYes != "" {
-				sub += " (Ja: " + l.meaningYes + ")"
+				group[i].Question = "Ja: " + l.meaningYes
 			}
-			group[i].Subtitle = strings.TrimSpace(sub)
 			continue
 		}
 		if l.meaningYes != "" && !plainMeanings[strings.ToLower(l.meaningYes)] {

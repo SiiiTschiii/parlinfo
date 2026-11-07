@@ -131,6 +131,12 @@ type Vote struct {
 	// what the consistency gate checks against the counts.
 	Outcome string
 
+	// Question says what a Ja vote supported, as a post prints it below the
+	// title: "Ja: keine Folge geben". Set where the verdict alone would read as
+	// a contradiction, a ✕ above 128 Ja, because Ja was a proposal to reject.
+	// Empty for every other vote.
+	Question string
+
 	// Attribution is the "Daten: …" line naming the source, closing the link
 	// block of every post. Two sources' terms require it (OpenParlData's CC BY
 	// 4.0, the Parlamentsdienste's open data terms); the others carry one too,
