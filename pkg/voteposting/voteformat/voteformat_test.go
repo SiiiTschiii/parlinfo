@@ -711,7 +711,7 @@ func TestQuorumFraktionColumns(t *testing.T) {
 		},
 	}
 
-	got := FormatFraktionBreakdown(AggregateFraktionCounts(v))
+	got := FormatFraktionBreakdown(AggregateFraktionCounts(v), votes.German)
 
 	if !strings.Contains(got, "(Zust./ohne)") {
 		t.Errorf("expected the two-column quorum header, got:\n%s", got)
@@ -736,7 +736,7 @@ func TestQuorumFraktionColumns(t *testing.T) {
 			{Fraktion: "SP", Choice: "Ja"},
 		},
 	}
-	got = FormatFraktionBreakdown(AggregateFraktionCounts(withNein))
+	got = FormatFraktionBreakdown(AggregateFraktionCounts(withNein), votes.German)
 	if !strings.Contains(got, "(Zust./ohne)") || !strings.Contains(got, "SVP 0/2") {
 		t.Errorf("a Nein choice should join the non-supporters:\n%s", got)
 	}
@@ -1002,7 +1002,7 @@ func TestAuthorList(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AuthorList(tt.authors, 0); got != tt.want {
+			if got := AuthorList(tt.authors, 0, votes.German); got != tt.want {
 				t.Errorf("AuthorList() = %q, want %q", got, tt.want)
 			}
 		})
@@ -1168,7 +1168,7 @@ func TestLeadAuthorsOnly_OnTheLabelLine(t *testing.T) {
 func TestPackNames(t *testing.T) {
 	b := NameBlock{"✍️ Mitunterzeichnet von", []votes.Author{
 		{Name: "A", Party: "SP"}, {Name: "B", Party: "FDP"}, {Name: "C", Party: "AL"},
-	}}
+	}, votes.German}
 	measure := func(s string) int { return len([]rune(s)) }
 	tag := func(s string) string { return s + " @x" }
 
@@ -1191,7 +1191,7 @@ func TestPackNames(t *testing.T) {
 			}
 		}
 	}
-	if got := PackNames(NameBlock{"✍️ Von", nil}, nil, 100, measure); got != nil {
+	if got := PackNames(NameBlock{"✍️ Von", nil, votes.German}, nil, 100, measure); got != nil {
 		t.Errorf("no names: %q, want nothing", got)
 	}
 }
@@ -1214,16 +1214,16 @@ func TestAuthorListCapped(t *testing.T) {
 	three := []votes.Author{
 		{Name: "A", Party: "SP"}, {Name: "B", Party: "FDP"}, {Name: "C", Party: "AL"},
 	}
-	if got, want := AuthorList(three, 0), "A (SP), B (FDP) und C (AL)"; got != want {
+	if got, want := AuthorList(three, 0, votes.German), "A (SP), B (FDP) und C (AL)"; got != want {
 		t.Errorf("max 0 = %q, want all named: %q", got, want)
 	}
-	if got, want := AuthorList(three, 2), "A (SP) und B (FDP) u. a."; got != want {
+	if got, want := AuthorList(three, 2, votes.German), "A (SP) und B (FDP) u. a."; got != want {
 		t.Errorf("max 2 = %q, want %q", got, want)
 	}
-	if got, want := AuthorList(three, 1), "A (SP) u. a."; got != want {
+	if got, want := AuthorList(three, 1, votes.German), "A (SP) u. a."; got != want {
 		t.Errorf("max 1 = %q, want %q", got, want)
 	}
-	if got, want := AuthorList(three, 5), "A (SP), B (FDP) und C (AL)"; got != want {
+	if got, want := AuthorList(three, 5, votes.German), "A (SP), B (FDP) und C (AL)"; got != want {
 		t.Errorf("a cap above the count = %q, want no 'u. a.': %q", got, want)
 	}
 }

@@ -138,7 +138,7 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 // If the title is too long, it is truncated with "…".
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
-	threadHint := "\n\n👇 Details im Thread"
+	threadHint := "\n\n👇 " + voteformat.T(group[0].Language, voteformat.MsgThreadHint)
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.
@@ -148,7 +148,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
 		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(group[0].Decision),
-			voteformat.GetVoteResultText(group[0].Decision), title)
+			voteformat.GetVoteResultText(group[0].Language, group[0].Decision), title)
 	}
 	available := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, weightedLen)
@@ -181,7 +181,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 				body = title
 			} else {
 				resultEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				result := voteformat.GetVoteResultText(vote.Decision)
+				result := voteformat.GetVoteResultText(vote.Language, vote.Decision)
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := available - weightedLen(prefix)
 				if titleAvailable > 0 {
@@ -225,17 +225,16 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 	}
 
 	for i, vote := range group {
-		var entry strings.Builder
-
 		counts := voteformat.CountsOf(vote)
 		if len(group) == 1 {
 			// Single vote: the counts, headed by the ballot type when it is one
 			// worth naming. A lone threshold vote needs that most — there is no
 			// sibling beside it to make the lopsided tally look unusual.
+			text := voteformat.FormatVoteCountsLong(counts)
 			if label := voteformat.TypeLabel(vote.Type); label != "" {
-				entry.WriteString(label + "\n")
+				text = label + "\n" + text
 			}
-			entry.WriteString(voteformat.FormatVoteCountsLong(counts))
+			entries = append(entries, replyEntry{text: text, vote: i, starts: true})
 		} else {
 			// Multi-vote: subtitle + counts
 			voteTitle := voteformat.SubVoteLabel(vote, i, len(group))
@@ -244,22 +243,32 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 				// AL-Fraktion zu Dispositivziffer 1".
 				voteTitle = contactMapper.TagXFraktionen(voteTitle, vote.Jurisdiction)
 			}
-			if !voteformat.HasVerdict(vote) {
-				// Auswahl: no ✅/❌ prefix
-				entry.WriteString(fmt.Sprintf("%s\n", voteTitle))
-			} else {
-				voteEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				entry.WriteString(fmt.Sprintf("%s %s\n", voteEmoji, voteTitle))
+			heading := voteTitle // Auswahl: no ✅/❌ prefix
+			if voteformat.HasVerdict(vote) {
+				heading = voteformat.GetVoteResultEmoji(vote.Decision) + " " + voteTitle
 			}
-			entry.WriteString(voteformat.FormatVoteCountsLong(counts))
+			countsLine := voteformat.FormatVoteCountsLong(counts)
+			if weightedLen(heading+"\n"+countsLine) <= charLimit {
+				entries = append(entries, replyEntry{text: heading + "\n" + countsLine, vote: i, starts: true})
+			} else {
+				// A bill title with its meaning of Ja can fill a post by
+				// itself — 25.059's decree does in French and Italian — and
+				// the packer only splits between entries. So the counts go to
+				// the next reply rather than past the limit, and the heading
+				// is cut only if it cannot fit even alone.
+				if weightedLen(heading) > charLimit {
+					heading = truncateText(heading, charLimit-1)
+				}
+				entries = append(entries,
+					replyEntry{text: heading, vote: i, starts: true},
+					replyEntry{text: countsLine, vote: i})
+			}
 		}
-
-		entries = append(entries, replyEntry{text: entry.String(), vote: i, starts: true})
 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
-			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
+			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts, vote.Language); breakdown != "" {
 				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}

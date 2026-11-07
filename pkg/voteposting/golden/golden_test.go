@@ -2,7 +2,8 @@
 //
 // It exists to make refactors that are supposed to be behaviour-preserving
 // provable: testdata/golden.txt contains the exact text every platform
-// formatter produces for every fixture. Any diff is a behaviour change and must
+// formatter produces for every fixture, and testdata/nationalrat_<lang>.txt
+// the same for the Nationalrat in each language it is posted in. Any diff is a behaviour change and must
 // be justified, not accepted.
 //
 // Generated images are checked separately, by properties rather than by bytes —
@@ -25,6 +26,7 @@ import (
 	"image/jpeg"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 
@@ -47,14 +49,44 @@ const goldenPath = "testdata/golden.txt"
 var xCharLimits = []int{x.DefaultMaxChars, 2000}
 
 func TestGoldenOutput(t *testing.T) {
+	got := renderGolden(t, fixtureNames(), func(name string) []votes.Vote { return fixtureByName(t, name) })
+	compareGolden(t, goldenPath, got)
+}
+
+// TestGoldenOutputByLanguage pins the Nationalrat's posts in each language it
+// is posted in, one file per language, so a change to one language's wording
+// shows up as a diff in that file and no other.
+//
+// German is among them although golden.txt is German too: golden.txt is
+// shaped after the Zürich bodies, and only these fixtures show the three
+// languages saying the same thing side by side.
+func TestGoldenOutputByLanguage(t *testing.T) {
+	for _, l := range []votes.Language{votes.German, votes.French, votes.Italian} {
+		t.Run(string(l), func(t *testing.T) {
+			fixtures := testfixtures.NationalratFixtures(l)
+			got := renderGolden(t, testfixtures.NationalratFixtureNames, func(name string) []votes.Vote {
+				group, ok := fixtures[name]
+				if !ok {
+					t.Fatalf("unknown fixture %q", name)
+				}
+				return group
+			})
+			compareGolden(t, filepath.Join("testdata", "nationalrat_"+string(l)+".txt"), got)
+		})
+	}
+}
+
+// renderGolden renders every named fixture on every platform, in order.
+func renderGolden(t *testing.T, names []string, fixture func(string) []votes.Vote) string {
+	t.Helper()
 	mapper, err := contacts.LoadContacts(filepath.Join("..", "..", "..", "data", "contacts_test.yaml"))
 	if err != nil {
 		t.Fatalf("loading test contacts: %v", err)
 	}
 
 	var sb strings.Builder
-	for _, name := range fixtureNames() {
-		group := fixtureByName(t, name)
+	for _, name := range names {
+		group := fixture(name)
 		sb.WriteString(fmt.Sprintf("################ FIXTURE %s ################\n\n", name))
 
 		for _, limit := range xCharLimits {
@@ -98,32 +130,34 @@ func TestGoldenOutput(t *testing.T) {
 		}
 		sb.WriteString("\n")
 	}
+	return sb.String()
+}
 
-	got := sb.String()
-
+// compareGolden checks got against the file at path, or rewrites the file
+// under -update.
+func compareGolden(t *testing.T, path, got string) {
+	t.Helper()
 	if *update {
-		if err := os.MkdirAll(filepath.Dir(goldenPath), 0o755); err != nil {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatalf("creating testdata dir: %v", err)
 		}
-		if err := os.WriteFile(goldenPath, []byte(got), 0o644); err != nil {
+		if err := os.WriteFile(path, []byte(got), 0o644); err != nil {
 			t.Fatalf("writing golden file: %v", err)
 		}
-		t.Logf("wrote %s (%d bytes)", goldenPath, len(got))
+		t.Logf("wrote %s (%d bytes)", path, len(got))
 		return
 	}
 
-	wantBytes, err := os.ReadFile(goldenPath)
+	wantBytes, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("reading golden file (run with -update to create it): %v", err)
 	}
 
 	if want := string(wantBytes); got != want {
-		t.Errorf("output differs from %s: %s", goldenPath, firstDiff(want, got))
+		t.Errorf("output differs from %s: %s", path, firstDiff(want, got))
 	}
 }
 
-// fixtureNames returns every fixture in a stable order, including the
-// Instagram-only truncation fixture that AllFixtures deliberately omits.
 func fixtureNames() []string {
 	return append(append([]string{}, testfixtures.FixtureNames...), "instagram-long-multi-vote-truncation")
 }
@@ -169,9 +203,24 @@ func firstDiff(want, got string) string {
 // SelectColor. The body caption is checked as a fact ("something was drawn
 // there"), not a value, so glyph-rasterisation differences cannot break it.
 func TestGeneratedImages(t *testing.T) {
+	groups := map[string][]votes.Vote{}
+	var names []string
 	for _, name := range fixtureNames() {
+		groups[name] = fixtureByName(t, name)
+		names = append(names, name)
+	}
+	for _, l := range []votes.Language{votes.German, votes.French, votes.Italian} {
+		for name, group := range testfixtures.NationalratFixtures(l) {
+			key := name + "-" + string(l)
+			groups[key] = group
+			names = append(names, key)
+		}
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
 		t.Run(name, func(t *testing.T) {
-			group := fixtureByName(t, name)
+			group := groups[name]
 
 			images, err := imagegen.GenerateCarousel(group)
 			if err != nil {

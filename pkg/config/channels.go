@@ -41,6 +41,17 @@ var channels = []Channel{
 		// (@chparlinfo) and its own workflow, bot-chparl.yml.
 		Jurisdictions: []string{NationalratKey},
 	},
+	{
+		// The same votes in French and in Italian, each to accounts of its
+		// own: a reader who wants one language should not have to scroll past
+		// the other two.
+		Key:           "chparl-fr",
+		Jurisdictions: []string{NationalratFrenchKey},
+	},
+	{
+		Key:           "chparl-it",
+		Jurisdictions: []string{NationalratItalianKey},
+	},
 }
 
 // Channels returns the configured channels in order.

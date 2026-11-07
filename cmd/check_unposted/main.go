@@ -152,11 +152,7 @@ func check(
 }
 
 func loadContacts(jurisdictions []config.Jurisdiction) *contacts.Mapper {
-	keys := make([]string, 0, len(jurisdictions))
-	for _, j := range jurisdictions {
-		keys = append(keys, j.Key)
-	}
-	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(keys...)...)
+	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(config.ContactsKeys(jurisdictions)...)...)
 	if err != nil {
 		log.Printf("Warning: Could not load contacts for tagging: %v", err)
 		return nil

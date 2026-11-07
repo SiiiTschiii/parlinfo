@@ -53,20 +53,37 @@ type authorDTO struct {
 	PartyAbbreviation string `json:"PartyAbbreviation"`
 }
 
-// partyLabels maps the service's party abbreviations onto the names posts use
-// elsewhere. Unlisted abbreviations (SVP, SP, EVP, EDU, Lega, MCG) already are
-// those names and pass through.
-var partyLabels = map[string]string{
-	"M-E":          "Mitte",
-	"FDP-Liberale": "FDP",
-	"GRÜNE":        "Grüne",
-	"glp":          "GLP",
-	"-":            "parteilos",
+// partyLabels maps the service's party abbreviations, as each language's feed
+// spells them, onto the names posts use elsewhere. Unlisted abbreviations
+// (SVP, SP, EVP, EDU, Lega, MCG in German; UDC, PLR, PEV, UDF in French and
+// Italian) already are those names and pass through.
+var partyLabels = map[votes.Language]map[string]string{
+	votes.German: {
+		"M-E":          "Mitte",
+		"FDP-Liberale": "FDP",
+		"GRÜNE":        "Grüne",
+		"glp":          "GLP",
+		"-":            "parteilos",
+	},
+	votes.French: {
+		"M-E":      "Centre",
+		"PSS":      "PS",
+		"VERT-E-S": "Vert-e-s",
+		"pvl":      "PVL",
+		"-":        "sans parti",
+	},
+	votes.Italian: {
+		"M-E":   "Centro",
+		"PSS":   "PS",
+		"VERDI": "Verdi",
+		"pvl":   "PVL",
+		"-":     "senza partito",
+	},
 }
 
-func partyLabel(abbreviation string) string {
+func partyLabel(l votes.Language, abbreviation string) string {
 	abbreviation = strings.TrimSpace(abbreviation)
-	if label, ok := partyLabels[abbreviation]; ok {
+	if label, ok := partyLabels[l.OrGerman()][abbreviation]; ok {
 		return label
 	}
 	return abbreviation
@@ -101,8 +118,8 @@ func (c *Client) authorsOf(businessNumber int64) []votes.Author {
 func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
 	var roles []businessRoleDTO
 	err := c.get("/BusinessRole", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
-			businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
+		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
+			c.odataLanguage(), businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
 		"$select": "Role,MemberCouncilNumber",
 	}, &roles)
 	if err != nil {
@@ -119,13 +136,13 @@ func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
 	}
 	var members []authorDTO
 	err = c.get("/MemberCouncil", query{
-		"$filter": "Language eq 'DE' and (" + strings.Join(clauses, " or ") + ")",
+		"$filter": "Language eq '" + c.odataLanguage() + "' and (" + strings.Join(clauses, " or ") + ")",
 		"$select": "ID,FirstName,LastName,PartyAbbreviation",
 	}, &members)
 	if err != nil {
 		return nil, err
 	}
-	return namedAuthors(held, members), nil
+	return namedAuthors(c.language(), held, members), nil
 }
 
 // heldRole is a member and the role they hold on a business.
@@ -161,7 +178,7 @@ func authorOrder(roles []businessRoleDTO) []heldRole {
 // out: the formatters treat the party as what marks a member acting in the
 // chamber, and a filer who has left is still a member of record with their
 // party.
-func namedAuthors(held []heldRole, members []authorDTO) []votes.Author {
+func namedAuthors(l votes.Language, held []heldRole, members []authorDTO) []votes.Author {
 	byID := make(map[int64]authorDTO, len(members))
 	for _, m := range members {
 		byID[m.ID] = m
@@ -178,7 +195,7 @@ func namedAuthors(held []heldRole, members []authorDTO) []votes.Author {
 		}
 		first, last := strings.TrimSpace(m.FirstName), strings.TrimSpace(m.LastName)
 		name := strings.TrimSpace(first + " " + last)
-		party := partyLabel(m.PartyAbbreviation)
+		party := partyLabel(l, m.PartyAbbreviation)
 		if name == "" || party == "" {
 			continue
 		}

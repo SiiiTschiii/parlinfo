@@ -38,7 +38,9 @@ var bodyAccents = map[string]color.RGBA{
 	"zurich-canton": {0x00, 0x70, 0xB4, 0xFF},
 	// The Bund's red. The Nationalrat posts to accounts of its own, but its
 	// cards follow the same rule.
-	"nationalrat": {0xDC, 0x00, 0x18, 0xFF},
+	"nationalrat":    {0xDC, 0x00, 0x18, 0xFF},
+	"nationalrat-fr": {0xDC, 0x00, 0x18, 0xFF},
+	"nationalrat-it": {0xDC, 0x00, 0x18, 0xFF},
 }
 
 // fallbackAccent is the band colour for a body with no assigned colour.

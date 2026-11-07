@@ -26,11 +26,13 @@ import (
 // DefaultBaseURL is the OData service root.
 const DefaultBaseURL = "https://ws.parlament.ch/odata.svc"
 
-// Attribution credits the Parlamentsdienste. Their open data terms allow use
-// only with the source named as «Parlamentsdienste der Bundesversammlung,
-// Bern», in those words:
+// Attribution credits the Parlamentsdienste on a German post. Their open data
+// terms allow use only with the source named as «Parlamentsdienste der
+// Bundesversammlung, Bern», in those words:
 // https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services
-const Attribution = "Daten: Parlamentsdienste der Bundesversammlung, Bern"
+//
+// Posts in other languages use AttributionFor.
+var Attribution = AttributionFor(votes.German)
 
 // Client fetches Nationalrat votes.
 type Client struct {
@@ -66,7 +68,8 @@ type Client struct {
 	council int
 }
 
-// New builds a client for the Nationalrat.
+// New builds a client for the Nationalrat. It asks the service for the
+// jurisdiction's language and labels what it returns in that language.
 func New(jurisdiction votes.Jurisdiction) *Client {
 	return &Client{
 		baseURL:       DefaultBaseURL,

@@ -369,7 +369,7 @@ func TestApplyMemberVotes_RefusesAnUnknownDecision(t *testing.T) {
 	v := votes.Vote{SourceID: "1", Type: "Normal"}
 	rows := fullChamber()
 	rows[1] = votingDTO{FirstName: "C", LastName: "D", ParlGroupCode: "V", Decision: 4, DecisionText: "?"}
-	applyMemberVotes(&v, rows)
+	New(testJurisdiction).applyMemberVotes(&v, rows)
 	if v.Type != "" {
 		t.Errorf("type = %q, want empty so the pipeline refuses the vote", v.Type)
 	}
@@ -382,7 +382,7 @@ func TestApplyMemberVotes_RefusesAPartialSnapshot(t *testing.T) {
 	// One row short of the chamber. Counted, it would still read as a clear
 	// result with a verdict; nothing derived from the rows alone can tell.
 	v := votes.Vote{SourceID: "1", Type: "Normal"}
-	applyMemberVotes(&v, fullChamber()[:Seats-1])
+	New(testJurisdiction).applyMemberVotes(&v, fullChamber()[:Seats-1])
 	if v.Type != "" {
 		t.Errorf("type = %q, want empty so the pipeline refuses the vote", v.Type)
 	}
@@ -393,7 +393,7 @@ func TestApplyMemberVotes_RefusesAPartialSnapshot(t *testing.T) {
 
 func TestApplyMemberVotes_FullChamberIsCounted(t *testing.T) {
 	v := votes.Vote{SourceID: "1", Type: "Normal"}
-	applyMemberVotes(&v, fullChamber())
+	New(testJurisdiction).applyMemberVotes(&v, fullChamber())
 	if v.Type != "Normal" || v.Yes == nil || *v.Yes != Seats {
 		t.Errorf("type=%q yes=%v, want a counted vote", v.Type, v.Yes)
 	}
@@ -401,7 +401,7 @@ func TestApplyMemberVotes_FullChamberIsCounted(t *testing.T) {
 
 func TestApplyMemberVotes_NoRowsIsRefused(t *testing.T) {
 	v := votes.Vote{SourceID: "1", Type: "Normal"}
-	applyMemberVotes(&v, nil)
+	New(testJurisdiction).applyMemberVotes(&v, nil)
 	if v.Type != "" {
 		t.Errorf("type = %q, want empty", v.Type)
 	}
@@ -420,16 +420,117 @@ func TestDecisionFor_TieStatesNothing(t *testing.T) {
 }
 
 func TestFraktionLabel(t *testing.T) {
-	tests := []struct{ code, abbr, want string }{
-		{"V", "Fraktion V", "SVP"},
-		{"M-E", "Fraktion M-E", "Mitte-EVP"},
+	tests := []struct {
+		lang             votes.Language
+		code, abbr, want string
+	}{
+		{votes.German, "V", "Fraktion V", "SVP"},
+		{votes.German, "M-E", "Fraktion M-E", "Mitte-EVP"},
+		// The French and Italian feeds abbreviate the SVP as "Groupe B" and
+		// "Gruppo B": an internal code, not a name anyone would recognise.
+		{votes.French, "V", "Groupe B", "UDC"},
+		{votes.French, "G", "Groupe G", "Vert-e-s"},
+		{votes.Italian, "M-E", "Gruppo K", "Centro-PEV"},
 		// A group nobody has mapped keeps its official short name.
-		{"X", "Fraktion X", "X"},
-		{"X", "", "X"},
+		{votes.German, "X", "Fraktion X", "X"},
+		{votes.French, "X", "Groupe X", "X"},
+		{votes.Italian, "X", "Gruppo X", "X"},
+		{votes.German, "X", "", "X"},
 	}
 	for _, tt := range tests {
-		if got := fraktionLabel(tt.code, tt.abbr); got != tt.want {
-			t.Errorf("fraktionLabel(%q, %q) = %q, want %q", tt.code, tt.abbr, got, tt.want)
+		j := testJurisdiction
+		j.Language = tt.lang
+		if got := New(j).fraktionLabel(tt.code, tt.abbr); got != tt.want {
+			t.Errorf("%s fraktionLabel(%q, %q) = %q, want %q", tt.lang, tt.code, tt.abbr, got, tt.want)
+		}
+	}
+}
+
+// Every group the German table names must be named in every language, or a
+// French table would print one German label among the French ones.
+func TestFraktionLabels_EveryLanguageNamesEveryGroup(t *testing.T) {
+	for lang, labels := range fraktionLabels {
+		for code := range fraktionLabels[votes.German] {
+			if labels[code] == "" {
+				t.Errorf("%s has no label for group %q", lang, code)
+			}
+		}
+	}
+}
+
+func TestFetchRecent_AsksForTheJurisdictionsLanguage(t *testing.T) {
+	c, requests := newTestClient(t)
+	c.jurisdiction.Language = votes.Italian
+
+	groups := fetchAndGroup(t, c)
+
+	for _, raw := range *requests {
+		q, err := url.ParseQuery(raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if f := q.Get("$filter"); f != "" && !strings.Contains(f, "Language eq 'IT'") {
+			t.Errorf("request asks for another language: %s", f)
+		}
+	}
+
+	v := groups[0][0]
+	if v.Language != votes.Italian {
+		t.Errorf("vote language = %q, want it", v.Language)
+	}
+	if !strings.HasPrefix(v.SourceURL, "https://www.parlament.ch/it/") {
+		t.Errorf("business link = %q, want the Italian page", v.SourceURL)
+	}
+	if v.Attribution != "Dati: Servizi del Parlamento" {
+		t.Errorf("attribution = %q, want the service's Italian name", v.Attribution)
+	}
+	// The service serves the subject in French in every feed.
+	if !strings.HasPrefix(v.Subtitle, "Votazione finale") {
+		t.Errorf("subtitle = %q, want the subject in Italian", v.Subtitle)
+	}
+}
+
+// The business type is read by key rather than filtered, so its language sits
+// in the path, where TestFetchRecent_AsksForTheJurisdictionsLanguage does not
+// look.
+func TestBusinessType_AsksForTheLanguage(t *testing.T) {
+	var path string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path = r.URL.Path
+		_, _ = w.Write([]byte(`{"d":{"BusinessTypeName":"Objet du Conseil fédéral"}}`))
+	}))
+	t.Cleanup(srv.Close)
+
+	j := testJurisdiction
+	j.Language = votes.French
+	c := New(j)
+	c.SetBaseURL(srv.URL)
+
+	if got := c.businessType(20260033); got != "Objet du Conseil fédéral" {
+		t.Errorf("business type = %q", got)
+	}
+	if want := "/Business(ID=20260033,Language='FR')"; path != want {
+		t.Errorf("path = %q, want %q", path, want)
+	}
+}
+
+func TestSubjectLabel(t *testing.T) {
+	tests := []struct {
+		lang          votes.Language
+		subject, want string
+	}{
+		{votes.Italian, "Vote final", "Votazione finale"},
+		{votes.Italian, "Vote sur l'ensemble", "Votazione sul complesso"},
+		{votes.French, "Gesamtabstimmung", "Vote sur l'ensemble"},
+		{votes.French, "Vote final", "Vote final"},
+		// The German account publishes the subject as served.
+		{votes.German, "Vote final", "Vote final"},
+		// A hand-typed variant is printed as served, not half translated.
+		{votes.Italian, "Gesamtabstimmung zur Vorlage 2", "Gesamtabstimmung zur Vorlage 2"},
+	}
+	for _, tt := range tests {
+		if got := subjectLabel(tt.lang, tt.subject); got != tt.want {
+			t.Errorf("%s subjectLabel(%q) = %q, want %q", tt.lang, tt.subject, got, tt.want)
 		}
 	}
 }

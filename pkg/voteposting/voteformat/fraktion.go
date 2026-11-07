@@ -87,7 +87,9 @@ var metaValues = map[string]bool{
 // Returns "" if the input is empty.
 // Header legend is built dynamically from distinct Abstimmungsverhalten values.
 // Fraktionen sorted by total members descending (sum of all counts); ties broken alphabetically.
-func FormatFraktionBreakdown(counts map[string]*FraktionCounts) string {
+// The header is written in l; the counts are keyed in the source vocabulary
+// whatever the language.
+func FormatFraktionBreakdown(counts map[string]*FraktionCounts, l votes.Language) string {
 	if len(counts) == 0 {
 		return ""
 	}
@@ -153,13 +155,15 @@ func FormatFraktionBreakdown(counts map[string]*FraktionCounts) string {
 	// Build header legend with abbreviations.
 	headerParts := make([]string, len(columns))
 	for i, col := range columns {
-		if abbr, ok := headerAbbrev[col]; ok {
+		if label, ok := localHeader(l, col); ok {
+			headerParts[i] = label
+		} else if abbr, ok := headerAbbrev[col]; ok {
 			headerParts[i] = abbr
 		} else {
 			headerParts[i] = col
 		}
 	}
-	header := fmt.Sprintf("🏛️ Fraktionen (%s):", strings.Join(headerParts, "/"))
+	header := fmt.Sprintf("🏛️ %s (%s):", T(l, MsgFraktionen), strings.Join(headerParts, "/"))
 
 	// Sort factions by total members descending, ties alphabetically.
 	type fraktionEntry struct {
@@ -194,4 +198,21 @@ func FormatFraktionBreakdown(counts map[string]*FraktionCounts) string {
 	}
 
 	return strings.Join(lines, "\n")
+}
+
+// localHeader names the standard columns in the post's language. The quorum
+// columns are not among them: only the Zürich bodies take quorum votes, and
+// headerAbbrev names those.
+func localHeader(l votes.Language, col string) (string, bool) {
+	switch col {
+	case "Ja":
+		return T(l, MsgYes), true
+	case "Nein":
+		return T(l, MsgNo), true
+	case "Enthaltung":
+		return T(l, MsgAbstainHeader), true
+	case "Abwesend":
+		return T(l, MsgAbsentHeader), true
+	}
+	return "", false
 }

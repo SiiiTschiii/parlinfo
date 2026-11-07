@@ -140,7 +140,7 @@ func resultAlt(group []votes.Vote, i int) string {
 	case auswahlOutcome(v) != "":
 		label = auswahlOutcome(v) + ": " + label
 	case voteformat.HasVerdict(v):
-		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(v.Decision), voteformat.GetVoteResultText(v.Decision), label)
+		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(v.Decision), voteformat.GetVoteResultText(v.Language, v.Decision), label)
 	}
 
 	if stamp := voteformat.FormatVoteDateTime(v.Date); stamp != "" {
@@ -149,7 +149,7 @@ func resultAlt(group []votes.Vote, i int) string {
 
 	result := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
 	if len(v.MemberVotes) > 0 {
-		if breakdown := voteformat.FormatFraktionBreakdown(voteformat.AggregateFraktionCounts(v)); breakdown != "" {
+		if breakdown := voteformat.FormatFraktionBreakdown(voteformat.AggregateFraktionCounts(v), v.Language); breakdown != "" {
 			result += "\n\n" + breakdown
 		}
 	}

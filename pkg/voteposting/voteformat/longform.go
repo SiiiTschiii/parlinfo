@@ -106,7 +106,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 			sb.WriteString(voteTitle)
 		} else {
 			sb.WriteString(fmt.Sprintf("%s %s: %s",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Decision), voteTitle))
+				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Language, vote.Decision), voteTitle))
 		}
 		sb.WriteString("\n")
 	} else {
@@ -118,7 +118,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 		}
 		if HasVerdict(vote) {
 			sb.WriteString(fmt.Sprintf("%s %s\n",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Decision)))
+				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Language, vote.Decision)))
 		}
 	}
 
@@ -126,7 +126,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 	sb.WriteString("\n")
 
 	if len(vote.MemberVotes) > 0 {
-		if breakdown := FormatFraktionBreakdown(AggregateFraktionCounts(vote)); breakdown != "" {
+		if breakdown := FormatFraktionBreakdown(AggregateFraktionCounts(vote), vote.Language); breakdown != "" {
 			sb.WriteString("\n")
 			sb.WriteString(breakdown)
 			sb.WriteString("\n")

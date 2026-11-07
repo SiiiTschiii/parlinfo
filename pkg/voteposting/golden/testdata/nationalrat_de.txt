@@ -1,0 +1,310 @@
+################ FIXTURE nationalrat-single-vote ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 17.09.2026 (09:54)
+
+Geschäft des Bundesrates · Vote sur l'ensemble
+✅ Angenommen: Bundesgesetz über die Unterstützung der Opfer der Brandkatastrophe von Crans-Montana vom 1. Januar 2026
+
+👇 Details im Thread
+
+[post 1]
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+📊 106 Ja | 87 Nein | 4 Enthaltung | 2 Abwesend
+
+[post 2]
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 1/65/0/0
+SP 41/0/0/0
+Mitte-EVP 28/1/0/2
+FDP 3/21/3/0
+Grüne 22/0/1/0
+GLP 11/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 17.09.2026 (09:54)
+
+Geschäft des Bundesrates · Vote sur l'ensemble
+✅ Angenommen: Bundesgesetz über die Unterstützung der Opfer der Brandkatastrophe von Crans-Montana vom 1. Januar 2026
+
+👇 Details im Thread
+
+[post 1]
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+📊 106 Ja | 87 Nein | 4 Enthaltung | 2 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 1/65/0/0
+SP 41/0/0/0
+Mitte-EVP 28/1/0/2
+FDP 3/21/3/0
+Grüne 22/0/1/0
+GLP 11/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Nationalrat | Abstimmung vom 17.09.2026 (09:54)
+
+Geschäft des Bundesrates · Vote sur l'ensemble
+✅ Angenommen: Bundesgesetz über die Unterstützung der Opfer der Brandkatastrophe von Crans-Montana vom 1. Januar 2026
+
+👇 Details im Thread
+
+[post 1]
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+📊 106 Ja | 87 Nein | 4 Enth. | 2 Abw.
+[facet] {Index:{ByteStart:16 ByteEnd:101} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022 DID: Tag:}]}
+[facet] {Index:{ByteStart:118 ByteEnd:183} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf DID: Tag:}]}
+
+[post 2]
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 1/65/0/0
+SP 41/0/0/0
+Mitte-EVP 28/1/0/2
+FDP 3/21/3/0
+Grüne 22/0/1/0
+GLP 11/0/0/0
+
+---- Instagram ----
+[images] 1
+[caption]
+🗳️ Nationalrat | Abstimmung vom 17.09.2026 (09:54)
+
+Geschäft des Bundesrates · Vote sur l'ensemble
+Bundesgesetz über die Unterstützung der Opfer der Brandkatastrophe von Crans-Montana vom 1. Januar 2026
+
+✅ Angenommen
+📊 106 Ja | 87 Nein | 4 Enthaltung | 2 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 1/65/0/0
+SP 41/0/0/0
+Mitte-EVP 28/1/0/2
+FDP 3/21/3/0
+Grüne 22/0/1/0
+GLP 11/0/0/0
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+---- Facebook ----
+[images] 1
+[message]
+🗳️ Nationalrat | Abstimmung vom 17.09.2026 (09:54)
+
+Geschäft des Bundesrates · Vote sur l'ensemble
+Bundesgesetz über die Unterstützung der Opfer der Brandkatastrophe von Crans-Montana vom 1. Januar 2026
+
+✅ Angenommen
+📊 106 Ja | 87 Nein | 4 Enthaltung | 2 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 1/65/0/0
+SP 41/0/0/0
+Mitte-EVP 28/1/0/2
+FDP 3/21/3/0
+Grüne 22/0/1/0
+GLP 11/0/0/0
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+################ FIXTURE nationalrat-two-bills ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 02.10.2026
+
+Geschäft des Bundesrates
+«Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelzinitiative)». Volksinitiative und indirekter Gegenvorschlag (Änderung des Tierschutzgesetzes)
+
+👇 Details im Thread
+
+[post 1]
+🔗 https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+[post 2]
+✅ Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Ja | 33 Nein | 7 Enthaltung | 3 Abwesend
+
+[post 3]
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 57/4/5/0
+SP 36/4/1/0
+Mitte-EVP 29/1/0/1
+FDP 26/1/0/0
+Grüne 0/22/0/1
+GLP 8/1/1/1
+
+[post 4]
+✅ Vote final: Tierschutzgesetz (TSchG)
+📊 139 Ja | 52 Nein | 5 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 10/52/4/0
+SP 41/0/0/0
+Mitte-EVP 30/0/0/1
+FDP 26/0/1/0
+Grüne 22/0/0/1
+GLP 10/0/0/1
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 02.10.2026
+
+Geschäft des Bundesrates
+«Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelzinitiative)». Volksinitiative und indirekter Gegenvorschlag (Änderung des Tierschutzgesetzes)
+
+👇 Details im Thread
+
+[post 1]
+🔗 https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+[post 2]
+✅ Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Ja | 33 Nein | 7 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 57/4/5/0
+SP 36/4/1/0
+Mitte-EVP 29/1/0/1
+FDP 26/1/0/0
+Grüne 0/22/0/1
+GLP 8/1/1/1
+
+[post 3]
+✅ Vote final: Tierschutzgesetz (TSchG)
+📊 139 Ja | 52 Nein | 5 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 10/52/4/0
+SP 41/0/0/0
+Mitte-EVP 30/0/0/1
+FDP 26/0/1/0
+Grüne 22/0/0/1
+GLP 10/0/0/1
+
+---- Bluesky ----
+[post 0]
+🗳️ Nationalrat | Abstimmung vom 02.10.2026
+
+Geschäft des Bundesrates
+«Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelzinitiative)». Volksinitiative und indirekter Gegenvorschlag (Änderung des Tierschutzgesetzes)
+
+👇 Details im Thread
+
+[post 1]
+🔗 https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059 DID: Tag:}]}
+
+[post 2]
+✅ Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Ja | 33 Nein | 7 Enth. | 3 Abw.
+
+[post 3]
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 57/4/5/0
+SP 36/4/1/0
+Mitte-EVP 29/1/0/1
+FDP 26/1/0/0
+Grüne 0/22/0/1
+GLP 8/1/1/1
+
+[post 4]
+✅ Vote final: Tierschutzgesetz (TSchG)
+📊 139 Ja | 52 Nein | 5 Enth. | 3 Abw.
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 10/52/4/0
+SP 41/0/0/0
+Mitte-EVP 30/0/0/1
+FDP 26/0/1/0
+Grüne 22/0/0/1
+GLP 10/0/0/1
+
+---- Instagram ----
+[images] 3
+[caption]
+🗳️ Nationalrat | Abstimmung vom 02.10.2026
+
+Geschäft des Bundesrates
+«Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelzinitiative)». Volksinitiative und indirekter Gegenvorschlag (Änderung des Tierschutzgesetzes)
+
+✅ Angenommen: Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Ja | 33 Nein | 7 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 57/4/5/0
+SP 36/4/1/0
+Mitte-EVP 29/1/0/1
+FDP 26/1/0/0
+Grüne 0/22/0/1
+GLP 8/1/1/1
+
+✅ Angenommen: Vote final: Tierschutzgesetz (TSchG)
+📊 139 Ja | 52 Nein | 5 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 10/52/4/0
+SP 41/0/0/0
+Mitte-EVP 30/0/0/1
+FDP 26/0/1/0
+Grüne 22/0/0/1
+GLP 10/0/0/1
+
+🔗 https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+---- Facebook ----
+[images] 3
+[message]
+🗳️ Nationalrat | Abstimmung vom 02.10.2026
+
+Geschäft des Bundesrates
+«Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelzinitiative)». Volksinitiative und indirekter Gegenvorschlag (Änderung des Tierschutzgesetzes)
+
+🔗 https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+[caption of image 2]
+✅ Angenommen: Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Ja | 33 Nein | 7 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 57/4/5/0
+SP 36/4/1/0
+Mitte-EVP 29/1/0/1
+FDP 26/1/0/0
+Grüne 0/22/0/1
+GLP 8/1/1/1
+
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33215.pdf
+[caption of image 3]
+✅ Angenommen: Vote final: Tierschutzgesetz (TSchG)
+📊 139 Ja | 52 Nein | 5 Enthaltung | 3 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 10/52/4/0
+SP 41/0/0/0
+Mitte-EVP 30/0/0/1
+FDP 26/0/1/0
+Grüne 22/0/0/1
+GLP 10/0/0/1
+
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
+
