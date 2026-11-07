@@ -46,6 +46,10 @@ func TestOutcomeOf(t *testing.T) {
 		{"not the decision", typeMotion, "Proposition de la commission (classer)", "Proposition Gugger (ne pas classer)", "angenommen", ""},
 		{"write-off", typeParlIv, "Antrag der Kommission (abschreiben)", "Antrag Aeschi Thomas (nicht abschreiben)", "angenommen", ""},
 		{"deadline", typeParlIv, "Antrag der Mehrheit (Frist um 2 Jahre verlängern)", "Antrag der Minderheit de Courten (abschreiben)", "angenommen", ""},
+		{"a proposer named like a guard word", typeParlIv,
+			"Proposition de la majorité (donner suite)", "Proposition de la minorité Pointet (ne pas donner suite)", "angenommen", outcomeLeave},
+		{"a point of a motion", typeMotion,
+			"Proposition de la commission (adopter le point 2 de la motion)", "Proposition du Conseil fédéral (rejeter la motion)", "angenommen", ""},
 		{"both sides the same", typeParlIv, "Antrag der Mehrheit (Folge geben)", "Antrag der Minderheit (Folge geben)", "angenommen", ""},
 	}
 	for _, tt := range tests {

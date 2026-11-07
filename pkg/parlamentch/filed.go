@@ -80,7 +80,10 @@ var (
 	// without one. Adopting a motion as amended does decide it, and reads as
 	// adoption; amended against original version puts adoption on both sides,
 	// which outcomeOf refuses.
-	reNotTheDecision = regexp.MustCompile(`abschreib|classe|frist|délai|prolong|ziffer|chiffre|punkt|point|vorlage|projet|entwurf|rückweis|renvoi`)
+	//
+	// Each must start a word, and "point" must be one, since the proposer's
+	// surname shares the text: François Pointet sits in the chamber.
+	reNotTheDecision = regexp.MustCompile(`(?:^|[^\p{L}])(?:abschreib|classe|frist|délai|prolong|ziffer|chiffre|punkt|points?(?:[^\p{L}]|$)|vorlage|projet|entwurf|rückweis|renvoi)`)
 )
 
 // meaningSide reads one meaning. The business's own noun must appear in a
