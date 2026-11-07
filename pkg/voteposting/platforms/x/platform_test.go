@@ -40,6 +40,9 @@ func newTestXPlatform(calls *[]tweetCall, maxPostsPerRun int) *XPlatform {
 		maxPostsPerRun: maxPostsPerRun,
 		postsThisRun:   0,
 		postTweetFunc:  mockPostTweet(calls),
+		// As NewXPlatform sets it: a zero limit would have every heading cut
+		// to fit nothing.
+		maxChars: DefaultMaxChars,
 	}
 }
 

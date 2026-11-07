@@ -139,9 +139,10 @@ Données : Les Services du Parlement
 
 [post 2]
 ✅ Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
-📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
 
 [post 3]
+📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
+
 🏛️ Groupes (Oui/Non/Abst/Abs):
 UDC 57/4/5/0
 PS 36/4/1/0

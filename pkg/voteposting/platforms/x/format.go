@@ -225,17 +225,16 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 	}
 
 	for i, vote := range group {
-		var entry strings.Builder
-
 		counts := voteformat.CountsOf(vote)
 		if len(group) == 1 {
 			// Single vote: the counts, headed by the ballot type when it is one
 			// worth naming. A lone threshold vote needs that most — there is no
 			// sibling beside it to make the lopsided tally look unusual.
+			text := voteformat.FormatVoteCountsLong(counts)
 			if label := voteformat.TypeLabel(vote.Type); label != "" {
-				entry.WriteString(label + "\n")
+				text = label + "\n" + text
 			}
-			entry.WriteString(voteformat.FormatVoteCountsLong(counts))
+			entries = append(entries, replyEntry{text: text, vote: i, starts: true})
 		} else {
 			// Multi-vote: subtitle + counts
 			voteTitle := voteformat.SubVoteLabel(vote, i, len(group))
@@ -244,17 +243,27 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 				// AL-Fraktion zu Dispositivziffer 1".
 				voteTitle = contactMapper.TagXFraktionen(voteTitle, vote.Jurisdiction)
 			}
-			if !voteformat.HasVerdict(vote) {
-				// Auswahl: no ✅/❌ prefix
-				entry.WriteString(fmt.Sprintf("%s\n", voteTitle))
-			} else {
-				voteEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				entry.WriteString(fmt.Sprintf("%s %s\n", voteEmoji, voteTitle))
+			heading := voteTitle // Auswahl: no ✅/❌ prefix
+			if voteformat.HasVerdict(vote) {
+				heading = voteformat.GetVoteResultEmoji(vote.Decision) + " " + voteTitle
 			}
-			entry.WriteString(voteformat.FormatVoteCountsLong(counts))
+			countsLine := voteformat.FormatVoteCountsLong(counts)
+			if weightedLen(heading+"\n"+countsLine) <= charLimit {
+				entries = append(entries, replyEntry{text: heading + "\n" + countsLine, vote: i, starts: true})
+			} else {
+				// A bill title with its meaning of Ja can fill a post by
+				// itself — 25.059's decree does in French and Italian — and
+				// the packer only splits between entries. So the counts go to
+				// the next reply rather than past the limit, and the heading
+				// is cut only if it cannot fit even alone.
+				if weightedLen(heading) > charLimit {
+					heading = truncateText(heading, charLimit-1)
+				}
+				entries = append(entries,
+					replyEntry{text: heading, vote: i, starts: true},
+					replyEntry{text: countsLine, vote: i})
+			}
 		}
-
-		entries = append(entries, replyEntry{text: entry.String(), vote: i, starts: true})
 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {

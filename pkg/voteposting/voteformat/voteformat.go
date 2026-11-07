@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -105,7 +106,7 @@ func GroupPrefixLine(group []votes.Vote) string {
 	// own would read as a sentence with its subject missing.
 	if prefix != "" {
 		if authors := AuthorList(LeadAuthors(group[0].Affair.Authors), 0, groupLanguage(group)); authors != "" {
-			prefix += " " + W(groupLanguage(group)).AuthorsBy + " " + authors
+			prefix += " " + byPhrase(groupLanguage(group), authors)
 		} else if fraktion := strings.TrimSpace(group[0].Affair.Fraktion); fraktion != "" {
 			// "Parlamentarische Initiative der GLP-Fraktion", the shape Stadt
 			// Zürich's titles use, which is also what the tagger reads to tag
@@ -192,8 +193,28 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 	if full == "" || full == short {
 		return line
 	}
-	by := W(l).AuthorsBy + " "
-	return strings.Replace(line, by+full, by+short, 1)
+	return strings.Replace(line, byPhrase(l, full), byPhrase(l, short), 1)
+}
+
+// byPhrase is "von <names>" in l. French elides its "de" before a vowel, as
+// "Initiative parlementaire d’Andrea Caroni" does.
+func byPhrase(l votes.Language, names string) string {
+	by := W(l).AuthorsBy
+	if elidesBefore(l, by, names) {
+		return strings.TrimSuffix(by, "de") + "d’" + names
+	}
+	return by + " " + names
+}
+
+// elidesBefore reports whether text, ending in French "de", becomes "d’"
+// before next. Only a vowel elides it: an h is mute in some names and not in
+// others, and "de Hans" is never wrong where "d’Hans" can be.
+func elidesBefore(l votes.Language, text, next string) bool {
+	if l != votes.French || (text != "de" && !strings.HasSuffix(text, " de")) {
+		return false
+	}
+	r, _ := utf8.DecodeRuneInString(next)
+	return strings.ContainsRune("AEIOUYÀÂÄÉÈÊËÎÏÔÖÙÛÜaeiouyàâäéèêëîïôöùûü", r)
 }
 
 // FitAuthorPrefix returns the label line that fits the space a post has left,
@@ -353,6 +374,8 @@ func PackNames(b NameBlock, tag func(string) string, limit int, measure func(str
 	for i, name := range names {
 		sep := " "
 		switch {
+		case count == 0 && cur == b.Label && elidesBefore(b.Language, cur, name):
+			cur, sep = strings.TrimSuffix(cur, "de")+"d’", ""
 		case count == 0:
 		case i == len(names)-1:
 			sep = " " + W(b.Language).And + " "
