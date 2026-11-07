@@ -207,6 +207,13 @@ func (c *Client) label(group []votes.Vote) {
 				continue
 			}
 			group[i].Decision = ""
+			// Even a plain meaning, "Annahme der Vorlage": without a
+			// verdict it is all that says what Ja was for.
+			if l.meaningYes != "" {
+				sub += " (Ja: " + l.meaningYes + ")"
+			}
+			group[i].Subtitle = strings.TrimSpace(sub)
+			continue
 		}
 		if l.meaningYes != "" && !plainMeanings[strings.ToLower(l.meaningYes)] {
 			sub += " (Ja: " + l.meaningYes + ")"

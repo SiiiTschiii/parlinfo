@@ -66,11 +66,13 @@ func TestLabel_FiledVote(t *testing.T) {
 	c := New(testJurisdiction)
 	read := votes.Vote{SourceID: "1", Decision: "angenommen", Affair: votes.Affair{Type: typeParlIv}}
 	unread := votes.Vote{SourceID: "2", Decision: "angenommen", Affair: votes.Affair{Type: typeMotion}}
+	plain := votes.Vote{SourceID: "4", Decision: "angenommen", Affair: votes.Affair{Type: typeParlIv}}
+	c.labels["4"] = voteLabel{meaningYes: "Annahme der Vorlage", meaningNo: "Ablehnung der Vorlage"}
 	bill := votes.Vote{SourceID: "3", Decision: "angenommen", Subtitle: "Gesamtabstimmung", Affair: votes.Affair{Type: typeMotion}}
 	c.labels["1"] = voteLabel{meaningYes: "Proposition de la majorité (ne pas donner suite)", meaningNo: "Proposition de la minorité (donner suite)"}
 	c.labels["2"] = voteLabel{meaningYes: "Proposition de la majorité (aprouver la motion)", meaningNo: "Proposition de la minorité (rejeter)"}
 	c.labels["3"] = voteLabel{meaningYes: "Adopter le projet"}
-	group := []votes.Vote{read, unread, bill}
+	group := []votes.Vote{read, unread, bill, plain}
 	c.label(group)
 
 	if group[0].Outcome != outcomeNoLeave || group[0].Subtitle != "" || group[0].Decision != "angenommen" {
@@ -78,6 +80,10 @@ func TestLabel_FiledVote(t *testing.T) {
 	}
 	if group[1].Outcome != "" || group[1].Decision != "" || !strings.Contains(group[1].Subtitle, "(Ja: Proposition de la majorité (aprouver la motion))") {
 		t.Errorf("unread: Outcome %q, Subtitle %q, Decision %q", group[1].Outcome, group[1].Subtitle, group[1].Decision)
+	}
+	// No verdict, so even a plain meaning is kept: it alone says what Ja was.
+	if group[3].Decision != "" || group[3].Subtitle != "(Ja: Annahme der Vorlage)" {
+		t.Errorf("plain: Subtitle %q, Decision %q", group[3].Subtitle, group[3].Decision)
 	}
 	// A vote with a Subject is a bill's, labelled as before.
 	if group[2].Outcome != "" || group[2].Subtitle != "Gesamtabstimmung" || group[2].Decision != "angenommen" {
