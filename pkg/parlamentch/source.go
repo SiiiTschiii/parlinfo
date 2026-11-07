@@ -119,9 +119,16 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 		}
 		// A vote without a Subject was fetched for being on filed business;
 		// the number it was selected by is a convention, the type is the
-		// service's word.
-		if c.filedBusiness && strings.TrimSpace(vs[i].Subtitle) == "" && !isFiledVote(vs[i]) {
-			continue
+		// service's word. Without the type there is no telling, and dropping
+		// the vote would lose it for good once it ages out of the fetch
+		// window, so the run fails instead and the next one asks again.
+		if c.filedBusiness && strings.TrimSpace(vs[i].Subtitle) == "" {
+			if vs[i].Affair.Type == "" {
+				return nil, fmt.Errorf("parlamentch: vote %s: the type of business %s is unknown, so it cannot be told whether to post it", vs[i].SourceID, vs[i].Affair.Number)
+			}
+			if !isFiledVote(vs[i]) {
+				continue
+			}
 		}
 		kept = append(kept, vs[i])
 	}

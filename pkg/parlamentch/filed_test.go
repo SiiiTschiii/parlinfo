@@ -113,3 +113,24 @@ func TestFilingCanton(t *testing.T) {
 		}
 	}
 }
+
+// A vote without a Subject is kept only on the four filed types. One whose
+// business type the service would not give fails the run rather than being
+// dropped, since a dropped vote is never asked about again.
+func TestGroupByAffair_FiledVoteType(t *testing.T) {
+	c, _ := newTestClient(t)
+	c.WithFiledBusiness()
+
+	// 25.059 is the Federal Council's business: no Subject, not filed.
+	gov := votes.Vote{SourceID: "38953", Affair: votes.Affair{ID: "20250059", Number: "25.059"}}
+	groups, err := c.GroupByAffair([]votes.Vote{gov})
+	if err != nil || len(groups) != 0 {
+		t.Errorf("government business without a Subject: groups %v, err %v; want it dropped", groups, err)
+	}
+
+	// The test server knows no business 26.4038, as when /Business fails.
+	unknown := votes.Vote{SourceID: "38953", Affair: votes.Affair{ID: "20264038", Number: "26.4038"}}
+	if _, err := c.GroupByAffair([]votes.Vote{unknown}); err == nil || !strings.Contains(err.Error(), "26.4038") {
+		t.Errorf("unknown type: err %v, want one naming 26.4038", err)
+	}
+}
