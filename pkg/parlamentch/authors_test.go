@@ -167,3 +167,48 @@ func TestFilingFraktion(t *testing.T) {
 		}
 	}
 }
+
+// 13.468, "Ehe für alle", was filed by the GLP-Fraktion: the service's one
+// row names the group and no member. Recorded from the service in November
+// 2026. The Fraktion reaches the vote, nobody is looked up, and the second
+// vote of the business is served from the cache.
+func TestEnrich_FraktionFiling(t *testing.T) {
+	c, requests := newTestClient(t)
+	inner := c.baseURL
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/BusinessRole" && strings.Contains(r.URL.Query().Get("$filter"), "BusinessNumber eq 20130468 ") {
+			*requests = append(*requests, r.URL.RawQuery)
+			http.ServeFile(w, r, "testdata/roles_20130468.json")
+			return
+		}
+		http.Redirect(w, r, inner+r.URL.RequestURI(), http.StatusTemporaryRedirect)
+	}))
+	t.Cleanup(srv.Close)
+	c.SetBaseURL(srv.URL)
+
+	for i, id := range []string{"38953", "38954"} {
+		before := len(*requests)
+		v := votes.Vote{SourceID: id, Affair: votes.Affair{ID: "20130468"}}
+		if err := c.enrich(&v); err != nil {
+			t.Fatal(err)
+		}
+		if v.Affair.Fraktion != "GLP-Fraktion" || len(v.Affair.Authors) != 0 {
+			t.Errorf("vote %s: Fraktion %q, Authors %v; want GLP-Fraktion and nobody", id, v.Affair.Fraktion, v.Affair.Authors)
+		}
+		var roles, members int
+		for _, q := range (*requests)[before:] {
+			if strings.Contains(q, "Role") {
+				roles++
+			}
+			if strings.Contains(q, "ID+eq") || strings.Contains(q, "ID%20eq") {
+				members++
+			}
+		}
+		if members != 0 {
+			t.Errorf("vote %s: %d member lookups, want none", id, members)
+		}
+		if want := 1 - i; roles != want {
+			t.Errorf("vote %s: %d BusinessRole requests, want %d", id, roles, want)
+		}
+	}
+}
