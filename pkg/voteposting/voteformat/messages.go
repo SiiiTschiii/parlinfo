@@ -28,7 +28,10 @@ const (
 	MsgAuthorsBy      Msg = "authors-by"      // between the business type and its authors
 	MsgAnd            Msg = "and"             // before the last of several authors
 	MsgAndOthers      Msg = "and-others"      // after a capped author list
-	MsgMoreSignatures Msg = "more-signatures" // the signatory block's label
+	MsgMoreSignatures Msg = "more-signatures" // signatories shed for length, after one was named
+	MsgBy             Msg = "by"              // signatories shed for length, none named, no business type
+	MsgTookOverBy     Msg = "took-over-by"    // members who took a business over
+	MsgCoSignedBy     Msg = "co-signed-by"    // co-signers
 	MsgLinkBusiness   Msg = "link-business"
 	MsgLinkProtocol   Msg = "link-protocol"
 	MsgLinkVideo      Msg = "link-video"
@@ -38,6 +41,7 @@ const (
 	MsgThreadHint     Msg = "thread-hint"
 	MsgCaptionCut     Msg = "caption-cut"   // Instagram, when the caption had to drop votes
 	MsgCardOverview   Msg = "card-overview" // fmt verb: how many votes the card lists
+	MsgOverviewMore   Msg = "overview-more" // fmt verb: how many rows the card dropped
 )
 
 // messages is the wording in each post language. German is the reference: it
@@ -68,6 +72,9 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgAnd:            "und",
 		MsgAndOthers:      "u. a.",
 		MsgMoreSignatures: "Weitere Unterzeichnende",
+		MsgBy:             "Von",
+		MsgTookOverBy:     "Übernommen von",
+		MsgCoSignedBy:     "Mitunterzeichnet von",
 		MsgLinkBusiness:   "Geschäft",
 		MsgLinkProtocol:   "Protokoll",
 		MsgLinkVideo:      "Video",
@@ -76,7 +83,8 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgLinkVote:       "Abstimmung",
 		MsgThreadHint:     "Details im Thread",
 		MsgCaptionCut:     "Gekürzt – weitere Teilabstimmungen im Link.",
-		MsgCardOverview:   "Übersicht (%d Teilabstimmungen)",
+		MsgCardOverview:   "%d Abstimmungen",
+		MsgOverviewMore:   "… und %d weitere Abstimmungen",
 	},
 	votes.French: {
 		MsgAccepted:       "Accepté",
@@ -97,6 +105,9 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgAnd:            "et",
 		MsgAndOthers:      "et al.",
 		MsgMoreSignatures: "Autres signataires",
+		MsgBy:             "De",
+		MsgTookOverBy:     "Repris par",
+		MsgCoSignedBy:     "Cosigné par",
 		MsgLinkBusiness:   "Objet",
 		MsgLinkProtocol:   "Procès-verbal",
 		MsgLinkVideo:      "Vidéo",
@@ -105,7 +116,8 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgLinkVote:       "Vote",
 		MsgThreadHint:     "Détails dans le fil",
 		MsgCaptionCut:     "Abrégé – autres votes dans le lien.",
-		MsgCardOverview:   "Aperçu (%d votes)",
+		MsgCardOverview:   "%d votes",
+		MsgOverviewMore:   "… et %d autres votes",
 	},
 	votes.Italian: {
 		MsgAccepted:       "Accettato",
@@ -126,6 +138,9 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgAnd:            "e",
 		MsgAndOthers:      "e altri",
 		MsgMoreSignatures: "Altri firmatari",
+		MsgBy:             "Di",
+		MsgTookOverBy:     "Ripreso da",
+		MsgCoSignedBy:     "Cofirmato da",
 		MsgLinkBusiness:   "Oggetto",
 		MsgLinkProtocol:   "Protocollo",
 		MsgLinkVideo:      "Video",
@@ -134,7 +149,8 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgLinkVote:       "Votazione",
 		MsgThreadHint:     "Dettagli nel thread",
 		MsgCaptionCut:     "Abbreviato – altre votazioni nel link.", //nolint:misspell // Italian
-		MsgCardOverview:   "Panoramica (%d votazioni)",
+		MsgCardOverview:   "%d votazioni",
+		MsgOverviewMore:   "… e altre %d votazioni",
 	},
 }
 

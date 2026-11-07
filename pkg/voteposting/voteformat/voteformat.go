@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -104,8 +105,8 @@ func GroupPrefixLine(group []votes.Vote) string {
 	// arrive from the same call, and "von Marc Bourgeois (FDP)" standing on its
 	// own would read as a sentence with its subject missing.
 	if prefix != "" {
-		if authors := AuthorList(group[0].Affair.Authors, 0, groupLanguage(group)); authors != "" {
-			prefix += " " + T(groupLanguage(group), MsgAuthorsBy) + " " + authors
+		if authors := AuthorList(LeadAuthors(group[0].Affair.Authors), 0, groupLanguage(group)); authors != "" {
+			prefix += " " + byPhrase(groupLanguage(group), authors)
 		}
 	}
 
@@ -181,14 +182,34 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 	capped := make([]votes.Vote, len(group))
 	copy(capped, group)
 	l := groupLanguage(group)
-	full := AuthorList(capped[0].Affair.Authors, 0, l)
-	short := AuthorList(capped[0].Affair.Authors, max, l)
+	full := AuthorList(LeadAuthors(capped[0].Affair.Authors), 0, l)
+	short := AuthorList(LeadAuthors(capped[0].Affair.Authors), max, l)
 	line := GroupPrefixLine(capped)
 	if full == "" || full == short {
 		return line
 	}
-	by := T(l, MsgAuthorsBy) + " "
-	return strings.Replace(line, by+full, by+short, 1)
+	return strings.Replace(line, byPhrase(l, full), byPhrase(l, short), 1)
+}
+
+// byPhrase is "von <names>" in l. French elides its "de" before a vowel, as
+// "Initiative parlementaire d’Andrea Caroni" does.
+func byPhrase(l votes.Language, names string) string {
+	by := T(l, MsgAuthorsBy)
+	if elidesBefore(l, by, names) {
+		return strings.TrimSuffix(by, "de") + "d’" + names
+	}
+	return by + " " + names
+}
+
+// elidesBefore reports whether text, ending in French "de", becomes "d’"
+// before next. Only a vowel elides it: an h is mute in some names and not in
+// others, and "de Hans" is never wrong where "d’Hans" can be.
+func elidesBefore(l votes.Language, text, next string) bool {
+	if l != votes.French || !(text == "de" || strings.HasSuffix(text, " de")) {
+		return false
+	}
+	r, _ := utf8.DecodeRuneInString(next)
+	return strings.ContainsRune("AEIOUYÀÂÄÉÈÊËÎÏÔÖÙÛÜaeiouyàâäéèêëîïôöùûü", r)
 }
 
 // FitAuthorPrefix returns the label line that fits the space a post has left,
@@ -197,7 +218,7 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 // The title is never what gives way. A reader who loses the subject of the vote
 // has lost the post; a reader who finds three of five names in the next post of
 // the thread has lost nothing. So names are shed from the end until the line
-// fits, and the ones shed come back in their own block — see SignatoryLine.
+// fits, and the ones shed come back in their own block — see SignatoryBlocks.
 //
 // available is the space left for this line after the header, the title and
 // whatever the platform appends; measure is the platform's own length function,
@@ -206,7 +227,7 @@ func FitAuthorPrefix(group []votes.Vote, available int, measure func(string) int
 	if len(group) == 0 {
 		return "", nil
 	}
-	authors := group[0].Affair.Authors
+	authors := LeadAuthors(group[0].Affair.Authors)
 
 	full := GroupPrefixLine(group)
 	if len(authors) == 0 || measure(full) <= available {
@@ -232,28 +253,158 @@ func prefixWithoutAuthors(group []votes.Vote) string {
 	return GroupPrefixLine(bare)
 }
 
-// SignatoryLine names the members a post could not fit beside its title.
+// LeadAuthors are the members a label line names: who filed and who took over,
+// without the co-signers. See votes.AuthorRole.
+func LeadAuthors(authors []votes.Author) []votes.Author {
+	return authorsWhere(authors, func(r votes.AuthorRole) bool { return r != votes.RoleCoSigned })
+}
+
+func authorsWhere(authors []votes.Author, keep func(votes.AuthorRole) bool) []votes.Author {
+	var out []votes.Author
+	for _, a := range authors {
+		if keep(a.Role) {
+			out = append(out, a)
+		}
+	}
+	return out
+}
+
+// NameBlock is one labelled list of members, named below a post rather than on
+// its label line.
+type NameBlock struct {
+	Label    string
+	Authors  []votes.Author
+	Language votes.Language
+}
+
+// SignatoryBlocks names, below the root of a thread, the members its label
+// line did not: the ones shed for length, and the co-signers, who are never on
+// it. Each role gets its own label, because a list that put a member who only
+// took a business over among its signatories would say something false about
+// them.
 //
-// "Weitere Unterzeichnende" rather than "Mitunterzeichnende" because the split
-// is made on length, not on role: the first signatory is named first and is
-// almost always the one that fits, but nothing guarantees the boundary falls
-// exactly there, and a label that is only usually right is worse than one that
-// is always right.
-func SignatoryLine(authors []votes.Author, l votes.Language) string {
-	names := AuthorList(authors, 0, l)
+//   - Signatories shed for length are "Weitere Unterzeichnende" when the label
+//     line kept one of them, and otherwise carry its own "<type> von …": with
+//     nobody named above, there is nobody for them to be further to. A federal
+//     title is often long enough for that; 20.406's leaves no room for Andri
+//     Silberschmidt, its only author.
+//   - A member who took the business over is "Übernommen von", wherever the
+//     cut fell: 21.472 is Stefania Prezioso Batou's, continued by Fabien Fivaz.
+//   - Co-signers are "Mitunterzeichnet von", all of them, so each can be
+//     tagged.
+func SignatoryBlocks(group []votes.Vote, deferred []votes.Author) []NameBlock {
+	if len(group) == 0 {
+		return nil
+	}
+	all := group[0].Affair.Authors
+	l := groupLanguage(group)
+	var blocks []NameBlock
+
+	isSigned := func(r votes.AuthorRole) bool { return r == votes.RoleSigned }
+	if shed := authorsWhere(deferred, isSigned); len(shed) > 0 {
+		label := "✍️ " + T(l, MsgMoreSignatures) + ":"
+		if len(shed) == len(authorsWhere(all, isSigned)) {
+			label = "✍️ " + T(l, MsgBy)
+			if t := strings.TrimSpace(group[0].Affair.Type); t != "" {
+				label = "✍️ " + t + " " + T(l, MsgAuthorsBy)
+			}
+		}
+		blocks = append(blocks, NameBlock{label, shed, l})
+	}
+	if took := authorsWhere(deferred, func(r votes.AuthorRole) bool { return r == votes.RoleTookOver }); len(took) > 0 {
+		blocks = append(blocks, NameBlock{"↪️ " + T(l, MsgTookOverBy), took, l})
+	}
+	if co := CoSigners(all); len(co) > 0 {
+		blocks = append(blocks, NameBlock{"✍️ " + T(l, MsgCoSignedBy), co, l})
+	}
+	return blocks
+}
+
+// CoSigners are the members who signed beside the filer.
+func CoSigners(authors []votes.Author) []votes.Author {
+	return authorsWhere(authors, func(r votes.AuthorRole) bool { return r == votes.RoleCoSigned })
+}
+
+// CoSignerLine is the co-signers as one line, for the platforms that publish a
+// vote as a single post; empty when there are none.
+func CoSignerLine(group []votes.Vote) string {
+	if len(group) == 0 {
+		return ""
+	}
+	l := groupLanguage(group)
+	names := AuthorList(CoSigners(group[0].Affair.Authors), 0, l)
 	if names == "" {
 		return ""
 	}
-	return "✍️ " + T(l, MsgMoreSignatures) + ": " + names
+	return "✍️ " + T(l, MsgCoSignedBy) + " " + names
 }
 
-// CountAuthors reports how many of an affair's signatories a post would name.
+// PackNames renders a block as reply entries of at most limit each, by the
+// platform's own measure.
+//
+// A co-signer list runs to twenty names, past what one post holds once
+// handles are added, so it is split between names rather than cut: every name
+// is someone who can be tagged. A list that continues ends in " …" and the next
+// entry opens with "… ". tag marks up one rendered name, "Greta Gysin (Grüne)",
+// and may lengthen it; nil leaves the names as they are.
+func PackNames(b NameBlock, tag func(string) string, limit int, measure func(string) int) []string {
+	var names []string
+	for _, a := range b.Authors {
+		name := AuthorList([]votes.Author{a}, 0, b.Language)
+		if name == "" {
+			continue
+		}
+		if tag != nil {
+			name = tag(name)
+		}
+		names = append(names, name)
+	}
+	if len(names) == 0 {
+		return nil
+	}
+
+	const more = " …"
+	var entries []string
+	cur, count := b.Label, 0
+	for i, name := range names {
+		sep := " "
+		switch {
+		case count == 0 && cur == b.Label && elidesBefore(b.Language, cur, name):
+			cur, sep = strings.TrimSuffix(cur, "de")+"d’", ""
+		case count == 0:
+		case i == len(names)-1:
+			sep = " " + T(b.Language, MsgAnd) + " "
+		default:
+			sep = ", "
+		}
+		next := cur + sep + name
+		reserve := 0
+		if i < len(names)-1 {
+			reserve = measure(more)
+		}
+		// Past the limit, the entry so far is closed and the name opens the
+		// next. That includes a first name with only the label before it: the
+		// label then stands alone rather than overrunning by its marker. A
+		// continuation that cannot hold even one name keeps it regardless,
+		// since there is nowhere smaller to put it.
+		if measure(next)+reserve > limit && (count > 0 || cur == b.Label) {
+			entries = append(entries, cur+more)
+			cur, count = "…", 0
+			next = cur + " " + name
+		}
+		cur = next
+		count++
+	}
+	return append(entries, cur)
+}
+
+// CountAuthors reports how many members a label line would name.
 func CountAuthors(group []votes.Vote) int {
 	if len(group) == 0 {
 		return 0
 	}
 	n := 0
-	for _, a := range group[0].Affair.Authors {
+	for _, a := range LeadAuthors(group[0].Affair.Authors) {
 		if strings.TrimSpace(a.Name) != "" {
 			n++
 		}
@@ -457,6 +608,25 @@ func IsUnsupportedVoteType(c VoteCounts) bool {
 	fields := []*int{c.Ja, c.Nein, c.Enthaltung, c.A, c.B, c.C, c.D, c.E}
 	for _, f := range fields {
 		if f != nil && *f > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// IsEmptyNormalVote reports whether these counts belong to an ordinary
+// Ja/Nein vote with nothing recorded at all: type "Normal" exactly and every
+// count, Abwesend included, nil or zero. A real vote seats a chamber, so even a
+// unanimous one carries a non-zero Ja or Abwesend; a record with none is a
+// placeholder the source never filled in. The Gemeinderat Zürich page for one
+// shows no title, no Geschäft and a Stimmen Total of 0. A negative count is a
+// fault in the source, not an empty record.
+func IsEmptyNormalVote(c VoteCounts) bool {
+	if strings.TrimSpace(c.Type) != "Normal" {
+		return false
+	}
+	for _, f := range []*int{c.Ja, c.Nein, c.Enthaltung, c.Abwesend, c.A, c.B, c.C, c.D, c.E} {
+		if f != nil && *f != 0 {
 			return false
 		}
 	}

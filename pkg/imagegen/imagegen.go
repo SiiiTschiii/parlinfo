@@ -314,9 +314,15 @@ func fitTitle(title string, maxWidth, available int) (font.Face, []string, error
 // fitTitleFully is fitTitle, and also reports whether the title got in whole.
 // False means the font ladder ran out and the last lines were cut.
 func fitTitleFully(title string, maxWidth, available int) (font.Face, []string, bool, error) {
+	return fitTitleFullyFrom(title, maxWidth, available, titleFontMax)
+}
+
+// fitTitleFullyFrom is fitTitleFully with the ladder starting at maxSize
+// rather than titleFontMax.
+func fitTitleFullyFrom(title string, maxWidth, available int, maxSize float64) (font.Face, []string, bool, error) {
 	var face font.Face
 	var lines []string
-	for size := titleFontMax; size >= titleFontMin; size -= titleFontStep {
+	for size := maxSize; size >= titleFontMin; size -= titleFontStep {
 		f, err := loadFace(goregular.TTF, size)
 		if err != nil {
 			return nil, nil, false, err
@@ -354,6 +360,12 @@ func cardTitle(group []votes.Vote, subject string, maxWidth, available int) (fon
 // been dropped is not whole, so a caller with something else to give up can
 // still win those names back.
 func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int) (font.Face, []string, bool, error) {
+	return cardTitleFullyFrom(group, subject, maxWidth, available, titleFontMax)
+}
+
+// cardTitleFullyFrom is cardTitleFully with the font ladder starting at
+// maxSize rather than titleFontMax.
+func cardTitleFullyFrom(group []votes.Vote, subject string, maxWidth, available int, maxSize float64) (font.Face, []string, bool, error) {
 	// Fullest first, then one name shorter each time, down to a lone name.
 	caps := []int{0}
 	for n := voteformat.CountAuthors(group) - 1; n >= 1; n-- {
@@ -368,7 +380,7 @@ func cardTitleFully(group []votes.Vote, subject string, maxWidth, available int)
 			title = prefix + ": " + subject
 		}
 
-		f, ls, whole, err := fitTitleFully(title, maxWidth, available)
+		f, ls, whole, err := fitTitleFullyFrom(title, maxWidth, available, maxSize)
 		if err != nil {
 			return nil, nil, false, err
 		}
@@ -682,6 +694,10 @@ type fontSet struct {
 	emojiSmall   font.Face // notoEmoji 28
 	emojiLarge   font.Face // notoEmoji 48
 	emojiVerdict font.Face // notoEmoji 72
+
+	overviewRows       []rowFaces // overviewRowSpecs, largest first
+	overviewRowsShort  []rowFaces // overviewShortRowSpecs then overviewRowSpecs
+	overviewTitleFloor font.Face  // goregular at overviewTitleFloor
 }
 
 func loadFontSet() (*fontSet, error) {
@@ -732,6 +748,24 @@ func loadFontSet() (*fontSet, error) {
 	}
 	if fs.emojiVerdict, err = load(notoEmojiTTF, 72); err != nil {
 		return nil, fmt.Errorf("emojiVerdict font: %w", err)
+	}
+
+	if fs.overviewTitleFloor, err = load(goregular.TTF, overviewTitleFloor); err != nil {
+		return nil, fmt.Errorf("overview title floor font: %w", err)
+	}
+	for i, spec := range append(append([]overviewRowSpec(nil), overviewShortRowSpecs...), overviewRowSpecs...) {
+		var rf rowFaces
+		if rf.text, err = load(goregular.TTF, spec.size); err != nil {
+			return nil, fmt.Errorf("overview row font: %w", err)
+		}
+		if rf.bold, err = load(gobold.TTF, spec.size); err != nil {
+			return nil, fmt.Errorf("overview row bold font: %w", err)
+		}
+		rf.pad = spec.pad
+		fs.overviewRowsShort = append(fs.overviewRowsShort, rf)
+		if i >= len(overviewShortRowSpecs) {
+			fs.overviewRows = append(fs.overviewRows, rf)
+		}
 	}
 
 	return &fs, nil
@@ -1147,93 +1181,6 @@ func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[st
 		if i < maxRows-1 {
 			cur.gap(numFace, fraktionRowGapFactor)
 		}
-	}
-}
-
-// fitTitleAndSummary sizes the title card's title and its Übersicht against
-// each other.
-//
-// The title is what matters most, so the summary gives way to it. The
-// subtitles are set in full first, wrapped over as many lines as they need;
-// only if the title cannot then be shown whole are they cut to
-// summarySubtitleMaxRunes and the title fitted again. The summary is built
-// first either way: it is what the title has to leave room for, and it does not
-// depend on the size the title ends up at.
-func fitTitleAndSummary(group []votes.Vote, inset, maxWidth int, fonts *fontSet) (font.Face, []string, []string, error) {
-	title := voteformat.CleanVoteTitle(group[0].Title)
-
-	var titleFace font.Face
-	var titleLines, summaryLines []string
-	for _, maxRunes := range []int{0, summarySubtitleMaxRunes} {
-		summaryLines = nil
-		for i, sv := range group {
-			line, ok := formatSummaryLineWithin(i+1, sv, len(group), maxRunes)
-			if ok {
-				summaryLines = append(summaryLines, wrapText(fonts.small, line, maxWidth)...)
-			}
-		}
-
-		// Reserve: gap after the title, the "Übersicht" header and its gap, one
-		// line per summary line, and the bottom padding.
-		summaryReserve := titleTrailingGap() +
-			lineHeight(fonts.small) + frac(fonts.small, 0.4) +
-			len(summaryLines)*lineHeight(fonts.small) + padding
-
-		var whole bool
-		var err error
-		titleFace, titleLines, whole, err = cardTitleFully(group, title, maxWidth, titleBudget(inset, summaryReserve))
-		if err != nil {
-			return nil, nil, nil, err
-		}
-		if whole {
-			break
-		}
-	}
-	return titleFace, titleLines, summaryLines, nil
-}
-
-func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) {
-	maxTextWidth := imgWidth - 2*padding
-
-	titleFace, titleLines, summaryLines, err := fitTitleAndSummary(group, inset, maxTextWidth, fonts)
-	if err != nil {
-		return
-	}
-
-	for _, line := range titleLines {
-		if img != nil {
-			drawCenteredText(img, titleFace, nil, cur.baseline(titleFace), line, bg)
-		}
-		cur.advance(titleFace)
-		cur.gap(titleFace, titleLineGapFactor)
-	}
-
-	// Summary: list each sub-vote with number + emoji + short subtitle.
-	cur.gap(fonts.regular, 0.75)
-	if img != nil {
-		header := fmt.Sprintf(voteformat.T(group[0].Language, voteformat.MsgCardOverview), len(group))
-		drawCenteredText(img, fonts.small, nil, cur.baseline(fonts.small), header, bg)
-	}
-	cur.advance(fonts.small)
-	cur.gap(fonts.small, 0.4)
-
-	// Find widest line and center the block, then left-align all lines within it
-	maxW := 0
-	for _, line := range summaryLines {
-		// Measured with the same pair of faces it is drawn with below; a
-		// summary line carrying an emoji would otherwise centre off its true
-		// width.
-		w := measureMixedText(fonts.small, fonts.emojiSmall, line)
-		if w > maxW {
-			maxW = w
-		}
-	}
-	blockX := (imgWidth - maxW) / 2
-	for _, line := range summaryLines {
-		if img != nil {
-			drawShadowedText(img, fonts.small, fonts.emojiSmall, blockX, cur.baseline(fonts.small), line, bg)
-		}
-		cur.advance(fonts.small)
 	}
 }
 

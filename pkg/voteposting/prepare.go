@@ -69,9 +69,34 @@ func PrepareVoteGroups(
 		return nil, err
 	}
 
+	groups = withoutPostedVotes(groups, voteLog)
+
 	applyCompletenessGate(groups)
 
 	return groups, nil
+}
+
+// withoutPostedVotes drops votes the log already has from grouped output.
+//
+// Filtering before grouping is not enough, because a source may widen a group
+// while grouping it: the Zürich source back-fills every vote of a business from
+// the whole sitting, posted or not, so that a group is not published partial
+// just because its earlier votes fell outside the fetch window. That makes any
+// vote that stays unposted — one rejected as unpublishable is never logged, by
+// design — a standing invitation to publish its already-posted siblings again,
+// on every run until it ages out. On 2026-11-03 a zero-count Änderungsantrag
+// did exactly that to the two votes beside it on every platform, hourly.
+//
+// A group left empty is dropped, and a group left smaller is posted smaller:
+// the votes that were already out stay out.
+func withoutPostedVotes(groups [][]votes.Vote, voteLog *votelog.VoteLog) [][]votes.Vote {
+	kept := make([][]votes.Vote, 0, len(groups))
+	for _, group := range groups {
+		if remaining := filterUnpostedVotes(group, voteLog); len(remaining) > 0 {
+			kept = append(kept, remaining)
+		}
+	}
+	return kept
 }
 
 // applyCompletenessGate drops the member list from any vote whose recorded
@@ -432,6 +457,14 @@ func validateVote(v votes.Vote) error {
 	if voteformat.IsEmptyQuorumRound(voteformat.CountsOf(v)) {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) is a quorum round with no votes cast",
 			ErrUnpostableVoteType, v.SourceID, v.Subtitle, v.Type)
+	}
+	// The same holds for an ordinary vote with no counts at all: the source
+	// served a placeholder, and the run has nothing to report. On 2026-11-03 the
+	// Gemeinderat Zürich served 2026_0212 Änderungsantrag as one — its own page
+	// is blank — and reddened every run for it.
+	if voteformat.IsEmptyNormalVote(voteformat.CountsOf(v)) {
+		return withVoteLink(v, "%w: vote %s (%q, type=%q) has no counts recorded at all",
+			ErrUnpostableVoteType, v.SourceID, voteDescription(v), v.Type)
 	}
 	if voteformat.IsUnsupportedVoteType(voteformat.CountsOf(v)) {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) has all-zero counts",

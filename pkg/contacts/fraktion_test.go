@@ -32,7 +32,7 @@ func partyMapper() *Mapper {
 		}),
 		org("AL Stadt Zürich", map[string][]string{
 			"x":         {"https://x.com/al_zuerich"},
-			"instagram": {"https://www.instagram.com/alternativelistezh/"},
+			"instagram": {"https://www.instagram.com/alternativelinkezh/"},
 		}),
 		org("SP Kanton Zürich", map[string][]string{
 			"x":         {"https://x.com/spkantonzh"},
@@ -94,7 +94,7 @@ func TestTagXFraktionen(t *testing.T) {
 func TestTagInstagramFraktionen(t *testing.T) {
 	m := partyMapper()
 	got := m.TagInstagramFraktionen(fraktionTitle, "zurich-city")
-	want := "Postulat der Grüne-, SP- und AL-Fraktion @gruenezuerich @spzuerich @alternativelistezh vom 18.03.2026: Vergabe von Schiffsplätzen"
+	want := "Postulat der Grüne-, SP- und AL-Fraktion @gruenezuerich @spzuerich @alternativelinkezh vom 18.03.2026: Vergabe von Schiffsplätzen"
 	if got != want {
 		t.Errorf("got  %q\nwant %q", got, want)
 	}
@@ -126,6 +126,17 @@ func TestPathsForLoadsCantonFallbackForCityOnly(t *testing.T) {
 	}
 	if got := PathsFor("zurich-canton"); !reflect.DeepEqual(got, []string{PathFor("zurich-canton")}) {
 		t.Errorf("canton only: got %v", got)
+	}
+}
+
+// A Nationalrat post names Ständerat members who filed the business, so their
+// file is loaded too; a Ständerat preview needs nothing from the Nationalrat.
+func TestPathsForLoadsStaenderatForNationalrat(t *testing.T) {
+	if got, want := PathsFor("nationalrat"), []string{PathFor("nationalrat"), PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("nationalrat: got %v, want %v", got, want)
+	}
+	if got, want := PathsFor("staenderat"), []string{PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("staenderat: got %v, want %v", got, want)
 	}
 }
 

@@ -56,6 +56,10 @@ type Client struct {
 	// BusinessNumber. See Client.hasSeveralBills.
 	multiBill map[int64]bool
 
+	// authors caches who filed each business, by BusinessNumber. See
+	// Client.authorsOf.
+	authors map[int64][]votes.Author
+
 	// labels holds what the listing says about each vote that votes.Vote has
 	// no field for, keyed by SourceID. See Client.label.
 	labels map[string]voteLabel
@@ -76,6 +80,7 @@ func New(jurisdiction votes.Jurisdiction) *Client {
 		businessTypes: make(map[int64]string),
 		labels:        make(map[string]voteLabel),
 		multiBill:     make(map[int64]bool),
+		authors:       make(map[int64][]votes.Author),
 		council:       CouncilNationalrat,
 	}
 }

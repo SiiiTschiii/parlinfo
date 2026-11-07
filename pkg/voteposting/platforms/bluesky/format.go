@@ -63,11 +63,15 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	root, deferred := buildRootPost(group, title)
 
 	// --- Build reply posts ---
-	// Signatories the root had no room for lead the thread: naming them costs a
-	// line here, where truncating the title to keep them would have cost the
-	// subject of the vote.
-	replies, voteStarts := buildReplyPosts(group, voteformat.SignatoryLine(deferred, group[0].Language),
-		voteformat.LinkLine(group), linkURLs(group))
+	// Members the root had no room for lead the thread, then the co-signers:
+	// naming them costs a line here, where truncating the title to keep them
+	// would have cost the subject of the vote. Mentions are facets over the
+	// text, found below, so a name is not lengthened by its handle.
+	var signatories []string
+	for _, b := range voteformat.SignatoryBlocks(group, deferred) {
+		signatories = append(signatories, voteformat.PackNames(b, nil, maxGraphemes, graphemeLen)...)
+	}
+	replies, voteStarts := buildReplyPosts(group, signatories, voteformat.LinkLine(group), linkURLs(group))
 
 	thread := make([]*BlueskyPost, 0, 1+len(replies))
 	thread = append(thread, root)
@@ -84,8 +88,8 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
 }
 
-// replyEntry is one block of reply text: a link block (link) or the signatory
-// line, both with vote -1, or a vote's counts (starts) or its Fraktion
+// replyEntry is one block of reply text: a link block (link) or a block of
+// names, both with vote -1, or a vote's counts (starts) or its Fraktion
 // breakdown.
 type replyEntry struct {
 	text   string
@@ -198,7 +202,7 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs entries into replies (≤300 graphemes).
 // The link block leads, and each vote opens a reply of its own.
-func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURLs []string) ([]*BlueskyPost, []int) {
+func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, linkURLs []string) ([]*BlueskyPost, []int) {
 
 	// Build individual vote entries
 	var entries []replyEntry
@@ -211,10 +215,10 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, linkURL
 	for _, chunk := range linkChunks(linkLine) {
 		entries = append(entries, replyEntry{text: chunk, vote: -1, link: true})
 	}
-	// The signatories the root could not hold come next, so a reader meets
-	// them before the tallies rather than after them.
-	if signatoryLine != "" {
-		entries = append(entries, replyEntry{text: signatoryLine, vote: -1})
+	// The names the root could not hold come next, so a reader meets them
+	// before the tallies rather than after them. Each is at most one post long.
+	for _, s := range signatories {
+		entries = append(entries, replyEntry{text: s, vote: -1})
 	}
 
 	for i, vote := range group {
