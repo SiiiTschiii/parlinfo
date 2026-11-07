@@ -119,9 +119,12 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 		// business title still has the links, while a reader who loses the
 		// sentence is looking at an election post that says nothing about why
 		// it reports no result. truncateText appends its own "…", so that
-		// comes out of the budget too.
+		// comes out of the budget too. The rest is measured in the order it is
+		// posted: X's length depends on what surrounds a link, and the
+		// attribution's bare domain stops counting as one with the sentence
+		// run onto it.
 		sentence := voteformat.WahlgeschaeftNoResult
-		available := charLimit - weightedLen(header+link+sentence+"\n\n") - weightedLen("…")
+		available := charLimit - weightedLen(header+"\n\n"+sentence+link) - weightedLen("…")
 		title := voteformat.CleanVoteTitle(group[0].Title)
 		if available > 0 {
 			body = truncateText(title, available) + "\n\n" + sentence
@@ -257,7 +260,7 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 				// the next reply rather than past the limit, and the heading
 				// is cut only if it cannot fit even alone.
 				if weightedLen(heading) > charLimit {
-					heading = truncateText(heading, charLimit-1)
+					heading = truncateText(heading, charLimit-weightedLen("…"))
 				}
 				entries = append(entries,
 					replyEntry{text: heading, vote: i, starts: true},
