@@ -144,3 +144,26 @@ func TestPartyLabel(t *testing.T) {
 		}
 	}
 }
+
+// A Fraktion filing is a role-7 row with a group and no member. Only the
+// current legislature's groups are named.
+func TestFilingFraktion(t *testing.T) {
+	n := func(v int64) *int64 { return &v }
+	tests := []struct {
+		name  string
+		roles []businessRoleDTO
+		want  string
+	}{
+		{"the GLP-Fraktion, 13.468", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(137)}}, "GLP-Fraktion"},
+		{"the Mitte-Fraktion names both its parties", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(3)}}, "Mitte-EVP-Fraktion"},
+		{"a member filed it", []businessRoleDTO{{Role: roleAuthor, MemberCouncilNumber: n(214)}}, ""},
+		{"a group in another role", []businessRoleDTO{{Role: roleCoSigned, ParlGroupNumber: n(4)}}, ""},
+		{"a dissolved group", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(136)}}, ""},
+		{"nobody", nil, ""},
+	}
+	for _, tt := range tests {
+		if got := filingFraktion(tt.roles); got != tt.want {
+			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+}

@@ -24,6 +24,15 @@
 # Work through them with the search links:
 #
 #     go run ./cmd/generate_search_urls -jurisdiction nationalrat
+#
+# The `kind: organization` entries are the national parties, tagged when a
+# Fraktion filed the business ("Parlamentarische Initiative der GLP-Fraktion").
+# Each verified account is one the party links from its own website, as of
+# November 2026. Lega dei Ticinesi and Mouvement Citoyens Genevois are cantonal
+# parties that sit in the SVP-Fraktion, so they go by their own names; see
+# pkg/contacts/fraktion.go. Left out on purpose: svpch.bsky.social, a
+# placeholder squatting the SVP's name, and grunliberale.bsky.social, which
+# says in its bio that it is not the GLP's official account.
 
 version: "1.0"
 contacts:
@@ -387,6 +396,20 @@ contacts:
       - url: https://www.facebook.com/DidierCalame
         verified: false
         confidence: high
+  - name: Die Mitte Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/mitte.centre
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mitte_centre/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/mitte-centre
+        verified: true
+    x:
+      - url: https://x.com/Mitte_Centre
+        verified: true
   - name: Dominik Blunschy
     facebook:
       - url: https://www.facebook.com/DominikBlunschy
@@ -405,6 +428,20 @@ contacts:
         verified: false
         confidence: high
   - name: Edgar Bischof
+  - name: EDU Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/eduschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/edu_udf_ch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@edu.schweiz
+        verified: true
+    x:
+      - url: https://x.com/EDUSchweiz
+        verified: true
   - name: Elisabeth Schneider-Schneiter
     facebook:
       - url: https://www.facebook.com/elisabeth.schneiderschneiter
@@ -447,6 +484,21 @@ contacts:
       - url: https://www.facebook.com/EstelleRevazCellist
         verified: false
         confidence: high
+  - name: EVP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/evppev.bsky.social
+        verified: false
+        confidence: high
+    facebook:
+      - url: https://www.facebook.com/evppev
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/evppev/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@evp_pev
+        verified: true
   - name: Fabian Molina
     bluesky:
       - url: https://bsky.app/profile/fabianmolina.ch
@@ -474,6 +526,23 @@ contacts:
       - url: https://www.linkedin.com/in/farah-rumy-46841b215
         verified: false
         confidence: high
+  - name: FDP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/fdp.dieliberalen
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/fdp_schweiz
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/fdp-die-liberalen-schweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@fdp_schweiz
+        verified: true
+    x:
+      - url: https://x.com/FDP_Liberalen
+        verified: true
   - name: Florence Brenzikofer
     facebook:
       - url: https://www.facebook.com/flobrenzikofer
@@ -565,6 +634,17 @@ contacts:
       - url: https://x.com/GiorgioFonio
         verified: false
         confidence: high
+  - name: GLP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/grunliberale
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/grunliberale
+        verified: true
+    x:
+      - url: https://x.com/grunliberale
+        verified: true
   - name: Gregor Rutz
     facebook:
       - url: https://www.facebook.com/gregor.rutz
@@ -579,6 +659,24 @@ contacts:
       - url: https://www.instagram.com/gretagysin/
         verified: false
         confidence: high
+  - name: Grüne Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/gruenech.bsky.social
+        verified: false
+        confidence: high
+    facebook:
+      - url: https://www.facebook.com/gruenech/
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/gruenech
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/14013437
+        verified: true
+    x:
+      - url: https://x.com/GrueneCH
+        verified: true
   - name: Hans Jörg Rüegsegger
     facebook:
       - url: https://www.facebook.com/hjruegsegger
@@ -840,6 +938,14 @@ contacts:
       - url: https://x.com/laurentwehrli
         verified: false
         confidence: high
+  - name: Lega dei Ticinesi
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/LegadeiTicinesi
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/legadeiticinesi/
+        verified: true
   - name: Leo Müller
   - name: Linda De Ventura
     facebook:
@@ -1129,6 +1235,17 @@ contacts:
         confidence: high
   - name: Miriam Locher
   - name: Monika Rüegger
+  - name: Mouvement Citoyens Genevois
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/MCGOfficiel
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mcg_geneve/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@mcg.officiel
+        verified: true
   - name: Nadine Gobet
     facebook:
       - url: https://www.facebook.com/gobetnadine
@@ -1582,6 +1699,20 @@ contacts:
         verified: false
         confidence: high
   - name: Sophie Michaud Gigon
+  - name: SP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/spschweiz.ch
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/spschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/spschweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@spschweiz
+        verified: true
   - name: Stefan Müller-Altermatt
   - name: Stefanie Heimgartner
     facebook:
@@ -1613,6 +1744,20 @@ contacts:
       - url: https://www.linkedin.com/in/susanne-vincenz-stauffacher-2a1571254
         verified: false
         confidence: high
+  - name: SVP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/SVPch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/SVPch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@svpch
+        verified: true
+    x:
+      - url: https://x.com/SVPch
+        verified: true
   - name: Sylvain Freymond
   - name: Tamara Funiciello
     facebook:

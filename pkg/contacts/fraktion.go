@@ -30,9 +30,40 @@ var partyAliases = map[string]string{
 // jurisdiction, most specific first. A Gemeinderat vote tags the city party and
 // falls back to the canton party on a platform where the city one has no
 // account; a Kantonsrat vote has nobody to fall back to above it.
+//
+// The Nationalrat tags the national parties, "SP Schweiz". Its post names a
+// Fraktion only when one filed the business; see votes.Affair.Fraktion.
 var partyLevels = map[string][]string{
 	"zurich-city":   {"Stadt Zürich", "Kanton Zürich"},
 	"zurich-canton": {"Kanton Zürich"},
+	"nationalrat":   {"Schweiz"},
+}
+
+// fraktionParties are the parties a Fraktion phrase stands for beyond the one
+// it names, per jurisdiction. A federal Fraktion can seat several parties, and
+// a business it files is theirs too.
+//
+// Only a party whose every member sits in the one Fraktion is listed, so the
+// tag is never in doubt. From parlament.ch's MemberCouncil, both chambers, in
+// November 2026: the SVP-Fraktion seats the SVP, the EDU (2), the Lega (1) and
+// the MCG (3); the Mitte-Fraktion seats Die Mitte and the EVP (2), and is
+// written "Mitte-EVP-Fraktion", which names both. The Grüne-Fraktion's member
+// from Alternative-die Grünen Zug and the FDP-Fraktion's from Basel's LDP
+// belong to cantonal sections of the national party, whose account covers them.
+//
+// Refresh with each legislature, when the Fraktionen are formed anew.
+var fraktionParties = map[string]map[string][]string{
+	"nationalrat": {
+		"SVP": {"SVP", "EDU", "Lega", "MCG"},
+	},
+}
+
+// regionalParties are parties that exist in one canton only and sit in a
+// federal Fraktion. They have no national level to look up, so their own
+// entry stands for every level.
+var regionalParties = map[string]string{
+	"Lega": "Lega dei Ticinesi",
+	"MCG":  "Mouvement Citoyens Genevois",
 }
 
 // partyFallbacks are the jurisdictions whose contacts file a jurisdiction's
@@ -167,8 +198,15 @@ func findFraktionSpans(text string) []fraktionSpan {
 // partyHandle returns the verified account a party has on a platform at the
 // jurisdiction's level, falling back to the next level up.
 func (m *Mapper) partyHandle(party, platform, jurisdiction string, extract func(string) string) string {
+	var names []string
 	for _, level := range partyLevels[jurisdiction] {
-		contact, ok := m.GetContact(party + " " + level)
+		names = append(names, party+" "+level)
+	}
+	if name, ok := regionalParties[party]; ok && len(names) > 0 {
+		names = append(names, name)
+	}
+	for _, name := range names {
+		contact, ok := m.GetContact(name)
 		if !ok || !contact.IsOrganization() {
 			continue
 		}
@@ -181,6 +219,20 @@ func (m *Mapper) partyHandle(party, platform, jurisdiction string, extract func(
 	return ""
 }
 
+// partiesOf returns the parties a Fraktion phrase stands for, in order: each
+// party it names, followed by those fraktionParties seats with it.
+func partiesOf(span fraktionSpan, jurisdiction string) []string {
+	var out []string
+	for _, p := range span.parties {
+		if more, ok := fraktionParties[jurisdiction][p.party]; ok {
+			out = append(out, more...)
+			continue
+		}
+		out = append(out, p.party)
+	}
+	return out
+}
+
 // tagFraktionen appends the handles of the parties named in a Fraktion phrase
 // after the phrase: "… der SP-, Grüne- und AL-Fraktion @spzuerich @gruene …".
 func (m *Mapper) tagFraktionen(text, platform, jurisdiction string, extract func(string) string) string {
@@ -189,8 +241,8 @@ func (m *Mapper) tagFraktionen(text, platform, jurisdiction string, extract func
 	for i := len(spans) - 1; i >= 0; i-- {
 		var handles []string
 		seen := map[string]bool{}
-		for _, p := range spans[i].parties {
-			h := m.partyHandle(p.party, platform, jurisdiction, extract)
+		for _, party := range partiesOf(spans[i], jurisdiction) {
+			h := m.partyHandle(party, platform, jurisdiction, extract)
 			if h == "" || seen[h] {
 				continue
 			}
@@ -219,7 +271,9 @@ func (m *Mapper) TagInstagramFraktionen(text, jurisdiction string) string {
 
 // FindBlueskyFraktionMentions returns a mention over each party token of a
 // Fraktion phrase whose party has a Bluesky account. Like FindBlueskyMentions
-// it leaves the text alone: the party name itself becomes the link.
+// it leaves the text alone: the party name itself becomes the link. So a party
+// fraktionParties adds, which has no token of its own, is not tagged here; none
+// of those has a Bluesky account today.
 func (m *Mapper) FindBlueskyFraktionMentions(text, jurisdiction string) []BlueskyMention {
 	var out []BlueskyMention
 	for _, span := range findFraktionSpans(text) {
