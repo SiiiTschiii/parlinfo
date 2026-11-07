@@ -124,7 +124,7 @@ func overviewAltPrefix(index int, v votes.Vote) string {
 	case auswahlOutcome(v) != "":
 		return fmt.Sprintf("%d. %s", index, auswahlResultLabel(v.Decision))
 	case voteformat.HasVerdict(v):
-		return fmt.Sprintf("%d. %s", index, voteformat.GetVoteResultEmoji(v.Decision))
+		return fmt.Sprintf("%d. %s", index, voteformat.GetVoteResultEmoji(voteformat.Verdict(v)))
 	}
 	return fmt.Sprintf("%d.", index)
 }
@@ -140,7 +140,7 @@ func resultAlt(group []votes.Vote, i int) string {
 	case auswahlOutcome(v) != "":
 		label = auswahlOutcome(v) + ": " + label
 	case voteformat.HasVerdict(v):
-		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(v.Decision), voteformat.GetVoteResultText(v.Decision), label)
+		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(v)), voteformat.GetVoteResultText(voteformat.Verdict(v)), label)
 	}
 
 	if stamp := voteformat.FormatVoteDateTime(v.Date); stamp != "" {

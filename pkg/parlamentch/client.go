@@ -46,6 +46,10 @@ type Client struct {
 	// WithSubjects.
 	subjects []string
 
+	// filedBusiness adds the votes on motions, postulates and initiatives to
+	// those subjects selects. See WithFiledBusiness.
+	filedBusiness bool
+
 	// businessTypes caches each business's type, which every vote of a group
 	// would otherwise ask for separately.
 	businessTypes map[int64]string

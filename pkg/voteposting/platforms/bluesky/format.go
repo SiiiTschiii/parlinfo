@@ -142,6 +142,11 @@ func buildWahlgeschaeftPosts(group []votes.Vote) []*BlueskyPost {
 func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️ %s\n\n", voteformat.PostHeadline(group))
 	threadHint := "\n\n👇 Details im Thread"
+	// What Ja supported sits below the title. Carried with the hint, so the
+	// truncation below reserves room for it and shortens the title instead.
+	if q := voteformat.QuestionLine(group); q != "" {
+		threadHint = "\n" + q + threadHint
+	}
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.
@@ -150,8 +155,8 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 	// into the thread rather than eating the subject of the vote.
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
-		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(group[0].Decision),
-			voteformat.GetVoteResultText(group[0].Decision), title)
+		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
+			voteformat.GetVoteResultText(voteformat.Verdict(group[0])), title)
 	}
 	available := maxGraphemes - graphemeLen(header) - graphemeLen(threadHint) - graphemeLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, graphemeLen)
@@ -176,8 +181,8 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 				body = title
 			} else {
 				// Truncate after "✅ Angenommen: " prefix
-				resultEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				result := voteformat.GetVoteResultText(vote.Decision)
+				resultEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
+				result := voteformat.GetVoteResultText(voteformat.Verdict(vote))
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := titleRoom - graphemeLen(prefix)
 				if titleAvailable > 0 {
@@ -240,7 +245,7 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 				// Auswahl: no ✅/❌ prefix
 				entry.WriteString(fmt.Sprintf("%s\n", voteTitle))
 			} else {
-				voteEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
+				voteEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
 				entry.WriteString(fmt.Sprintf("%s %s\n", voteEmoji, voteTitle))
 			}
 			entry.WriteString(voteformat.FormatVoteCounts(counts))
