@@ -187,6 +187,16 @@ type Affair struct {
 	// a bare subject line. Formatters read this field; the city's titles are
 	// left exactly as they arrive.
 	Authors []Author
+
+	// Fraktion names the parliamentary group that filed this business, when a
+	// group and not a member did, written so it reads after "der" and names its
+	// parties: "SVP-Fraktion", "Mitte-EVP-Fraktion". Empty otherwise.
+	//
+	// parlament.ch records a Fraktion filing with the group as the filer and
+	// no member, so Authors stays empty for it. Zürich's sources leave this
+	// empty: the Gemeinderat writes the Fraktion into the title itself, and
+	// the tagger finds it there.
+	Fraktion string
 }
 
 // Author is a member who signed a business matter into the chamber: the

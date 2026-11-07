@@ -152,3 +152,91 @@ func TestPartyLabel(t *testing.T) {
 		}
 	}
 }
+
+// A Fraktion filing is a role-7 row with a group and no member. Only the
+// current legislature's groups are named.
+func TestFilingFraktion(t *testing.T) {
+	n := func(v int64) *int64 { return &v }
+	tests := []struct {
+		name  string
+		roles []businessRoleDTO
+		want  string
+	}{
+		{"the GLP-Fraktion, 13.468", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(137)}}, "GLP-Fraktion"},
+		{"the Mitte-Fraktion names both its parties", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(3)}}, "Mitte-EVP-Fraktion"},
+		{"a member filed it", []businessRoleDTO{{Role: roleAuthor, MemberCouncilNumber: n(214)}}, ""},
+		{"a group in another role", []businessRoleDTO{{Role: roleCoSigned, ParlGroupNumber: n(4)}}, ""},
+		{"a dissolved group", []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(136)}}, ""},
+		{"nobody", nil, ""},
+	}
+	for _, tt := range tests {
+		if got := filingFraktion(votes.German, tt.roles); got != tt.want {
+			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+	// The other languages name the group in their own words.
+	glp := []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(137)}}
+	if got := filingFraktion(votes.French, glp); got != "groupe PVL" {
+		t.Errorf("French: got %q, want groupe PVL", got)
+	}
+	if got := filingFraktion(votes.Italian, glp); got != "gruppo PVL" {
+		t.Errorf("Italian: got %q, want gruppo PVL", got)
+	}
+}
+
+// Every language names the same Fraktionen, so a business filed by one reads
+// the same in every language's posts.
+func TestFraktionNames_EveryLanguageNamesEveryGroup(t *testing.T) {
+	for l, names := range fraktionNames {
+		for n := range fraktionNames[votes.German] {
+			if names[n] == "" {
+				t.Errorf("%s has no name for group %d", l, n)
+			}
+		}
+	}
+}
+
+// 13.468, "Ehe für alle", was filed by the GLP-Fraktion: the service's one
+// row names the group and no member. Recorded from the service in November
+// 2026. The Fraktion reaches the vote, nobody is looked up, and the second
+// vote of the business is served from the cache.
+func TestEnrich_FraktionFiling(t *testing.T) {
+	c, requests := newTestClient(t)
+	inner := c.baseURL
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/BusinessRole" && strings.Contains(r.URL.Query().Get("$filter"), "BusinessNumber eq 20130468 ") {
+			*requests = append(*requests, r.URL.RawQuery)
+			http.ServeFile(w, r, "testdata/roles_20130468.json")
+			return
+		}
+		http.Redirect(w, r, inner+r.URL.RequestURI(), http.StatusTemporaryRedirect)
+	}))
+	t.Cleanup(srv.Close)
+	c.SetBaseURL(srv.URL)
+
+	for i, id := range []string{"38953", "38954"} {
+		before := len(*requests)
+		v := votes.Vote{SourceID: id, Affair: votes.Affair{ID: "20130468"}}
+		if err := c.enrich(&v); err != nil {
+			t.Fatal(err)
+		}
+		if v.Affair.Fraktion != "GLP-Fraktion" || len(v.Affair.Authors) != 0 {
+			t.Errorf("vote %s: Fraktion %q, Authors %v; want GLP-Fraktion and nobody", id, v.Affair.Fraktion, v.Affair.Authors)
+		}
+		var roles, members int
+		for _, q := range (*requests)[before:] {
+			if strings.Contains(q, "Role") {
+				roles++
+			}
+			if strings.Contains(q, "ID+eq") || strings.Contains(q, "ID%20eq") {
+				members++
+			}
+		}
+		if members != 0 {
+			t.Errorf("vote %s: %d member lookups, want none", id, members)
+		}
+		if want := 1 - i; roles != want {
+			t.Errorf("vote %s: %d BusinessRole requests, want %d", id, roles, want)
+		}
+	}
+}

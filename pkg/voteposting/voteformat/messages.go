@@ -26,6 +26,7 @@ const (
 	MsgVoteOn         Msg = "vote-on"         // headline before the date
 	MsgVoteNumbered   Msg = "vote-numbered"   // fmt verb: the ordinal
 	MsgAuthorsBy      Msg = "authors-by"      // between the business type and its authors
+	MsgByFraktion     Msg = "by-fraktion"     // between the business type and the Fraktion that filed it
 	MsgAnd            Msg = "and"             // before the last of several authors
 	MsgAndOthers      Msg = "and-others"      // after a capped author list
 	MsgMoreSignatures Msg = "more-signatures" // signatories shed for length, after one was named
@@ -69,6 +70,7 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgVoteOn:         "Abstimmung vom",
 		MsgVoteNumbered:   "Abstimmung %d",
 		MsgAuthorsBy:      "von",
+		MsgByFraktion:     "der",
 		MsgAnd:            "und",
 		MsgAndOthers:      "u. a.",
 		MsgMoreSignatures: "Weitere Unterzeichnende",
@@ -102,6 +104,7 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgVoteOn:         "Vote du",
 		MsgVoteNumbered:   "Vote %d",
 		MsgAuthorsBy:      "de",
+		MsgByFraktion:     "du",
 		MsgAnd:            "et",
 		MsgAndOthers:      "et al.",
 		MsgMoreSignatures: "Autres signataires",
@@ -135,6 +138,7 @@ var messages = map[votes.Language]map[Msg]string{
 		MsgVoteOn:         "Votazione del",
 		MsgVoteNumbered:   "Votazione %d",
 		MsgAuthorsBy:      "di",
+		MsgByFraktion:     "del",
 		MsgAnd:            "e",
 		MsgAndOthers:      "e altri",
 		MsgMoreSignatures: "Altri firmatari",

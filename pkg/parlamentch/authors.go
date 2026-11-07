@@ -43,6 +43,7 @@ var authorRoles = []struct {
 type businessRoleDTO struct {
 	Role                int    `json:"Role"`
 	MemberCouncilNumber *int64 `json:"MemberCouncilNumber"`
+	ParlGroupNumber     *int64 `json:"ParlGroupNumber"`
 }
 
 // authorDTO is the part of a MemberCouncil row a post names.
@@ -89,24 +90,77 @@ func partyLabel(l votes.Language, abbreviation string) string {
 	return abbreviation
 }
 
-// authorsOf returns the members who filed, took over or co-signed a business,
-// remembering them for the
-// rest of the run, since every vote of a group asks.
+// fraktionNames are the Fraktionen of the current legislature by
+// ParlGroupNumber, as a post names them after "der". Each name lists the
+// parties it is tagged for, because the tagger reads them off the text: the
+// Mitte-Fraktion is "Die Mitte-Fraktion. Die Mitte. EVP." and seats both, so it
+// is written with both. The SVP-Fraktion also seats EDU, Lega and MCG, but its
+// name is the SVP's alone; the tagger adds those from its own table, see
+// contacts.fraktionParties.
+//
+// A group not listed — a Fraktion of an earlier legislature — is not named.
+// Business filed by one and still on the agenda is rare enough that the post
+// does without the name rather than guess at a group that has since
+// dissolved or merged.
+//
+// The French and Italian names are what those languages' posts print after
+// "du" and "del"; the tagger reads only the German ones, so they carry no
+// party list.
+var fraktionNames = map[votes.Language]map[int64]string{
+	votes.German: {
+		1:   "FDP-Fraktion",
+		2:   "SP-Fraktion",
+		3:   "Mitte-EVP-Fraktion",
+		4:   "SVP-Fraktion",
+		6:   "Grüne-Fraktion",
+		137: "GLP-Fraktion",
+	},
+	votes.French: {
+		1:   "groupe PLR",
+		2:   "groupe PS",
+		3:   "groupe Centre-PEV",
+		4:   "groupe UDC",
+		6:   "groupe des Vert-e-s",
+		137: "groupe PVL",
+	},
+	votes.Italian: {
+		1:   "gruppo PLR",
+		2:   "gruppo PS",
+		3:   "gruppo Centro-PEV",
+		4:   "gruppo UDC",
+		6:   "gruppo dei Verdi",
+		137: "gruppo PVL",
+	},
+}
+
+// authorship is who filed a business: members, or a Fraktion.
+type authorship struct {
+	authors  []votes.Author
+	fraktion string
+}
+
+// authorsOf returns the members who filed, took over or co-signed a business.
+func (c *Client) authorsOf(businessNumber int64) []votes.Author {
+	return c.authorshipOf(businessNumber).authors
+}
+
+// authorshipOf returns who filed a business, remembering it for the rest of
+// the run, since every vote of a group asks.
 //
 // Authorship is enrichment, so a failure costs the names and nothing else: the
 // post still carries the subject, the counts and the link.
-func (c *Client) authorsOf(businessNumber int64) []votes.Author {
-	if authors, ok := c.authors[businessNumber]; ok {
-		return authors
+func (c *Client) authorshipOf(businessNumber int64) authorship {
+	if a, ok := c.authors[businessNumber]; ok {
+		return a
 	}
-	authors, err := c.businessAuthors(businessNumber)
+	a, err := c.businessAuthors(businessNumber)
 	if err != nil {
 		log.Printf("⚠️  parlamentch: could not fetch the authors of business %d: %v", businessNumber, err)
 		// Cached as absent, so one outage is not retried once per vote.
-		authors = nil
+		a = authorship{}
 	}
-	c.authors[businessNumber] = authors
-	return authors
+	c.authors[businessNumber] = a
+	return a
 }
 
 // businessAuthors asks who filed a business, who took it over and who
@@ -115,19 +169,25 @@ func (c *Client) authorsOf(businessNumber int64) []votes.Author {
 // Most business the Nationalrat takes a final vote on comes from the Federal
 // Council or a committee, and has no member in either role: in the year to
 // November 2026, 11 of 105. Those cost one request that returns nothing.
-func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
+//
+// A Fraktion files business too, and the service records it as the filer with
+// a group number and no member. Of the 1,481 businesses that reached a final or
+// overall vote from 2007 to November 2026, ten were a Fraktion's — "Ehe für
+// alle", the GLP's, among them — and those are named by the group.
+func (c *Client) businessAuthors(businessNumber int64) (authorship, error) {
 	var roles []businessRoleDTO
 	err := c.get("/BusinessRole", query{
 		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
 			c.odataLanguage(), businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
-		"$select": "Role,MemberCouncilNumber",
+		"$select": "Role,MemberCouncilNumber,ParlGroupNumber",
 	}, &roles)
 	if err != nil {
-		return nil, err
+		return authorship{}, err
 	}
+	a := authorship{fraktion: filingFraktion(c.language(), roles)}
 	held := authorOrder(roles)
 	if len(held) == 0 {
-		return nil, nil
+		return a, nil
 	}
 
 	clauses := make([]string, len(held))
@@ -140,9 +200,21 @@ func (c *Client) businessAuthors(businessNumber int64) ([]votes.Author, error) {
 		"$select": "ID,FirstName,LastName,PartyAbbreviation",
 	}, &members)
 	if err != nil {
-		return nil, err
+		return authorship{}, err
 	}
-	return namedAuthors(c.language(), held, members), nil
+	a.authors = namedAuthors(c.language(), held, members)
+	return a, nil
+}
+
+// filingFraktion returns the name of the Fraktion that filed a business, in l,
+// or "" when no Fraktion did or the one that did is not in fraktionNames.
+func filingFraktion(l votes.Language, roles []businessRoleDTO) string {
+	for _, r := range roles {
+		if r.Role == roleAuthor && r.ParlGroupNumber != nil {
+			return fraktionNames[l.OrGerman()][*r.ParlGroupNumber]
+		}
+	}
+	return ""
 }
 
 // heldRole is a member and the role they hold on a business.

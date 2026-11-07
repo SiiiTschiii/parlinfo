@@ -218,7 +218,8 @@ func (c *Client) enrich(v *votes.Vote) error {
 
 	if id, err := strconv.ParseInt(v.Affair.ID, 10, 64); err == nil {
 		v.Affair.Type = c.businessType(id)
-		v.Affair.Authors = c.authorsOf(id)
+		a := c.authorshipOf(id)
+		v.Affair.Authors, v.Affair.Fraktion = a.authors, a.fraktion
 	}
 	return nil
 }

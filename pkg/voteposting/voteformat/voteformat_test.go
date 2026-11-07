@@ -1393,3 +1393,26 @@ func TestVoteLinks(t *testing.T) {
 		}
 	})
 }
+
+// A business a Fraktion filed is labelled with the Fraktion, in the genitive
+// Stadt Zürich's titles use. A member filer takes precedence; without a type
+// there is nothing for the Fraktion to attach to.
+func TestGroupPrefixLineNamesTheFilingFraktion(t *testing.T) {
+	vote := func(affairType, fraktion string, authors ...votes.Author) []votes.Vote {
+		return []votes.Vote{{Affair: votes.Affair{Type: affairType, Fraktion: fraktion, Authors: authors}}}
+	}
+	tests := []struct {
+		name  string
+		group []votes.Vote
+		want  string
+	}{
+		{"a Fraktion", vote("Parlamentarische Initiative", "GLP-Fraktion"), "Parlamentarische Initiative der GLP-Fraktion"},
+		{"a member wins", vote("Motion", "SP-Fraktion", votes.Author{Name: "Anna Muster", Party: "SP"}), "Motion von Anna Muster (SP)"},
+		{"no type", vote("", "SVP-Fraktion"), ""},
+	}
+	for _, tt := range tests {
+		if got := GroupPrefixLine(tt.group); got != tt.want {
+			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+}
