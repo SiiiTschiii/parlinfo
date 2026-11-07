@@ -418,7 +418,7 @@ contacts:
       - url: https://www.facebook.com/fdp.dieliberalen
         verified: true
     instagram:
-      - url: https://www.instagram.com/fdp_schweiz
+      - url: https://www.instagram.com/fdp_schweiz/
         verified: true
     linkedin:
       - url: https://www.linkedin.com/company/fdp-die-liberalen-schweiz/
@@ -502,7 +502,7 @@ contacts:
       - url: https://www.facebook.com/grunliberale
         verified: true
     instagram:
-      - url: https://www.instagram.com/grunliberale
+      - url: https://www.instagram.com/grunliberale/
         verified: true
     x:
       - url: https://x.com/grunliberale
@@ -528,7 +528,7 @@ contacts:
       - url: https://www.facebook.com/gruenech/
         verified: true
     instagram:
-      - url: https://www.instagram.com/gruenech
+      - url: https://www.instagram.com/gruenech/
         verified: true
     linkedin:
       - url: https://www.linkedin.com/company/14013437
