@@ -67,3 +67,19 @@ func TestFrenchElidesDeBeforeAVowel(t *testing.T) {
 		}
 	}
 }
+
+// An elided first name that does not fit beside the label still moves to the
+// next entry, as an unelided one does, rather than overrunning the limit.
+func TestPackNames_ElidedNameStillSplitsFromTheLabel(t *testing.T) {
+	b := NameBlock{"✍️ Initiative parlementaire de", []votes.Author{{Name: "Andrea Caroni", Party: "PLR"}}, votes.French}
+	measure := func(s string) int { return len([]rune(s)) }
+	got := PackNames(b, nil, 45, measure)
+	for _, e := range got {
+		if n := measure(e); n > 45 {
+			t.Errorf("entry %q is %d runes, over the limit of 45", e, n)
+		}
+	}
+	if len(got) != 2 {
+		t.Errorf("PackNames = %q, want the label and the name apart", got)
+	}
+}

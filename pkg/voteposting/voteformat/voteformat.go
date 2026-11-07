@@ -374,8 +374,6 @@ func PackNames(b NameBlock, tag func(string) string, limit int, measure func(str
 	for i, name := range names {
 		sep := " "
 		switch {
-		case count == 0 && cur == b.Label && elidesBefore(b.Language, cur, name):
-			cur, sep = strings.TrimSuffix(cur, "de")+"d’", ""
 		case count == 0:
 		case i == len(names)-1:
 			sep = " " + W(b.Language).And + " "
@@ -383,6 +381,11 @@ func PackNames(b NameBlock, tag func(string) string, limit int, measure func(str
 			sep = ", "
 		}
 		next := cur + sep + name
+		if count == 0 && cur == b.Label && elidesBefore(b.Language, cur, name) {
+			// Elided into next only, so the label is still the label when the
+			// fit check below decides whether it has to stand alone.
+			next = strings.TrimSuffix(cur, "de") + "d’" + name
+		}
 		reserve := 0
 		if i < len(names)-1 {
 			reserve = measure(more)
