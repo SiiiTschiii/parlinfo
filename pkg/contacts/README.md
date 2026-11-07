@@ -17,6 +17,12 @@ post and appends their handle. Two things follow from that.
   Nationalrat's do not, and their authorship is put back onto the label line by
   the formatters — see `votes.Affair.Authors`. A Nationalrat post can name a
   Ständerat member who filed the business, so it loads both files.
+- A Fraktion phrase ("der SP-, Grüne- und AL-Fraktion") tags the parties it
+  names, at the level of the vote: the city party, then the canton party, for
+  the Gemeinderat; the canton party for the Kantonsrat; the national party
+  ("SP Schweiz") for the Nationalrat, whose label line names the Fraktion when
+  one filed the business — see `votes.Affair.Fraktion`. A federal Fraktion
+  that seats several parties tags them all (`fraktionParties`).
 - An entry with no handles is valid and useful. It costs nothing, and it marks
   a member as known-but-not-yet-found.
 

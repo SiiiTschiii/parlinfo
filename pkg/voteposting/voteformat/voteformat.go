@@ -104,6 +104,11 @@ func GroupPrefixLine(group []votes.Vote) string {
 	if prefix != "" {
 		if authors := AuthorList(LeadAuthors(group[0].Affair.Authors), 0); authors != "" {
 			prefix += " von " + authors
+		} else if fraktion := strings.TrimSpace(group[0].Affair.Fraktion); fraktion != "" {
+			// "Parlamentarische Initiative der GLP-Fraktion", the shape Stadt
+			// Zürich's titles use, which is also what the tagger reads to tag
+			// the Fraktion's parties.
+			prefix += " der " + fraktion
 		}
 	}
 
