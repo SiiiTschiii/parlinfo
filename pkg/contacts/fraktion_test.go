@@ -179,3 +179,40 @@ func TestFraktionPhrasesFromRealTitles(t *testing.T) {
 		}
 	}
 }
+
+// A Nationalrat post names the Fraktion that filed the business, and tags every
+// party it seats: the Mitte-EVP-Fraktion names both, the SVP-Fraktion names the
+// SVP alone and seats EDU, Lega and MCG beside it. Lega and MCG are cantonal
+// parties, found under their own names.
+func TestTagXFraktionenNationalrat(t *testing.T) {
+	m := newMapper([]Contact{
+		{Name: "SVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/SVPch")},
+		{Name: "EDU Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/EDUSchweiz")},
+		{Name: "Lega dei Ticinesi", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/lega")},
+		{Name: "Die Mitte Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/Mitte_Centre")},
+		{Name: "EVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/evp")},
+		{Name: "GLP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/grunliberale")},
+		{Name: "Grüne Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/GrueneCH")},
+		{Name: "SP Kanton Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/spkantonzh")},
+	})
+	tests := []struct{ in, want string }{
+		// MCG has no account here, so it is skipped rather than guessed.
+		{"Parlamentarische Initiative der SVP-Fraktion", "Parlamentarische Initiative der SVP-Fraktion @SVPch @EDUSchweiz @lega"},
+		{"Parlamentarische Initiative der Mitte-EVP-Fraktion", "Parlamentarische Initiative der Mitte-EVP-Fraktion @Mitte_Centre @evp"},
+		{"Parlamentarische Initiative der GLP-Fraktion", "Parlamentarische Initiative der GLP-Fraktion @grunliberale"},
+		{"Parlamentarische Initiative der Grüne-Fraktion", "Parlamentarische Initiative der Grüne-Fraktion @GrueneCH"},
+		// The national level only: a cantonal account is never a federal tag.
+		{"Parlamentarische Initiative der SP-Fraktion", "Parlamentarische Initiative der SP-Fraktion"},
+	}
+	for _, tt := range tests {
+		if got := m.TagXFraktionen(tt.in, "nationalrat"); got != tt.want {
+			t.Errorf("%q\n got  %q\n want %q", tt.in, got, tt.want)
+		}
+	}
+
+	// The SVP-Fraktion of the Gemeinderat is the SVP's alone, and a cantonal
+	// party is not looked up for a jurisdiction that has none of its own.
+	if got := m.TagXFraktionen("Motion der SVP-Fraktion", "zurich-city"); got != "Motion der SVP-Fraktion" {
+		t.Errorf("zurich-city: got %q", got)
+	}
+}
