@@ -812,7 +812,7 @@ func layoutCombinedCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.
 	case isAuswahl:
 		verdictText = strings.ToUpper(v.Decision)
 	case voteformat.HasVerdict(*v):
-		verdictText = voteformat.GetVoteResultEmoji(v.Decision)
+		verdictText = voteformat.GetVoteResultEmoji(voteformat.Verdict(*v))
 	}
 	if img != nil {
 		drawCenteredText(img, fonts.verdict, fonts.emojiVerdict, cur.baseline(fonts.verdict), verdictText, bg)
@@ -1287,7 +1287,7 @@ func layoutResultCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.Vo
 	case isAuswahl:
 		verdictText = strings.ToUpper(v.Decision)
 	case voteformat.HasVerdict(*v):
-		verdictText = voteformat.GetVoteResultEmoji(v.Decision)
+		verdictText = voteformat.GetVoteResultEmoji(voteformat.Verdict(*v))
 	}
 	if img != nil {
 		drawCenteredText(img, fonts.verdictSm, fonts.emojiVerdict, cur.baseline(fonts.verdictSm), verdictText, bg)
@@ -1345,7 +1345,7 @@ func formatSummaryLineWithin(index int, vote votes.Vote, groupSize, maxRunes int
 	case voteformat.IsAuswahlVote(counts):
 		verdict = auswahlResultLabel(vote.Decision)
 	case voteformat.HasVerdict(vote):
-		verdict = voteformat.GetVoteResultEmoji(vote.Decision)
+		verdict = voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
 	}
 	if verdict == "" {
 		return fmt.Sprintf("%d. %s", index, subtitle), true

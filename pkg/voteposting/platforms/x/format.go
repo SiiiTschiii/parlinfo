@@ -147,8 +147,8 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 	// into the thread rather than eating the subject of the vote.
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
-		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(group[0].Decision),
-			voteformat.GetVoteResultText(group[0].Decision), title)
+		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
+			voteformat.GetVoteResultText(voteformat.Verdict(group[0])), title)
 	}
 	available := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, weightedLen)
@@ -180,8 +180,8 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 				title = truncateText(title, available)
 				body = title
 			} else {
-				resultEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				result := voteformat.GetVoteResultText(vote.Decision)
+				resultEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
+				result := voteformat.GetVoteResultText(voteformat.Verdict(vote))
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := available - weightedLen(prefix)
 				if titleAvailable > 0 {
@@ -248,7 +248,7 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 				// Auswahl: no ✅/❌ prefix
 				entry.WriteString(fmt.Sprintf("%s\n", voteTitle))
 			} else {
-				voteEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
+				voteEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
 				entry.WriteString(fmt.Sprintf("%s %s\n", voteEmoji, voteTitle))
 			}
 			entry.WriteString(voteformat.FormatVoteCountsLong(counts))

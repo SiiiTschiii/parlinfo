@@ -33,7 +33,10 @@ func FormatVoteDateTime(t time.Time) string {
 // GetVoteResultEmoji returns the appropriate emoji for a vote result
 func GetVoteResultEmoji(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
-	if strings.Contains(result, "angenommen") || result == "ja" {
+	if strings.Contains(result, "keine folge") {
+		return "❌"
+	}
+	if strings.Contains(result, "angenommen") || strings.Contains(result, "folge gegeben") || result == "ja" {
 		return "✅"
 	}
 	return "❌"
@@ -42,6 +45,14 @@ func GetVoteResultEmoji(result string) string {
 // GetVoteResultText returns the text for a vote result
 func GetVoteResultText(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
+	// An initiative is not adopted by the vote that lets it go on, only given
+	// leave to: "Folge gegeben". Checked first, since it contains the other.
+	if strings.Contains(result, "keine folge") {
+		return "Keine Folge gegeben"
+	}
+	if strings.Contains(result, "folge gegeben") {
+		return "Folge gegeben"
+	}
 	if strings.Contains(result, "angenommen") || result == "ja" {
 		return "Angenommen"
 	}
@@ -109,6 +120,8 @@ func GroupPrefixLine(group []votes.Vote) string {
 			// Zürich's titles use, which is also what the tagger reads to tag
 			// the Fraktion's parties.
 			prefix += " der " + fraktion
+		} else if canton := strings.TrimSpace(group[0].Affair.Canton); canton != "" {
+			prefix += " des Kantons " + canton
 		}
 	}
 
@@ -478,6 +491,16 @@ func CountsOf(v votes.Vote) VoteCounts {
 // Kanton Zürich reports a decision for binary votes only, and the openparldata
 // client clears it again unless the business and the ballot both state their
 // outcome, so threshold votes still arrive here without one.
+// Verdict is the outcome a post states for a vote: what it did to the
+// business where the source says (votes.Vote.Outcome), otherwise whether Ja
+// carried. Feed it to GetVoteResultEmoji and GetVoteResultText.
+func Verdict(v votes.Vote) string {
+	if o := strings.TrimSpace(v.Outcome); o != "" {
+		return o
+	}
+	return v.Decision
+}
+
 func HasVerdict(v votes.Vote) bool {
 	if IsAuswahlVote(CountsOf(v)) {
 		return false
