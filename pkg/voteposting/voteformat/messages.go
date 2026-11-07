@@ -26,6 +26,9 @@ type Words struct {
 	VoteNumbered   string // fmt verb: the ordinal
 	AuthorsBy      string // between the business type and its authors
 	ByFraktion     string // between the business type and the Fraktion that filed it
+	ByCanton       string // fmt verb: the canton that filed a Standesinitiative, after the type
+	LeaveGiven     string // an initiative's verdict when it carried
+	NoLeaveGiven   string // an initiative's verdict when it did not
 	And            string // before the last of several authors
 	AndOthers      string // after a capped author list
 	MoreSignatures string // signatories shed for length, after one was named
@@ -69,6 +72,9 @@ var (
 		VoteNumbered:   "Abstimmung %d",
 		AuthorsBy:      "von",
 		ByFraktion:     "der",
+		ByCanton:       " des Kantons %s",
+		LeaveGiven:     "Folge gegeben",
+		NoLeaveGiven:   "Keine Folge gegeben",
 		And:            "und",
 		AndOthers:      "u. a.",
 		MoreSignatures: "Weitere Unterzeichnende",
@@ -103,6 +109,9 @@ var (
 		VoteNumbered:   "Vote %d",
 		AuthorsBy:      "de",
 		ByFraktion:     "du",
+		ByCanton:       " (%s)",
+		LeaveGiven:     "Suite donnée",
+		NoLeaveGiven:   "Pas de suite donnée",
 		And:            "et",
 		AndOthers:      "et al.",
 		MoreSignatures: "Autres signataires",
@@ -137,6 +146,9 @@ var (
 		VoteNumbered:   "Votazione %d",
 		AuthorsBy:      "di",
 		ByFraktion:     "del",
+		ByCanton:       " (%s)",
+		LeaveGiven:     "Dato seguito",
+		NoLeaveGiven:   "Non dato seguito",
 		And:            "e",
 		AndOthers:      "e altri",
 		MoreSignatures: "Altri firmatari",

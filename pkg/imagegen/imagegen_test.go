@@ -933,3 +933,16 @@ func TestCardTitleWithoutAuthors(t *testing.T) {
 		t.Errorf("a card with no authors grew a 'von' clause:\n%s", set)
 	}
 }
+
+// A line break in the card title starts a paragraph of its own, which is how
+// the line saying what Ja supported sits below the title.
+func TestWrapTextKeepsParagraphs(t *testing.T) {
+	face, err := loadFace(goregular.TTF, 40)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := wrapText(face, "Kurzer Titel\nJa: keine Folge geben", 2000)
+	if len(got) != 2 || got[0] != "Kurzer Titel" || got[1] != "Ja: keine Folge geben" {
+		t.Errorf("wrapText = %q", got)
+	}
+}

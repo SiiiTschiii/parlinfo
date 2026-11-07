@@ -72,6 +72,9 @@ func LongFormHeading(group []votes.Vote, tags Tags) string {
 		sb.WriteString("\n")
 	}
 	sb.WriteString(tagHeading(CleanVoteTitle(group[0].Title), jurisdiction))
+	if q := QuestionLine(group); q != "" {
+		sb.WriteString("\n" + q)
+	}
 	sb.WriteString("\n\n")
 	return sb.String()
 }
@@ -106,7 +109,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 			sb.WriteString(voteTitle)
 		} else {
 			sb.WriteString(fmt.Sprintf("%s %s: %s",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Language, vote.Decision), voteTitle))
+				GetVoteResultEmoji(Verdict(vote)), GetVoteResultText(vote.Language, Verdict(vote)), voteTitle))
 		}
 		sb.WriteString("\n")
 	} else {
@@ -118,7 +121,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 		}
 		if HasVerdict(vote) {
 			sb.WriteString(fmt.Sprintf("%s %s\n",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Language, vote.Decision)))
+				GetVoteResultEmoji(Verdict(vote)), GetVoteResultText(vote.Language, Verdict(vote))))
 		}
 	}
 

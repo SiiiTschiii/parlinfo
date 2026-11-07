@@ -48,9 +48,17 @@ type Client struct {
 	// WithSubjects.
 	subjects []string
 
+	// filedBusiness adds the votes on motions, postulates and initiatives to
+	// those subjects selects. See WithFiledBusiness.
+	filedBusiness bool
+
 	// businessTypes caches each business's type, which every vote of a group
 	// would otherwise ask for separately.
 	businessTypes map[int64]string
+
+	// businessCodes caches each business's type code, by which filedKind
+	// tells a motion from a postulate in any language. See filedKinds.
+	businessCodes map[int64]int
 
 	// multiBill caches whether a business holds more than one bill, by
 	// BusinessNumber. See Client.hasSeveralBills.
@@ -78,6 +86,7 @@ func New(jurisdiction votes.Jurisdiction) *Client {
 		maxAttempts:   3,
 		retryDelay:    2 * time.Second,
 		businessTypes: make(map[int64]string),
+		businessCodes: make(map[int64]int),
 		labels:        make(map[string]voteLabel),
 		multiBill:     make(map[int64]bool),
 		authors:       make(map[int64]authorship),
