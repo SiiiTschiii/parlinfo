@@ -205,7 +205,7 @@ func byPhrase(l votes.Language, names string) string {
 // before next. Only a vowel elides it: an h is mute in some names and not in
 // others, and "de Hans" is never wrong where "d’Hans" can be.
 func elidesBefore(l votes.Language, text, next string) bool {
-	if l != votes.French || !(text == "de" || strings.HasSuffix(text, " de")) {
+	if l != votes.French || (text != "de" && !strings.HasSuffix(text, " de")) {
 		return false
 	}
 	r, _ := utf8.DecodeRuneInString(next)
