@@ -1,0 +1,309 @@
+################ FIXTURE nationalrat-single-vote ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 17.09.2026 (09:54)
+
+Oggetto del Consiglio federale · Votazione sul complesso
+✅ Accettato: Legge federale sul sostegno alle vittime dell’incendio di Crans-Montana del 1° gennaio 2026
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Dati: Servizi del Parlamento
+
+📊 106 Sì | 87 No | 4 Astensioni | 2 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centro-PEV 28/1/0/2
+PLR 3/21/3/0
+Verdi 22/0/1/0
+PVL 11/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 17.09.2026 (09:54)
+
+Oggetto del Consiglio federale · Votazione sul complesso
+✅ Accettato: Legge federale sul sostegno alle vittime dell’incendio di Crans-Montana del 1° gennaio 2026
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Dati: Servizi del Parlamento
+
+📊 106 Sì | 87 No | 4 Astensioni | 2 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centro-PEV 28/1/0/2
+PLR 3/21/3/0
+Verdi 22/0/1/0
+PVL 11/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Consiglio nazionale | Votazione del 17.09.2026 (09:54)
+
+Oggetto del Consiglio federale · Votazione sul complesso
+✅ Accettato: Legge federale sul sostegno alle vittime dell’incendio di Crans-Montana del 1° gennaio 2026
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Dati: Servizi del Parlamento
+
+📊 106 Sì | 87 No | 4 Ast. | 2 Ass.
+[facet] {Index:{ByteStart:14 ByteEnd:99} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022 DID: Tag:}]}
+[facet] {Index:{ByteStart:117 ByteEnd:182} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf DID: Tag:}]}
+
+[post 2]
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centro-PEV 28/1/0/2
+PLR 3/21/3/0
+Verdi 22/0/1/0
+PVL 11/0/0/0
+
+---- Instagram ----
+[images] 1
+[caption]
+🗳️ Consiglio nazionale | Votazione del 17.09.2026 (09:54)
+
+Oggetto del Consiglio federale · Votazione sul complesso
+Legge federale sul sostegno alle vittime dell’incendio di Crans-Montana del 1° gennaio 2026
+
+✅ Accettato
+📊 106 Sì | 87 No | 4 Astensioni | 2 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centro-PEV 28/1/0/2
+PLR 3/21/3/0
+Verdi 22/0/1/0
+PVL 11/0/0/0
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Dati: Servizi del Parlamento
+
+---- Facebook ----
+[images] 1
+[message]
+🗳️ Consiglio nazionale | Votazione del 17.09.2026 (09:54)
+
+Oggetto del Consiglio federale · Votazione sul complesso
+Legge federale sul sostegno alle vittime dell’incendio di Crans-Montana del 1° gennaio 2026
+
+✅ Accettato
+📊 106 Sì | 87 No | 4 Astensioni | 2 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centro-PEV 28/1/0/2
+PLR 3/21/3/0
+Verdi 22/0/1/0
+PVL 11/0/0/0
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Dati: Servizi del Parlamento
+
+################ FIXTURE nationalrat-two-bills ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 02.10.2026
+
+Oggetto del Consiglio federale
+«Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)». Iniziativa popolare e controprogetto indiretto (…
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Dati: Servizi del Parlamento
+
+[post 2]
+✅ Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
+
+[post 3]
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centro-PEV 29/1/0/1
+PLR 26/1/0/0
+Verdi 0/22/0/1
+PVL 8/1/1/1
+
+[post 4]
+✅ Votazione finale: Legge federale sulla protezione degli animali (LPAn)
+📊 139 Sì | 52 No | 5 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centro-PEV 30/0/0/1
+PLR 26/0/1/0
+Verdi 22/0/0/1
+PVL 10/0/0/1
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 02.10.2026
+
+Oggetto del Consiglio federale
+«Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)». Iniziativa popolare e controprogetto indiretto (Modifica della legge federale sulla protezione degli animali)
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Dati: Servizi del Parlamento
+
+[post 2]
+✅ Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centro-PEV 29/1/0/1
+PLR 26/1/0/0
+Verdi 0/22/0/1
+PVL 8/1/1/1
+
+[post 3]
+✅ Votazione finale: Legge federale sulla protezione degli animali (LPAn)
+📊 139 Sì | 52 No | 5 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centro-PEV 30/0/0/1
+PLR 26/0/1/0
+Verdi 22/0/0/1
+PVL 10/0/0/1
+
+---- Bluesky ----
+[post 0]
+🗳️ Consiglio nazionale | Votazione del 02.10.2026
+
+Oggetto del Consiglio federale
+«Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)». Iniziativa popolare e controprogetto indiretto (Modifica della legge fede…
+
+👇 Dettagli nel thread
+
+[post 1]
+🔗 https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Dati: Servizi del Parlamento
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059 DID: Tag:}]}
+
+[post 2]
+✅ Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Sì | 33 No | 7 Ast. | 3 Ass.
+
+[post 3]
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centro-PEV 29/1/0/1
+PLR 26/1/0/0
+Verdi 0/22/0/1
+PVL 8/1/1/1
+
+[post 4]
+✅ Votazione finale: Legge federale sulla protezione degli animali (LPAn)
+📊 139 Sì | 52 No | 5 Ast. | 3 Ass.
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centro-PEV 30/0/0/1
+PLR 26/0/1/0
+Verdi 22/0/0/1
+PVL 10/0/0/1
+
+---- Instagram ----
+[images] 3
+[caption]
+🗳️ Consiglio nazionale | Votazione del 02.10.2026
+
+Oggetto del Consiglio federale
+«Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)». Iniziativa popolare e controprogetto indiretto (Modifica della legge federale sulla protezione degli animali)
+
+✅ Accettato: Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centro-PEV 29/1/0/1
+PLR 26/1/0/0
+Verdi 0/22/0/1
+PVL 8/1/1/1
+
+✅ Accettato: Votazione finale: Legge federale sulla protezione degli animali (LPAn)
+📊 139 Sì | 52 No | 5 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centro-PEV 30/0/0/1
+PLR 26/0/1/0
+Verdi 22/0/0/1
+PVL 10/0/0/1
+
+🔗 https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Dati: Servizi del Parlamento
+
+---- Facebook ----
+[images] 3
+[message]
+🗳️ Consiglio nazionale | Votazione del 02.10.2026
+
+Oggetto del Consiglio federale
+«Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)». Iniziativa popolare e controprogetto indiretto (Modifica della legge federale sulla protezione degli animali)
+
+🔗 https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Dati: Servizi del Parlamento
+[caption of image 2]
+✅ Accettato: Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centro-PEV 29/1/0/1
+PLR 26/1/0/0
+Verdi 0/22/0/1
+PVL 8/1/1/1
+
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33215.pdf
+[caption of image 3]
+✅ Accettato: Votazione finale: Legge federale sulla protezione degli animali (LPAn)
+📊 139 Sì | 52 No | 5 Astensioni | 3 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centro-PEV 30/0/0/1
+PLR 26/0/1/0
+Verdi 22/0/0/1
+PVL 10/0/0/1
+
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
+

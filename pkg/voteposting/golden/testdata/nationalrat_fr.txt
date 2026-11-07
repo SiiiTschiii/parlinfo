@@ -1,0 +1,310 @@
+################ FIXTURE nationalrat-single-vote ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Conseil national | Vote du 17.09.2026 (09:54)
+
+Objet du Conseil fédéral · Vote sur l'ensemble
+✅ Accepté: Loi fédérale sur le soutien aux victimes de l'incendie de Crans-Montana du 1er janvier 2026
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Données : Les Services du Parlement
+
+📊 106 Oui | 87 Non | 4 Abstentions | 2 Absents
+
+[post 2]
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centre-PEV 28/1/0/2
+PLR 3/21/3/0
+Vert-e-s 22/0/1/0
+PVL 11/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Conseil national | Vote du 17.09.2026 (09:54)
+
+Objet du Conseil fédéral · Vote sur l'ensemble
+✅ Accepté: Loi fédérale sur le soutien aux victimes de l'incendie de Crans-Montana du 1er janvier 2026
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Données : Les Services du Parlement
+
+📊 106 Oui | 87 Non | 4 Abstentions | 2 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centre-PEV 28/1/0/2
+PLR 3/21/3/0
+Vert-e-s 22/0/1/0
+PVL 11/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Conseil national | Vote du 17.09.2026 (09:54)
+
+Objet du Conseil fédéral · Vote sur l'ensemble
+✅ Accepté: Loi fédérale sur le soutien aux victimes de l'incendie de Crans-Montana du 1er janvier 2026
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Données : Les Services du Parlement
+
+📊 106 Oui | 87 Non | 4 Abst. | 2 Abs.
+[facet] {Index:{ByteStart:12 ByteEnd:97} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022 DID: Tag:}]}
+[facet] {Index:{ByteStart:119 ByteEnd:184} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf DID: Tag:}]}
+
+[post 2]
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centre-PEV 28/1/0/2
+PLR 3/21/3/0
+Vert-e-s 22/0/1/0
+PVL 11/0/0/0
+
+---- Instagram ----
+[images] 1
+[caption]
+🗳️ Conseil national | Vote du 17.09.2026 (09:54)
+
+Objet du Conseil fédéral · Vote sur l'ensemble
+Loi fédérale sur le soutien aux victimes de l'incendie de Crans-Montana du 1er janvier 2026
+
+✅ Accepté
+📊 106 Oui | 87 Non | 4 Abstentions | 2 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centre-PEV 28/1/0/2
+PLR 3/21/3/0
+Vert-e-s 22/0/1/0
+PVL 11/0/0/0
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Données : Les Services du Parlement
+
+---- Facebook ----
+[images] 1
+[message]
+🗳️ Conseil national | Vote du 17.09.2026 (09:54)
+
+Objet du Conseil fédéral · Vote sur l'ensemble
+Loi fédérale sur le soutien aux victimes de l'incendie de Crans-Montana du 1er janvier 2026
+
+✅ Accepté
+📊 106 Oui | 87 Non | 4 Abstentions | 2 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 1/65/0/0
+PS 41/0/0/0
+Centre-PEV 28/1/0/2
+PLR 3/21/3/0
+Vert-e-s 22/0/1/0
+PVL 11/0/0/0
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20260022
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_32936.pdf
+Données : Les Services du Parlement
+
+################ FIXTURE nationalrat-two-bills ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Conseil national | Vote du 02.10.2026
+
+Objet du Conseil fédéral
+«Oui à l'interdiction d'importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)». Initiative populaire et contre-projet indirect (…
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Données : Les Services du Parlement
+
+[post 2]
+✅ Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
+
+[post 3]
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centre-PEV 29/1/0/1
+PLR 26/1/0/0
+Vert-e-s 0/22/0/1
+PVL 8/1/1/1
+
+[post 4]
+✅ Vote final: Loi fédérale sur la protection des animaux (LPA)
+📊 139 Oui | 52 Non | 5 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centre-PEV 30/0/0/1
+PLR 26/0/1/0
+Vert-e-s 22/0/0/1
+PVL 10/0/0/1
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Conseil national | Vote du 02.10.2026
+
+Objet du Conseil fédéral
+«Oui à l'interdiction d'importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)». Initiative populaire et contre-projet indirect (modification de la loi fédérale sur la protection des animaux)
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Données : Les Services du Parlement
+
+[post 2]
+✅ Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centre-PEV 29/1/0/1
+PLR 26/1/0/0
+Vert-e-s 0/22/0/1
+PVL 8/1/1/1
+
+[post 3]
+✅ Vote final: Loi fédérale sur la protection des animaux (LPA)
+📊 139 Oui | 52 Non | 5 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centre-PEV 30/0/0/1
+PLR 26/0/1/0
+Vert-e-s 22/0/0/1
+PVL 10/0/0/1
+
+---- Bluesky ----
+[post 0]
+🗳️ Conseil national | Vote du 02.10.2026
+
+Objet du Conseil fédéral
+«Oui à l'interdiction d'importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)». Initiative populaire et contre-projet indirect (modification de la loi fé…
+
+👇 Détails dans le fil
+
+[post 1]
+🔗 https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Données : Les Services du Parlement
+[facet] {Index:{ByteStart:5 ByteEnd:90} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059 DID: Tag:}]}
+
+[post 2]
+✅ Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Oui | 33 Non | 7 Abst. | 3 Abs.
+
+[post 3]
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centre-PEV 29/1/0/1
+PLR 26/1/0/0
+Vert-e-s 0/22/0/1
+PVL 8/1/1/1
+
+[post 4]
+✅ Vote final: Loi fédérale sur la protection des animaux (LPA)
+📊 139 Oui | 52 Non | 5 Abst. | 3 Abs.
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centre-PEV 30/0/0/1
+PLR 26/0/1/0
+Vert-e-s 22/0/0/1
+PVL 10/0/0/1
+
+---- Instagram ----
+[images] 3
+[caption]
+🗳️ Conseil national | Vote du 02.10.2026
+
+Objet du Conseil fédéral
+«Oui à l'interdiction d'importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)». Initiative populaire et contre-projet indirect (modification de la loi fédérale sur la protection des animaux)
+
+✅ Accepté: Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centre-PEV 29/1/0/1
+PLR 26/1/0/0
+Vert-e-s 0/22/0/1
+PVL 8/1/1/1
+
+✅ Accepté: Vote final: Loi fédérale sur la protection des animaux (LPA)
+📊 139 Oui | 52 Non | 5 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centre-PEV 30/0/0/1
+PLR 26/0/1/0
+Vert-e-s 22/0/0/1
+PVL 10/0/0/1
+
+🔗 https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Données : Les Services du Parlement
+
+---- Facebook ----
+[images] 3
+[message]
+🗳️ Conseil national | Vote du 02.10.2026
+
+Objet du Conseil fédéral
+«Oui à l'interdiction d'importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)». Initiative populaire et contre-projet indirect (modification de la loi fédérale sur la protection des animaux)
+
+🔗 https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059
+Données : Les Services du Parlement
+[caption of image 2]
+✅ Accepté: Vote final: Arrêté fédéral relatif à l’initiative populaire «Oui à l’interdiction d’importer des produits en fourrure provenant d’animaux ayant subi de mauvais traitements (initiative fourrure)» (Oui: Adopter le projet (recommandation de rejeter l'initiative))
+📊 156 Oui | 33 Non | 7 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 57/4/5/0
+PS 36/4/1/0
+Centre-PEV 29/1/0/1
+PLR 26/1/0/0
+Vert-e-s 0/22/0/1
+PVL 8/1/1/1
+
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33215.pdf
+[caption of image 3]
+✅ Accepté: Vote final: Loi fédérale sur la protection des animaux (LPA)
+📊 139 Oui | 52 Non | 5 Abstentions | 3 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 10/52/4/0
+PS 41/0/0/0
+Centre-PEV 30/0/0/1
+PLR 26/0/1/0
+Vert-e-s 22/0/0/1
+PVL 10/0/0/1
+
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
+

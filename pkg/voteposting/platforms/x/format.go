@@ -73,7 +73,7 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	// Tagged like the root's own line. X finds no mentions on its own, so a
 	// handle only exists where this puts one — and a member shed from the root
 	// for length has done nothing to deserve losing their tag.
-	signatories := voteformat.SignatoryLine(deferred)
+	signatories := voteformat.SignatoryLine(deferred, group[0].Language)
 	if contactMapper != nil {
 		signatories = contactMapper.TagXHandlesInText(signatories)
 	}
@@ -134,7 +134,7 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 // If the title is too long, it is truncated with "…".
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
-	threadHint := "\n\n👇 Details im Thread"
+	threadHint := "\n\n👇 " + voteformat.T(group[0].Language, voteformat.MsgThreadHint)
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.
@@ -144,7 +144,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
 		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(group[0].Decision),
-			voteformat.GetVoteResultText(group[0].Decision), title)
+			voteformat.GetVoteResultText(group[0].Language, group[0].Decision), title)
 	}
 	available := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, weightedLen)
@@ -177,7 +177,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 				body = title
 			} else {
 				resultEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				result := voteformat.GetVoteResultText(vote.Decision)
+				result := voteformat.GetVoteResultText(vote.Language, vote.Decision)
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := available - weightedLen(prefix)
 				if titleAvailable > 0 {
@@ -255,7 +255,7 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contact
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
-			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
+			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts, vote.Language); breakdown != "" {
 				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}

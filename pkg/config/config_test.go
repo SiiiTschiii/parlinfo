@@ -18,7 +18,7 @@ func TestValidate(t *testing.T) {
 // a member who moved chambers from one who left. A body that cannot answer
 // stops it for every other body, so each one must be able to.
 func TestEveryJurisdictionCanSayWhoSits(t *testing.T) {
-	for _, key := range JurisdictionKeys() {
+	for _, key := range ChamberKeys() {
 		j, err := LookupJurisdiction(key)
 		if err != nil {
 			t.Fatal(err)
@@ -29,6 +29,38 @@ func TestEveryJurisdictionCanSayWhoSits(t *testing.T) {
 		}
 		if _, ok := j.NewMemberSource().(votes.SittingLister); !ok {
 			t.Errorf("%s's roster cannot say who sits", key)
+		}
+	}
+}
+
+// A chamber posted in another language shares its roster and contacts, and
+// says whose they are.
+func TestLanguageRegistrationsShareTheirChambersRoster(t *testing.T) {
+	for _, key := range JurisdictionKeys() {
+		j, _ := LookupJurisdiction(key)
+		if j.RosterOf == "" {
+			continue
+		}
+		if j.NewMemberSource != nil {
+			t.Errorf("%s reads a roster of its own; %s's would be counted twice", key, j.RosterOf)
+		}
+		owner, err := LookupJurisdiction(j.RosterOf)
+		if err != nil {
+			t.Fatalf("%s shares the roster of %v", key, err)
+		}
+		if owner.RosterOf != "" {
+			t.Errorf("%s shares %s's roster, which is itself shared", key, owner.Key)
+		}
+		if j.ContactsKey() != owner.Key {
+			t.Errorf("%s tags from %s, want %s", key, j.ContactsKey(), owner.Key)
+		}
+		if j.Language.OrGerman() == owner.Language.OrGerman() {
+			t.Errorf("%s posts in %s, as %s already does", key, j.Language.OrGerman(), owner.Key)
+		}
+	}
+	for _, key := range ChamberKeys() {
+		if j, _ := LookupJurisdiction(key); j.RosterOf != "" {
+			t.Errorf("ChamberKeys lists %s, which is %s posted in another language", key, j.RosterOf)
 		}
 	}
 }

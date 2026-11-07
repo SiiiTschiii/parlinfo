@@ -16,8 +16,11 @@ const maxCaptionChars = 2200
 // maxCarouselImages is the maximum number of images in an Instagram carousel.
 const maxCarouselImages = 10
 
-// Captions are intentionally German because post copy targets Zurich municipal council followers.
-const captionTruncatedNoticeLine = "ℹ️ Gekürzt – weitere Teilabstimmungen im Link."
+// captionTruncatedNotice is the line a caption carries when it had to drop
+// votes to fit, in the post's language.
+func captionTruncatedNotice(l votes.Language) string {
+	return "ℹ️ " + voteformat.T(l, voteformat.MsgCaptionCut)
+}
 
 // InstagramContent implements platforms.Content for Instagram
 type InstagramContent struct {
@@ -90,17 +93,17 @@ func buildCaption(group []votes.Vote, contactMapper *contacts.Mapper) string {
 		}
 		tags.SubVote = contactMapper.TagInstagramFraktionen
 	}
-	return buildCaptionWithPreservedLink(voteformat.LongFormBody(group, tags), voteformat.LinkLine(group))
+	return buildCaptionWithPreservedLink(voteformat.LongFormBody(group, tags), voteformat.LinkLine(group), group[0].Language)
 }
 
-func buildCaptionWithPreservedLink(body, linkBlock string) string {
+func buildCaptionWithPreservedLink(body, linkBlock string, l votes.Language) string {
 	body = strings.TrimRight(body, "\n")
 	linkLine := strings.TrimLeft(linkBlock, "\n")
 	caption := body + "\n\n" + linkLine
 
 	// Truncate if over Instagram's character limit
 	if len([]rune(caption)) > maxCaptionChars {
-		tailWithNotice := captionTruncatedNoticeLine + "\n" + linkLine
+		tailWithNotice := captionTruncatedNotice(l) + "\n" + linkLine
 		tailWithNoticeWithSeparator := "\n" + tailWithNotice
 
 		if len([]rune(tailWithNotice)) > maxCaptionChars {

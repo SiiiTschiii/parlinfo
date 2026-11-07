@@ -52,6 +52,12 @@ type Jurisdiction struct {
 	// Nachrücken. Nil for a body whose source publishes no roster.
 	NewMemberSource func() votes.MemberSource
 
+	// RosterOf names the jurisdiction whose members these are, for a chamber
+	// registered once per post language. Its contacts are that one's, and it
+	// is left out wherever the roster itself is the question — see
+	// ContactsKey and Chambers. Empty for a chamber of its own.
+	RosterOf string
+
 	// Enabled decides whether the scheduled run posts this body. It defaults to
 	// false for every jurisdiction and is turned on with
 	// JURISDICTION_<KEY>_ENABLED, e.g. JURISDICTION_ZURICH_CITY_ENABLED=true.
@@ -148,9 +154,14 @@ var nationalrat = votes.Jurisdiction{
 // bill) and a Schlussabstimmung (the last vote before a bill becomes law) are
 // the ones that do: 25 and 18 of the 328 votes in the Herbstsession 2026.
 //
-// Both languages are listed because the German feed has served these labels in
-// French since the Wintersession 2025. Matching the German alone finds nothing
-// recent; matching the French alone would find nothing once that is fixed.
+// All three languages are listed because the label is not translated: every
+// language's feed serves the same text, in whichever language it was entered.
+// That has been French since the Wintersession 2025 and was Italian in
+// 2018/19, which looks like the language of the presiding member — Marina
+// Carobbio Guscetti's year — though nothing in the service says so. Matching
+// any one language finds nothing for the years another was used, and the
+// Italian labels, 66 Votazione finale and 128 Votazione sul complesso, are
+// last seen in September 2019.
 //
 // A vote with no Subject at all — a third of them — is never one of these: in
 // the Herbstsession 2026 every one was a motion, a postulate or an
@@ -158,8 +169,60 @@ var nationalrat = votes.Jurisdiction{
 var nationalratSubjects = []string{
 	"Schlussabstimmung",
 	"Vote final",
+	"Votazione finale",
 	"Gesamtabstimmung",
 	"Vote sur l'ensemble",
+	"Votazione sul complesso",
+}
+
+// NationalratFrenchKey and NationalratItalianKey identify the Nationalrat
+// posted in French and in Italian.
+//
+// They are jurisdictions of their own rather than a language setting on the
+// Nationalrat, because a jurisdiction is what owns a vote log: a vote posted
+// to the German accounts has not been posted to the French ones. The members
+// are the same, so their contacts are the Nationalrat's — see RosterOf.
+const (
+	NationalratFrenchKey  = "nationalrat-fr"
+	NationalratItalianKey = "nationalrat-it"
+)
+
+var nationalratFrench = votes.Jurisdiction{
+	Key:       NationalratFrenchKey,
+	Name:      "Conseil national",
+	ShortName: "Conseil national",
+	Language:  votes.French,
+}
+
+var nationalratItalian = votes.Jurisdiction{
+	Key:       NationalratItalianKey,
+	Name:      "Consiglio nazionale",
+	ShortName: "Consiglio nazionale",
+	Language:  votes.Italian,
+}
+
+// nationalratMaxAgeDays bounds the first run of every Nationalrat
+// registration, since each one's log starts empty. Two weeks covers a
+// session's final votes, which all fall on its last day, while keeping the
+// previous session out of a run started early in the next.
+const nationalratMaxAgeDays = 14
+
+// nationalratIn registers the Nationalrat in a language other than German.
+// The editorial policy and the age guard are the German registration's, so
+// they cannot drift apart between accounts that post the same votes.
+//
+// No member source: the roster is the German registration's, kept with its
+// tools. A second registration answering for the same people would make every
+// member of the Nationalrat look, to prune, like someone who moved chambers.
+func nationalratIn(j votes.Jurisdiction) Jurisdiction {
+	return Jurisdiction{
+		Jurisdiction: j,
+		RosterOf:     NationalratKey,
+		MaxAgeDays:   nationalratMaxAgeDays,
+		NewSource: func() votes.Source {
+			return parlamentch.New(j).WithSubjects(nationalratSubjects...)
+		},
+	}
 }
 
 // StaenderatKey identifies the Ständerat.
@@ -199,15 +262,14 @@ var jurisdictions = map[string]Jurisdiction{
 	},
 	NationalratKey: {
 		Jurisdiction: nationalrat,
-		// The log starts empty, so this alone bounds the first run. Two weeks
-		// covers a session's final votes, which all fall on its last day, while
-		// keeping the previous session out of a run started early in the next.
-		MaxAgeDays: 14,
+		MaxAgeDays:   nationalratMaxAgeDays,
 		NewSource: func() votes.Source {
 			return parlamentch.New(nationalrat).WithSubjects(nationalratSubjects...)
 		},
 		NewMemberSource: func() votes.MemberSource { return parlamentch.New(nationalrat) },
 	},
+	NationalratFrenchKey:  nationalratIn(nationalratFrench),
+	NationalratItalianKey: nationalratIn(nationalratItalian),
 	// A roster and no votes. parlament.ch serves the Nationalrat's votes only,
 	// so nothing can post the Ständerat yet; it is registered so its contacts
 	// are kept with the same tools as every other body's, and so prune can tell
@@ -239,6 +301,42 @@ func (j Jurisdiction) Source() (votes.Source, error) {
 		return nil, fmt.Errorf("%s has no vote source: its contacts are kept, its votes are not posted", j.Key)
 	}
 	return j.NewSource(), nil
+}
+
+// ContactsKey is the jurisdiction whose contacts file tags this one's posts:
+// its own, or for a chamber registered once per language, the chamber's.
+func (j Jurisdiction) ContactsKey() string {
+	if j.RosterOf != "" {
+		return j.RosterOf
+	}
+	return j.Key
+}
+
+// ContactsKeys is ContactsKey for several jurisdictions, each once, in order.
+func ContactsKeys(js []Jurisdiction) []string {
+	seen := map[string]bool{}
+	var keys []string
+	for _, j := range js {
+		if k := j.ContactsKey(); !seen[k] {
+			seen[k] = true
+			keys = append(keys, k)
+		}
+	}
+	return keys
+}
+
+// ChamberKeys lists the jurisdictions that are chambers of their own, leaving
+// out the further languages a chamber is posted in. It is what a question
+// about who sits where walks: asked of every registration, one person would
+// sit in the Nationalrat three times.
+func ChamberKeys() []string {
+	var keys []string
+	for _, k := range JurisdictionKeys() {
+		if jurisdictions[k].RosterOf == "" {
+			keys = append(keys, k)
+		}
+	}
+	return keys
 }
 
 // enabled resolves the posting switch for a jurisdiction.

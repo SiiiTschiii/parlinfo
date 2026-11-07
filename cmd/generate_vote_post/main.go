@@ -50,7 +50,7 @@ func main() {
 		log.Fatalf("%v. Available: %v", err, config.JurisdictionKeys())
 	}
 
-	contactMapper, err := contacts.LoadContactFiles(contacts.PathsFor(jurisdiction.Key)...)
+	contactMapper, err := contacts.LoadContactFiles(contacts.PathsFor(jurisdiction.ContactsKey())...)
 	if err != nil {
 		log.Printf("Warning: Could not load contacts for tagging: %v", err)
 		contactMapper = nil

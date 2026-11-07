@@ -91,7 +91,7 @@ func main() {
 		log.Fatalf("❌ %v", err)
 	}
 
-	path := contacts.PathFor(j.Key)
+	path := contacts.PathFor(j.ContactsKey())
 	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalf("❌ reading %s: %v", path, err)

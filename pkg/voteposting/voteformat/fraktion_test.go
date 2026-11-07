@@ -69,7 +69,7 @@ func TestFormatFraktionBreakdown_JaNein(t *testing.T) {
 	stimmabgaben = append(stimmabgaben, repeat(stimmabgabe("", "Ja"), 1)...) // empty — omitted
 
 	counts := AggregateFraktionCounts(votes.Vote{MemberVotes: stimmabgaben})
-	result := FormatFraktionBreakdown(counts)
+	result := FormatFraktionBreakdown(counts, votes.German)
 
 	t.Logf("Output:\n%s", result)
 
@@ -115,7 +115,7 @@ func TestFormatFraktionBreakdown_Auswahl(t *testing.T) {
 	stimmabgaben = append(stimmabgaben, repeat(stimmabgabe("FDP", "Abwesend"), 7)...)
 
 	counts := AggregateFraktionCounts(votes.Vote{MemberVotes: stimmabgaben})
-	result := FormatFraktionBreakdown(counts)
+	result := FormatFraktionBreakdown(counts, votes.German)
 
 	t.Logf("Output:\n%s", result)
 
@@ -144,12 +144,12 @@ func TestFormatFraktionBreakdown_Auswahl(t *testing.T) {
 }
 
 func TestFormatFraktionBreakdown_Empty(t *testing.T) {
-	result := FormatFraktionBreakdown(nil)
+	result := FormatFraktionBreakdown(nil, votes.German)
 	if result != "" {
 		t.Errorf("expected empty string for nil, got %q", result)
 	}
 
-	result = FormatFraktionBreakdown(map[string]*FraktionCounts{})
+	result = FormatFraktionBreakdown(map[string]*FraktionCounts{}, votes.German)
 	if result != "" {
 		t.Errorf("expected empty string for empty map, got %q", result)
 	}
@@ -162,7 +162,7 @@ func TestFormatFraktionBreakdown_TieBreaking(t *testing.T) {
 	stimmabgaben = append(stimmabgaben, repeat(stimmabgabe("Alpha", "Ja"), 10)...)
 
 	counts := AggregateFraktionCounts(votes.Vote{MemberVotes: stimmabgaben})
-	result := FormatFraktionBreakdown(counts)
+	result := FormatFraktionBreakdown(counts, votes.German)
 
 	t.Logf("Output:\n%s", result)
 
@@ -179,7 +179,7 @@ func TestFormatFraktionBreakdown_SingleFaction(t *testing.T) {
 	stimmabgaben := repeat(stimmabgabe("SP", "Ja"), 5)
 
 	counts := AggregateFraktionCounts(votes.Vote{MemberVotes: stimmabgaben})
-	result := FormatFraktionBreakdown(counts)
+	result := FormatFraktionBreakdown(counts, votes.German)
 
 	t.Logf("Output:\n%s", result)
 
@@ -216,7 +216,7 @@ func TestAggregateFraktionCounts_UnmappedFraktion(t *testing.T) {
 		t.Errorf("mapped members should still be counted, got %v", counts["SVP"].Counts)
 	}
 
-	if out := FormatFraktionBreakdown(counts); out == "" {
+	if out := FormatFraktionBreakdown(counts, votes.German); out == "" {
 		t.Error("a breakdown with unmapped members should still render")
 	}
 }

@@ -53,7 +53,7 @@ type memberDTO struct {
 func (c *Client) FetchMembers() ([]votes.Member, error) {
 	var rows []memberDTO
 	err := c.get("/MemberCouncil", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and Active eq true and Council eq %d", c.council),
+		"$filter": fmt.Sprintf("Language eq '%s' and Active eq true and Council eq %d", c.odataLanguage(), c.council),
 		"$select": "ID,FirstName,LastName,PartyName,ParlGroupAbbreviation",
 	}, &rows)
 	if err != nil {
@@ -71,7 +71,7 @@ func (c *Client) FetchMembers() ([]votes.Member, error) {
 			// The name, not the abbreviation: the service abbreviates Die
 			// Mitte as "M-E", its Fraktion's code.
 			Party:      strings.TrimSpace(r.PartyName),
-			Fraktion:   fraktionLabel(r.ParlGroupAbbreviation, ""),
+			Fraktion:   c.fraktionLabel(r.ParlGroupAbbreviation, ""),
 			ProfileURL: ProfileURL(r.ID),
 		})
 	}
