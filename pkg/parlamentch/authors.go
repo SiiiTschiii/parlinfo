@@ -44,6 +44,7 @@ type businessRoleDTO struct {
 	Role                int    `json:"Role"`
 	MemberCouncilNumber *int64 `json:"MemberCouncilNumber"`
 	ParlGroupNumber     *int64 `json:"ParlGroupNumber"`
+	CantonNumber        *int64 `json:"CantonNumber"`
 }
 
 // authorDTO is the part of a MemberCouncil row a post names.
@@ -133,10 +134,39 @@ var fraktionNames = map[votes.Language]map[int64]string{
 	},
 }
 
-// authorship is who filed a business: members, or a Fraktion.
+// cantonNames are the cantons by the service's CantonNumber, in each language,
+// as a post names them after "des Kantons" or in brackets after the type. The
+// numbers follow the federal order except Tessin, which the service numbers
+// 27; the French and Italian names are the service's own.
+var cantonNames = map[votes.Language]map[int64]string{
+	votes.German: {
+		1: "Zürich", 2: "Bern", 3: "Luzern", 4: "Uri", 5: "Schwyz", 6: "Obwalden", 7: "Nidwalden",
+		8: "Glarus", 9: "Zug", 10: "Freiburg", 11: "Solothurn", 12: "Basel-Stadt", 13: "Basel-Landschaft",
+		14: "Schaffhausen", 15: "Appenzell Ausserrhoden", 16: "Appenzell Innerrhoden", 17: "St. Gallen",
+		18: "Graubünden", 19: "Aargau", 20: "Thurgau", 22: "Waadt", 23: "Wallis",
+		24: "Neuenburg", 25: "Genf", 26: "Jura", 27: "Tessin",
+	},
+	votes.French: {
+		1: "Zurich", 2: "Berne", 3: "Lucerne", 4: "Uri", 5: "Schwyz", 6: "Obwald", 7: "Nidwald",
+		8: "Glaris", 9: "Zoug", 10: "Fribourg", 11: "Soleure", 12: "Bâle-Ville", 13: "Bâle-Campagne",
+		14: "Schaffhouse", 15: "Appenzell Rh.-Ext.", 16: "Appenzell Rh.-Int.", 17: "St-Gall",
+		18: "Grisons", 19: "Argovie", 20: "Thurgovie", 22: "Vaud", 23: "Valais",
+		24: "Neuchâtel", 25: "Genève", 26: "Jura", 27: "Tessin",
+	},
+	votes.Italian: {
+		1: "Zurigo", 2: "Berna", 3: "Lucerna", 4: "Uri", 5: "Svitto", 6: "Obvaldo", 7: "Nidvaldo",
+		8: "Glarona", 9: "Zugo", 10: "Friburgo", 11: "Soletta", 12: "Basilea-Città", 13: "Basilea-Campagna",
+		14: "Sciaffusa", 15: "Appenzello Esterno", 16: "Appenzello Interno", 17: "San Gallo",
+		18: "Grigioni", 19: "Argovia", 20: "Turgovia", 22: "Vaud", 23: "Vallese",
+		24: "Neuchâtel", 25: "Ginevra", 26: "Giura", 27: "Ticino",
+	},
+}
+
+// authorship is who filed a business: members, a Fraktion, or a canton.
 type authorship struct {
 	authors  []votes.Author
 	fraktion string
+	canton   string
 }
 
 // authorsOf returns the members who filed, took over or co-signed a business.
@@ -179,12 +209,12 @@ func (c *Client) businessAuthors(businessNumber int64) (authorship, error) {
 	err := c.get("/BusinessRole", query{
 		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
 			c.odataLanguage(), businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
-		"$select": "Role,MemberCouncilNumber,ParlGroupNumber",
+		"$select": "Role,MemberCouncilNumber,ParlGroupNumber,CantonNumber",
 	}, &roles)
 	if err != nil {
 		return authorship{}, err
 	}
-	a := authorship{fraktion: filingFraktion(c.language(), roles)}
+	a := authorship{fraktion: filingFraktion(c.language(), roles), canton: filingCanton(c.language(), roles)}
 	held := authorOrder(roles)
 	if len(held) == 0 {
 		return a, nil
@@ -204,6 +234,17 @@ func (c *Client) businessAuthors(businessNumber int64) (authorship, error) {
 	}
 	a.authors = namedAuthors(c.language(), held, members)
 	return a, nil
+}
+
+// filingCanton returns the name of the canton that filed a business, a
+// Standesinitiative, in l, or "" when no canton did.
+func filingCanton(l votes.Language, roles []businessRoleDTO) string {
+	for _, r := range roles {
+		if r.Role == roleAuthor && r.CantonNumber != nil {
+			return cantonNames[l.OrGerman()][*r.CantonNumber]
+		}
+	}
+	return ""
 }
 
 // filingFraktion returns the name of the Fraktion that filed a business, in l,

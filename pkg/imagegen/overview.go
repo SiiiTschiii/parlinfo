@@ -125,7 +125,7 @@ func voteMark(v votes.Vote) (markKind, string) {
 	if !voteformat.HasVerdict(v) {
 		return markNone, ""
 	}
-	if voteformat.GetVoteResultEmoji(v.Decision) == "✅" {
+	if voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "✅" {
 		return markAccepted, ""
 	}
 	return markRejected, ""

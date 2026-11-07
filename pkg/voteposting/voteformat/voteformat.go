@@ -34,7 +34,10 @@ func FormatVoteDateTime(t time.Time) string {
 // GetVoteResultEmoji returns the appropriate emoji for a vote result
 func GetVoteResultEmoji(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
-	if strings.Contains(result, "angenommen") || result == "ja" {
+	if strings.Contains(result, "keine folge") {
+		return "❌"
+	}
+	if strings.Contains(result, "angenommen") || strings.Contains(result, "folge gegeben") || result == "ja" {
 		return "✅"
 	}
 	return "❌"
@@ -45,6 +48,14 @@ func GetVoteResultEmoji(result string) string {
 // whatever language the post is in.
 func GetVoteResultText(l votes.Language, result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
+	// An initiative is not adopted by the vote that lets it go on, only given
+	// leave to: "Folge gegeben". Checked first, since it contains the other.
+	if strings.Contains(result, "keine folge") {
+		return W(l).NoLeaveGiven
+	}
+	if strings.Contains(result, "folge gegeben") {
+		return W(l).LeaveGiven
+	}
 	if strings.Contains(result, "angenommen") || result == "ja" {
 		return W(l).Accepted
 	}
@@ -112,6 +123,8 @@ func GroupPrefixLine(group []votes.Vote) string {
 			// Zürich's titles use, which is also what the tagger reads to tag
 			// the Fraktion's parties.
 			prefix += " " + W(groupLanguage(group)).ByFraktion + " " + fraktion
+		} else if canton := strings.TrimSpace(group[0].Affair.Canton); canton != "" {
+			prefix += fmt.Sprintf(W(groupLanguage(group)).ByCanton, canton)
 		}
 	}
 
@@ -516,6 +529,26 @@ func CountsOf(v votes.Vote) VoteCounts {
 // Kanton Zürich reports a decision for binary votes only, and the openparldata
 // client clears it again unless the business and the ballot both state their
 // outcome, so threshold votes still arrive here without one.
+// Verdict is the outcome a post states for a vote: what it did to the
+// business where the source says (votes.Vote.Outcome), otherwise whether Ja
+// carried. Feed it to GetVoteResultEmoji and GetVoteResultText.
+func Verdict(v votes.Vote) string {
+	if o := strings.TrimSpace(v.Outcome); o != "" {
+		return o
+	}
+	return v.Decision
+}
+
+// QuestionLine is the line a post prints below the title saying what a Ja
+// supported, or "" when there is none. Only a lone vote has one: a group's
+// votes are each labelled by their own heading.
+func QuestionLine(group []votes.Vote) string {
+	if len(group) != 1 {
+		return ""
+	}
+	return strings.TrimSpace(group[0].Question)
+}
+
 func HasVerdict(v votes.Vote) bool {
 	if IsAuswahlVote(CountsOf(v)) {
 		return false
