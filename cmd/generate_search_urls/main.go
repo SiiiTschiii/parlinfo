@@ -102,14 +102,7 @@ func main() {
 		log.Fatalf("❌ parsing %s: %v", path, err)
 	}
 
-	// A language registration has no member list of its own: its members sit
-	// in the chamber it shares a roster with, so that is where they are looked
-	// up. The heading keeps the registration's own name.
-	rosterOwner, err := config.LookupJurisdiction(j.ContactsKey())
-	if err != nil {
-		log.Fatalf("❌ %v", err)
-	}
-	roster := fetchRoster(rosterOwner)
+	roster := fetchRoster(j)
 
 	fmt.Printf("# Social media search URLs — %s\n\n", j.Name)
 	fmt.Printf("Verify before adding: a handle that belongs to someone else puts a real\n")
