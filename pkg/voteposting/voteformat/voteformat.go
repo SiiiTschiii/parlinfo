@@ -46,9 +46,9 @@ func GetVoteResultEmoji(result string) string {
 func GetVoteResultText(l votes.Language, result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
 	if strings.Contains(result, "angenommen") || result == "ja" {
-		return T(l, MsgAccepted)
+		return W(l).Accepted
 	}
-	return T(l, MsgRejected)
+	return W(l).Rejected
 }
 
 // IsDecisionConsistent reports whether a vote's stated decision is consistent
@@ -111,7 +111,7 @@ func GroupPrefixLine(group []votes.Vote) string {
 			// "Parlamentarische Initiative der GLP-Fraktion", the shape Stadt
 			// Zürich's titles use, which is also what the tagger reads to tag
 			// the Fraktion's parties.
-			prefix += " " + T(groupLanguage(group), MsgByFraktion) + " " + fraktion
+			prefix += " " + W(groupLanguage(group)).ByFraktion + " " + fraktion
 		}
 	}
 
@@ -162,7 +162,7 @@ func AuthorList(authors []votes.Author, max int, l votes.Language) string {
 
 	more := ""
 	if max > 0 && len(names) > max {
-		names, more = names[:max], " "+T(l, MsgAndOthers)
+		names, more = names[:max], " "+W(l).AndOthers
 	}
 
 	switch len(names) {
@@ -171,7 +171,7 @@ func AuthorList(authors []votes.Author, max int, l votes.Language) string {
 	case 1:
 		return names[0] + more
 	default:
-		return strings.Join(names[:len(names)-1], ", ") + " " + T(l, MsgAnd) + " " + names[len(names)-1] + more
+		return strings.Join(names[:len(names)-1], ", ") + " " + W(l).And + " " + names[len(names)-1] + more
 	}
 }
 
@@ -199,7 +199,7 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 // byPhrase is "von <names>" in l. French elides its "de" before a vowel, as
 // "Initiative parlementaire d’Andrea Caroni" does.
 func byPhrase(l votes.Language, names string) string {
-	by := T(l, MsgAuthorsBy)
+	by := W(l).AuthorsBy
 	if elidesBefore(l, by, names) {
 		return strings.TrimSuffix(by, "de") + "d’" + names
 	}
@@ -307,20 +307,20 @@ func SignatoryBlocks(group []votes.Vote, deferred []votes.Author) []NameBlock {
 
 	isSigned := func(r votes.AuthorRole) bool { return r == votes.RoleSigned }
 	if shed := authorsWhere(deferred, isSigned); len(shed) > 0 {
-		label := "✍️ " + T(l, MsgMoreSignatures) + ":"
+		label := "✍️ " + W(l).MoreSignatures + ":"
 		if len(shed) == len(authorsWhere(all, isSigned)) {
-			label = "✍️ " + T(l, MsgBy)
+			label = "✍️ " + W(l).By
 			if t := strings.TrimSpace(group[0].Affair.Type); t != "" {
-				label = "✍️ " + t + " " + T(l, MsgAuthorsBy)
+				label = "✍️ " + t + " " + W(l).AuthorsBy
 			}
 		}
 		blocks = append(blocks, NameBlock{label, shed, l})
 	}
 	if took := authorsWhere(deferred, func(r votes.AuthorRole) bool { return r == votes.RoleTookOver }); len(took) > 0 {
-		blocks = append(blocks, NameBlock{"↪️ " + T(l, MsgTookOverBy), took, l})
+		blocks = append(blocks, NameBlock{"↪️ " + W(l).TookOverBy, took, l})
 	}
 	if co := CoSigners(all); len(co) > 0 {
-		blocks = append(blocks, NameBlock{"✍️ " + T(l, MsgCoSignedBy), co, l})
+		blocks = append(blocks, NameBlock{"✍️ " + W(l).CoSignedBy, co, l})
 	}
 	return blocks
 }
@@ -341,7 +341,7 @@ func CoSignerLine(group []votes.Vote) string {
 	if names == "" {
 		return ""
 	}
-	return "✍️ " + T(l, MsgCoSignedBy) + " " + names
+	return "✍️ " + W(l).CoSignedBy + " " + names
 }
 
 // PackNames renders a block as reply entries of at most limit each, by the
@@ -378,7 +378,7 @@ func PackNames(b NameBlock, tag func(string) string, limit int, measure func(str
 			cur, sep = strings.TrimSuffix(cur, "de")+"d’", ""
 		case count == 0:
 		case i == len(names)-1:
-			sep = " " + T(b.Language, MsgAnd) + " "
+			sep = " " + W(b.Language).And + " "
 		default:
 			sep = ", "
 		}
@@ -673,15 +673,15 @@ func FormatVoteCounts(c VoteCounts) string {
 		}
 	}
 	if len(auswahlParts) > 0 {
-		return fmt.Sprintf("📊 %s | %s %s", strings.Join(auswahlParts, " | "), T(c.Language, MsgAbsentShort), abwesend)
+		return fmt.Sprintf("📊 %s | %s %s", strings.Join(auswahlParts, " | "), W(c.Language).AbsentShort, abwesend)
 	}
 
 	// Standard Ja/Nein vote (short labels for space-constrained platforms)
 	return fmt.Sprintf("📊 %s %s | %s %s | %s %s | %s %s",
-		FormatVoteCount(c.Ja), T(c.Language, MsgYes),
-		FormatVoteCount(c.Nein), T(c.Language, MsgNo),
-		FormatVoteCount(c.Enthaltung), T(c.Language, MsgAbstainShort),
-		abwesend, T(c.Language, MsgAbsentShort))
+		FormatVoteCount(c.Ja), W(c.Language).Yes,
+		FormatVoteCount(c.Nein), W(c.Language).No,
+		FormatVoteCount(c.Enthaltung), W(c.Language).AbstainShort,
+		abwesend, W(c.Language).AbsentShort)
 }
 
 // FormatVoteCountsLong is like FormatVoteCounts but uses full label names
@@ -701,14 +701,14 @@ func FormatVoteCountsLong(c VoteCounts) string {
 		}
 	}
 	if len(auswahlParts) > 0 {
-		return fmt.Sprintf("📊 %s | %s %s", strings.Join(auswahlParts, " | "), T(c.Language, MsgAbsentLong), abwesend)
+		return fmt.Sprintf("📊 %s | %s %s", strings.Join(auswahlParts, " | "), W(c.Language).AbsentLong, abwesend)
 	}
 
 	return fmt.Sprintf("📊 %s %s | %s %s | %s %s | %s %s",
-		FormatVoteCount(c.Ja), T(c.Language, MsgYes),
-		FormatVoteCount(c.Nein), T(c.Language, MsgNo),
-		FormatVoteCount(c.Enthaltung), T(c.Language, MsgAbstainLong),
-		abwesend, T(c.Language, MsgAbsentLong))
+		FormatVoteCount(c.Ja), W(c.Language).Yes,
+		FormatVoteCount(c.Nein), W(c.Language).No,
+		FormatVoteCount(c.Enthaltung), W(c.Language).AbstainLong,
+		abwesend, W(c.Language).AbsentLong)
 }
 
 // IsSchlussabstimmung returns true if the Abstimmungstitel contains "Schlussabstimmung" (case-insensitive).
@@ -925,7 +925,7 @@ func PostHeadline(group []votes.Vote) string {
 		if votes.IsWahlgeschaeftGroup(group) {
 			return prefix + "Wahlgeschäft"
 		}
-		return prefix + T(groupLanguage(group), MsgVote)
+		return prefix + W(groupLanguage(group)).Vote
 	}
 	// A Wahlgeschäft post reports no vote, so it is not labelled as one, and it
 	// carries no clock time: the only timestamp available is the roll call's,
@@ -935,7 +935,7 @@ func PostHeadline(group []votes.Vote) string {
 		return prefix + "Wahlgeschäft vom " + FormatVoteDate(group[0].Date)
 	}
 
-	headline := prefix + T(groupLanguage(group), MsgVoteOn) + " " + FormatVoteDate(group[0].Date)
+	headline := prefix + W(groupLanguage(group)).VoteOn + " " + FormatVoteDate(group[0].Date)
 	if len(group) == 1 {
 		headline += clockSuffix(group[0].Date)
 	}
@@ -1007,16 +1007,16 @@ func GroupLinks(group []votes.Vote) []Link {
 	// only reason a Wahlgeschäft post exists at all. Every other vote leaves
 	// the field empty and keeps the sitting link.
 	lang := groupLanguage(group)
-	sitting := Link{Icon: "📄", Name: T(lang, MsgLinkSitting), URL: first.SessionURL}
+	sitting := Link{Icon: "📄", Name: W(lang).LinkSitting, URL: first.SessionURL}
 	if first.BulletinURL != "" {
-		sitting = Link{Icon: "📄", Name: T(lang, MsgLinkBulletin), URL: first.BulletinURL}
+		sitting = Link{Icon: "📄", Name: W(lang).LinkBulletin, URL: first.BulletinURL}
 	}
 
 	var out []Link
 	for _, l := range []Link{
-		{Icon: "🔗", Name: T(lang, MsgLinkBusiness), URL: business},
-		{Icon: "📋", Name: T(lang, MsgLinkProtocol), URL: protocol},
-		{Icon: "🎬", Name: T(lang, MsgLinkVideo), URL: video},
+		{Icon: "🔗", Name: W(lang).LinkBusiness, URL: business},
+		{Icon: "📋", Name: W(lang).LinkProtocol, URL: protocol},
+		{Icon: "🎬", Name: W(lang).LinkVideo, URL: video},
 		sitting,
 	} {
 		if l.URL != "" {
@@ -1086,7 +1086,7 @@ func CardSubVoteLabel(v votes.Vote, index, groupSize int) string {
 func subVoteLabel(v votes.Vote, index, groupSize int, withClock bool) string {
 	base := CleanVoteSubtitle(v.Subtitle)
 	if base == "" {
-		base = fmt.Sprintf(T(v.Language, MsgVoteNumbered), index+1)
+		base = fmt.Sprintf(W(v.Language).VoteNumbered, index+1)
 		// The clock disambiguates our own ordinals, so it belongs only on them.
 		// A source that titles its votes has already done the distinguishing.
 		if withClock && groupSize > 1 {
@@ -1138,9 +1138,9 @@ func VoteLinks(group []votes.Vote, i int) []Link {
 	lang := v.Language
 	var out []Link
 	for _, l := range []Link{
-		{Icon: "🎬", Name: T(lang, MsgLinkVideo), URL: v.VideoURL},
-		{Icon: "📋", Name: T(lang, MsgLinkProtocol), URL: v.ArchiveURL},
-		{Icon: "🔗", Name: T(lang, MsgLinkVote), URL: v.SourceURL},
+		{Icon: "🎬", Name: W(lang).LinkVideo, URL: v.VideoURL},
+		{Icon: "📋", Name: W(lang).LinkProtocol, URL: v.ArchiveURL},
+		{Icon: "🔗", Name: W(lang).LinkVote, URL: v.SourceURL},
 	} {
 		if l.URL == "" || have[l.URL] {
 			continue

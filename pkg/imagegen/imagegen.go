@@ -955,9 +955,9 @@ type statCol struct {
 // drawStandardStatsDashboard draws Ja/Nein/Enthaltung as large centered numbers.
 func drawStandardStatsDashboard(img *image.RGBA, cur *layoutCursor, counts voteformat.VoteCounts, bg color.RGBA, numFace, labelFace font.Face) {
 	cols := []statCol{
-		{voteformat.FormatVoteCount(counts.Ja), voteformat.T(counts.Language, voteformat.MsgYes)},
-		{voteformat.FormatVoteCount(counts.Nein), voteformat.T(counts.Language, voteformat.MsgNo)},
-		{voteformat.FormatVoteCount(counts.Enthaltung), voteformat.T(counts.Language, voteformat.MsgAbstainShort)},
+		{voteformat.FormatVoteCount(counts.Ja), voteformat.W(counts.Language).Yes},
+		{voteformat.FormatVoteCount(counts.Nein), voteformat.W(counts.Language).No},
+		{voteformat.FormatVoteCount(counts.Enthaltung), voteformat.W(counts.Language).AbstainShort},
 	}
 	drawStatColumns(img, cur, cols, bg, numFace, labelFace)
 }
@@ -1094,19 +1094,19 @@ func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[st
 		header := strings.TrimPrefix(k, "Auswahl ")
 		switch k {
 		case "Ja":
-			header = voteformat.T(lang, voteformat.MsgYes)
+			header = voteformat.W(lang).Yes
 		case "Nein":
-			header = voteformat.T(lang, voteformat.MsgNo)
+			header = voteformat.W(lang).No
 		}
 		allCols = append(allCols, header)
 		colKeys = append(colKeys, k)
 	}
 	if hasEnth {
-		allCols = append(allCols, voteformat.T(lang, voteformat.MsgAbstainShort))
+		allCols = append(allCols, voteformat.W(lang).AbstainShort)
 		colKeys = append(colKeys, "Enthaltung")
 	}
 	if hasAbw {
-		allCols = append(allCols, voteformat.T(lang, voteformat.MsgAbsentShort))
+		allCols = append(allCols, voteformat.W(lang).AbsentShort)
 		colKeys = append(colKeys, "Abwesend")
 	}
 	if len(allCols) == 0 {

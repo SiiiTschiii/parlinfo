@@ -138,7 +138,7 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 // If the title is too long, it is truncated with "…".
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
-	threadHint := "\n\n👇 " + voteformat.T(group[0].Language, voteformat.MsgThreadHint)
+	threadHint := "\n\n👇 " + voteformat.W(group[0].Language).ThreadHint
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.

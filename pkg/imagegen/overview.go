@@ -173,8 +173,8 @@ func overviewTallyLong(v votes.Vote) string {
 		support, without := voteformat.QuorumTally(c)
 		return fmt.Sprintf("%d Zustimmungen, %d ohne Zustimmung", support, without)
 	default:
-		return fmt.Sprintf("%s %s, %s %s", voteformat.FormatVoteCount(c.Ja), voteformat.T(c.Language, voteformat.MsgYes),
-			voteformat.FormatVoteCount(c.Nein), voteformat.T(c.Language, voteformat.MsgNo))
+		return fmt.Sprintf("%s %s, %s %s", voteformat.FormatVoteCount(c.Ja), voteformat.W(c.Language).Yes,
+			voteformat.FormatVoteCount(c.Nein), voteformat.W(c.Language).No)
 	}
 }
 
@@ -378,7 +378,7 @@ func squeezeOverview(group []votes.Vote, title string, inset, maxWidth int, font
 		if dropped := len(group) - keep; dropped > 0 {
 			ol.rows = append(ol.rows, overviewRow{
 				mark:  markOmitted,
-				lines: []string{fmt.Sprintf(voteformat.T(group[0].Language, voteformat.MsgOverviewMore), dropped)},
+				lines: []string{fmt.Sprintf(voteformat.W(group[0].Language).OverviewMore, dropped)},
 			})
 		}
 		face, lines, isWhole, err := fitOverviewTitle(group, title, ol, inset, maxWidth, fonts)
@@ -426,7 +426,7 @@ func layoutTitleCard(img *image.RGBA, cur *layoutCursor, inset int, group []vote
 	cur.gap(fonts.regular, 0.75)
 	if img != nil {
 		drawCenteredText(img, fonts.partyBold, nil, cur.baseline(fonts.partyBold),
-			fmt.Sprintf(voteformat.T(group[0].Language, voteformat.MsgCardOverview), len(group)), bg)
+			fmt.Sprintf(voteformat.W(group[0].Language).CardOverview, len(group)), bg)
 	}
 	cur.advance(fonts.partyBold)
 	cur.gap(fonts.statLabel, 0.9)

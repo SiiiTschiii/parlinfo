@@ -2,169 +2,170 @@ package voteformat
 
 import "github.com/siiitschiii/parlinfo/pkg/votes"
 
-// Msg names one piece of fixed post wording: a label, a connective, a hint.
-// Everything a post says that does not come from the source goes through one.
-type Msg string
+// Words is the fixed wording of a post in one language: every label,
+// connective and hint a post carries that does not come from the source.
+//
+// Wording only the Zürich bodies reach — quorum and Ausgabenbremse labels, the
+// Wahlgeschäft notice — stays German literals where it is used, because
+// nothing posts it in another language and a translation nobody reads is a
+// translation nobody checks.
+type Words struct {
+	Accepted       string
+	Rejected       string
+	Yes            string
+	No             string
+	AbstainShort   string // stats line and card, with a dot
+	AbsentShort    string // stats line and card, with a dot
+	AbstainHeader  string // Fraktion header, without one
+	AbsentHeader   string // Fraktion header, without one
+	AbstainLong    string // long counts line
+	AbsentLong     string // long counts line
+	Fraktionen     string // "🏛️ Fraktionen (…):"
+	Vote           string // headline without a date
+	VoteOn         string // headline before the date
+	VoteNumbered   string // fmt verb: the ordinal
+	AuthorsBy      string // between the business type and its authors
+	ByFraktion     string // between the business type and the Fraktion that filed it
+	And            string // before the last of several authors
+	AndOthers      string // after a capped author list
+	MoreSignatures string // signatories shed for length, after one was named
+	By             string // signatories shed for length, none named, no business type
+	TookOverBy     string // members who took a business over
+	CoSignedBy     string // co-signers
+	LinkBusiness   string
+	LinkProtocol   string
+	LinkVideo      string
+	LinkSitting    string
+	LinkBulletin   string
+	LinkVote       string
+	ThreadHint     string
+	CaptionCut     string // Instagram, when the caption had to drop votes
+	CardOverview   string // fmt verb: how many votes the card lists
+	OverviewMore   string // fmt verb: how many rows the card dropped
+}
 
-// The wording a Nationalrat post can carry. Messages only the Zürich bodies
-// reach — quorum and Ausgabenbremse labels, the Wahlgeschäft notice — stay
-// German literals where they are used, because nothing posts them in another
-// language and a translation nobody reads is a translation nobody checks.
-const (
-	MsgAccepted       Msg = "accepted"
-	MsgRejected       Msg = "rejected"
-	MsgYes            Msg = "yes"
-	MsgNo             Msg = "no"
-	MsgAbstainShort   Msg = "abstain-short"   // stats line and card, with a dot
-	MsgAbsentShort    Msg = "absent-short"    // stats line and card, with a dot
-	MsgAbstainHeader  Msg = "abstain-header"  // Fraktion header, without one
-	MsgAbsentHeader   Msg = "absent-header"   // Fraktion header, without one
-	MsgAbstainLong    Msg = "abstain-long"    // long counts line
-	MsgAbsentLong     Msg = "absent-long"     // long counts line
-	MsgFraktionen     Msg = "fraktionen"      // "🏛️ Fraktionen (…):"
-	MsgVote           Msg = "vote"            // headline without a date
-	MsgVoteOn         Msg = "vote-on"         // headline before the date
-	MsgVoteNumbered   Msg = "vote-numbered"   // fmt verb: the ordinal
-	MsgAuthorsBy      Msg = "authors-by"      // between the business type and its authors
-	MsgByFraktion     Msg = "by-fraktion"     // between the business type and the Fraktion that filed it
-	MsgAnd            Msg = "and"             // before the last of several authors
-	MsgAndOthers      Msg = "and-others"      // after a capped author list
-	MsgMoreSignatures Msg = "more-signatures" // signatories shed for length, after one was named
-	MsgBy             Msg = "by"              // signatories shed for length, none named, no business type
-	MsgTookOverBy     Msg = "took-over-by"    // members who took a business over
-	MsgCoSignedBy     Msg = "co-signed-by"    // co-signers
-	MsgLinkBusiness   Msg = "link-business"
-	MsgLinkProtocol   Msg = "link-protocol"
-	MsgLinkVideo      Msg = "link-video"
-	MsgLinkSitting    Msg = "link-sitting"
-	MsgLinkBulletin   Msg = "link-bulletin"
-	MsgLinkVote       Msg = "link-vote"
-	MsgThreadHint     Msg = "thread-hint"
-	MsgCaptionCut     Msg = "caption-cut"   // Instagram, when the caption had to drop votes
-	MsgCardOverview   Msg = "card-overview" // fmt verb: how many votes the card lists
-	MsgOverviewMore   Msg = "overview-more" // fmt verb: how many rows the card dropped
-)
-
-// messages is the wording in each post language. German is the reference: it
-// is what every post said before there were other languages, and what a
-// message missing elsewhere falls back to — TestMessagesAreComplete keeps that
-// from happening by accident.
+// german is the reference: it is what every post said before there were other
+// languages, and what any other language falls back to.
 //
 // French and Italian follow parlament.ch's own vocabulary where it has one
 // ("Objet", "Oggetto", "Procès-verbal", "Bollettino"), so a reader who clicks
-// through finds the same words on the other side.
-var messages = map[votes.Language]map[Msg]string{
-	votes.German: {
-		MsgAccepted:       "Angenommen",
-		MsgRejected:       "Abgelehnt",
-		MsgYes:            "Ja",
-		MsgNo:             "Nein",
-		MsgAbstainShort:   "Enth.",
-		MsgAbsentShort:    "Abw.",
-		MsgAbstainHeader:  "Enth",
-		MsgAbsentHeader:   "Abw",
-		MsgAbstainLong:    "Enthaltung",
-		MsgAbsentLong:     "Abwesend",
-		MsgFraktionen:     "Fraktionen",
-		MsgVote:           "Abstimmung",
-		MsgVoteOn:         "Abstimmung vom",
-		MsgVoteNumbered:   "Abstimmung %d",
-		MsgAuthorsBy:      "von",
-		MsgByFraktion:     "der",
-		MsgAnd:            "und",
-		MsgAndOthers:      "u. a.",
-		MsgMoreSignatures: "Weitere Unterzeichnende",
-		MsgBy:             "Von",
-		MsgTookOverBy:     "Übernommen von",
-		MsgCoSignedBy:     "Mitunterzeichnet von",
-		MsgLinkBusiness:   "Geschäft",
-		MsgLinkProtocol:   "Protokoll",
-		MsgLinkVideo:      "Video",
-		MsgLinkSitting:    "Sitzung",
-		MsgLinkBulletin:   "Bulletin",
-		MsgLinkVote:       "Abstimmung",
-		MsgThreadHint:     "Details im Thread",
-		MsgCaptionCut:     "Gekürzt – weitere Teilabstimmungen im Link.",
-		MsgCardOverview:   "%d Abstimmungen",
-		MsgOverviewMore:   "… und %d weitere Abstimmungen",
-	},
-	votes.French: {
-		MsgAccepted:       "Accepté",
-		MsgRejected:       "Rejeté",
-		MsgYes:            "Oui",
-		MsgNo:             "Non",
-		MsgAbstainShort:   "Abst.",
-		MsgAbsentShort:    "Abs.",
-		MsgAbstainHeader:  "Abst",
-		MsgAbsentHeader:   "Abs",
-		MsgAbstainLong:    "Abstentions",
-		MsgAbsentLong:     "Absents",
-		MsgFraktionen:     "Groupes",
-		MsgVote:           "Vote",
-		MsgVoteOn:         "Vote du",
-		MsgVoteNumbered:   "Vote %d",
-		MsgAuthorsBy:      "de",
-		MsgByFraktion:     "du",
-		MsgAnd:            "et",
-		MsgAndOthers:      "et al.",
-		MsgMoreSignatures: "Autres signataires",
-		MsgBy:             "De",
-		MsgTookOverBy:     "Repris par",
-		MsgCoSignedBy:     "Cosigné par",
-		MsgLinkBusiness:   "Objet",
-		MsgLinkProtocol:   "Procès-verbal",
-		MsgLinkVideo:      "Vidéo",
-		MsgLinkSitting:    "Séance",
-		MsgLinkBulletin:   "Bulletin",
-		MsgLinkVote:       "Vote",
-		MsgThreadHint:     "Détails dans le fil",
-		MsgCaptionCut:     "Abrégé – autres votes dans le lien.",
-		MsgCardOverview:   "%d votes",
-		MsgOverviewMore:   "… et %d autres votes",
-	},
-	votes.Italian: {
-		MsgAccepted:       "Accettato",
-		MsgRejected:       "Respinto",
-		MsgYes:            "Sì",
-		MsgNo:             "No",
-		MsgAbstainShort:   "Ast.",
-		MsgAbsentShort:    "Ass.",
-		MsgAbstainHeader:  "Ast",
-		MsgAbsentHeader:   "Ass",
-		MsgAbstainLong:    "Astensioni",
-		MsgAbsentLong:     "Assenti",
-		MsgFraktionen:     "Gruppi",
-		MsgVote:           "Votazione",
-		MsgVoteOn:         "Votazione del",
-		MsgVoteNumbered:   "Votazione %d",
-		MsgAuthorsBy:      "di",
-		MsgByFraktion:     "del",
-		MsgAnd:            "e",
-		MsgAndOthers:      "e altri",
-		MsgMoreSignatures: "Altri firmatari",
-		MsgBy:             "Di",
-		MsgTookOverBy:     "Ripreso da",
-		MsgCoSignedBy:     "Cofirmato da",
-		MsgLinkBusiness:   "Oggetto",
-		MsgLinkProtocol:   "Protocollo",
-		MsgLinkVideo:      "Video",
-		MsgLinkSitting:    "Seduta",
-		MsgLinkBulletin:   "Bollettino",
-		MsgLinkVote:       "Votazione",
-		MsgThreadHint:     "Dettagli nel thread",
-		MsgCaptionCut:     "Abbreviato – altre votazioni nel link.", //nolint:misspell // Italian
-		MsgCardOverview:   "%d votazioni",
-		MsgOverviewMore:   "… e altre %d votazioni",
-	},
-}
-
-// T returns a message in a language, falling back to German for a language
-// or a message the table does not have.
-func T(l votes.Language, m Msg) string {
-	if s, ok := messages[l.OrGerman()][m]; ok {
-		return s
+// through finds the same words on the other side. TestWordsAreComplete keeps
+// a field from being left empty, which would print nothing in a post.
+var (
+	german = Words{
+		Accepted:       "Angenommen",
+		Rejected:       "Abgelehnt",
+		Yes:            "Ja",
+		No:             "Nein",
+		AbstainShort:   "Enth.",
+		AbsentShort:    "Abw.",
+		AbstainHeader:  "Enth",
+		AbsentHeader:   "Abw",
+		AbstainLong:    "Enthaltung",
+		AbsentLong:     "Abwesend",
+		Fraktionen:     "Fraktionen",
+		Vote:           "Abstimmung",
+		VoteOn:         "Abstimmung vom",
+		VoteNumbered:   "Abstimmung %d",
+		AuthorsBy:      "von",
+		ByFraktion:     "der",
+		And:            "und",
+		AndOthers:      "u. a.",
+		MoreSignatures: "Weitere Unterzeichnende",
+		By:             "Von",
+		TookOverBy:     "Übernommen von",
+		CoSignedBy:     "Mitunterzeichnet von",
+		LinkBusiness:   "Geschäft",
+		LinkProtocol:   "Protokoll",
+		LinkVideo:      "Video",
+		LinkSitting:    "Sitzung",
+		LinkBulletin:   "Bulletin",
+		LinkVote:       "Abstimmung",
+		ThreadHint:     "Details im Thread",
+		CaptionCut:     "Gekürzt – weitere Teilabstimmungen im Link.",
+		CardOverview:   "%d Abstimmungen",
+		OverviewMore:   "… und %d weitere Abstimmungen",
 	}
-	return messages[votes.German][m]
+	french = Words{
+		Accepted:       "Accepté",
+		Rejected:       "Rejeté",
+		Yes:            "Oui",
+		No:             "Non",
+		AbstainShort:   "Abst.",
+		AbsentShort:    "Abs.",
+		AbstainHeader:  "Abst",
+		AbsentHeader:   "Abs",
+		AbstainLong:    "Abstentions",
+		AbsentLong:     "Absents",
+		Fraktionen:     "Groupes",
+		Vote:           "Vote",
+		VoteOn:         "Vote du",
+		VoteNumbered:   "Vote %d",
+		AuthorsBy:      "de",
+		ByFraktion:     "du",
+		And:            "et",
+		AndOthers:      "et al.",
+		MoreSignatures: "Autres signataires",
+		By:             "De",
+		TookOverBy:     "Repris par",
+		CoSignedBy:     "Cosigné par",
+		LinkBusiness:   "Objet",
+		LinkProtocol:   "Procès-verbal",
+		LinkVideo:      "Vidéo",
+		LinkSitting:    "Séance",
+		LinkBulletin:   "Bulletin",
+		LinkVote:       "Vote",
+		ThreadHint:     "Détails dans le fil",
+		CaptionCut:     "Abrégé – autres votes dans le lien.",
+		CardOverview:   "%d votes",
+		OverviewMore:   "… et %d autres votes",
+	}
+	italian = Words{
+		Accepted:       "Accettato",
+		Rejected:       "Respinto",
+		Yes:            "Sì",
+		No:             "No",
+		AbstainShort:   "Ast.",
+		AbsentShort:    "Ass.",
+		AbstainHeader:  "Ast",
+		AbsentHeader:   "Ass",
+		AbstainLong:    "Astensioni",
+		AbsentLong:     "Assenti",
+		Fraktionen:     "Gruppi",
+		Vote:           "Votazione",
+		VoteOn:         "Votazione del",
+		VoteNumbered:   "Votazione %d",
+		AuthorsBy:      "di",
+		ByFraktion:     "del",
+		And:            "e",
+		AndOthers:      "e altri",
+		MoreSignatures: "Altri firmatari",
+		By:             "Di",
+		TookOverBy:     "Ripreso da",
+		CoSignedBy:     "Cofirmato da",
+		LinkBusiness:   "Oggetto",
+		LinkProtocol:   "Protocollo",
+		LinkVideo:      "Video",
+		LinkSitting:    "Seduta",
+		LinkBulletin:   "Bollettino",
+		LinkVote:       "Votazione",
+		ThreadHint:     "Dettagli nel thread",
+		CaptionCut:     "Abbreviato – altre votazioni nel link.", //nolint:misspell // Italian
+		CardOverview:   "%d votazioni",
+		OverviewMore:   "… e altre %d votazioni",
+	}
+)
+
+// W returns the wording for a language, German for any other.
+func W(l votes.Language) Words {
+	switch l {
+	case votes.French:
+		return french
+	case votes.Italian:
+		return italian
+	default:
+		return german
+	}
 }
 
 // groupLanguage is the language a group's post is written in.

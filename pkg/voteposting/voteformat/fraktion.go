@@ -163,7 +163,7 @@ func FormatFraktionBreakdown(counts map[string]*FraktionCounts, l votes.Language
 			headerParts[i] = col
 		}
 	}
-	header := fmt.Sprintf("🏛️ %s (%s):", T(l, MsgFraktionen), strings.Join(headerParts, "/"))
+	header := fmt.Sprintf("🏛️ %s (%s):", W(l).Fraktionen, strings.Join(headerParts, "/"))
 
 	// Sort factions by total members descending, ties alphabetically.
 	type fraktionEntry struct {
@@ -206,13 +206,13 @@ func FormatFraktionBreakdown(counts map[string]*FraktionCounts, l votes.Language
 func localHeader(l votes.Language, col string) (string, bool) {
 	switch col {
 	case "Ja":
-		return T(l, MsgYes), true
+		return W(l).Yes, true
 	case "Nein":
-		return T(l, MsgNo), true
+		return W(l).No, true
 	case "Enthaltung":
-		return T(l, MsgAbstainHeader), true
+		return W(l).AbstainHeader, true
 	case "Abwesend":
-		return T(l, MsgAbsentHeader), true
+		return W(l).AbsentHeader, true
 	}
 	return "", false
 }

@@ -19,7 +19,7 @@ const maxCarouselImages = 10
 // captionTruncatedNotice is the line a caption carries when it had to drop
 // votes to fit, in the post's language.
 func captionTruncatedNotice(l votes.Language) string {
-	return "ℹ️ " + voteformat.T(l, voteformat.MsgCaptionCut)
+	return "ℹ️ " + voteformat.W(l).CaptionCut
 }
 
 // InstagramContent implements platforms.Content for Instagram
