@@ -33,6 +33,11 @@ import (
 // to come are not yet in the source at posting time, so the adapter picks them
 // from the same official vocabulary rather than wording them itself.
 //
+// The step this vote took is labelled with the chamber's name, its official
+// one ("Nationalrat", "Gemeinderat"), and carries the decision as its detail
+// ("Annahme", "Überweisung, Frist 24 Monate"), whichever source it comes from:
+// a reader looking for the vote finds it the same way on every card.
+//
 // The one composed text is a next step built from parts the source states, the
 // actor and a deadline written into a step name: "Stadtrat, Frist 24 Monate"
 // after a Gemeinderat "Überweisung, Frist 24 Monate".

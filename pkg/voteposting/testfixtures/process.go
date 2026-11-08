@@ -117,7 +117,7 @@ func ProcessGemeinderatPostulat() []votes.Vote {
 			{Label: "Eingang, Frist 3 Monate", Detail: "16.09.2026", State: votes.StepDone},
 			{Label: "Stadtrat, Entgegennahme", Detail: "23.09.2026", State: votes.StepDone},
 			{Label: "Ablehnung, beantragt", Detail: "30.09.2026", State: votes.StepDone},
-			{Label: "Überweisung, Frist 24 Monate", State: votes.StepCurrent},
+			{Label: "Gemeinderat", Detail: "Überweisung, Frist 24 Monate", State: votes.StepCurrent},
 			{Label: "Stadtrat", Detail: "Frist 24 Monate", State: votes.StepNext},
 		},
 		Next: "Stadtrat, Frist 24 Monate",
@@ -149,7 +149,7 @@ func ProcessGemeinderatAbgelehnt() []votes.Vote {
 		Steps: []votes.ProcessStep{
 			{Label: "Eingang, Frist 3 Monate", Detail: "08.07.2026", State: votes.StepDone},
 			{Label: "Stadtrat, Entgegennahme", Detail: "26.08.2026", State: votes.StepDone},
-			{Label: "Ablehnung", State: votes.StepEnded},
+			{Label: "Gemeinderat", Detail: "Ablehnung", State: votes.StepEnded},
 		},
 		Next: "Abgeschlossen",
 	})
