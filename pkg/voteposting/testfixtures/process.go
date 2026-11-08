@@ -6,15 +6,19 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
-// The fixtures in this file carry a votes.Process, one per body, so the
-// snapshot pins the next-step line and the status card everywhere they appear:
-// a lone vote on a business that goes on, in each of the three bodies, and a
-// multi-vote group whose last vote ends its business.
+// The fixtures in this file carry a votes.Process, so the snapshot pins the
+// next-step line and the status card everywhere they appear.
 //
-// The processes are written out by hand, as an adapter would produce them from
-// its source's history and the vote's own result. They are shaped after real
-// paths seen in the sources — parlament.ch's status history, the PARIS
-// Ablaufschritte, the OpenParlData events — but no adapter fills them yet.
+// The first three are real businesses, with their real tallies and the
+// sources' own texts as of the day they were looked up: every Label and Detail
+// below is what parlament.ch or the PARIS API publishes, and the steps for the
+// vote itself and after it are taken from the same vocabulary, as an adapter
+// would choose them (see votes.Process). The last is the constructed
+// multi-vote group from MultiVoteGroup, given a process so the snapshot covers
+// a status card among several result cards.
+//
+// The Kantonsrat has none: OpenParlData does not say what a Kantonsrat Ja
+// stood for, so no adapter can derive a process for it.
 
 func withProcess(group []votes.Vote, p votes.Process) []votes.Vote {
 	for i := range group {
@@ -25,101 +29,143 @@ func withProcess(group []votes.Vote, p votes.Process) []votes.Vote {
 	return group
 }
 
-// ProcessNationalratMotion is a Nationalrat motion the Nationalrat adopts as
-// the first chamber: the Ständerat decides next.
+// ProcessNationalratMotion is motion 24.3004, which the Nationalrat adopted on
+// 07.03.2024 against the Bundesrat's proposal; parlament.ch then listed it "In
+// Kommission des Ständerats". The motion is the committee's, so it names no
+// member.
 func ProcessNationalratMotion() []votes.Vote {
-	const title = "Zugang zu Kinderbetreuung im ländlichen Raum verbessern"
-	const affairURL = "https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305"
+	const title = "Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten"
+	const affairURL = "https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004"
 
 	v := votes.Vote{
-		SourceID:     "38412",
+		SourceID:     "32084",
 		Jurisdiction: "nationalrat",
 		Body:         "Nationalrat",
-		SessionID:    "5215",
-		Sequence:     "33002",
-		Date:         time.Date(2026, 9, 14, 16, 52, 0, 0, time.UTC),
+		SessionID:    "5202",
+		Sequence:     "28344",
+		Date:         time.Date(2024, 3, 7, 13, 51, 42, 0, time.UTC),
 		Title:        title,
 		Type:         "Normal",
 		Decision:     "angenommen",
-		Outcome:      "angenommen",
-		Yes:          intPtr(102),
-		No:           intPtr(88),
-		Abstention:   intPtr(3),
-		Absent:       intPtr(7),
-		SourceURL:    affairURL,
-		GroupURL:     affairURL,
-		ArchiveURL:   "https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf",
-		Attribution:  "Daten: Parlamentsdienste der Bundesversammlung, Bern",
+		// "Antrag der Mehrheit (Annahme der Motion)" against "Antrag der
+		// Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)".
+		Outcome:     "angenommen",
+		Yes:         intPtr(117),
+		No:          intPtr(62),
+		Abstention:  intPtr(8),
+		Absent:      intPtr(12),
+		SourceURL:   affairURL,
+		GroupURL:    affairURL,
+		ArchiveURL:  "https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf",
+		Attribution: "Daten: Parlamentsdienste der Bundesversammlung, Bern",
 		Affair: votes.Affair{
-			Number:  "24.4305",
-			Title:   title,
-			ID:      "20244305",
-			URL:     affairURL,
-			Type:    "Motion",
-			Authors: []votes.Author{{Name: "Andrea Muster", Party: "SP", Role: votes.RoleSigned}},
+			Number: "24.3004",
+			Title:  title,
+			ID:     "20243004",
+			URL:    affairURL,
+			Type:   "Motion",
 		},
 	}
 	v.MemberVotes = makeStimmabgaben([]struct {
 		Name                string
 		Ja, Nein, Enth, Abw int
 	}{
-		{"SVP", 0, 66, 0, 2},
-		{"SP", 40, 0, 0, 1},
-		{"Mitte", 26, 2, 2, 1},
-		{"FDP-Liberale", 4, 20, 1, 2},
-		{"Grüne", 23, 0, 0, 0},
-		{"GLP", 9, 0, 0, 1},
+		{"SVP", 58, 1, 4, 4},
+		{"SP", 0, 38, 0, 2},
+		{"Mitte-EVP", 27, 2, 1, 1},
+		{"FDP", 22, 0, 3, 3},
+		{"Grüne", 0, 21, 0, 2},
+		{"GLP", 10, 0, 0, 0},
 	})
 
 	return withProcess([]votes.Vote{v}, votes.Process{
 		Steps: []votes.ProcessStep{
-			{Label: "Eingereicht", Detail: "Im Nationalrat, 13.12.2024", State: votes.StepDone},
-			{Label: "Bundesrat", Detail: "Beantragt Ablehnung", State: votes.StepDone},
-			{Label: "Nationalrat", Detail: "Angenommen", State: votes.StepCurrent},
-			{Label: "Ständerat", Detail: "Entscheidet als Zweitrat", State: votes.StepNext},
-			{Label: "Umsetzung", Detail: "Der Bundesrat setzt die Motion um", State: votes.StepNext},
+			{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
+			{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
+			{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent},
+			{Label: "In Kommission des Ständerats", State: votes.StepNext},
 		},
-		Next: "Der Ständerat entscheidet.",
+		Next: "In Kommission des Ständerats",
 	})
 }
 
-// ProcessKantonsratPostulat is a Kantonsrat Postulat the chamber überweist
-// against the Regierungsrat's advice: the Regierungsrat reports next.
-func ProcessKantonsratPostulat() []votes.Vote {
-	return withProcess(KantonsratMemberBusiness(), votes.Process{
-		Steps: []votes.ProcessStep{
-			{Label: "Eingereicht", Detail: "15.12.2025", State: votes.StepDone},
-			{Label: "Regierungsrat", Detail: "Beantragt Ablehnung", State: votes.StepDone},
-			{Label: "Kantonsrat", Detail: "Überwiesen", State: votes.StepCurrent},
-			{Label: "Regierungsrat", Detail: "Erstattet Bericht", State: votes.StepNext},
-		},
-		Next: "Der Regierungsrat erstattet Bericht.",
-	})
-}
-
-// ProcessGemeinderatPostulat is a Gemeinderat Postulat überwiesen after a
-// member moved to reject it, with the deadline the source states.
+// ProcessGemeinderatPostulat is Postulat 2026/519, überwiesen on 21.10.2026
+// after an Ablehnungsantrag. The PARIS step names are verbatim; the next step
+// is the one composed text votes.Process allows, the actor and the deadline the
+// "Überweisung, Frist 24 Monate" step states.
 func ProcessGemeinderatPostulat() []votes.Vote {
-	return withProcess(SingleVoteAngenommen(), votes.Process{
+	// Title, Subtitle and Decision as zurichapi.ToVote maps the real record.
+	v := vote("2026-519", "2026/519\nPostulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026:\nKontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage", "2026/519", "Ja", 101, 16, 0, 8)
+	v.Affair.Title = "Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage"
+	v.Date = date(2026, 10, 21)
+	v.Subtitle = "2026_0519 Schlussabstimmung"
+	v.MemberVotes = makeStimmabgaben([]struct {
+		Name                string
+		Ja, Nein, Enth, Abw int
+	}{
+		{"SP", 40, 0, 0, 1},
+		{"FDP", 22, 0, 0, 2},
+		{"SVP", 0, 16, 0, 0},
+		{"GLP", 12, 0, 0, 3},
+		{"Grüne", 14, 0, 0, 0},
+		{"AL", 8, 0, 0, 0},
+		{"Die Mitte", 5, 0, 0, 2},
+	})
+
+	return withProcess([]votes.Vote{v}, votes.Process{
 		Steps: []votes.ProcessStep{
-			{Label: "Eingereicht", Detail: "12.02.2025", State: votes.StepDone},
-			{Label: "Stadtrat", Detail: "Ist bereit, das Postulat entgegenzunehmen", State: votes.StepDone},
-			{Label: "Ablehnung beantragt", Detail: "Von einem Ratsmitglied", State: votes.StepDone},
-			{Label: "Gemeinderat", Detail: "Überwiesen", State: votes.StepCurrent},
-			{Label: "Stadtrat", Detail: "Bericht, Frist 24 Monate", State: votes.StepNext},
+			{Label: "Eingang, Frist 3 Monate", Detail: "16.09.2026", State: votes.StepDone},
+			{Label: "Stadtrat, Entgegennahme", Detail: "23.09.2026", State: votes.StepDone},
+			{Label: "Ablehnung, beantragt", Detail: "30.09.2026", State: votes.StepDone},
+			{Label: "Überweisung, Frist 24 Monate", State: votes.StepCurrent},
+			{Label: "Stadtrat", Detail: "Frist 24 Monate", State: votes.StepNext},
 		},
-		Next: "Der Stadtrat hat 24 Monate für seinen Bericht.",
+		Next: "Stadtrat, Frist 24 Monate",
 	})
 }
 
-// ProcessEndedMultiVote is a Gemeinderat Weisung whose final vote fails: the
-// business ends, and no step follows.
-func ProcessEndedMultiVote() []votes.Vote {
+// ProcessGemeinderatAbgelehnt is Postulat 2026/392, which the Gemeinderat
+// rejected on 26.08.2026 although the Stadtrat would have taken it: the vote
+// ends the business, which PARIS then lists as "Abgeschlossen".
+func ProcessGemeinderatAbgelehnt() []votes.Vote {
+	v := vote("2026-392", "2026/392\nPostulat der SP- und Grüne-Fraktion vom 08.07.2026:\nUmsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet", "2026/392", "Nein", 51, 69, 0, 5)
+	v.Affair.Title = "Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet"
+	v.Date = date(2026, 8, 26)
+	v.Subtitle = "2026_0392 Schlussabstimmung"
+	v.MemberVotes = makeStimmabgaben([]struct {
+		Name                string
+		Ja, Nein, Enth, Abw int
+	}{
+		{"SP", 39, 0, 0, 2},
+		{"FDP", 0, 24, 0, 0},
+		{"SVP", 0, 16, 0, 0},
+		{"GLP", 0, 14, 0, 1},
+		{"Grüne", 12, 0, 0, 2},
+		{"AL", 0, 8, 0, 0},
+		{"Die Mitte", 0, 7, 0, 0},
+	})
+
+	return withProcess([]votes.Vote{v}, votes.Process{
+		Steps: []votes.ProcessStep{
+			{Label: "Eingang, Frist 3 Monate", Detail: "08.07.2026", State: votes.StepDone},
+			{Label: "Stadtrat, Entgegennahme", Detail: "26.08.2026", State: votes.StepDone},
+			{Label: "Ablehnung", State: votes.StepEnded},
+		},
+		Next: "Abgeschlossen",
+	})
+}
+
+// ProcessMultiVote is the constructed MultiVoteGroup with a process, so the
+// snapshot covers a status card among several result cards. Its first two
+// step names are the ones PARIS gives a Weisung; the business itself is not
+// real.
+func ProcessMultiVote() []votes.Vote {
 	return withProcess(MultiVoteGroup(), votes.Process{
 		Steps: []votes.ProcessStep{
-			{Label: "Weisung", Detail: "Antrag des Stadtrats", State: votes.StepDone},
-			{Label: "Kommission", Detail: "Vorberatung abgeschlossen", State: votes.StepDone},
-			{Label: "Gemeinderat", Detail: "In der Schlussabstimmung abgelehnt", State: votes.StepEnded},
+			{Label: "Stadtrat, Weisung", State: votes.StepDone},
+			{Label: "Überweisung, SK PRD/SSD", Detail: "Sachkommission Präsidialdepartement, Schul- und Sportdepartement", State: votes.StepDone},
+			{Label: "Gemeinderat", Detail: "Schlussabstimmung: Nein", State: votes.StepEnded},
 		},
+		Next: "Abgeschlossen",
 	})
 }

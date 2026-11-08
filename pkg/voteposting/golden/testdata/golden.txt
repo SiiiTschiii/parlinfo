@@ -3726,417 +3726,390 @@ Daten: OpenParlData.ch
 
 ---- X (limit 280) ----
 [post 0]
-🗳️  Nationalrat | Abstimmung vom 14.09.2026 (16:52)
+🗳️  Nationalrat | Abstimmung vom 07.03.2024 (13:51)
 
-Motion von Andrea Muster (SP)
-✅ Angenommen: Zugang zu Kinderbetreuung im ländlichen Raum verbessern
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
 
 👇 Details im Thread
 
 [post 1]
-➡️ Als Nächstes: Der Ständerat entscheidet.
+➡️ Als Nächstes: In Kommission des Ständerats
 
-🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305
-📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
 
-📊 102 Ja | 88 Nein | 3 Enthaltung | 7 Abwesend
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
 
 [post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 0/66/0/2
-SP 40/0/0/1
-Mitte 26/2/2/1
-FDP-Liberale 4/20/1/2
-Grüne 23/0/0/0
-GLP 9/0/0/1
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
 
 ---- X (limit 2000) ----
 [post 0]
-🗳️  Nationalrat | Abstimmung vom 14.09.2026 (16:52)
+🗳️  Nationalrat | Abstimmung vom 07.03.2024 (13:51)
 
-Motion von Andrea Muster (SP)
-✅ Angenommen: Zugang zu Kinderbetreuung im ländlichen Raum verbessern
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
 
 👇 Details im Thread
 
 [post 1]
-➡️ Als Nächstes: Der Ständerat entscheidet.
+➡️ Als Nächstes: In Kommission des Ständerats
 
-🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305
-📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
 
-📊 102 Ja | 88 Nein | 3 Enthaltung | 7 Abwesend
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 0/66/0/2
-SP 40/0/0/1
-Mitte 26/2/2/1
-FDP-Liberale 4/20/1/2
-Grüne 23/0/0/0
-GLP 9/0/0/1
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
 
 ---- Bluesky ----
 [post 0]
-🗳️ Nationalrat | Abstimmung vom 14.09.2026 (16:52)
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (13:51)
 
-Motion von Andrea Muster (SP)
-✅ Angenommen: Zugang zu Kinderbetreuung im ländlichen Raum verbessern
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
 
 👇 Details im Thread
 
 [post 1]
-➡️ Als Nächstes: Der Ständerat entscheidet.
+➡️ Als Nächstes: In Kommission des Ständerats
 
-🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305
-📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
-[facet] {Index:{ByteStart:67 ByteEnd:152} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305 DID: Tag:}]}
-[facet] {Index:{ByteStart:169 ByteEnd:234} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf DID: Tag:}]}
+[facet] {Index:{ByteStart:69 ByteEnd:154} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
+[facet] {Index:{ByteStart:171 ByteEnd:236} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
 
 [post 2]
-📊 102 Ja | 88 Nein | 3 Enth. | 7 Abw.
+📊 117 Ja | 62 Nein | 8 Enth. | 12 Abw.
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 0/66/0/2
-SP 40/0/0/1
-Mitte 26/2/2/1
-FDP-Liberale 4/20/1/2
-Grüne 23/0/0/0
-GLP 9/0/0/1
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
 
 ---- Instagram ----
 [images] 2
 [caption]
-🗳️ Nationalrat | Abstimmung vom 14.09.2026 (16:52)
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (13:51)
 
-Motion von Andrea Muster (SP)
-Zugang zu Kinderbetreuung im ländlichen Raum verbessern
+Motion
+Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
 
 ✅ Angenommen
-📊 102 Ja | 88 Nein | 3 Enthaltung | 7 Abwesend
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 0/66/0/2
-SP 40/0/0/1
-Mitte 26/2/2/1
-FDP-Liberale 4/20/1/2
-Grüne 23/0/0/0
-GLP 9/0/0/1
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
 
-➡️ Als Nächstes: Der Ständerat entscheidet.
+➡️ Als Nächstes: In Kommission des Ständerats
 
-🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305
-📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
 
 ---- Facebook ----
 [images] 2
 [message]
-🗳️ Nationalrat | Abstimmung vom 14.09.2026 (16:52)
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (13:51)
 
-Motion von Andrea Muster (SP)
-Zugang zu Kinderbetreuung im ländlichen Raum verbessern
+Motion
+Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
 
 ✅ Angenommen
-📊 102 Ja | 88 Nein | 3 Enthaltung | 7 Abwesend
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 0/66/0/2
-SP 40/0/0/1
-Mitte 26/2/2/1
-FDP-Liberale 4/20/1/2
-Grüne 23/0/0/0
-GLP 9/0/0/1
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
 
-➡️ Als Nächstes: Der Ständerat entscheidet.
+➡️ Als Nächstes: In Kommission des Ständerats
 
-🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20244305
-📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33002.pdf
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
-
-################ FIXTURE process-kantonsrat-postulat ################
-
----- X (limit 280) ----
-[post 0]
-🗳️  Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
-
-Postulat von Tobias Weidmann @Z7f3a94241 (SVP)
-Verbindliche Richtlinien – keine Smartphones an Volksschulen
-
-👇 Details im Thread
-
-[post 1]
-➡️ Als Nächstes: Der Regierungsrat erstattet Bericht.
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Daten: OpenParlData.ch
-
-📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
-
-[post 2]
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 46/0/0/1
-SP 0/35/0/1
-FDP 29/0/0/1
-Grünliberale 0/23/0/0
-Grüne 0/19/0/0
-Die Mitte 10/0/1/1
-EVP 6/0/1/0
-AL 0/5/0/0
-
----- X (limit 2000) ----
-[post 0]
-🗳️  Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
-
-Postulat von Tobias Weidmann @Z7f3a94241 (SVP)
-Verbindliche Richtlinien – keine Smartphones an Volksschulen
-
-👇 Details im Thread
-
-[post 1]
-➡️ Als Nächstes: Der Regierungsrat erstattet Bericht.
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Daten: OpenParlData.ch
-
-📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
-
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 46/0/0/1
-SP 0/35/0/1
-FDP 29/0/0/1
-Grünliberale 0/23/0/0
-Grüne 0/19/0/0
-Die Mitte 10/0/1/1
-EVP 6/0/1/0
-AL 0/5/0/0
-
----- Bluesky ----
-[post 0]
-🗳️ Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
-
-Postulat von Tobias Weidmann (SVP)
-Verbindliche Richtlinien – keine Smartphones an Volksschulen
-
-👇 Details im Thread
-[mention] zri-testbot-7f3a.bsky.social @ 72-87
-
-[post 1]
-➡️ Als Nächstes: Der Regierungsrat erstattet Bericht.
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-[facet] {Index:{ByteStart:76 ByteEnd:162} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1 DID: Tag:}]}
-[facet] {Index:{ByteStart:175 ByteEnd:304} Features:[{Type:app.bsky.richtext.facet#link URI:https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1 DID: Tag:}]}
-
-[post 2]
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Daten: OpenParlData.ch
-
-📊 92 Ja | 82 Nein | 2 Enth. | 4 Abw.
-[facet] {Index:{ByteStart:14 ByteEnd:118} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31 DID: Tag:}]}
-
-[post 3]
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 46/0/0/1
-SP 0/35/0/1
-FDP 29/0/0/1
-Grünliberale 0/23/0/0
-Grüne 0/19/0/0
-Die Mitte 10/0/1/1
-EVP 6/0/1/0
-AL 0/5/0/0
-
----- Instagram ----
-[images] 2
-[caption]
-🗳️ Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
-
-Postulat von Tobias Weidmann @zueri835 (SVP)
-Verbindliche Richtlinien – keine Smartphones an Volksschulen
-
-📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
-
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 46/0/0/1
-SP 0/35/0/1
-FDP 29/0/0/1
-Grünliberale 0/23/0/0
-Grüne 0/19/0/0
-Die Mitte 10/0/1/1
-EVP 6/0/1/0
-AL 0/5/0/0
-
-➡️ Als Nächstes: Der Regierungsrat erstattet Bericht.
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Daten: OpenParlData.ch
-
----- Facebook ----
-[images] 2
-[message]
-🗳️ Kantonsrat ZH | Abstimmung vom 31.08.2026 (10:21)
-
-Postulat von Tobias Weidmann (SVP)
-Verbindliche Richtlinien – keine Smartphones an Volksschulen
-
-📊 92 Ja | 82 Nein | 2 Enthaltung | 4 Abwesend
-
-🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SVP 46/0/0/1
-SP 0/35/0/1
-FDP 29/0/0/1
-Grünliberale 0/23/0/0
-Grüne 0/19/0/0
-Die Mitte 10/0/1/1
-EVP 6/0/1/0
-AL 0/5/0/0
-
-➡️ Als Nächstes: Der Regierungsrat erstattet Bericht.
-
-🔗 Geschäft: https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1
-🎬 Video: https://zh.recapp.ch/shareparl?agendaItemUid=d7dc2b4b-51b2-4c4f-bf9b-9d9b0e1a2c73&segmentUid=4f0a1d6e-2a83-4b02-9f52-1c6d9f39a5b1
-📄 Sitzung: https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?endDate=2026-08-31&startDate=2026-08-31
-Daten: OpenParlData.ch
 
 ################ FIXTURE process-gemeinderat-postulat ################
 
 ---- X (limit 280) ----
 [post 0]
-🗳️  Gemeinderat ZH | Abstimmung vom 15.06.2025
+🗳️  Gemeinderat ZH | Abstimmung vom 21.10.2026
 
-✅ Angenommen: Postulat von Reto Brüesch @Z7f3a94241 (SVP) und Martin Götzl (FDP) betreffend Anpassung der Mindest- und Höchstarealfläche bei der städtischen Liegenschaftenverwaltung
+✅ Angenommen: Postulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026: Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorl…
 
 👇 Details im Thread
 
 [post 1]
-➡️ Als Nächstes: Der Stadtrat hat 24 Monate für seinen Bericht.
+➡️ Als Nächstes: Stadtrat, Frist 24 Monate
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
-📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
+📊 101 Ja | 16 Nein | 0 Enthaltung | 8 Abwesend
 
-[post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SP 0/30/0/1
-SVP 22/0/0/0
-FDP 20/0/0/1
-GLP 18/0/0/0
-AL 15/0/0/1
-Die Mitte 15/0/0/0
-Grüne 0/0/0/2
+SP 40/0/0/1
+FDP 22/0/0/2
+SVP 0/16/0/0
+GLP 12/0/0/3
+Grüne 14/0/0/0
+AL 8/0/0/0
+Die Mitte 5/0/0/2
 
 ---- X (limit 2000) ----
 [post 0]
-🗳️  Gemeinderat ZH | Abstimmung vom 15.06.2025
+🗳️  Gemeinderat ZH | Abstimmung vom 21.10.2026
 
-✅ Angenommen: Postulat von Reto Brüesch @Z7f3a94241 (SVP) und Martin Götzl (FDP) betreffend Anpassung der Mindest- und Höchstarealfläche bei der städtischen Liegenschaftenverwaltung
+✅ Angenommen: Postulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026: Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage
 
 👇 Details im Thread
 
 [post 1]
-➡️ Als Nächstes: Der Stadtrat hat 24 Monate für seinen Bericht.
+➡️ Als Nächstes: Stadtrat, Frist 24 Monate
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
-📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
+📊 101 Ja | 16 Nein | 0 Enthaltung | 8 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SP 0/30/0/1
-SVP 22/0/0/0
-FDP 20/0/0/1
-GLP 18/0/0/0
-AL 15/0/0/1
-Die Mitte 15/0/0/0
-Grüne 0/0/0/2
+SP 40/0/0/1
+FDP 22/0/0/2
+SVP 0/16/0/0
+GLP 12/0/0/3
+Grüne 14/0/0/0
+AL 8/0/0/0
+Die Mitte 5/0/0/2
 
 ---- Bluesky ----
 [post 0]
-🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
+🗳️ Gemeinderat ZH | Abstimmung vom 21.10.2026
 
-✅ Angenommen: Postulat von Reto Brüesch (SVP) und Martin Götzl (FDP) betreffend Anpassung der Mindest- und Höchstarealfläche bei der städtischen Liegenschaftenverwaltung
+✅ Angenommen: Postulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026: Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage
 
 👇 Details im Thread
-[mention] zri-testbot-7f3a.bsky.social @ 81-94
 
 [post 1]
-➡️ Als Nächstes: Der Stadtrat hat 24 Monate für seinen Bericht.
+➡️ Als Nächstes: Stadtrat, Frist 24 Monate
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
-📊 90 Ja | 30 Nein | 0 Enth. | 5 Abw.
-[facet] {Index:{ByteStart:76 ByteEnd:159} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1 DID: Tag:}]}
+📊 101 Ja | 16 Nein | 0 Enth. | 8 Abw.
+[facet] {Index:{ByteStart:54 ByteEnd:133} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519 DID: Tag:}]}
 
 [post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SP 0/30/0/1
-SVP 22/0/0/0
-FDP 20/0/0/1
-GLP 18/0/0/0
-AL 15/0/0/1
-Die Mitte 15/0/0/0
-Grüne 0/0/0/2
+SP 40/0/0/1
+FDP 22/0/0/2
+SVP 0/16/0/0
+GLP 12/0/0/3
+Grüne 14/0/0/0
+AL 8/0/0/0
+Die Mitte 5/0/0/2
 
 ---- Instagram ----
 [images] 2
 [caption]
-🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
+🗳️ Gemeinderat ZH | Abstimmung vom 21.10.2026
 
-Postulat von Reto Brüesch @zueri835 (SVP) und Martin Götzl (FDP) betreffend Anpassung der Mindest- und Höchstarealfläche bei der städtischen Liegenschaftenverwaltung
+Postulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026: Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage
 
 ✅ Angenommen
-📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
+📊 101 Ja | 16 Nein | 0 Enthaltung | 8 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SP 0/30/0/1
-SVP 22/0/0/0
-FDP 20/0/0/1
-GLP 18/0/0/0
-AL 15/0/0/1
-Die Mitte 15/0/0/0
-Grüne 0/0/0/2
+SP 40/0/0/1
+FDP 22/0/0/2
+SVP 0/16/0/0
+GLP 12/0/0/3
+Grüne 14/0/0/0
+AL 8/0/0/0
+Die Mitte 5/0/0/2
 
-➡️ Als Nächstes: Der Stadtrat hat 24 Monate für seinen Bericht.
+➡️ Als Nächstes: Stadtrat, Frist 24 Monate
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
 ---- Facebook ----
 [images] 2
 [message]
-🗳️ Gemeinderat ZH | Abstimmung vom 15.06.2025
+🗳️ Gemeinderat ZH | Abstimmung vom 21.10.2026
 
-Postulat von Reto Brüesch (SVP) und Martin Götzl (FDP) betreffend Anpassung der Mindest- und Höchstarealfläche bei der städtischen Liegenschaftenverwaltung
+Postulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026: Kontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage
 
 ✅ Angenommen
-📊 90 Ja | 30 Nein | 0 Enthaltung | 5 Abwesend
+📊 101 Ja | 16 Nein | 0 Enthaltung | 8 Abwesend
 
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
-SP 0/30/0/1
-SVP 22/0/0/0
-FDP 20/0/0/1
-GLP 18/0/0/0
-AL 15/0/0/1
-Die Mitte 15/0/0/0
-Grüne 0/0/0/2
+SP 40/0/0/1
+FDP 22/0/0/2
+SVP 0/16/0/0
+GLP 12/0/0/3
+Grüne 14/0/0/0
+AL 8/0/0/0
+Die Mitte 5/0/0/2
 
-➡️ Als Nächstes: Der Stadtrat hat 24 Monate für seinen Bericht.
+➡️ Als Nächstes: Stadtrat, Frist 24 Monate
 
-🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-angenommen-1
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
-################ FIXTURE process-ended-multi-vote ################
+################ FIXTURE process-gemeinderat-abgelehnt ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Gemeinderat ZH | Abstimmung vom 26.08.2026
+
+❌ Abgelehnt: Postulat der SP- und Grüne-Fraktion vom 08.07.2026: Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet
+
+👇 Details im Thread
+
+[post 1]
+🏁 Abgeschlossen
+
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
+Daten: Open Data Zürich
+
+📊 51 Ja | 69 Nein | 0 Enthaltung | 5 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SP 39/0/0/2
+FDP 0/24/0/0
+SVP 0/16/0/0
+GLP 0/14/0/1
+Grüne 12/0/0/2
+AL 0/8/0/0
+Die Mitte 0/7/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Gemeinderat ZH | Abstimmung vom 26.08.2026
+
+❌ Abgelehnt: Postulat der SP- und Grüne-Fraktion vom 08.07.2026: Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet
+
+👇 Details im Thread
+
+[post 1]
+🏁 Abgeschlossen
+
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
+Daten: Open Data Zürich
+
+📊 51 Ja | 69 Nein | 0 Enthaltung | 5 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SP 39/0/0/2
+FDP 0/24/0/0
+SVP 0/16/0/0
+GLP 0/14/0/1
+Grüne 12/0/0/2
+AL 0/8/0/0
+Die Mitte 0/7/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Gemeinderat ZH | Abstimmung vom 26.08.2026
+
+❌ Abgelehnt: Postulat der SP- und Grüne-Fraktion vom 08.07.2026: Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet
+
+👇 Details im Thread
+
+[post 1]
+🏁 Abgeschlossen
+
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
+Daten: Open Data Zürich
+
+📊 51 Ja | 69 Nein | 0 Enth. | 5 Abw.
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SP 39/0/0/2
+FDP 0/24/0/0
+SVP 0/16/0/0
+GLP 0/14/0/1
+Grüne 12/0/0/2
+AL 0/8/0/0
+Die Mitte 0/7/0/0
+[facet] {Index:{ByteStart:25 ByteEnd:104} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392 DID: Tag:}]}
+
+---- Instagram ----
+[images] 2
+[caption]
+🗳️ Gemeinderat ZH | Abstimmung vom 26.08.2026
+
+Postulat der SP- und Grüne-Fraktion vom 08.07.2026: Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet
+
+❌ Abgelehnt
+📊 51 Ja | 69 Nein | 0 Enthaltung | 5 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SP 39/0/0/2
+FDP 0/24/0/0
+SVP 0/16/0/0
+GLP 0/14/0/1
+Grüne 12/0/0/2
+AL 0/8/0/0
+Die Mitte 0/7/0/0
+
+🏁 Abgeschlossen
+
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
+Daten: Open Data Zürich
+
+---- Facebook ----
+[images] 2
+[message]
+🗳️ Gemeinderat ZH | Abstimmung vom 26.08.2026
+
+Postulat der SP- und Grüne-Fraktion vom 08.07.2026: Umsetzung einer stationsgebundenen Mikromobilitätsstrategie auf dem gesamten Stadtgebiet
+
+❌ Abgelehnt
+📊 51 Ja | 69 Nein | 0 Enthaltung | 5 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SP 39/0/0/2
+FDP 0/24/0/0
+SVP 0/16/0/0
+GLP 0/14/0/1
+Grüne 12/0/0/2
+AL 0/8/0/0
+Die Mitte 0/7/0/0
+
+🏁 Abgeschlossen
+
+🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
+Daten: Open Data Zürich
+
+################ FIXTURE process-multi-vote ################
 
 ---- X (limit 280) ----
 [post 0]
@@ -4147,7 +4120,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Das Geschäft ist erledigt.
+🏁 Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4187,7 +4160,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Das Geschäft ist erledigt.
+🏁 Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4227,11 +4200,11 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Das Geschäft ist erledigt.
+🏁 Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
-[facet] {Index:{ByteStart:39 ByteEnd:122} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
+[facet] {Index:{ByteStart:25 ByteEnd:108} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 [post 2]
 ✅ Einleitungsartikel
@@ -4290,7 +4263,7 @@ Grüne 10/0/3/1
 Die Mitte 0/12/0/1
 AL 0/8/0/1
 
-🏁 Das Geschäft ist erledigt.
+🏁 Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4302,7 +4275,7 @@ Daten: Open Data Zürich
 
 Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen im Bereich Stadtentwicklung
 
-🏁 Das Geschäft ist erledigt.
+🏁 Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich

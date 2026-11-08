@@ -20,8 +20,29 @@ import (
 // the vote itself. The history alone is not enough: every source records the
 // step a vote took some time after the vote — parlament.ch within hours, the
 // Gemeinderat a week later, the Kantonsrat later still — so at posting time the
-// step this vote took is the adapter's own, derived from the result it is
+// step this vote took is the adapter's choice, made from the result it is
 // posting. Everything before it comes from the source.
+//
+// Every text in a Process is the source's own, verbatim: the status names of
+// parlament.ch ("Stellungnahme zum Vorstoss liegt vor", "In Kommission des
+// Ständerats"), the Gemeinderat's step names ("Stadtrat, Entgegennahme",
+// "Überweisung, Frist 24 Monate"), the chamber's decision ("Annahme"). A
+// paraphrase reads differently from what the parliament says and cannot be
+// checked against it; "Beantragt Ablehnung" for a government's proposal was
+// read as the result of the vote. The steps this vote took and the ones still
+// to come are not yet in the source at posting time, so the adapter picks them
+// from the same official vocabulary rather than wording them itself.
+//
+// The one composed text is a next step built from parts the source states, the
+// actor and a deadline written into a step name: "Stadtrat, Frist 24 Monate"
+// after a Gemeinderat "Überweisung, Frist 24 Monate".
+//
+// The outcome that decides this vote's step must come from a source that
+// states it: parlament.ch's reading of what Ja meant (Vote.Outcome), the
+// Gemeinderat's Schlussresultat on a business's Schlussabstimmung. Never from
+// the counts alone. Ja is whatever proposal was put first, which on the
+// Kantonsrat can be a committee's proposal to reject, and OpenParlData does not
+// say which; until a source does, the Kantonsrat gets no process.
 //
 // Nil means the adapter could not say where the business stands, and the post
 // goes out as it always has. That is the right answer for anything the adapter
@@ -31,21 +52,24 @@ type Process struct {
 	// vote took, then the steps still to come. See Validate.
 	Steps []ProcessStep
 
-	// Next is what happens next, as a sentence a post prints after
-	// "Als Nächstes:": "Der Ständerat entscheidet." Empty, and only empty,
-	// when this vote ended the business. At most MaxNextRunes long.
+	// Next is what happens next, in the source's words, as a post prints it
+	// after "Als Nächstes:": "In Kommission des Ständerats". When this vote
+	// ended the business it is instead the source's word for a closed one —
+	// "Erledigt" on parlament.ch, "Abgeschlossen" in the Gemeinderat — printed
+	// on its own. Required either way; at most MaxNextRunes long.
 	Next string
 }
 
 // ProcessStep is one stage of a business: who acts, and what they did or will
 // do.
 type ProcessStep struct {
-	// Label names the stage, usually who acts in it: "Ständerat",
-	// "Regierungsrat", "Eingereicht". A card prints it in bold; keep it to a
-	// word or two.
+	// Label names the stage in the source's words: a status
+	// ("Eingereicht"), a step ("Stadtrat, Entgegennahme") or the chamber that
+	// decided ("Nationalrat"). A card prints it in bold.
 	Label string
-	// Detail is one short sentence on what happened or will happen at this
-	// stage: "Beantragt Ablehnung", "Bericht, Frist 24 Monate". Optional.
+	// Detail is what the source records about the stage, verbatim: a date, a
+	// decision ("Annahme"), a government's proposal ("Antrag des Bundesrates:
+	// Ablehnung"). Optional.
 	Detail string
 	State  StepState
 }
@@ -72,7 +96,7 @@ const (
 // does not is one to post without a process rather than squeeze.
 const MaxProcessSteps = 6
 
-// MaxNextRunes is the longest next-step sentence a Process may carry.
+// MaxNextRunes is the longest next-step text a Process may carry.
 //
 // The sentence goes out whole, as one block of an X or Bluesky reply, and the
 // reply packer never splits a block: one longer than a post would make the
@@ -133,18 +157,12 @@ func (p Process) Validate() error {
 		return errors.New("process has no step for this vote")
 	}
 
-	next := strings.TrimSpace(p.Next)
-	if p.Steps[current].State == StepEnded {
-		if current != len(p.Steps)-1 {
-			return errors.New("steps follow the step that ended the business")
-		}
-		if next != "" {
-			return errors.New("an ended business has no next step")
-		}
-		return nil
+	if p.Steps[current].State == StepEnded && current != len(p.Steps)-1 {
+		return errors.New("steps follow the step that ended the business")
 	}
+	next := strings.TrimSpace(p.Next)
 	if next == "" {
-		return errors.New("an open business needs a next step")
+		return errors.New("a process needs a next step, or the source's word for a closed business")
 	}
 	if n := len([]rune(next)); n > MaxNextRunes {
 		return fmt.Errorf("next step is %d runes, more than %d", n, MaxNextRunes)

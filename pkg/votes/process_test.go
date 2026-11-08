@@ -17,10 +17,13 @@ func open() Process {
 }
 
 func ended() Process {
-	return Process{Steps: []ProcessStep{
-		{Label: "Eingereicht", State: StepDone},
-		{Label: "Nationalrat", Detail: "Abgelehnt", State: StepEnded},
-	}}
+	return Process{
+		Steps: []ProcessStep{
+			{Label: "Eingereicht", State: StepDone},
+			{Label: "Nationalrat", Detail: "Ablehnung", State: StepEnded},
+		},
+		Next: "Erledigt",
+	}
 }
 
 func TestProcessValidate(t *testing.T) {
@@ -79,9 +82,9 @@ func TestProcessValidate(t *testing.T) {
 			p.Next = ""
 			return p
 		}, false},
-		{"ended business with a next step", func() Process {
+		{"ended business without the word for closed", func() Process {
 			p := ended()
-			p.Next = "Der Ständerat entscheidet."
+			p.Next = ""
 			return p
 		}, false},
 		{"steps after the one that ended the business", func() Process {

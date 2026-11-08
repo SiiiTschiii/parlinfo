@@ -107,7 +107,8 @@ func TestFooter_IsReservedNotOverlaid(t *testing.T) {
 func TestProcessCards_SayWhatComesNext(t *testing.T) {
 	for name, group := range map[string][]votes.Vote{
 		"open":  testfixtures.ProcessNationalratMotion(),
-		"ended": testfixtures.ProcessEndedMultiVote(),
+		"ended": testfixtures.ProcessGemeinderatAbgelehnt(),
+		"multi": testfixtures.ProcessMultiVote(),
 	} {
 		t.Run(name, func(t *testing.T) {
 			fonts, err := loadFontSet()
@@ -120,9 +121,6 @@ func TestProcessCards_SayWhatComesNext(t *testing.T) {
 				t.Fatalf("status card is not second: %q", cards[1].name)
 			}
 			want := votes.GroupProcess(group).Next
-			if want == "" {
-				want = "erledigt"
-			}
 			for _, c := range cards[:2] {
 				if c.footer.text == "" || !strings.Contains(c.footer.text, want) {
 					t.Errorf("%s: footer %q does not say %q", c.name, c.footer.text, want)

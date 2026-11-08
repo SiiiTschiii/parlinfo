@@ -17,11 +17,12 @@ func TestNextStepLine(t *testing.T) {
 			{Label: "Nationalrat", State: votes.StepCurrent},
 			{Label: "Ständerat", State: votes.StepNext},
 		},
-		Next: " Der Ständerat entscheidet. ",
+		Next: " In Kommission des Ständerats ",
 	}
-	ended := &votes.Process{Steps: []votes.ProcessStep{
-		{Label: "Nationalrat", State: votes.StepEnded},
-	}}
+	ended := &votes.Process{
+		Steps: []votes.ProcessStep{{Label: "Nationalrat", State: votes.StepEnded}},
+		Next:  "Erledigt",
+	}
 
 	tests := []struct {
 		name  string
@@ -29,9 +30,9 @@ func TestNextStepLine(t *testing.T) {
 		want  string
 	}{
 		{"no process", group(nil), ""},
-		{"open business", group(open), "➡️ Als Nächstes: Der Ständerat entscheidet."},
-		{"ended business", group(ended), "🏁 Das Geschäft ist erledigt."},
-		{"invalid process", group(&votes.Process{Next: "Der Ständerat entscheidet."}), ""},
+		{"open business", group(open), "➡️ Als Nächstes: In Kommission des Ständerats"},
+		{"ended business", group(ended), "🏁 Erledigt"},
+		{"invalid process", group(&votes.Process{Next: "In Kommission des Ständerats"}), ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

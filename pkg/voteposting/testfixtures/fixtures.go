@@ -1101,9 +1101,9 @@ var FixtureNames = []string{
 	"kantonsrat-wahlgeschaeft",
 	"kantonsrat-wahlgeschaeft-two-rounds",
 	"process-nationalrat-motion",
-	"process-kantonsrat-postulat",
 	"process-gemeinderat-postulat",
-	"process-ended-multi-vote",
+	"process-gemeinderat-abgelehnt",
+	"process-multi-vote",
 }
 
 // AllFixtures returns all fixtures keyed by kebab-case name.
@@ -1132,8 +1132,8 @@ func AllFixtures() map[string][]votes.Vote {
 		"kantonsrat-wahlgeschaeft":            KantonsratWahlgeschaeft(),
 		"kantonsrat-wahlgeschaeft-two-rounds": KantonsratWahlgeschaeftTwoRounds(),
 		"process-nationalrat-motion":          ProcessNationalratMotion(),
-		"process-kantonsrat-postulat":         ProcessKantonsratPostulat(),
 		"process-gemeinderat-postulat":        ProcessGemeinderatPostulat(),
-		"process-ended-multi-vote":            ProcessEndedMultiVote(),
+		"process-gemeinderat-abgelehnt":       ProcessGemeinderatAbgelehnt(),
+		"process-multi-vote":                  ProcessMultiVote(),
 	}
 }
