@@ -30,8 +30,8 @@ func TestNextStepLine(t *testing.T) {
 		want  string
 	}{
 		{"no process", group(nil), ""},
-		{"open business", group(open), "➡️ Als Nächstes: In Kommission des Ständerats"},
-		{"ended business", group(ended), "🏁 Erledigt"},
+		{"open business", group(open), "➡️ Nächster Schritt: In Kommission des Ständerats"},
+		{"ended business", group(ended), "🏁 Nächster Schritt: Erledigt"},
 		{"invalid process", group(&votes.Process{Next: "In Kommission des Ständerats"}), ""},
 	}
 	for _, tt := range tests {

@@ -53,10 +53,10 @@ type Process struct {
 	Steps []ProcessStep
 
 	// Next is what happens next, in the source's words, as a post prints it
-	// after "Als Nächstes:": "In Kommission des Ständerats". When this vote
+	// after "Nächster Schritt:": "In Kommission des Ständerats". When this vote
 	// ended the business it is instead the source's word for a closed one —
-	// "Erledigt" on parlament.ch, "Abgeschlossen" in the Gemeinderat — printed
-	// on its own. Required either way; at most MaxNextRunes long.
+	// "Erledigt" on parlament.ch, "Abgeschlossen" in the Gemeinderat — under
+	// the same label. Required either way; at most MaxNextRunes long.
 	Next string
 }
 
