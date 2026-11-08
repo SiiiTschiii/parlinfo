@@ -41,7 +41,7 @@ import (
 //
 // The step this vote took is labelled with the chamber's name, its official
 // one ("Nationalrat", "Gemeinderat"), and carries the decision as its detail
-// ("Annahme", "Überweisung, Frist 24 Monate"), whichever source it comes from:
+// ("Annahme", "Überweisung"), whichever source it comes from:
 // a reader looking for the vote finds it the same way on every card.
 //
 // The one composed text is a next step built from parts the source states:
@@ -101,7 +101,14 @@ const (
 	// StepNext is the step that comes next. A process has one, after this
 	// vote's, unless this vote ended the business.
 	StepNext
+	// StepCompleted is the step this vote took when it brought the business
+	// to its end in its favour: an adopted Schlussabstimmung. Like StepEnded
+	// no step follows it, but it is a step taken, not one that failed.
+	StepCompleted
 )
+
+// closes reports whether a state is this vote's step ending the business.
+func (s StepState) closes() bool { return s == StepEnded || s == StepCompleted }
 
 // MaxProcessSteps is the most steps a Process may have. A card shows every
 // step, and a path longer than this would leave the business title no room.
@@ -122,7 +129,7 @@ const MaxNextRunes = 140
 // Ended reports whether the vote ended the business.
 func (p Process) Ended() bool {
 	for _, s := range p.Steps {
-		if s.State == StepEnded {
+		if s.State.closes() {
 			return true
 		}
 	}
@@ -153,7 +160,7 @@ func (p Process) Validate() error {
 			if current >= 0 {
 				return fmt.Errorf("step %d is done but follows this vote's step", i+1)
 			}
-		case StepCurrent, StepEnded:
+		case StepCurrent, StepEnded, StepCompleted:
 			if current >= 0 {
 				return fmt.Errorf("step %d is a second step for this vote", i+1)
 			}
@@ -172,7 +179,7 @@ func (p Process) Validate() error {
 	}
 
 	switch {
-	case p.Steps[current].State == StepEnded && next > 0:
+	case p.Steps[current].State.closes() && next > 0:
 		return errors.New("steps follow the step that ended the business")
 	case p.Steps[current].State == StepCurrent && next != 1:
 		return fmt.Errorf("an open business shows exactly one next step, not %d", next)
@@ -185,6 +192,15 @@ func (p Process) Validate() error {
 		return fmt.Errorf("next step is %d runes, more than %d", n, MaxNextRunes)
 	}
 	return nil
+}
+
+// ProcessSource is implemented by a Source that can say where a group's
+// business stands. Process returns nil, and no error, for a business it has no
+// rule for or cannot read with certainty; an error is for a source it could not
+// reach. Either way the group posts without a process — see
+// voteposting.PrepareVoteGroups.
+type ProcessSource interface {
+	Process(group []Vote) (*Process, error)
 }
 
 // Equal reports whether p and q describe the same process.

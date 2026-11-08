@@ -1,0 +1,22 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Nationalrat",
+    "Abbreviation1": "WBK-N"
+   },
+   {
+    "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Ständerat",
+    "Abbreviation1": "WBK-S"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "d": {
+  "results": [
+   {
+    "BusinessStatusName": "In Kommission des Nationalrats",
+    "BusinessStatusDate": "/Date(1725285345000)/"
+   },
+   {
+    "BusinessStatusName": "Angemeldet",
+    "BusinessStatusDate": "/Date(1723507200000)/"
+   },
+   {
+    "BusinessStatusName": "In Kommission des Ständerats",
+    "BusinessStatusDate": "/Date(1758030571000)/"
+   },
+   {
+    "BusinessStatusName": "In Kommission des Nationalrats",
+    "BusinessStatusDate": "/Date(1780906516000)/"
+   },
+   {
+    "BusinessStatusName": "Beratung in Kommission des Nationalrates abgeschlossen",
+    "BusinessStatusDate": "/Date(1756473989000)/"
+   },
+   {
+    "BusinessStatusName": "Eingereicht",
+    "BusinessStatusDate": "/Date(1723636097000)/"
+   },
+   {
+    "BusinessStatusName": "Erledigt",
+    "BusinessStatusDate": "/Date(1781861345000)/"
+   },
+   {
+    "BusinessStatusName": "Geplant für die Schlussabstimmung",
+    "BusinessStatusDate": "/Date(1781168599000)/"
+   }
+  ]
+ }
+}

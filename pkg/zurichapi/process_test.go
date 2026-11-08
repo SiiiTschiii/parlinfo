@@ -1,0 +1,130 @@
+package zurichapi
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/siiitschiii/parlinfo/pkg/votes"
+)
+
+// The Geschäft fixtures are PARIS's records of three Postulate, recorded on
+// 08.11.2026. They hold steps recorded after the vote each test posts, which
+// the adapter has to leave out.
+func recordedGeschaeft(t *testing.T, grNr string) processGeschaeft {
+	t.Helper()
+	name := filepath.Join("testdata", "process", "geschaeft_"+grNr[:4]+"_"+grNr[5:]+".xml")
+	body, err := os.ReadFile(name)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := parseProcessGeschaeft(body, grNr)
+	if err != nil || g == nil {
+		t.Fatalf("parsing %s: %v, %v", name, g, err)
+	}
+	return *g
+}
+
+func schlussabstimmung(grNr, decision string, day time.Time) votes.Vote {
+	return votes.Vote{
+		Jurisdiction: JurisdictionKey, Date: day, Decision: decision,
+		Subtitle: grNr[:4] + "_0" + grNr[5:] + " Schlussabstimmung",
+		Affair:   votes.Affair{Number: grNr},
+	}
+}
+
+func day(y int, m time.Month, d int) time.Time { return time.Date(y, m, d, 0, 0, 0, 0, time.UTC) }
+
+func TestProcessFor_RecordedPostulate(t *testing.T) {
+	tests := []struct {
+		grNr     string
+		decision string
+		day      time.Time
+		want     votes.Process
+	}{
+		{"2026/351", "Ja", day(2026, 10, 28), votes.Process{
+			Steps: []votes.ProcessStep{
+				{Label: "Eingang, Frist 3 Monate", Detail: "01.07.2026", State: votes.StepDone},
+				{Label: "Stadtrat, Entgegennahme", Detail: "08.07.2026", State: votes.StepDone},
+				{Label: "Ablehnung, beantragt", Detail: "19.08.2026", State: votes.StepDone},
+				{Label: "Gemeinderat", Detail: "Überweisung", State: votes.StepCurrent},
+				{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext},
+			},
+			Next: "Stadtrat, Weisung, Frist 24 Monate",
+		}},
+		{"2026/303", "Nein", day(2026, 10, 28), votes.Process{
+			Steps: []votes.ProcessStep{
+				{Label: "Eingang, Frist 3 Monate", Detail: "17.06.2026", State: votes.StepDone},
+				{Label: "Stadtrat, Entgegennahme", Detail: "08.07.2026", State: votes.StepDone},
+				{Label: "Ablehnung, beantragt", Detail: "19.08.2026", State: votes.StepDone},
+				{Label: "Gemeinderat", Detail: "Ablehnung", State: votes.StepEnded},
+			},
+			Next: "Abgeschlossen",
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.grNr, func(t *testing.T) {
+			got := processFor(schlussabstimmung(tt.grNr, tt.decision, tt.day), recordedGeschaeft(t, tt.grNr))
+			if got == nil {
+				t.Fatal("no process")
+			}
+			if err := got.Validate(); err != nil {
+				t.Fatalf("invalid: %v", err)
+			}
+			if !got.Equal(&tt.want) {
+				t.Errorf("process =\n%+v\nwant\n%+v", *got, tt.want)
+			}
+		})
+	}
+}
+
+func motion(steps ...string) processGeschaeft {
+	g := processGeschaeft{GRNr: "2026/1", Art: "Motion"}
+	for i, name := range steps {
+		s := processStep{Name: name}
+		s.Datum.Start = time.Date(2026, 1, 1+i, 0, 0, 0, 0, time.UTC).Format("2006-01-02T15:04:05.000")
+		g.Steps = append(g.Steps, s)
+	}
+	return g
+}
+
+// A Motion's Ja is its Überweisung only where the Stadtrat would take it as a
+// Motion; where it would take it as a Postulat, the same Ja was as often its
+// Umwandlung, so no process is said. Nein is always the Ablehnung.
+func TestProcessFor_Motion(t *testing.T) {
+	v := func(decision string) votes.Vote { return schlussabstimmung("2026/1", decision, day(2026, 3, 1)) }
+
+	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme", "Ablehnung, beantragt")); p == nil || p.Next != "Stadtrat, Weisung, Frist 24 Monate" {
+		t.Errorf("contested motion the Stadtrat takes: %+v", p)
+	}
+	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p != nil {
+		t.Errorf("motion the Stadtrat takes only as a Postulat got %+v", p)
+	}
+	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Ablehnung")); p != nil {
+		t.Errorf("motion the Stadtrat rejects got %+v", p)
+	}
+	if p := processFor(v("Nein"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p == nil || p.Next != "Abgeschlossen" {
+		t.Errorf("rejected motion: %+v", p)
+	}
+}
+
+func TestProcessFor_NoRule(t *testing.T) {
+	v := schlussabstimmung("2026/1", "Ja", day(2026, 3, 1))
+	weisung := motion("Stadtrat, Weisung", "Überweisung, SK FD (Sachkommission Finanzdepartement)")
+	weisung.Art = "Weisung"
+	if p := processFor(v, weisung); p != nil {
+		t.Errorf("Weisung got %+v", p)
+	}
+	changed := motion("Eingang, Frist 3 Monate", "Textänderung, beantragt")
+	changed.Art = "Postulat"
+	if p := processFor(v, changed); p != nil {
+		t.Errorf("Postulat with a Textänderung got %+v", p)
+	}
+	unknown := schlussabstimmung("2026/1", "", day(2026, 3, 1))
+	postulat := motion("Eingang, Frist 3 Monate")
+	postulat.Art = "Postulat"
+	if p := processFor(unknown, postulat); p != nil {
+		t.Errorf("vote without a Schlussresultat got %+v", p)
+	}
+}

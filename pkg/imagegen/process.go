@@ -357,7 +357,7 @@ func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGB
 	white := color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
 	size := stepMarkSize
 	switch state {
-	case votes.StepDone, votes.StepCurrent, votes.StepEnded:
+	case votes.StepDone, votes.StepCurrent, votes.StepEnded, votes.StepCompleted:
 		if state != votes.StepDone {
 			// The ring sits outside the disc, so the check inside is the same
 			// size as on every other step taken.
@@ -435,7 +435,7 @@ func statusAlt(group []votes.Vote) string {
 		switch s.State {
 		case votes.StepDone:
 			state = "Erledigt"
-		case votes.StepCurrent, votes.StepEnded:
+		case votes.StepCurrent, votes.StepEnded, votes.StepCompleted:
 			state = "Diese Abstimmung"
 		case votes.StepNext:
 			state = "Noch offen"

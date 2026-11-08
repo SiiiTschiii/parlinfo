@@ -1,0 +1,34 @@
+{
+ "d": {
+  "results": [
+   {
+    "BusinessStatusName": "In Kommission des Nationalrats",
+    "BusinessStatusDate": "/Date(1764858639000)/"
+   },
+   {
+    "BusinessStatusName": "Beratung in Kommission des Nationalrates abgeschlossen",
+    "BusinessStatusDate": "/Date(1779201108000)/"
+   },
+   {
+    "BusinessStatusName": "In Nationalrat geplant",
+    "BusinessStatusDate": "/Date(1779792047643)/"
+   },
+   {
+    "BusinessStatusName": "In Ständerat geplant",
+    "BusinessStatusDate": "/Date(1764174549470)/"
+   },
+   {
+    "BusinessStatusName": "Eingereicht",
+    "BusinessStatusDate": "/Date(1758758400000)/"
+   },
+   {
+    "BusinessStatusName": "Überwiesen an den Bundesrat",
+    "BusinessStatusDate": "/Date(1780306911000)/"
+   },
+   {
+    "BusinessStatusName": "Stellungnahme zum Vorstoss liegt vor",
+    "BusinessStatusDate": "/Date(1763538154000)/"
+   }
+  ]
+ }
+}

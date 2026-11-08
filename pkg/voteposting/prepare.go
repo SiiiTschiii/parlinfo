@@ -73,7 +73,46 @@ func PrepareVoteGroups(
 
 	applyCompletenessGate(groups)
 
+	attachProcesses(src, groups)
+
 	return groups, nil
+}
+
+// attachProcesses sets each group's process where the source can say one.
+//
+// It runs on the groups that survived dedup, so a run asks only about the
+// business it may post. Nothing here can hold a post back: a source without the
+// capability, a business with no rule, a process that fails votes.Validate and
+// a source that cannot be reached all leave the group without a process, and
+// the post goes out as it would have before the feature existed. The last is
+// logged, since it is the one case worth looking into.
+func attachProcesses(src votes.Source, groups [][]votes.Vote) {
+	ps, ok := src.(votes.ProcessSource)
+	if !ok {
+		return
+	}
+	for _, group := range groups {
+		if len(group) == 0 {
+			continue
+		}
+		p, err := ps.Process(group)
+		if err != nil {
+			log.Printf("⚠️  no process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		if p == nil {
+			continue
+		}
+		if err := p.Validate(); err != nil {
+			log.Printf("⚠️  dropping invalid process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		for i := range group {
+			group[i].Affair.Process = p
+		}
+	}
 }
 
 // withoutPostedVotes drops votes the log already has from grouped output.
