@@ -1,6 +1,9 @@
 package votes
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func open() Process {
 	return Process{
@@ -59,6 +62,16 @@ func TestProcessValidate(t *testing.T) {
 		{"a step without a label", func() Process {
 			p := open()
 			p.Steps[0].Label = " "
+			return p
+		}, false},
+		{"next step at the limit", func() Process {
+			p := open()
+			p.Next = strings.Repeat("x", MaxNextRunes)
+			return p
+		}, true},
+		{"next step over the limit", func() Process {
+			p := open()
+			p.Next = strings.Repeat("x", MaxNextRunes+1)
 			return p
 		}, false},
 		{"open business without a next step", func() Process {

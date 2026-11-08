@@ -400,8 +400,12 @@ func circleMask(size int, ring, inset float64, dashes ...int) *image.Alpha {
 // ---------------------------------------------------------------------------
 // Alt text
 
-// statusAlt describes the status card: the heading and title, then every step
-// with its state, then the next step.
+// statusAlt describes the status card: the heading and title, then the next
+// step, then every step with its state.
+//
+// The next step comes before the steps, not after them as on the card: it is
+// what the card's footer says, and a description cut for length cuts from the
+// end. Six steps with long details can fill the cap on their own.
 func statusAlt(group []votes.Vote) string {
 	p := votes.GroupProcess(group)
 	if p == nil {
@@ -429,7 +433,7 @@ func statusAlt(group []votes.Vote) string {
 	}
 	result := strings.Join(lines, "\n")
 	if next := voteformat.NextStepLine(group); next != "" {
-		result += "\n\n" + next
+		result = next + "\n\n" + result
 	}
 	return assembleAlt(label, result)
 }

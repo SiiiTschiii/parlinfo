@@ -33,7 +33,7 @@ type Process struct {
 
 	// Next is what happens next, as a sentence a post prints after
 	// "Als Nächstes:": "Der Ständerat entscheidet." Empty, and only empty,
-	// when this vote ended the business.
+	// when this vote ended the business. At most MaxNextRunes long.
 	Next string
 }
 
@@ -71,6 +71,16 @@ const (
 // Every process this project models fits well within it; a business whose path
 // does not is one to post without a process rather than squeeze.
 const MaxProcessSteps = 6
+
+// MaxNextRunes is the longest next-step sentence a Process may carry.
+//
+// The sentence goes out whole, as one block of an X or Bluesky reply, and the
+// reply packer never splits a block: one longer than a post would make the
+// first reply fail after the root had already been published. 140 runes leaves
+// that reply room under X's 280 weighted characters for the line's emoji and
+// label, and keeps the card's footer to its two lines. Next steps are meant to
+// be one short sentence; the longest any body needs today is under 100.
+const MaxNextRunes = 140
 
 // Ended reports whether the vote ended the business.
 func (p Process) Ended() bool {
@@ -135,6 +145,9 @@ func (p Process) Validate() error {
 	}
 	if next == "" {
 		return errors.New("an open business needs a next step")
+	}
+	if n := len([]rune(next)); n > MaxNextRunes {
+		return fmt.Errorf("next step is %d runes, more than %d", n, MaxNextRunes)
 	}
 	return nil
 }

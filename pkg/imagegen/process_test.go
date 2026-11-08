@@ -9,11 +9,12 @@ import (
 )
 
 // crowdedProcess is the most a status card has to hold: votes.MaxProcessSteps
-// steps, each detail long enough to wrap, and a next step long enough to fill
-// the footer's two lines.
+// steps, each detail long enough to wrap, and a next step of the longest length
+// a process may carry, which is more than the footer's two lines hold.
 func crowdedProcess() votes.Process {
 	detail := "Die vorberatende Kommission prüft das Geschäft und stellt dem Rat einen Antrag"
-	p := votes.Process{Next: strings.Repeat("Die Kommission des Ständerats entscheidet, ob sie zustimmt. ", 3)}
+	next := []rune(strings.Repeat("Die Kommission des Ständerats entscheidet, ob sie zustimmt. ", 3))
+	p := votes.Process{Next: strings.TrimSpace(string(next[:votes.MaxNextRunes]))}
 	for i := 0; i < votes.MaxProcessSteps; i++ {
 		state := votes.StepDone
 		switch {
@@ -49,6 +50,11 @@ func TestStatusCard_FitsTheCrowdedCase(t *testing.T) {
 	}
 	if n := len(cards[0].footer.lines(fonts)); n != footerMaxLines {
 		t.Errorf("footer wraps to %d lines, want it cut at %d", n, footerMaxLines)
+	}
+	// The description is cut for length here; the next step, which the
+	// footer shows, has to survive the cut.
+	if !strings.Contains(cards[1].alt, p.Next) {
+		t.Errorf("status card alt text lost the next step:\n%s", cards[1].alt)
 	}
 
 	for _, c := range cards {
