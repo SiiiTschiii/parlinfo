@@ -76,7 +76,7 @@ func combinedAlt(group []votes.Vote) string {
 // overviewAltHeadingFloor: a group that long is named by its business number
 // and the start of its title, and every result stays.
 func titleAlt(group []votes.Vote) string {
-	head := fmt.Sprintf("%d Abstimmungen\n", len(group))
+	head := fmt.Sprintf(voteformat.W(group[0].Language).CardOverview+"\n", len(group))
 	// Labels shorten first, then go, then the tallies take their short form:
 	// what a vote is called can be found on its own card, its result is what
 	// this description is for.
