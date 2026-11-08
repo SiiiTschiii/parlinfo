@@ -230,31 +230,35 @@ func stepsHeight(steps []statusStep, fonts *fontSet) int {
 	return h
 }
 
-// statusHeading is the line above the business title: what the card shows,
-// and which business it is about.
+// statusHeading is the line above the business title naming the business as
+// the source does: its type and number ("Motion 24.3004"), or the number alone
+// where the source gives no type ("2026/519"), or "" when it gives neither.
+//
+// The card carries no heading of ours saying what it shows. The ticks, the ring
+// and the next-step footer say that, and a label in our words would be the one
+// text on the card that is not the parliament's.
 func statusHeading(v votes.Vote) string {
-	heading := "STAND IM PROZESS"
-	kind := strings.TrimSpace(v.Affair.Type)
-	number := strings.TrimSpace(v.Affair.Number)
-	switch {
-	case kind != "" && number != "":
-		return heading + " · " + kind + " " + number
-	case number != "":
-		return heading + " · " + number
+	return strings.TrimSpace(strings.TrimSpace(v.Affair.Type) + " " + strings.TrimSpace(v.Affair.Number))
+}
+
+// statusHeadingHeight is the space the heading line takes, or 0 without one.
+func statusHeadingHeight(v votes.Vote, fonts *fontSet) int {
+	if statusHeading(v) == "" {
+		return 0
 	}
-	return heading
+	return lineHeight(fonts.small) + frac(fonts.small, 0.6)
 }
 
 // statusReserve is the space the status card needs for everything but the
 // title, mirroring layoutStatusCard.
-func statusReserve(steps []statusStep, fonts *fontSet) int {
-	reserve := lineHeight(fonts.small) + frac(fonts.small, 0.6)
+func statusReserve(v votes.Vote, steps []statusStep, fonts *fontSet) int {
+	reserve := statusHeadingHeight(v, fonts)
 	reserve += titleTrailingGap() + frac(fonts.stepLabel, 0.75)
 	reserve += stepsHeight(steps, fonts)
 	return reserve + padding
 }
 
-// layoutStatusCard draws the business's path: a heading, the title, a rule,
+// layoutStatusCard draws the business's path: its type and number, the title, a rule,
 // then one row per step with a marker on a line that runs through them —
 // solid through the steps taken, dashed through the ones to come.
 func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []votes.Vote, bg color.RGBA, fonts *fontSet) error {
@@ -269,20 +273,22 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	// two lines, under a two-line footer would otherwise leave the title
 	// nothing.
 	steps := statusSteps(p, fonts, 2)
-	if titleBudget(inset, statusReserve(steps, fonts)) < statusMinTitle {
+	if titleBudget(inset, statusReserve(v, steps, fonts)) < statusMinTitle {
 		steps = statusSteps(p, fonts, 1)
 	}
 
-	titleFace, titleLines, err := fitTitle(voteformat.CleanVoteTitle(v.Title), maxTextWidth, titleBudget(inset, statusReserve(steps, fonts)))
+	titleFace, titleLines, err := fitTitle(voteformat.CleanVoteTitle(v.Title), maxTextWidth, titleBudget(inset, statusReserve(v, steps, fonts)))
 	if err != nil {
 		return err
 	}
 
-	if img != nil {
-		drawCenteredText(img, fonts.small, nil, cur.baseline(fonts.small), statusHeading(v), bg)
+	if heading := statusHeading(v); heading != "" {
+		if img != nil {
+			drawCenteredText(img, fonts.small, nil, cur.baseline(fonts.small), heading, bg)
+		}
+		cur.advance(fonts.small)
+		cur.gap(fonts.small, 0.6)
 	}
-	cur.advance(fonts.small)
-	cur.gap(fonts.small, 0.6)
 
 	for _, line := range titleLines {
 		if img != nil {
@@ -418,7 +424,10 @@ func statusAlt(group []votes.Vote) string {
 		return ""
 	}
 	v := group[0]
-	label := statusHeading(v) + "\n\n" + voteformat.CleanVoteTitle(v.Title)
+	label := voteformat.CleanVoteTitle(v.Title)
+	if heading := statusHeading(v); heading != "" {
+		label = heading + "\n\n" + label
+	}
 
 	var lines []string
 	for _, s := range p.Steps {
