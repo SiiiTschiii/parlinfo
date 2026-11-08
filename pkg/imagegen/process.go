@@ -183,6 +183,10 @@ type statusStep struct {
 const (
 	stepMarkSize = 48
 	stepMarkCol  = 68
+	// stepMarkHalo is how far the ring around this vote's step stands out
+	// from its disc. It has to fit the marker column, and the line between
+	// two markers stops short of it.
+	stepMarkHalo = 8
 	stepTextGap  = 20
 )
 
@@ -305,7 +309,7 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 			if i > 0 {
 				// The line into this step: solid where the business has been,
 				// dashed where it has yet to go.
-				drawStepConnector(img, markX+stepMarkSize/2, prevMarkBottom+6, markY-6, s.state == votes.StepNext, bg)
+				drawStepConnector(img, markX+stepMarkSize/2, prevMarkBottom+stepMarkHalo+4, markY-stepMarkHalo-4, s.state == votes.StepNext, bg)
 			}
 			drawStepMark(img, markX, markY, s.state, bg)
 			drawShadowedText(img, fonts.stepLabel, nil, textX, base, s.label, bg)
@@ -340,14 +344,22 @@ func drawStepConnector(img *image.RGBA, x, y1, y2 int, dashed bool, bg color.RGB
 }
 
 // drawStepMark draws a step's marker: a white disc with a check for a step
-// taken, a white disc with a cross for the step that ended the business, a
-// ring around a dot for the step this vote took, and a dashed ring for a step
-// to come.
+// taken, and a dashed ring for a step to come. The step this vote took is a
+// step taken too, so it gets the same disc — with a cross where it ended the
+// business — and a ring around it, which is what marks it as this post's vote.
 func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGBA) {
 	white := color.RGBA{0xFF, 0xFF, 0xFF, 0xFF}
 	size := stepMarkSize
 	switch state {
-	case votes.StepDone, votes.StepEnded:
+	case votes.StepDone, votes.StepCurrent, votes.StepEnded:
+		if state != votes.StepDone {
+			// The ring sits outside the disc, so the check inside is the same
+			// size as on every other step taken.
+			halo := size + 2*stepMarkHalo
+			ring := circleMask(halo, 0.06, 0)
+			drawMask(img, ring, x-stepMarkHalo+shadowOff, y-stepMarkHalo+shadowOff, darken(bg))
+			drawMask(img, ring, x-stepMarkHalo, y-stepMarkHalo, white)
+		}
 		disc := circleMask(size, 0, 0)
 		drawMask(img, disc, x+shadowOff, y+shadowOff, darken(bg))
 		drawMask(img, disc, x, y, white)
@@ -356,12 +368,6 @@ func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGB
 			kind = markRejected
 		}
 		drawMask(img, strokeMask(kind, size), x, y, bg)
-	case votes.StepCurrent:
-		ring := circleMask(size, 0.16, 0)
-		drawMask(img, ring, x+shadowOff, y+shadowOff, darken(bg))
-		drawMask(img, ring, x, y, white)
-		dot := circleMask(size, 0, 0.3)
-		drawMask(img, dot, x, y, white)
 	case votes.StepNext:
 		drawMask(img, circleMask(size, 0.09, 0, 12), x, y, blend(bg, 0x99))
 	}
