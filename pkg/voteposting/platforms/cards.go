@@ -10,12 +10,19 @@ const NoCard = -1
 // overview of a multi-vote group — which shows what the root says: the title
 // and the verdicts. In a multi-vote group each vote's result card goes on the
 // reply that opens that vote, given by voteStarts (reply indices, the root not
-// counted). A lone vote's replies carry nothing, its one card being on the
-// root already.
+// counted). A lone vote's replies carry nothing else, its one result card being
+// on the root already.
 //
-// The indices follow imagegen.GenerateCards: one combined card for a lone vote,
-// otherwise the overview followed by one result card per vote.
-func ThreadCards(groupSize, posts int, voteStarts []int) []int {
+// statusCard says the carousel has a status card (see imagegen.HasStatusCard).
+// It goes on the first reply, which opens with the links and the next-step line
+// the card illustrates, provided that reply carries no vote's card already —
+// it never does while the group has links, which every source supplies. Where
+// it would, the status card is left out of the thread rather than displacing a
+// result.
+//
+// The indices follow imagegen.GenerateCards: the first card, the status card if
+// there is one, then one result card per vote of a multi-vote group.
+func ThreadCards(groupSize, posts int, voteStarts []int, statusCard bool) []int {
 	out := make([]int, posts)
 	for i := range out {
 		out[i] = NoCard
@@ -24,13 +31,19 @@ func ThreadCards(groupSize, posts int, voteStarts []int) []int {
 		return out
 	}
 	out[0] = 0
-	if groupSize < 2 {
-		return out
+	first := 1
+	if statusCard {
+		first = 2
 	}
-	for v, reply := range voteStarts {
-		if post := 1 + reply; post < posts {
-			out[post] = v + 1
+	if groupSize >= 2 {
+		for v, reply := range voteStarts {
+			if post := 1 + reply; post < posts {
+				out[post] = v + first
+			}
 		}
+	}
+	if statusCard && posts > 1 && out[1] == NoCard {
+		out[1] = 1
 	}
 	return out
 }

@@ -29,6 +29,9 @@ func orIdentity(f func(string, string) string) func(string, string) string {
 // heading, the co-signers, then per vote the verdict, the counts and the
 // Fraktion breakdown.
 //
+// The business's next step (NextStepLine) is not part of it: callers put it
+// between the body and the links, where a caption cut for length keeps it.
+//
 // It is what the platforms that publish a vote as a single post carry — the
 // Instagram caption and the Facebook message — where X and Bluesky spread the
 // same facts over a thread. Sharing it keeps the two from drifting apart line

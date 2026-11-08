@@ -1,0 +1,181 @@
+package votes
+
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
+
+// Process is where a business stands in its parliamentary process, as of the
+// vote a post reports: the steps behind it, the step this vote took, and what
+// comes next.
+//
+// It exists because a vote result alone is routinely misread. "✅ Angenommen"
+// on a Nationalrat motion reads as decided, when the Ständerat has yet to vote
+// on it; a Gemeinderat Postulat that is überwiesen still waits two years for
+// the Stadtrat's report. Posts state the next step in one line and show the
+// whole path on a card of its own.
+//
+// An adapter fills it from its source's process history plus the outcome of
+// the vote itself. The history alone is not enough: every source records the
+// step a vote took some time after the vote — parlament.ch within hours, the
+// Gemeinderat a week later, the Kantonsrat later still — so at posting time the
+// step this vote took is the adapter's own, derived from the result it is
+// posting. Everything before it comes from the source.
+//
+// Nil means the adapter could not say where the business stands, and the post
+// goes out as it always has. That is the right answer for anything the adapter
+// does not recognise: a wrong next step is worse than none.
+type Process struct {
+	// Steps run in order: the steps already taken, then exactly one step this
+	// vote took, then the steps still to come. See Validate.
+	Steps []ProcessStep
+
+	// Next is what happens next, as a sentence a post prints after
+	// "Als Nächstes:": "Der Ständerat entscheidet." Empty, and only empty,
+	// when this vote ended the business.
+	Next string
+}
+
+// ProcessStep is one stage of a business: who acts, and what they did or will
+// do.
+type ProcessStep struct {
+	// Label names the stage, usually who acts in it: "Ständerat",
+	// "Regierungsrat", "Eingereicht". A card prints it in bold; keep it to a
+	// word or two.
+	Label string
+	// Detail is one short sentence on what happened or will happen at this
+	// stage: "Beantragt Ablehnung", "Bericht, Frist 24 Monate". Optional.
+	Detail string
+	State  StepState
+}
+
+// StepState is where a step stands relative to the vote a post reports.
+type StepState int
+
+const (
+	// StepDone is a step taken before this vote.
+	StepDone StepState = iota
+	// StepCurrent is the step this vote took, with the business carrying on.
+	StepCurrent
+	// StepEnded is the step this vote took when it ended the business: a
+	// rejected motion, an Einzelinitiative that missed its quorum. No step
+	// follows it.
+	StepEnded
+	// StepNext is a step still to come.
+	StepNext
+)
+
+// MaxProcessSteps is the most steps a Process may have. A card shows every
+// step, and a path longer than this would leave the business title no room.
+// Every process this project models fits well within it; a business whose path
+// does not is one to post without a process rather than squeeze.
+const MaxProcessSteps = 6
+
+// Ended reports whether the vote ended the business.
+func (p Process) Ended() bool {
+	for _, s := range p.Steps {
+		if s.State == StepEnded {
+			return true
+		}
+	}
+	return false
+}
+
+// Validate checks that p tells one coherent story: done steps, then the one
+// step this vote took, then — unless that step ended the business — the steps
+// still to come, and a next-step sentence exactly when the business goes on.
+//
+// Adapters build processes from rules and source data that can disagree with
+// each other; a process that fails here is dropped rather than posted.
+func (p Process) Validate() error {
+	if len(p.Steps) == 0 {
+		return errors.New("process has no steps")
+	}
+	if len(p.Steps) > MaxProcessSteps {
+		return fmt.Errorf("process has %d steps, more than %d", len(p.Steps), MaxProcessSteps)
+	}
+
+	current := -1
+	for i, s := range p.Steps {
+		if strings.TrimSpace(s.Label) == "" {
+			return fmt.Errorf("step %d has no label", i+1)
+		}
+		switch s.State {
+		case StepDone:
+			if current >= 0 {
+				return fmt.Errorf("step %d is done but follows this vote's step", i+1)
+			}
+		case StepCurrent, StepEnded:
+			if current >= 0 {
+				return fmt.Errorf("step %d is a second step for this vote", i+1)
+			}
+			current = i
+		case StepNext:
+			if current < 0 {
+				return fmt.Errorf("step %d is still to come but precedes this vote's step", i+1)
+			}
+		default:
+			return fmt.Errorf("step %d has unknown state %d", i+1, s.State)
+		}
+	}
+	if current < 0 {
+		return errors.New("process has no step for this vote")
+	}
+
+	next := strings.TrimSpace(p.Next)
+	if p.Steps[current].State == StepEnded {
+		if current != len(p.Steps)-1 {
+			return errors.New("steps follow the step that ended the business")
+		}
+		if next != "" {
+			return errors.New("an ended business has no next step")
+		}
+		return nil
+	}
+	if next == "" {
+		return errors.New("an open business needs a next step")
+	}
+	return nil
+}
+
+// Equal reports whether p and q describe the same process.
+func (p *Process) Equal(q *Process) bool {
+	if p == nil || q == nil {
+		return p == q
+	}
+	if p.Next != q.Next || len(p.Steps) != len(q.Steps) {
+		return false
+	}
+	for i := range p.Steps {
+		if p.Steps[i] != q.Steps[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// GroupProcess returns the process a posting group reports, or nil when there
+// is none to report.
+//
+// A group is one business on one day, so its votes should all carry the same
+// process; the adapter sets it from the group's decisive vote. When they do not
+// — one vote without a process, or two that disagree about where the business
+// stands — nothing is reported rather than a guess at which one is right. An
+// invalid process is likewise reported as none, and so is any process on an
+// election business, which records no decision a process could follow from.
+func GroupProcess(group []Vote) *Process {
+	if len(group) == 0 || IsWahlgeschaeftGroup(group) {
+		return nil
+	}
+	p := group[0].Affair.Process
+	if p == nil || p.Validate() != nil {
+		return nil
+	}
+	for _, v := range group[1:] {
+		if !p.Equal(v.Affair.Process) {
+			return nil
+		}
+	}
+	return p
+}

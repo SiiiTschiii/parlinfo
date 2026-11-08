@@ -533,12 +533,21 @@ type card struct {
 	// alt is what the card says, as text. It lives beside the layout so a card
 	// added here cannot ship without one.
 	alt string
+	// footer is the next-step line along the bottom edge, on the cards that
+	// carry one; see process.go.
+	footer cardFooter
 }
 
-// inset is the Y the card's content starts below: the band, then the corner
-// row.
+// inset is the space the card's frame takes from its content: the band and the
+// corner row above it, and the footer below it.
+//
+// The layouts only ever budget with it — the title gets imgHeight less the
+// inset less everything else — so charging the footer here, at the top, is
+// what makes the content give up room for it. renderCard then draws the content
+// that much higher than the inset alone would put it, which is what lands the
+// room at the bottom, where the footer is.
 func (c card) inset(fonts *fontSet) int {
-	return bandInset(c.vote) + c.corner.height(fonts)
+	return bandInset(c.vote) + c.corner.height(fonts) + c.footer.height(fonts)
 }
 
 // carouselCards returns the cards GenerateCarousel draws for a group, in order.
@@ -550,53 +559,76 @@ func (c card) inset(fonts *fontSet) int {
 //
 // A single vote combines title and results on one card. A multi-vote group
 // gets an overview card, then one result card per vote.
+//
+// A group that reports where its business stands (votes.GroupProcess) gets the
+// next step as a footer on its first card, and a status card right after it:
+// second, so Instagram's ten-card cap never cuts it, and on X and Bluesky on the
+// first reply, which carries the same line as text (platforms.ThreadCards).
 func carouselCards(group []votes.Vote, bg color.RGBA, fonts *fontSet) []card {
 	if votes.IsWahlgeschaeftGroup(group) {
 		v := group[0]
 		return []card{{"Wahlgeschäft card", v, dateCorner(v), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutWahlgeschaeftCard(img, cur, inset, &v, bg, fonts)
 			return nil
-		}, wahlgeschaeftAlt(group)}}
+		}, wahlgeschaeftAlt(group), cardFooter{}}}
+	}
+
+	footer := nextStepFooter(group)
+	var status []card
+	if HasStatusCard(group) {
+		status = []card{{"status card", group[0], dateCorner(group[0]), func(img *image.RGBA, cur *layoutCursor, inset int) error {
+			return layoutStatusCard(img, cur, inset, group, bg, fonts)
+		}, statusAlt(group), footer}}
 	}
 
 	if len(group) == 1 {
 		v := group[0]
-		return []card{{"combined card", v, voteCorner(v, ""), func(img *image.RGBA, cur *layoutCursor, inset int) error {
+		return append([]card{{"combined card", v, voteCorner(v, ""), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			_, _, err := layoutCombinedCard(img, cur, inset, &v, bg, fonts)
 			return err
-		}, combinedAlt(group)}}
+		}, combinedAlt(group), footer}}, status...)
 	}
 
 	cards := []card{{"title card", group[0], dateCorner(group[0]), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 		layoutTitleCard(img, cur, inset, group, bg, fonts)
 		return nil
-	}, titleAlt(group)}}
+	}, titleAlt(group), footer}}
+	cards = append(cards, status...)
 	for i := range group {
 		v := group[i]
 		cards = append(cards, card{fmt.Sprintf("result card %d", i+1), v, voteCorner(v, formatProgressBadge(i+1, len(group))), func(img *image.RGBA, cur *layoutCursor, inset int) error {
 			layoutResultCard(img, cur, inset, &v, bg, fonts, i+1, len(group))
 			return nil
-		}, resultAlt(group, i)})
+		}, resultAlt(group, i), cardFooter{}})
 	}
 	return cards
 }
 
 // renderCard lays a card out twice: a dry run at its inset to measure it, then
-// the real run, centred in the space the band and the corner row leave.
+// the real run, centred in the space the band, the corner row and the footer
+// leave.
+//
+// The inset counts the footer as though it sat at the top (see card.inset), so
+// the centring is worked out in that frame and the content then moved up by
+// the footer's height, into the space the footer really leaves; the drawing
+// cursor's floor moves up with it, so the Fraktion table stops above the footer
+// rather than running into it.
 func renderCard(c card, bg color.RGBA, fonts *fontSet) ([]byte, error) {
 	inset := c.inset(fonts)
+	foot := c.footer.height(fonts)
 
 	dry := newCursor(inset, imgHeight)
 	if err := c.layout(nil, dry, inset); err != nil {
 		return nil, err
 	}
 
-	startY := centredStart(inset, dry.contentHeight())
+	startY := centredStart(inset, dry.contentHeight()) - foot
 	img := newImage(bg)
 	drawBodyBand(img, fonts.bandLabel, c.vote)
 	c.corner.draw(img, fonts, c.vote, bg)
+	c.footer.draw(img, fonts, bg)
 
-	cur := newCursor(startY, imgHeight)
+	cur := newCursor(startY, imgHeight-foot)
 	if err := c.layout(img, cur, inset); err != nil {
 		return nil, err
 	}
@@ -697,6 +729,7 @@ type fontSet struct {
 	small       font.Face // goregular 28
 	boldHeading font.Face // gobold 48 (= statNum, shared)
 	bandLabel   font.Face // gobold 44 (body band)
+	stepLabel   font.Face // gobold stepLabelSize (status card)
 
 	emojiRegular font.Face // notoEmoji 36
 	emojiSmall   font.Face // notoEmoji 28
@@ -742,6 +775,9 @@ func loadFontSet() (*fontSet, error) {
 	}
 	if fs.bandLabel, err = load(gobold.TTF, 44); err != nil {
 		return nil, fmt.Errorf("bandLabel font: %w", err)
+	}
+	if fs.stepLabel, err = load(gobold.TTF, stepLabelSize); err != nil {
+		return nil, fmt.Errorf("stepLabel font: %w", err)
 	}
 	fs.boldHeading = fs.statNum // same face, gobold 48
 

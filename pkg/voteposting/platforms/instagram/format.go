@@ -90,7 +90,14 @@ func buildCaption(group []votes.Vote, contactMapper *contacts.Mapper) string {
 		}
 		tags.SubVote = contactMapper.TagInstagramFraktionen
 	}
-	return buildCaptionWithPreservedLink(voteformat.LongFormBody(group, tags), voteformat.LinkLine(group))
+	// The next step rides with the links, in the tail a caption cut for length
+	// keeps: it is one line, and on a ten-vote group it would otherwise be the
+	// first thing the cut removes.
+	tail := voteformat.LinkLine(group)
+	if next := voteformat.NextStepLine(group); next != "" {
+		tail = next + "\n\n" + strings.TrimLeft(tail, "\n")
+	}
+	return buildCaptionWithPreservedLink(voteformat.LongFormBody(group, tags), tail)
 }
 
 func buildCaptionWithPreservedLink(body, linkBlock string) string {
