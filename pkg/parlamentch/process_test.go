@@ -26,6 +26,11 @@ func newProcessClient(t *testing.T) *Client {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		filter := r.URL.Query().Get("$filter")
 		entity := r.URL.Path[1:]
+		if entity == "Vote/$count" {
+			// None of the recorded businesses has a second bill.
+			_, _ = w.Write([]byte("0"))
+			return
+		}
 		var name string
 		if entity == "Resolution" {
 			m := processBill.FindStringSubmatch(filter)
@@ -116,9 +121,17 @@ func TestProcess_RealBusinesses(t *testing.T) {
 			next: processDone,
 		},
 		{
+			// 24.065 has two bills; the vote names its own, and the history
+			// is that bill's alone.
 			name: "Schlussabstimmung adopted",
-			vote: processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
-				"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8)),
+			vote: onBill(c, processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
+				"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8)), 1),
+			steps: []votes.ProcessStep{
+				{Label: "Eingereicht", Detail: "14.08.2024", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "Beschluss abweichend vom Entwurf", State: votes.StepDone},
+				{Label: "Ständerat", Detail: "Abweichung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "Annahme in der Schlussabstimmung", State: votes.StepCompleted},
+			},
 			next: processDone,
 		},
 	}
@@ -173,10 +186,7 @@ func TestProcess_SecondChamberNamesTheFirst(t *testing.T) {
 
 // What has no rule gets no process, and asks the service nothing.
 func TestProcess_NoRuleNoProcess(t *testing.T) {
-	c := New(testJurisdiction)
-	c.SetBaseURL("http://127.0.0.1:1") // any request fails the test below
-	c.retryDelay = 0
-	c.maxAttempts = 1
+	c := newProcessClient(t)
 
 	cases := map[string][]votes.Vote{
 		"amended motion": {processVote(c, "a", "20253007", typeMotion, "", "angenommen", outcomeAdopted,
@@ -199,5 +209,25 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 				t.Errorf("Process = %+v, %v; want nothing", p, err)
 			}
 		})
+	}
+}
+
+// onBill records which bill a vote was on, as the listing serves it.
+func onBill(c *Client, v votes.Vote, bill int64) votes.Vote {
+	l := c.labels[v.SourceID]
+	l.billNumber = bill
+	c.labels[v.SourceID] = l
+	return v
+}
+
+// A business with several bills gets no process where the vote does not say
+// which it was on: its decisions are filed per bill, and a card merging them
+// read as one bill rejected and then adopted. 24.065 has two bills.
+func TestProcess_SeveralBillsNoProcess(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
+		"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8))
+	if p, err := c.Process([]votes.Vote{v}); p != nil || err != nil {
+		t.Errorf("Process = %+v, %v; want nothing", p, err)
 	}
 }

@@ -126,6 +126,24 @@ const MaxProcessSteps = 6
 // be one short sentence; the longest any body needs today is under 100.
 const MaxNextRunes = 140
 
+// TrimHistory shortens the steps taken before a vote to at most room,
+// keeping the first — the filing, which dates the business — and the most
+// recent, which lead up to the vote. A business with a long history keeps its
+// process rather than losing it to MaxProcessSteps; what it gives up is the
+// middle of a path the source still lists in full.
+func TrimHistory(done []ProcessStep, room int) []ProcessStep {
+	if room <= 0 {
+		return nil
+	}
+	if len(done) <= room {
+		return done
+	}
+	if room == 1 {
+		return done[len(done)-1:]
+	}
+	return append(append([]ProcessStep(nil), done[0]), done[len(done)-room+1:]...)
+}
+
 // Ended reports whether the vote ended the business.
 func (p Process) Ended() bool {
 	for _, s := range p.Steps {

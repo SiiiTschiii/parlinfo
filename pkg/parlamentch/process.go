@@ -1,6 +1,7 @@
 package parlamentch
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -25,7 +26,8 @@ import (
 //   - an initiative given no leave ("Keine Folge gegeben"): "Erledigt", 15 of 15
 //   - a Schlussabstimmung, adopted or rejected: "Erledigt", 15 of 15
 //
-// Everything else gets no process: a motion adopted as amended (2 of its 3
+// Everything else gets no process: a business with several bills, a motion
+// adopted as amended (2 of its 3
 // went back to the Ständerat), an initiative given leave and a Gesamtabstimmung
 // (each continues under more than one status), a group whose outcome the
 // meanings do not settle, and any business type not named here.
@@ -55,7 +57,8 @@ type statusDTO struct {
 }
 
 type billDTO struct {
-	ID string `json:"ID"`
+	ID         string `json:"ID"`
+	BillNumber int64  `json:"BillNumber"`
 }
 
 type resolutionDTO struct {
@@ -78,7 +81,22 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 	if err != nil {
 		return nil, nil
 	}
+	p, err := c.process(id, group)
+	if errors.Is(err, errSeveralBills) {
+		return nil, nil
+	}
+	return p, err
+}
 
+// errSeveralBills stops a business with more than one bill when the vote does
+// not say which it was on. Such a business — a Volksinitiative and its
+// counter-proposal, a law and its decree — has a history for each, and a card
+// that merged them listed one bill's rejection on the way to the other's
+// adoption: the service files decisions by bill, not by business. So the
+// history is read from the vote's own bill, and without it there is none.
+var errSeveralBills = errors.New("business has several bills, and the vote names none")
+
+func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 	switch t := group[0].Affair.Type; t {
 	case typeMotion, typePostulat:
 		v, ok := c.decisiveFiledVote(group)
@@ -132,6 +150,7 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 	if err != nil {
 		return nil, err
 	}
+	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
 	steps = append(steps, votes.ProcessStep{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent})
 
 	if businessType == typePostulat || otherChamber {
@@ -195,6 +214,7 @@ func (c *Client) closingProcess(id int64, v votes.Vote, step votes.ProcessStep) 
 	if err != nil {
 		return nil, err
 	}
+	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
 	return &votes.Process{Steps: append(steps, step), Next: processDone}, nil
 }
 
@@ -238,7 +258,11 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 		break
 	}
 
-	resolutions, err := c.resolutions(id)
+	bill, err := c.billOf(id, c.labels[v.SourceID].billNumber)
+	if err != nil {
+		return
+	}
+	resolutions, err := c.resolutions(bill)
 	if err != nil {
 		return
 	}
@@ -259,28 +283,37 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 	return
 }
 
-// resolutions are the chambers' decisions on every bill of a business, oldest
-// first. The service files them by bill, not by business.
-func (c *Client) resolutions(id int64) ([]resolutionDTO, error) {
+// billOf is the bill a vote was on: the one numbered billNumber, or the
+// business's only bill where the vote names none.
+func (c *Client) billOf(id, billNumber int64) (billDTO, error) {
 	var bills []billDTO
 	if err := c.get("/Bill", query{
 		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d", id),
-		"$select": "ID",
+		"$select": "ID,BillNumber",
 	}, &bills); err != nil {
+		return billDTO{}, err
+	}
+	for _, b := range bills {
+		if billNumber > 0 && b.BillNumber == billNumber {
+			return b, nil
+		}
+	}
+	if billNumber == 0 && len(bills) == 1 {
+		return bills[0], nil
+	}
+	return billDTO{}, errSeveralBills
+}
+
+// resolutions are the chambers' decisions on a bill, oldest first.
+func (c *Client) resolutions(bl billDTO) ([]resolutionDTO, error) {
+	var rs []resolutionDTO
+	if err := c.get("/Resolution", query{
+		"$filter": fmt.Sprintf("Language eq 'DE' and IdBill eq guid'%s'", bl.ID),
+	}, &rs); err != nil {
 		return nil, err
 	}
-	var all []resolutionDTO
-	for _, bl := range bills {
-		var rs []resolutionDTO
-		if err := c.get("/Resolution", query{
-			"$filter": fmt.Sprintf("Language eq 'DE' and IdBill eq guid'%s'", bl.ID),
-		}, &rs); err != nil {
-			return nil, err
-		}
-		all = append(all, rs...)
-	}
-	sort.SliceStable(all, func(i, j int) bool { return odataDay(all[i].ResolutionDate) < odataDay(all[j].ResolutionDate) })
-	return all, nil
+	sort.SliceStable(rs, func(i, j int) bool { return odataDay(rs[i].ResolutionDate) < odataDay(rs[j].ResolutionDate) })
+	return rs, nil
 }
 
 // standeratCommittee is the Ständerat committee that will deliberate the

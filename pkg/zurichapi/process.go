@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/votes"
@@ -113,8 +114,12 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 		return nil
 	}
 	day := v.DateString()
+	// PARIS lists steps in the order they were entered, which is not always
+	// the order they happened in.
+	sorted := append([]processStep(nil), g.Steps...)
+	sort.SliceStable(sorted, func(i, j int) bool { return sorted[i].Datum.Start < sorted[j].Datum.Start })
 	var steps []votes.ProcessStep
-	for _, s := range g.Steps {
+	for _, s := range sorted {
 		start := strings.TrimSpace(s.Datum.Start)
 		if len(start) < 10 || start[:10] >= day {
 			continue
@@ -128,12 +133,14 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 
 	switch strings.TrimSpace(v.Decision) {
 	case "Nein":
+		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
 		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: stepAblehnung, State: votes.StepEnded})
 		return &votes.Process{Steps: steps, Next: processClosed}
 	case "Ja":
 		if g.Art == "Motion" && !motionGoesToStadtrat(steps) {
 			return nil
 		}
+		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
 		steps = append(steps,
 			votes.ProcessStep{Label: "Gemeinderat", Detail: stepUeberweisung, State: votes.StepCurrent},
 			votes.ProcessStep{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext})

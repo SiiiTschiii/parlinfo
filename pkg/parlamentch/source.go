@@ -20,6 +20,7 @@ type voteDTO struct {
 	BusinessNumber      int64   `json:"BusinessNumber"`
 	BusinessShortNumber string  `json:"BusinessShortNumber"`
 	BusinessTitle       string  `json:"BusinessTitle"`
+	BillNumber          int64   `json:"BillNumber"`
 	BillTitle           *string `json:"BillTitle"`
 	IdLegislativePeriod int64   `json:"IdLegislativePeriod"`
 	IdSession           int64   `json:"IdSession"`
@@ -64,7 +65,7 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 		"$filter":  c.voteFilter(),
 		"$orderby": "VoteEnd desc",
 		"$top":     strconv.Itoa(limit),
-		"$select":  "ID,RegistrationNumber,BusinessNumber,BusinessShortNumber,BusinessTitle,BillTitle,IdLegislativePeriod,IdSession,Subject,MeaningYes,MeaningNo,VoteEnd",
+		"$select":  "ID,RegistrationNumber,BusinessNumber,BusinessShortNumber,BusinessTitle,BillNumber,BillTitle,IdLegislativePeriod,IdSession,Subject,MeaningYes,MeaningNo,VoteEnd",
 	}, &rows)
 	if err != nil {
 		return nil, err
@@ -75,6 +76,7 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 		v := c.toVote(r)
 		c.labels[v.SourceID] = voteLabel{
 			bill:       strings.TrimSpace(deref(r.BillTitle)),
+			billNumber: r.BillNumber,
 			meaningYes: strings.TrimSpace(deref(r.MeaningYes)),
 			meaningNo:  strings.TrimSpace(deref(r.MeaningNo)),
 		}
@@ -148,6 +150,7 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 // depends on the group. See Client.label.
 type voteLabel struct {
 	bill       string
+	billNumber int64 // which of the business's bills the vote was on; 0 when not served
 	meaningYes string
 	meaningNo  string
 }

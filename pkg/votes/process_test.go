@@ -164,3 +164,26 @@ func TestGroupProcess(t *testing.T) {
 		}
 	})
 }
+
+func TestTrimHistory(t *testing.T) {
+	steps := func(labels ...string) []ProcessStep {
+		var s []ProcessStep
+		for _, l := range labels {
+			s = append(s, ProcessStep{Label: l, State: StepDone})
+		}
+		return s
+	}
+	labels := func(s []ProcessStep) string {
+		var out []string
+		for _, x := range s {
+			out = append(out, x.Label)
+		}
+		return strings.Join(out, ",")
+	}
+	all := steps("a", "b", "c", "d", "e")
+	for room, want := range map[int]string{0: "", 1: "e", 2: "a,e", 3: "a,d,e", 5: "a,b,c,d,e", 9: "a,b,c,d,e"} {
+		if got := labels(TrimHistory(all, room)); got != want {
+			t.Errorf("TrimHistory(5 steps, %d) = %q, want %q", room, got, want)
+		}
+	}
+}
