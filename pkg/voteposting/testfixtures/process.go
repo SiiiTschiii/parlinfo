@@ -83,16 +83,17 @@ func ProcessNationalratMotion() []votes.Vote {
 			{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
 			{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
 			{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent},
-			{Label: "In Kommission des Ständerats", State: votes.StepNext},
+			{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
 		},
-		Next: "In Kommission des Ständerats",
+		Next: "In Kommission des Ständerats (SGK-S)",
 	})
 }
 
 // ProcessGemeinderatPostulat is Postulat 2026/519, überwiesen on 21.10.2026
 // after an Ablehnungsantrag. The PARIS step names are verbatim; the next step
-// is the one composed text votes.Process allows, the actor and the deadline the
-// "Überweisung, Frist 24 Monate" step states.
+// is the one composed text votes.Process allows: "Stadtrat, Weisung", the step
+// every überwiesene Postulat records next, with the deadline the "Überweisung,
+// Frist 24 Monate" step set.
 func ProcessGemeinderatPostulat() []votes.Vote {
 	// Title, Subtitle and Decision as zurichapi.ToVote maps the real record.
 	v := vote("2026-519", "2026/519\nPostulat von Rahel Hofstetter (GLP) und Christoph Riedweg (GLP) vom 16.09.2026:\nKontrakte mit den Nachbarschaftshilfe-Vereinen, Ausweisung zusätzlicher Kennzahlen in der nächsten Beitragsvorlage", "2026/519", "Ja", 101, 16, 0, 8)
@@ -118,9 +119,9 @@ func ProcessGemeinderatPostulat() []votes.Vote {
 			{Label: "Stadtrat, Entgegennahme", Detail: "23.09.2026", State: votes.StepDone},
 			{Label: "Ablehnung, beantragt", Detail: "30.09.2026", State: votes.StepDone},
 			{Label: "Gemeinderat", Detail: "Überweisung, Frist 24 Monate", State: votes.StepCurrent},
-			{Label: "Stadtrat", Detail: "Frist 24 Monate", State: votes.StepNext},
+			{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext},
 		},
-		Next: "Stadtrat, Frist 24 Monate",
+		Next: "Stadtrat, Weisung, Frist 24 Monate",
 	})
 }
 

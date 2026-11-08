@@ -38,8 +38,18 @@ func TestProcessValidate(t *testing.T) {
 		{"too many steps", func() Process {
 			p := open()
 			for len(p.Steps) <= MaxProcessSteps {
-				p.Steps = append(p.Steps, ProcessStep{Label: "Kommission", State: StepNext})
+				p.Steps = append([]ProcessStep{{Label: "Kommission", State: StepDone}}, p.Steps...)
 			}
+			return p
+		}, false},
+		{"two next steps", func() Process {
+			p := open()
+			p.Steps = append(p.Steps, ProcessStep{Label: "In Ständerat geplant", State: StepNext})
+			return p
+		}, false},
+		{"open business without a next step on the card", func() Process {
+			p := open()
+			p.Steps = p.Steps[:2]
 			return p
 		}, false},
 		{"no step for this vote", func() Process {

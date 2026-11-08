@@ -14,7 +14,11 @@ import (
 // on a Nationalrat motion reads as decided, when the Ständerat has yet to vote
 // on it; a Gemeinderat Postulat that is überwiesen still waits two years for
 // the Stadtrat's report. Posts state the next step in one line and show the
-// whole path on a card of its own.
+// path so far, and that one next step, on a card of its own.
+//
+// Only the one next step: the path beyond it is long, branches, and is named in
+// terms ("Abschreibung", "In Ständerat geplant") that need explaining more than
+// they explain.
 //
 // An adapter fills it from its source's process history plus the outcome of
 // the vote itself. The history alone is not enough: every source records the
@@ -29,18 +33,20 @@ import (
 // "Überweisung, Frist 24 Monate"), the chamber's decision ("Annahme"). A
 // paraphrase reads differently from what the parliament says and cannot be
 // checked against it; "Beantragt Ablehnung" for a government's proposal was
-// read as the result of the vote. The steps this vote took and the ones still
-// to come are not yet in the source at posting time, so the adapter picks them
-// from the same official vocabulary rather than wording them itself.
+// read as the result of the vote. The step this vote took and the one after it
+// are not yet in the source at posting time, so the adapter picks them from the
+// same official vocabulary rather than wording them itself: the status or step
+// the source records next for a business of this kind, with the details it
+// gives — the committee that will deliberate, the deadline the step sets.
 //
 // The step this vote took is labelled with the chamber's name, its official
 // one ("Nationalrat", "Gemeinderat"), and carries the decision as its detail
 // ("Annahme", "Überweisung, Frist 24 Monate"), whichever source it comes from:
 // a reader looking for the vote finds it the same way on every card.
 //
-// The one composed text is a next step built from parts the source states, the
-// actor and a deadline written into a step name: "Stadtrat, Frist 24 Monate"
-// after a Gemeinderat "Überweisung, Frist 24 Monate".
+// The one composed text is a next step built from parts the source states:
+// "Stadtrat, Weisung, Frist 24 Monate", the step the Gemeinderat records next
+// with the deadline its "Überweisung, Frist 24 Monate" set.
 //
 // The outcome that decides this vote's step must come from a source that
 // states it: parlament.ch's reading of what Ja meant (Vote.Outcome), the
@@ -54,7 +60,8 @@ import (
 // does not recognise: a wrong next step is worse than none.
 type Process struct {
 	// Steps run in order: the steps already taken, then exactly one step this
-	// vote took, then the steps still to come. See Validate.
+	// vote took, then — unless it ended the business — exactly one step to
+	// come. See Validate.
 	Steps []ProcessStep
 
 	// Next is what happens next, in the source's words, as a post prints it
@@ -91,7 +98,8 @@ const (
 	// rejected motion, an Einzelinitiative that missed its quorum. No step
 	// follows it.
 	StepEnded
-	// StepNext is a step still to come.
+	// StepNext is the step that comes next. A process has one, after this
+	// vote's, unless this vote ended the business.
 	StepNext
 )
 
@@ -122,8 +130,8 @@ func (p Process) Ended() bool {
 }
 
 // Validate checks that p tells one coherent story: done steps, then the one
-// step this vote took, then — unless that step ended the business — the steps
-// still to come, and a next-step sentence exactly when the business goes on.
+// step this vote took, then — unless that step ended the business — the one
+// step that comes next, and a next-step text in either case.
 //
 // Adapters build processes from rules and source data that can disagree with
 // each other; a process that fails here is dropped rather than posted.
@@ -135,7 +143,7 @@ func (p Process) Validate() error {
 		return fmt.Errorf("process has %d steps, more than %d", len(p.Steps), MaxProcessSteps)
 	}
 
-	current := -1
+	current, next := -1, 0
 	for i, s := range p.Steps {
 		if strings.TrimSpace(s.Label) == "" {
 			return fmt.Errorf("step %d has no label", i+1)
@@ -154,6 +162,7 @@ func (p Process) Validate() error {
 			if current < 0 {
 				return fmt.Errorf("step %d is still to come but precedes this vote's step", i+1)
 			}
+			next++
 		default:
 			return fmt.Errorf("step %d has unknown state %d", i+1, s.State)
 		}
@@ -162,14 +171,17 @@ func (p Process) Validate() error {
 		return errors.New("process has no step for this vote")
 	}
 
-	if p.Steps[current].State == StepEnded && current != len(p.Steps)-1 {
+	switch {
+	case p.Steps[current].State == StepEnded && next > 0:
 		return errors.New("steps follow the step that ended the business")
+	case p.Steps[current].State == StepCurrent && next != 1:
+		return fmt.Errorf("an open business shows exactly one next step, not %d", next)
 	}
-	next := strings.TrimSpace(p.Next)
-	if next == "" {
+	text := strings.TrimSpace(p.Next)
+	if text == "" {
 		return errors.New("a process needs a next step, or the source's word for a closed business")
 	}
-	if n := len([]rune(next)); n > MaxNextRunes {
+	if n := len([]rune(text)); n > MaxNextRunes {
 		return fmt.Errorf("next step is %d runes, more than %d", n, MaxNextRunes)
 	}
 	return nil

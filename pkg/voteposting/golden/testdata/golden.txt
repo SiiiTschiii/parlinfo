@@ -3734,7 +3734,7 @@ Motion
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: In Kommission des Ständerats
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
 
 🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
@@ -3761,7 +3761,7 @@ Motion
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: In Kommission des Ständerats
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
 
 🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
@@ -3787,13 +3787,13 @@ Motion
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: In Kommission des Ständerats
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
 
 🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
 Daten: Parlamentsdienste der Bundesversammlung, Bern
-[facet] {Index:{ByteStart:73 ByteEnd:158} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
-[facet] {Index:{ByteStart:175 ByteEnd:240} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
+[facet] {Index:{ByteStart:81 ByteEnd:166} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
+[facet] {Index:{ByteStart:183 ByteEnd:248} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
 
 [post 2]
 📊 117 Ja | 62 Nein | 8 Enth. | 12 Abw.
@@ -3825,7 +3825,7 @@ FDP 22/0/3/3
 Grüne 0/21/0/2
 GLP 10/0/0/0
 
-➡️ Nächster Schritt: In Kommission des Ständerats
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
 
 🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
@@ -3850,7 +3850,7 @@ FDP 22/0/3/3
 Grüne 0/21/0/2
 GLP 10/0/0/0
 
-➡️ Nächster Schritt: In Kommission des Ständerats
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
 
 🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
@@ -3867,7 +3867,7 @@ Daten: Parlamentsdienste der Bundesversammlung, Bern
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: Stadtrat, Frist 24 Monate
+➡️ Nächster Schritt: Stadtrat, Weisung, Frist 24 Monate
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
@@ -3893,7 +3893,7 @@ Die Mitte 5/0/0/2
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: Stadtrat, Frist 24 Monate
+➡️ Nächster Schritt: Stadtrat, Weisung, Frist 24 Monate
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
@@ -3918,13 +3918,13 @@ Die Mitte 5/0/0/2
 👇 Details im Thread
 
 [post 1]
-➡️ Nächster Schritt: Stadtrat, Frist 24 Monate
+➡️ Nächster Schritt: Stadtrat, Weisung, Frist 24 Monate
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
 
 📊 101 Ja | 16 Nein | 0 Enth. | 8 Abw.
-[facet] {Index:{ByteStart:58 ByteEnd:137} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519 DID: Tag:}]}
+[facet] {Index:{ByteStart:67 ByteEnd:146} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519 DID: Tag:}]}
 
 [post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -3955,7 +3955,7 @@ Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 5/0/0/2
 
-➡️ Nächster Schritt: Stadtrat, Frist 24 Monate
+➡️ Nächster Schritt: Stadtrat, Weisung, Frist 24 Monate
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich
@@ -3979,7 +3979,7 @@ Grüne 14/0/0/0
 AL 8/0/0/0
 Die Mitte 5/0/0/2
 
-➡️ Nächster Schritt: Stadtrat, Frist 24 Monate
+➡️ Nächster Schritt: Stadtrat, Weisung, Frist 24 Monate
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-519
 Daten: Open Data Zürich

@@ -17,10 +17,10 @@ func crowdedProcess() votes.Process {
 	p := votes.Process{Next: strings.TrimSpace(string(next[:votes.MaxNextRunes]))}
 	for i := 0; i < votes.MaxProcessSteps; i++ {
 		state := votes.StepDone
-		switch {
-		case i == 2:
+		switch i {
+		case votes.MaxProcessSteps - 2:
 			state = votes.StepCurrent
-		case i > 2:
+		case votes.MaxProcessSteps - 1:
 			state = votes.StepNext
 		}
 		p.Steps = append(p.Steps, votes.ProcessStep{Label: "Kommission des Ständerats", Detail: detail, State: state})
