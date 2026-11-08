@@ -84,6 +84,8 @@ type ProcessStep struct {
 	// Ablehnung"). Optional.
 	Detail string
 	State  StepState
+	// Skipped is how many steps a StepSkipped placeholder stands for.
+	Skipped int
 }
 
 // StepState is where a step stands relative to the vote a post reports.
@@ -105,6 +107,10 @@ const (
 	// to its end in its favour: an adopted Schlussabstimmung. Like StepEnded
 	// no step follows it, but it is a step taken, not one that failed.
 	StepCompleted
+	// StepSkipped stands for steps taken before this vote that the card has
+	// no room for, so that leaving them out shows. It has no label of its own;
+	// Skipped says how many it replaces. See TrimHistory.
+	StepSkipped
 )
 
 // closes reports whether a state is this vote's step ending the business.
@@ -127,8 +133,10 @@ const MaxProcessSteps = 6
 const MaxNextRunes = 140
 
 // TrimHistory shortens the steps taken before a vote to at most room,
-// keeping the first — the filing, which dates the business — and the most
-// recent, which lead up to the vote. A business with a long history keeps its
+// keeping the first — where the business starts — and the most recent, which
+// lead up to the vote, with a StepSkipped placeholder between them for the
+// ones left out, so a reader sees that the path had more. The placeholder
+// takes one of the room's slots. A business with a long history keeps its
 // process rather than losing it to MaxProcessSteps; what it gives up is the
 // middle of a path the source still lists in full.
 func TrimHistory(done []ProcessStep, room int) []ProcessStep {
@@ -138,10 +146,12 @@ func TrimHistory(done []ProcessStep, room int) []ProcessStep {
 	if len(done) <= room {
 		return done
 	}
-	if room == 1 {
-		return done[len(done)-1:]
+	if room < 3 {
+		return done[len(done)-room:]
 	}
-	return append(append([]ProcessStep(nil), done[0]), done[len(done)-room+1:]...)
+	recent := done[len(done)-room+2:]
+	gap := ProcessStep{State: StepSkipped, Skipped: len(done) - 1 - len(recent)}
+	return append(append([]ProcessStep{done[0]}, gap), recent...)
 }
 
 // Ended reports whether the vote ended the business.
@@ -170,6 +180,12 @@ func (p Process) Validate() error {
 
 	current, next := -1, 0
 	for i, s := range p.Steps {
+		if s.State == StepSkipped {
+			if current >= 0 || s.Skipped < 1 {
+				return fmt.Errorf("step %d skips %d steps, after this vote's step: only steps taken can be skipped", i+1, s.Skipped)
+			}
+			continue
+		}
 		if strings.TrimSpace(s.Label) == "" {
 			return fmt.Errorf("step %d has no label", i+1)
 		}

@@ -1,6 +1,7 @@
 package votes
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -176,14 +177,40 @@ func TestTrimHistory(t *testing.T) {
 	labels := func(s []ProcessStep) string {
 		var out []string
 		for _, x := range s {
+			if x.State == StepSkipped {
+				out = append(out, fmt.Sprintf("(%d)", x.Skipped))
+				continue
+			}
 			out = append(out, x.Label)
 		}
 		return strings.Join(out, ",")
 	}
-	all := steps("a", "b", "c", "d", "e")
-	for room, want := range map[int]string{0: "", 1: "e", 2: "a,e", 3: "a,d,e", 5: "a,b,c,d,e", 9: "a,b,c,d,e"} {
+	all := steps("a", "b", "c", "d", "e", "f")
+	for room, want := range map[int]string{0: "", 1: "f", 2: "e,f", 3: "a,(4),f", 4: "a,(3),e,f", 6: "a,b,c,d,e,f", 9: "a,b,c,d,e,f"} {
 		if got := labels(TrimHistory(all, room)); got != want {
-			t.Errorf("TrimHistory(5 steps, %d) = %q, want %q", room, got, want)
+			t.Errorf("TrimHistory(6 steps, %d) = %q, want %q", room, got, want)
 		}
 	}
+}
+
+// A trimmed history is a valid one: the placeholder needs no label, but it
+// may stand only among the steps taken.
+func TestValidate_SkippedSteps(t *testing.T) {
+	p := open()
+	p.Steps = append(TrimHistory(steps6(), 4), p.Steps[1:]...)
+	if err := p.Validate(); err != nil {
+		t.Errorf("trimmed history is invalid: %v", err)
+	}
+	p.Steps = append(p.Steps, ProcessStep{State: StepSkipped, Skipped: 2})
+	if p.Validate() == nil {
+		t.Error("a skip after this vote's step passed")
+	}
+}
+
+func steps6() []ProcessStep {
+	var s []ProcessStep
+	for _, l := range []string{"a", "b", "c", "d", "e", "f"} {
+		s = append(s, ProcessStep{Label: l, State: StepDone})
+	}
+	return s
 }

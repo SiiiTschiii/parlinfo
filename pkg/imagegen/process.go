@@ -202,11 +202,24 @@ func statusSteps(p *votes.Process, fonts *fontSet, maxLines int) []statusStep {
 	width := imgWidth - 2*padding - stepMarkCol - stepTextGap
 	steps := make([]statusStep, len(p.Steps))
 	for i, s := range p.Steps {
+		if s.State == votes.StepSkipped {
+			steps[i] = statusStep{label: skippedLabel(s.Skipped), state: s.State}
+			continue
+		}
 		detail := wrapText(fonts.partyNum, s.Detail, width)
 		detail = ellipsizeLines(fonts.partyNum, detail, width, titleBlockHeight(fonts.partyNum, maxLines))
 		steps[i] = statusStep{label: s.Label, detail: detail, state: s.State}
 	}
 	return steps
+}
+
+// skippedLabel is what the card prints where steps were left out: the count,
+// so a reader knows the path was longer than the card shows.
+func skippedLabel(n int) string {
+	if n == 1 {
+		return "1 weiterer Schritt"
+	}
+	return fmt.Sprintf("%d weitere Schritte", n)
 }
 
 // stepHeight is the space one step takes: its label line and its detail.
@@ -315,10 +328,17 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 			if i > 0 {
 				// The line into this step: solid where the business has been,
 				// dashed where it has yet to go.
-				drawStepConnector(img, markX+stepMarkSize/2, prevMarkBottom+stepMarkHalo+4, markY-stepMarkHalo-4, s.state == votes.StepNext, bg)
+				// Dotted, too, into and out of steps left out: the line does not
+				// claim the steps on either side follow one another.
+				dashed := s.state == votes.StepNext || s.state == votes.StepSkipped || steps[i-1].state == votes.StepSkipped
+				drawStepConnector(img, markX+stepMarkSize/2, prevMarkBottom+stepMarkHalo+4, markY-stepMarkHalo-4, dashed, bg)
 			}
 			drawStepMark(img, markX, markY, s.state, bg)
-			drawShadowedText(img, fonts.stepLabel, nil, textX, base, s.label, bg)
+			if s.state == votes.StepSkipped {
+				drawTrackedText(img, fonts.partyNum, textX, base, s.label, 0, blend(bg, 0xB0))
+			} else {
+				drawShadowedText(img, fonts.stepLabel, nil, textX, base, s.label, bg)
+			}
 			for j, line := range s.detail {
 				y := cur.y + lineHeight(fonts.stepLabel) + j*lineHeight(fonts.partyNum) + fonts.partyNum.Metrics().Ascent.Ceil()
 				drawShadowedText(img, fonts.partyNum, nil, textX, y, line, bg)
@@ -376,6 +396,12 @@ func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGB
 		drawMask(img, strokeMask(kind, size), x, y, bg)
 	case votes.StepNext:
 		drawMask(img, circleMask(size, 0.09, 0, 12), x, y, blend(bg, 0x99))
+	case votes.StepSkipped:
+		// Three dots down the line, where a marker would stand.
+		dot := circleMask(size/6, 0, 0)
+		for i := -1; i <= 1; i++ {
+			drawMask(img, dot, x+size/2-size/12, y+size/2-size/12+i*size/4, blend(bg, 0xB0))
+		}
 	}
 }
 
@@ -439,6 +465,9 @@ func statusAlt(group []votes.Vote) string {
 			state = "Diese Abstimmung"
 		case votes.StepNext:
 			state = "Noch offen"
+		case votes.StepSkipped:
+			lines = append(lines, "… "+skippedLabel(s.Skipped))
+			continue
 		}
 		line := state + ": " + s.Label
 		if d := strings.TrimSpace(s.Detail); d != "" {

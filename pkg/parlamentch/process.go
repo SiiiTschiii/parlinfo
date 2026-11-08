@@ -151,7 +151,7 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 		return nil, err
 	}
 	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
-	steps = append(steps, votes.ProcessStep{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent})
+	steps = append(steps, votes.ProcessStep{Label: "Nationalrat", Detail: dated(v.DateString(), "Annahme"), State: votes.StepCurrent})
 
 	if businessType == typePostulat || otherChamber {
 		steps = append(steps, votes.ProcessStep{Label: "Überwiesen an den Bundesrat", State: votes.StepNext})
@@ -215,12 +215,19 @@ func (c *Client) closingProcess(id int64, v votes.Vote, step votes.ProcessStep) 
 		return nil, err
 	}
 	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
+	step.Detail = dated(v.DateString(), step.Detail)
 	return &votes.Process{Steps: append(steps, step), Next: processDone}, nil
 }
 
-// history is the business's steps before the vote: its filing, the
-// Bundesrat's opinion where it gave one, and each earlier decision of either
-// chamber. otherChamber reports whether the Ständerat decided it before.
+// history is the business's steps before the vote, as parlament.ch dates and
+// words them.
+//
+// It opens with the filing, the "Einreichungsdatum" the business page heads
+// every business with, and for a Vorstoss the Bundesrat's opinion, from the
+// business's status history. Then every decision of either chamber on the vote's bill, in order: those of
+// the days before, and those the other chamber took on the vote's own day,
+// which the service dates but does not time. otherChamber reports whether the
+// Ständerat decided it before.
 func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b processBusinessDTO, otherChamber bool, err error) {
 	day := v.DateString()
 
@@ -237,25 +244,28 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 	}
 	b = bs[0]
 
-	var statuses []statusDTO
-	if err = c.get("/BusinessStatus", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d", id),
-	}, &statuses); err != nil {
-		return
-	}
-	if d := odataDay(b.SubmissionDate); d != "" {
-		steps = append(steps, votes.ProcessStep{Label: "Eingereicht", Detail: dayDE(d), State: votes.StepDone})
-	}
-	for _, s := range statuses {
-		if strings.TrimSpace(s.BusinessStatusName) != "Stellungnahme zum Vorstoss liegt vor" || odataDay(s.BusinessStatusDate) >= day {
-			continue
+	{
+		var statuses []statusDTO
+		if err = c.get("/BusinessStatus", query{
+			"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d", id),
+		}, &statuses); err != nil {
+			return
 		}
-		step := votes.ProcessStep{Label: "Stellungnahme zum Vorstoss liegt vor", State: votes.StepDone}
-		if p := strings.TrimSpace(b.FederalCouncilProposalText); p != "" {
-			step.Detail = "Antrag des Bundesrates: " + p
+		if d := odataDay(b.SubmissionDate); d != "" {
+			steps = append(steps, votes.ProcessStep{Label: "Eingereicht", Detail: dayDE(d), State: votes.StepDone})
 		}
-		steps = append(steps, step)
-		break
+		for _, s := range statuses {
+			d := odataDay(s.BusinessStatusDate)
+			if strings.TrimSpace(s.BusinessStatusName) != "Stellungnahme zum Vorstoss liegt vor" || d >= day {
+				continue
+			}
+			text := ""
+			if p := strings.TrimSpace(b.FederalCouncilProposalText); p != "" {
+				text = "Antrag des Bundesrates: " + p
+			}
+			steps = append(steps, votes.ProcessStep{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: dated(d, text), State: votes.StepDone})
+			break
+		}
 	}
 
 	bill, err := c.billOf(id, c.labels[v.SourceID].billNumber)
@@ -266,21 +276,33 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 	if err != nil {
 		return
 	}
-	// The first decision of each chamber is what a reader needs: a business
-	// that went back and forth has many more, and the card has room for few.
-	seen := map[string]bool{}
 	for _, r := range resolutions {
 		council := strings.TrimSpace(r.CouncilName)
-		if council == "" || seen[council] || odataDay(r.ResolutionDate) >= day {
+		d := odataDay(r.ResolutionDate)
+		// The Nationalrat's own decisions of the day are this vote's, which
+		// the adapter states itself. Committees' decisions carry no council
+		// and are not the chambers' chronology.
+		if council == "" || d > day || (d == day && council == "Nationalrat") {
 			continue
 		}
-		seen[council] = true
-		steps = append(steps, votes.ProcessStep{Label: council, Detail: strings.TrimSpace(r.ResolutionText), State: votes.StepDone})
+		steps = append(steps, votes.ProcessStep{Label: council, Detail: dated(d, strings.TrimSpace(r.ResolutionText)), State: votes.StepDone})
 		if council == "Ständerat" {
 			otherChamber = true
 		}
 	}
 	return
+}
+
+// dated prefixes a step's text with the day it was taken, as the business
+// page prints it beside each decision.
+func dated(day, text string) string {
+	if day == "" {
+		return text
+	}
+	if text == "" {
+		return dayDE(day)
+	}
+	return dayDE(day) + " · " + text
 }
 
 // billOf is the bill a vote was on: the one numbered billNumber, or the

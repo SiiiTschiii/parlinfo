@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -100,8 +101,8 @@ func TestProcess_RealBusinesses(t *testing.T) {
 				swiss(2024, 3, 7, 12, 51)),
 			steps: []votes.ProcessStep{
 				{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
-				{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
-				{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent},
+				{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "26.02.2024 · Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
 				{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
 			},
 			next: "In Kommission des Ständerats (SGK-S)",
@@ -122,15 +123,19 @@ func TestProcess_RealBusinesses(t *testing.T) {
 		},
 		{
 			// 24.065 has two bills; the vote names its own, and the history
-			// is that bill's alone.
+			// is that bill's chronology, as the business page lists it under
+			// Entwurf 1, after the business's filing: the Ständerat's
+			// Schlussabstimmung of the same day included.
 			name: "Schlussabstimmung adopted",
 			vote: onBill(c, processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
 				"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8)), 1),
 			steps: []votes.ProcessStep{
 				{Label: "Eingereicht", Detail: "14.08.2024", State: votes.StepDone},
-				{Label: "Nationalrat", Detail: "Beschluss abweichend vom Entwurf", State: votes.StepDone},
-				{Label: "Ständerat", Detail: "Abweichung", State: votes.StepDone},
-				{Label: "Nationalrat", Detail: "Annahme in der Schlussabstimmung", State: votes.StepCompleted},
+				{Label: "Nationalrat", Detail: "16.09.2025 · Beschluss abweichend vom Entwurf", State: votes.StepDone},
+				{Label: "Ständerat", Detail: "08.06.2026 · Abweichung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "11.06.2026 · Zustimmung", State: votes.StepDone},
+				{Label: "Ständerat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepCompleted},
 			},
 			next: processDone,
 		},
@@ -154,7 +159,7 @@ func TestProcess_RealBusinesses(t *testing.T) {
 				t.Errorf("steps =\n%+v\nwant\n%+v", p.Steps, tt.steps)
 			}
 			for _, s := range p.Steps {
-				if s.State == votes.StepDone && s.Label == "Nationalrat" && s.Detail == "Annahme" {
+				if s.State == votes.StepDone && s.Label == "Nationalrat" && strings.HasPrefix(s.Detail, tt.vote.Date.Format("02.01.2006")) {
 					t.Errorf("a decision taken on the vote's own day or later is listed as history: %+v", s)
 				}
 			}

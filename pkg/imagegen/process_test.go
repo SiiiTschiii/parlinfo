@@ -138,3 +138,32 @@ func TestProcessCards_SayWhatComesNext(t *testing.T) {
 		})
 	}
 }
+
+// Steps left out of a long history show on the card and in its description,
+// so neither reads as though the steps on either side followed one another.
+func TestStatusCard_ShowsSkippedSteps(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	group := testfixtures.ProcessNationalratMotion()
+	p := *votes.GroupProcess(group)
+	p.Steps = append([]votes.ProcessStep{p.Steps[0], {State: votes.StepSkipped, Skipped: 3}}, p.Steps[1:]...)
+	if err := p.Validate(); err != nil {
+		t.Fatalf("invalid: %v", err)
+	}
+	for i := range group {
+		group[i].Affair.Process = &p
+	}
+	bg := SelectColor(group[0].Jurisdiction, group[0].Affair.Number)
+	status := carouselCards(group, bg, fonts)[1]
+	if !strings.Contains(status.alt, "… 3 weitere Schritte") {
+		t.Errorf("alt text does not say steps were left out:\n%s", status.alt)
+	}
+	if got := statusSteps(&p, fonts, 2)[1].label; got != "3 weitere Schritte" {
+		t.Errorf("skip label = %q", got)
+	}
+	if _, err := renderCard(status, bg, fonts); err != nil {
+		t.Fatal(err)
+	}
+}

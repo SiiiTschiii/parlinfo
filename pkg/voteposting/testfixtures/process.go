@@ -81,8 +81,8 @@ func ProcessNationalratMotion() []votes.Vote {
 	return withProcess([]votes.Vote{v}, votes.Process{
 		Steps: []votes.ProcessStep{
 			{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
-			{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
-			{Label: "Nationalrat", Detail: "Annahme", State: votes.StepCurrent},
+			{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "26.02.2024 · Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
+			{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
 			{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
 		},
 		Next: "In Kommission des Ständerats (SGK-S)",
@@ -118,7 +118,7 @@ func ProcessGemeinderatPostulat() []votes.Vote {
 			{Label: "Eingang, Frist 3 Monate", Detail: "16.09.2026", State: votes.StepDone},
 			{Label: "Stadtrat, Entgegennahme", Detail: "23.09.2026", State: votes.StepDone},
 			{Label: "Ablehnung, beantragt", Detail: "30.09.2026", State: votes.StepDone},
-			{Label: "Gemeinderat", Detail: "Überweisung", State: votes.StepCurrent},
+			{Label: "Gemeinderat", Detail: "21.10.2026 · Überweisung", State: votes.StepCurrent},
 			{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext},
 		},
 		Next: "Stadtrat, Weisung, Frist 24 Monate",
@@ -150,7 +150,7 @@ func ProcessGemeinderatAbgelehnt() []votes.Vote {
 		Steps: []votes.ProcessStep{
 			{Label: "Eingang, Frist 3 Monate", Detail: "08.07.2026", State: votes.StepDone},
 			{Label: "Stadtrat, Entgegennahme", Detail: "26.08.2026", State: votes.StepDone},
-			{Label: "Gemeinderat", Detail: "Ablehnung", State: votes.StepEnded},
+			{Label: "Gemeinderat", Detail: "26.08.2026 · Ablehnung", State: votes.StepEnded},
 		},
 		Next: "Abgeschlossen",
 	})

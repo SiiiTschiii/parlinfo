@@ -134,7 +134,7 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 	switch strings.TrimSpace(v.Decision) {
 	case "Nein":
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
-		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: stepAblehnung, State: votes.StepEnded})
+		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepAblehnung, State: votes.StepEnded})
 		return &votes.Process{Steps: steps, Next: processClosed}
 	case "Ja":
 		if g.Art == "Motion" && !motionGoesToStadtrat(steps) {
@@ -142,7 +142,7 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 		}
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
 		steps = append(steps,
-			votes.ProcessStep{Label: "Gemeinderat", Detail: stepUeberweisung, State: votes.StepCurrent},
+			votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepUeberweisung, State: votes.StepCurrent},
 			votes.ProcessStep{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext})
 		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate"}
 	}
