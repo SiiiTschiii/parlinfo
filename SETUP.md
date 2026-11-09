@@ -388,8 +388,9 @@ per language. The channels are `chparl-fr` and `chparl-it`: every setting is the
 does not even start until its `JURISDICTION_NATIONALRAT_<FR|IT>_ENABLED` is
 `true`.
 
-**Tagging is off** on both unless `CHPARL_<FR|IT>_TAGGING` is `true`: a tag
-notifies the member, and the accounts share the German roster.
+Tagging is on unless `CHPARL_<FR|IT>_TAGGING` is `false`, as on every
+channel. Set it to `false` in step 3 to go live without notifying anyone, and
+delete it when tagging should start.
 
 Every command below works for either language. Set which one first:
 
@@ -419,6 +420,7 @@ the other bots', and an age limit that still covers its oldest vote when its
 turn comes:
 
 ```bash
+gh variable set CHPARL_${L}_TAGGING --body false
 gh variable set JURISDICTION_NATIONALRAT_${L}_POST_FROM --body 2026-09-28
 gh variable set CHPARL_${L}_IG_MAX_POSTS_PER_RUN --body 1
 gh variable set CHPARL_${L}_FB_MAX_POSTS_PER_RUN --body 1
@@ -433,6 +435,12 @@ env "JURISDICTION_NATIONALRAT_${L}_POST_FROM=2026-09-28" "MAX_VOTE_AGE_DAYS_NATI
 ```
 
 ### 4. Go live
+
+Check that tagging is off, if it should be: this prints `false`.
+
+```bash
+gh variable get CHPARL_${L}_TAGGING
+```
 
 ```bash
 gh variable set JURISDICTION_NATIONALRAT_${L}_ENABLED --body true

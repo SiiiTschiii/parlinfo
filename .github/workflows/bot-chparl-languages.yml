@@ -47,8 +47,7 @@ jobs:
       CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN }}
       CHPARL_FR_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_IG_MAX_POSTS_PER_RUN }}
       CHPARL_FR_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_FB_MAX_POSTS_PER_RUN }}
-      # Off unless the variable says "true": a tag notifies the member.
-      CHPARL_FR_TAGGING: ${{ vars.CHPARL_FR_TAGGING || 'false' }}
+      CHPARL_FR_TAGGING: ${{ vars.CHPARL_FR_TAGGING }}
       # Its own override, so a catch-up can look further back than the other
       # bots without changing what they fetch.
       MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_FR || vars.MAX_VOTES_TO_CHECK }}
@@ -159,8 +158,7 @@ jobs:
       CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN }}
       CHPARL_IT_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_IG_MAX_POSTS_PER_RUN }}
       CHPARL_IT_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_FB_MAX_POSTS_PER_RUN }}
-      # Off unless the variable says "true": a tag notifies the member.
-      CHPARL_IT_TAGGING: ${{ vars.CHPARL_IT_TAGGING || 'false' }}
+      CHPARL_IT_TAGGING: ${{ vars.CHPARL_IT_TAGGING }}
       # Its own override, so a catch-up can look further back than the other
       # bots without changing what they fetch.
       MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_IT || vars.MAX_VOTES_TO_CHECK }}
