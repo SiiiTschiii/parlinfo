@@ -70,7 +70,11 @@ func main() {
 			}
 		}
 
-		contactMapper := loadContacts(jurisdictions)
+		// As main.go: a channel with tagging off previews without tags.
+		var contactMapper *contacts.Mapper
+		if channel.Tags() {
+			contactMapper = loadContacts(jurisdictions)
+		}
 
 		if showX {
 			maxPosts := pick(*maxPostsFlag, channel.EnvInt("X_MAX_POSTS_PER_RUN", 10))
