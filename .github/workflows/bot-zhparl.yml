@@ -119,6 +119,8 @@ jobs:
           ZURICH_X_MAX_CHARS: ${{ vars.ZURICH_X_MAX_CHARS }}
           ZURICH_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_BLUESKY_MAX_POSTS_PER_RUN }}
           ZURICH_IG_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_IG_MAX_POSTS_PER_RUN }}
+          # Tagging is on unless this is "false"; see Channel.Tags.
+          ZURICH_TAGGING: ${{ vars.ZURICH_TAGGING }}
           ZURICH_FB_MAX_POSTS_PER_RUN: ${{ vars.ZURICH_FB_MAX_POSTS_PER_RUN }}
 
           MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK }}
