@@ -371,8 +371,9 @@ gh workflow run bot-chparl.yml
 `JURISDICTION_NATIONALRAT_POST_FROM` is the first sitting date posted, on every
 platform. The vote logs start empty on that date, so nothing before it is ever
 posted and nothing has to be seeded. Votes also have to be inside the age
-window (`MAX_VOTE_AGE_DAYS_NATIONALRAT`, 14 days unless overridden), so a date
-further back than that posts nothing until the override is raised. Until the switch is set,
+window (`MAX_VOTE_AGE_DAYS_NATIONALRAT`, 14 days unless overridden). To backfill
+votes older than that window, raise the override; newer eligible votes still
+post regardless of how far back the start date is. Until the switch is set,
 every scheduled run fails with "No jurisdiction is enabled". That is the switch
 working as designed; `gh workflow disable bot-chparl.yml` silences it until
 then. To stop posting again (the runs then fail the same way):
