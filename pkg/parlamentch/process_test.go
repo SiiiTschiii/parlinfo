@@ -206,6 +206,8 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 			"Adopter le point 1", "Rejeter le point 1", swiss(2026, 9, 14, 18, 1))},
 		"unknown type": {processVote(c, "f", "20264002", "Petition", "", "angenommen", "",
 			"", "", swiss(2026, 9, 14, 18, 1))},
+		"no vote date": {processVote(c, "g", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
+			"Antrag der Mehrheit (Annahme der Motion)", "Antrag des Bundesrates (Ablehnung der Motion)", time.Time{})},
 	}
 	for name, group := range cases {
 		t.Run(name, func(t *testing.T) {

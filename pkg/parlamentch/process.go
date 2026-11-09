@@ -74,7 +74,9 @@ type preconsultationDTO struct {
 
 // Process implements votes.ProcessSource.
 func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
-	if len(group) == 0 {
+	// Without the vote's date there is no telling which decisions came before
+	// it.
+	if len(group) == 0 || group[0].DateString() == "" {
 		return nil, nil
 	}
 	id, err := strconv.ParseInt(group[0].Affair.ID, 10, 64)

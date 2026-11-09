@@ -3,6 +3,7 @@ package zurichapi
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -126,5 +127,42 @@ func TestProcessFor_NoRule(t *testing.T) {
 	postulat.Art = "Postulat"
 	if p := processFor(unknown, postulat); p != nil {
 		t.Errorf("vote without a Schlussresultat got %+v", p)
+	}
+}
+
+// Steps of the voting day itself lead up to the vote unless they are its
+// result: on 2026/392 the Stadtrat answered on the day of the vote.
+func TestProcessFor_SameDaySteps(t *testing.T) {
+	g := processGeschaeft{GRNr: "2026/392", Art: "Postulat"}
+	for _, s := range []struct{ name, start, text string }{
+		{"Eingang, Frist 3 Monate", "2026-07-08T00:00:00.000", "08.07.2026"},
+		{"Stadtrat, Entgegennahme", "2026-08-26T00:00:00.000", "26.08.2026"},
+		{"Ablehnung", "2026-08-26T00:00:00.000", "26.08.2026"},
+	} {
+		st := processStep{Name: s.name}
+		st.Datum.Start, st.Datum.Text = s.start, s.text
+		g.Steps = append(g.Steps, st)
+	}
+	p := processFor(schlussabstimmung("2026/392", "Nein", day(2026, 8, 26)), g)
+	if p == nil {
+		t.Fatal("no process")
+	}
+	var labels []string
+	for _, s := range p.Steps {
+		labels = append(labels, s.Label+" "+s.Detail)
+	}
+	want := []string{"Eingang, Frist 3 Monate 08.07.2026", "Stadtrat, Entgegennahme 26.08.2026", "Gemeinderat 26.08.2026 · Ablehnung"}
+	if strings.Join(labels, "|") != strings.Join(want, "|") {
+		t.Errorf("steps = %q, want %q", labels, want)
+	}
+}
+
+// A vote without a date gets no process: nothing says which steps came
+// before it.
+func TestProcessFor_NoDate(t *testing.T) {
+	g := motion("Eingang, Frist 3 Monate", "Textänderung, beantragt")
+	g.Art = "Postulat"
+	if p := processFor(schlussabstimmung("2026/1", "Nein", time.Time{}), g); p != nil {
+		t.Errorf("undated vote got %+v", p)
 	}
 }

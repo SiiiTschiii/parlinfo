@@ -114,6 +114,10 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 		return nil
 	}
 	day := v.DateString()
+	// Without the vote's date there is no telling which steps came before it.
+	if day == "" {
+		return nil
+	}
 	// PARIS lists steps in the order they were entered, which is not always
 	// the order they happened in.
 	sorted := append([]processStep(nil), g.Steps...)
@@ -121,10 +125,13 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 	var steps []votes.ProcessStep
 	for _, s := range sorted {
 		start := strings.TrimSpace(s.Datum.Start)
-		if len(start) < 10 || start[:10] >= day {
+		name := strings.TrimSpace(s.Name)
+		// Steps of the voting day count unless they record the vote's own
+		// result: the Stadtrat's answer often comes the same day, and on
+		// 2026/392 it did.
+		if len(start) < 10 || start[:10] > day || (start[:10] == day && isResultStep(name)) {
 			continue
 		}
-		name := strings.TrimSpace(s.Name)
 		if strings.Contains(name, "Textänderung") {
 			return nil
 		}
@@ -147,6 +154,13 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate"}
 	}
 	return nil
+}
+
+// isResultStep reports whether a PARIS step records the result of a
+// Schlussabstimmung, which the adapter states itself, rather than something
+// that led up to it.
+func isResultStep(name string) bool {
+	return strings.HasPrefix(name, "Überweisung") || name == stepAblehnung || strings.HasPrefix(name, "Umwandlung")
 }
 
 // motionGoesToStadtrat reports whether a Motion's history is the one where a
