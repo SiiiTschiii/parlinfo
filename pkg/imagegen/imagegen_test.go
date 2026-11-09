@@ -31,12 +31,16 @@ func TestGenerateCarousel_ValidJPEG(t *testing.T) {
 			// Single vote: 1 combined image. Multi-vote: 1 title + 1 result per
 			// vote. A Wahlgeschäft is one text card however many roll calls it
 			// holds, because a result card would render a headcount as a result.
+			// A group that reports its process adds the status card.
 			var expected int
 			switch {
 			case votes.IsWahlgeschaeftGroup(group), len(group) == 1:
 				expected = 1
 			default:
 				expected = 1 + len(group)
+			}
+			if HasStatusCard(group) {
+				expected++
 			}
 			if len(images) != expected {
 				t.Errorf("expected %d images, got %d", expected, len(images))
@@ -95,7 +99,8 @@ func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
 			if len(title) > 0 && !strings.Contains(cards[0].Alt, string(title)) {
 				t.Errorf("first card's alt text does not name the business %q:\n%s", string(title), cards[0].Alt)
 			}
-			if len(cards) == len(group)+1 {
+			multi := len(group) > 1 && !votes.IsWahlgeschaeftGroup(group)
+			if multi {
 				for i, v := range group {
 					// The overview lists every vote's result, as the card does.
 					// Where ten of them crowd the cap their labels are cut
@@ -108,8 +113,8 @@ func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
 						t.Errorf("overview alt text does not list vote %d:\n%s", i+1, cards[0].Alt)
 					}
 					counts := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
-					if !strings.Contains(cards[i+1].Alt, counts) {
-						t.Errorf("result card %d alt text lacks its counts %q:\n%s", i+1, counts, cards[i+1].Alt)
+					if c := cards[ResultCardIndex(group, i)]; !strings.Contains(c.Alt, counts) {
+						t.Errorf("result card %d alt text lacks its counts %q:\n%s", i+1, counts, c.Alt)
 					}
 				}
 			}
@@ -120,8 +125,8 @@ func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
 					continue
 				}
 				card := cards[0]
-				if len(cards) == len(group)+1 {
-					card = cards[i+1]
+				if multi {
+					card = cards[ResultCardIndex(group, i)]
 				}
 				if !strings.Contains(card.Alt, outcome) {
 					t.Errorf("vote %d alt text lacks the Auswahl outcome %q:\n%s", i+1, outcome, card.Alt)

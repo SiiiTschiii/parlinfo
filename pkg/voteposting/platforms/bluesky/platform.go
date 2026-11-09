@@ -185,7 +185,10 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 
 		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, p.uploadImages(reply.Images))
 		if err != nil {
-			return votelog.PostRef{}, false, fmt.Errorf("failed to post reply %d: %w", i+1, err)
+			// The root is live, so the vote is published and must be logged:
+			// returning the ref alongside the error is what stops the next run
+			// from posting it again. See platforms.Platform.Post.
+			return votelog.PostRef{ID: rootRef.URI, URL: rootURL}, false, fmt.Errorf("failed to post reply %d (root %s is already live): %w", i+1, rootURL, err)
 		}
 		fmt.Printf("  ↳ Reply %d created (uri: %s)\n", i+1, ref.URI)
 		parentRef = ref
