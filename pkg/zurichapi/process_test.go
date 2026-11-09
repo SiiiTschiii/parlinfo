@@ -1,6 +1,7 @@
 package zurichapi
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -164,5 +165,21 @@ func TestProcessFor_NoDate(t *testing.T) {
 	g.Art = "Postulat"
 	if p, _ := processFor(schlussabstimmung("2026/1", "Nein", time.Time{}), g); p != nil {
 		t.Errorf("undated vote got %+v", p)
+	}
+}
+
+// Only the vote that decides the business is a Schlussabstimmung here: PARIS
+// titles a deadline extension "… Schlussabstimmung Fristverlängerung", and its
+// Ja is no Überweisung.
+func TestProcess_OnlyTheDecidingVote(t *testing.T) {
+	c := NewClient()
+	for _, subtitle := range []string{"2021_0183 Schlussabstimmung Fristverlängerung 2", "2026_0098 Dringlicherklärung", "Fristverlängerung Schlussabstimmung"} {
+		v := schlussabstimmung("2026/1", "Ja", day(2026, 3, 1))
+		v.Subtitle = subtitle
+		p, err := c.Process([]votes.Vote{v})
+		var none votes.NoProcess
+		if p != nil || !errors.As(err, &none) {
+			t.Errorf("%q: Process = %+v, %v; want no process", subtitle, p, err)
+		}
 	}
 }

@@ -109,7 +109,8 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 		}
 		return c.filedProcess(id, t, v)
 	case typeParlIv, typeStandesIv:
-		if v, why := c.decisiveFiledVote(group); why == "" {
+		v, why := c.decisiveFiledVote(group)
+		if why == "" {
 			switch v.Outcome {
 			case outcomeNoLeave:
 				return c.closingProcess(id, v, votes.ProcessStep{
@@ -117,6 +118,11 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 			case outcomeLeave:
 				return nil, none("Folge gegeben: nächster Status nicht eindeutig (\"Vorprüfung - in Kommission des Ständerates\" oder \"In Kommission des Ständerats\")")
 			}
+		}
+		// A vote on leave whose meaning cannot be read says so, rather than
+		// being reported as no Schlussabstimmung, which it never claimed to be.
+		if len(group) == 1 && !isFinalVote(group[0].Subtitle) && strings.TrimSpace(group[0].Subtitle) == "" && why != "" {
+			return nil, none(why)
 		}
 		return c.finalVoteProcess(id, group)
 	case typeFederalCouncil:

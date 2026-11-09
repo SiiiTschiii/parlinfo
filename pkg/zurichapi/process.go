@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/url"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -35,6 +36,12 @@ import (
 
 var _ votes.ProcessSource = (*Client)(nil)
 
+// reSchlussabstimmung matches the title PARIS gives the vote that decides a
+// business, "2026_0351 Schlussabstimmung", and nothing else: it gives a
+// deadline extension "2021_0183 Schlussabstimmung Fristverlängerung 2", whose
+// Ja is no Überweisung.
+var reSchlussabstimmung = regexp.MustCompile(`^\d{4}_\d+ Schlussabstimmung$`)
+
 const (
 	stepUeberweisung = "Überweisung"
 	stepAblehnung    = "Ablehnung"
@@ -63,8 +70,8 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 	if len(group) != 1 {
 		return nil, none(fmt.Sprintf("%d Abstimmungen am selben Tag: nur eine Schlussabstimmung allein hat eine Regel", len(group)))
 	}
-	if !strings.HasSuffix(strings.TrimSpace(group[0].Subtitle), "Schlussabstimmung") {
-		return nil, none("keine Schlussabstimmung (" + strings.TrimSpace(group[0].Subtitle) + ")")
+	if !reSchlussabstimmung.MatchString(strings.TrimSpace(group[0].Subtitle)) {
+		return nil, none("keine Schlussabstimmung über das Geschäft (" + strings.TrimSpace(group[0].Subtitle) + ")")
 	}
 	g, err := c.fetchProcessGeschaeft(group[0].Affair.Number)
 	if err != nil {
