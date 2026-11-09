@@ -60,18 +60,27 @@ type processStep struct {
 
 // Process implements votes.ProcessSource.
 func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
-	if len(group) != 1 || !strings.HasSuffix(strings.TrimSpace(group[0].Subtitle), "Schlussabstimmung") {
-		return nil, nil
+	if len(group) != 1 {
+		return nil, none(fmt.Sprintf("%d Abstimmungen am selben Tag: nur eine Schlussabstimmung allein hat eine Regel", len(group)))
+	}
+	if !strings.HasSuffix(strings.TrimSpace(group[0].Subtitle), "Schlussabstimmung") {
+		return nil, none("keine Schlussabstimmung (" + strings.TrimSpace(group[0].Subtitle) + ")")
 	}
 	g, err := c.fetchProcessGeschaeft(group[0].Affair.Number)
 	if err != nil {
 		return nil, err
 	}
 	if g == nil {
-		return nil, nil
+		return nil, none("Geschäft " + group[0].Affair.Number + " nicht in PARIS gefunden")
 	}
-	return processFor(group[0], *g), nil
+	p, why := processFor(group[0], *g)
+	if p == nil {
+		return nil, none(why)
+	}
+	return p, nil
 }
+
+func none(reason string) error { return votes.NoProcess{Reason: reason} }
 
 // fetchProcessGeschaeft fetches a business by its GR number, or nil when PARIS
 // has none.
@@ -108,15 +117,21 @@ func parseProcessGeschaeft(body []byte, grNr string) (*processGeschaeft, error) 
 }
 
 // processFor builds the process of a Postulat or Motion from its PARIS record
-// and its Schlussabstimmung, or nil where no rule covers it.
-func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
-	if g.Art != "Postulat" && g.Art != "Motion" {
-		return nil
+// and its Schlussabstimmung, or nil and the reason where no rule covers it.
+func processFor(v votes.Vote, g processGeschaeft) (*votes.Process, string) {
+	switch g.Art {
+	case "Postulat", "Motion":
+	case "Weisung":
+		return nil, "Weisung: ein Ja ist \"Zustimmung\" oder \"Zustimmung, fakultatives Referendum, Frist 60 Tage\", und die Abstimmung sagt nicht, welches"
+	case "":
+		return nil, "Geschäftsart unbekannt"
+	default:
+		return nil, "Geschäftsart " + g.Art + ": keine Regel"
 	}
 	day := v.DateString()
 	// Without the vote's date there is no telling which steps came before it.
 	if day == "" {
-		return nil
+		return nil, "Abstimmung ohne Datum"
 	}
 	// PARIS lists steps in the order they were entered, which is not always
 	// the order they happened in.
@@ -133,7 +148,7 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 			continue
 		}
 		if strings.Contains(name, "Textänderung") {
-			return nil
+			return nil, "Textänderung im Verlauf (\"" + name + "\"): der Schritt der Abstimmung hat dann eine eigene Form"
 		}
 		steps = append(steps, votes.ProcessStep{Label: name, Detail: strings.TrimSpace(s.Datum.Text), State: votes.StepDone})
 	}
@@ -142,18 +157,18 @@ func processFor(v votes.Vote, g processGeschaeft) *votes.Process {
 	case "Nein":
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
 		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepAblehnung, State: votes.StepEnded})
-		return &votes.Process{Steps: steps, Next: processClosed}
+		return &votes.Process{Steps: steps, Next: processClosed}, ""
 	case "Ja":
 		if g.Art == "Motion" && !motionGoesToStadtrat(steps) {
-			return nil
+			return nil, "Motion, die der Stadtrat nur als Postulat oder gar nicht entgegennehmen will: ein Ja ist ebenso oft eine \"Umwandlung in Postulat\" wie eine Überweisung"
 		}
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
 		steps = append(steps,
 			votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepUeberweisung, State: votes.StepCurrent},
 			votes.ProcessStep{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext})
-		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate"}
+		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate"}, ""
 	}
-	return nil
+	return nil, "Schlussresultat \"" + v.Decision + "\": keine Regel"
 }
 
 // isResultStep reports whether a PARIS step records the result of a

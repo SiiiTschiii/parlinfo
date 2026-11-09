@@ -66,7 +66,7 @@ func TestProcessFor_RecordedPostulate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.grNr, func(t *testing.T) {
-			got := processFor(schlussabstimmung(tt.grNr, tt.decision, tt.day), recordedGeschaeft(t, tt.grNr))
+			got, _ := processFor(schlussabstimmung(tt.grNr, tt.decision, tt.day), recordedGeschaeft(t, tt.grNr))
 			if got == nil {
 				t.Fatal("no process")
 			}
@@ -96,16 +96,16 @@ func motion(steps ...string) processGeschaeft {
 func TestProcessFor_Motion(t *testing.T) {
 	v := func(decision string) votes.Vote { return schlussabstimmung("2026/1", decision, day(2026, 3, 1)) }
 
-	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme", "Ablehnung, beantragt")); p == nil || p.Next != "Stadtrat, Weisung, Frist 24 Monate" {
+	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme", "Ablehnung, beantragt")); p == nil || p.Next != "Stadtrat, Weisung, Frist 24 Monate" {
 		t.Errorf("contested motion the Stadtrat takes: %+v", p)
 	}
-	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p != nil {
+	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p != nil {
 		t.Errorf("motion the Stadtrat takes only as a Postulat got %+v", p)
 	}
-	if p := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Ablehnung")); p != nil {
+	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Ablehnung")); p != nil {
 		t.Errorf("motion the Stadtrat rejects got %+v", p)
 	}
-	if p := processFor(v("Nein"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p == nil || p.Next != "Abgeschlossen" {
+	if p, _ := processFor(v("Nein"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p == nil || p.Next != "Abgeschlossen" {
 		t.Errorf("rejected motion: %+v", p)
 	}
 }
@@ -114,18 +114,18 @@ func TestProcessFor_NoRule(t *testing.T) {
 	v := schlussabstimmung("2026/1", "Ja", day(2026, 3, 1))
 	weisung := motion("Stadtrat, Weisung", "Überweisung, SK FD (Sachkommission Finanzdepartement)")
 	weisung.Art = "Weisung"
-	if p := processFor(v, weisung); p != nil {
-		t.Errorf("Weisung got %+v", p)
+	if p, why := processFor(v, weisung); p != nil || !strings.Contains(why, "Zustimmung, fakultatives Referendum") {
+		t.Errorf("Weisung got %+v, reason %q", p, why)
 	}
 	changed := motion("Eingang, Frist 3 Monate", "Textänderung, beantragt")
 	changed.Art = "Postulat"
-	if p := processFor(v, changed); p != nil {
+	if p, _ := processFor(v, changed); p != nil {
 		t.Errorf("Postulat with a Textänderung got %+v", p)
 	}
 	unknown := schlussabstimmung("2026/1", "", day(2026, 3, 1))
 	postulat := motion("Eingang, Frist 3 Monate")
 	postulat.Art = "Postulat"
-	if p := processFor(unknown, postulat); p != nil {
+	if p, _ := processFor(unknown, postulat); p != nil {
 		t.Errorf("vote without a Schlussresultat got %+v", p)
 	}
 }
@@ -143,7 +143,7 @@ func TestProcessFor_SameDaySteps(t *testing.T) {
 		st.Datum.Start, st.Datum.Text = s.start, s.text
 		g.Steps = append(g.Steps, st)
 	}
-	p := processFor(schlussabstimmung("2026/392", "Nein", day(2026, 8, 26)), g)
+	p, _ := processFor(schlussabstimmung("2026/392", "Nein", day(2026, 8, 26)), g)
 	if p == nil {
 		t.Fatal("no process")
 	}
@@ -162,7 +162,7 @@ func TestProcessFor_SameDaySteps(t *testing.T) {
 func TestProcessFor_NoDate(t *testing.T) {
 	g := motion("Eingang, Frist 3 Monate", "Textänderung, beantragt")
 	g.Art = "Postulat"
-	if p := processFor(schlussabstimmung("2026/1", "Nein", time.Time{}), g); p != nil {
+	if p, _ := processFor(schlussabstimmung("2026/1", "Nein", time.Time{}), g); p != nil {
 		t.Errorf("undated vote got %+v", p)
 	}
 }

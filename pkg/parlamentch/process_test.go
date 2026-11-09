@@ -1,6 +1,7 @@
 package parlamentch
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -212,8 +213,9 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 	for name, group := range cases {
 		t.Run(name, func(t *testing.T) {
 			p, err := c.Process(group)
-			if p != nil || err != nil {
-				t.Errorf("Process = %+v, %v; want nothing", p, err)
+			var none votes.NoProcess
+			if p != nil || !errors.As(err, &none) || none.Reason == "" {
+				t.Errorf("Process = %+v, %v; want no process, with a reason", p, err)
 			}
 		})
 	}
@@ -234,7 +236,8 @@ func TestProcess_SeveralBillsNoProcess(t *testing.T) {
 	c := newProcessClient(t)
 	v := processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
 		"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8))
-	if p, err := c.Process([]votes.Vote{v}); p != nil || err != nil {
-		t.Errorf("Process = %+v, %v; want nothing", p, err)
+	var none votes.NoProcess
+	if p, err := c.Process([]votes.Vote{v}); p != nil || !errors.As(err, &none) {
+		t.Errorf("Process = %+v, %v; want no process, with a reason", p, err)
 	}
 }

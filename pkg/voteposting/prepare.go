@@ -96,6 +96,10 @@ func attachProcesses(src votes.Source, groups [][]votes.Vote) {
 			continue
 		}
 		p, err := ps.Process(group)
+		var none votes.NoProcess
+		if errors.As(err, &none) {
+			continue
+		}
 		if err != nil {
 			log.Printf("⚠️  no process for %s %s (%s): %v",
 				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)

@@ -77,18 +77,20 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 	// Without the vote's date there is no telling which decisions came before
 	// it.
 	if len(group) == 0 || group[0].DateString() == "" {
-		return nil, nil
+		return nil, none("Abstimmung ohne Datum")
 	}
 	id, err := strconv.ParseInt(group[0].Affair.ID, 10, 64)
 	if err != nil {
-		return nil, nil
+		return nil, none("Geschäftsnummer nicht lesbar")
 	}
 	p, err := c.process(id, group)
 	if errors.Is(err, errSeveralBills) {
-		return nil, nil
+		return nil, none("mehrere Entwürfe, und die Abstimmung nennt keinen")
 	}
 	return p, err
 }
+
+func none(reason string) error { return votes.NoProcess{Reason: reason} }
 
 // errSeveralBills stops a business with more than one bill when the vote does
 // not say which it was on. Such a business — a Volksinitiative and its
@@ -101,42 +103,54 @@ var errSeveralBills = errors.New("business has several bills, and the vote names
 func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 	switch t := group[0].Affair.Type; t {
 	case typeMotion, typePostulat:
-		v, ok := c.decisiveFiledVote(group)
-		if !ok {
-			return nil, nil
+		v, why := c.decisiveFiledVote(group)
+		if why != "" {
+			return nil, none(why)
 		}
 		return c.filedProcess(id, t, v)
 	case typeParlIv, typeStandesIv:
-		if v, ok := c.decisiveFiledVote(group); ok && v.Outcome == outcomeNoLeave {
-			return c.closingProcess(id, v, votes.ProcessStep{
-				Label: "Nationalrat", Detail: "Keine Folge gegeben", State: votes.StepEnded})
+		if v, why := c.decisiveFiledVote(group); why == "" {
+			switch v.Outcome {
+			case outcomeNoLeave:
+				return c.closingProcess(id, v, votes.ProcessStep{
+					Label: "Nationalrat", Detail: "Keine Folge gegeben", State: votes.StepEnded})
+			case outcomeLeave:
+				return nil, none("Folge gegeben: nächster Status nicht eindeutig (\"Vorprüfung - in Kommission des Ständerates\" oder \"In Kommission des Ständerats\")")
+			}
 		}
 		return c.finalVoteProcess(id, group)
 	case typeFederalCouncil:
 		return c.finalVoteProcess(id, group)
+	case "":
+		return nil, none("Geschäftsart unbekannt")
+	default:
+		return nil, none("Geschäftsart " + t + ": keine Regel")
 	}
-	return nil, nil
 }
 
 // decisiveFiledVote is the one vote of a group whose outcome the meanings
-// state, or false where there is not exactly one, or where it adopts the
-// business as amended.
-func (c *Client) decisiveFiledVote(group []votes.Vote) (votes.Vote, bool) {
+// state, or the reason there is none: not exactly one such vote, or one that
+// adopts the business as amended.
+func (c *Client) decisiveFiledVote(group []votes.Vote) (votes.Vote, string) {
 	var decisive []votes.Vote
 	for _, v := range group {
 		if v.Outcome != "" {
 			decisive = append(decisive, v)
 		}
 	}
-	if len(decisive) != 1 {
-		return votes.Vote{}, false
+	switch len(decisive) {
+	case 0:
+		return votes.Vote{}, "keine Abstimmung, deren Ausgang die Quelle nennt (z. B. über einzelne Punkte, Abschreibung oder Fristverlängerung)"
+	case 1:
+	default:
+		return votes.Vote{}, fmt.Sprintf("%d Abstimmungen mit Ausgang am selben Tag: welche entscheidet, ist nicht eindeutig", len(decisive))
 	}
 	v := decisive[0]
 	l := c.labels[v.SourceID]
 	if amended.MatchString(l.meaningYes) || amended.MatchString(l.meaningNo) {
-		return votes.Vote{}, false
+		return votes.Vote{}, "Annahme mit Änderung: geht zurück an den anderen Rat, nächster Status nicht eindeutig"
 	}
-	return v, true
+	return v, ""
 }
 
 // filedProcess is the process of a motion or postulate after the Nationalrat
@@ -146,7 +160,7 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 		return c.closingProcess(id, v, votes.ProcessStep{Label: "Nationalrat", Detail: "Ablehnung", State: votes.StepEnded})
 	}
 	if v.Outcome != outcomeAdopted {
-		return nil, nil
+		return nil, none("Ausgang " + v.Outcome + ": keine Regel")
 	}
 	steps, b, otherChamber, err := c.history(id, v)
 	if err != nil {
@@ -162,7 +176,7 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 	// A motion the Nationalrat adopts first goes to the Ständerat. One filed
 	// in the Ständerat that reaches the Nationalrat first fits neither rule.
 	if b.SubmissionCouncil != 1 {
-		return nil, nil
+		return nil, none("im Ständerat eingereichte Motion, über die der Ständerat noch nicht entschieden hat")
 	}
 	next := votes.ProcessStep{Label: "In Kommission des Ständerats", State: votes.StepNext}
 	text := "In Kommission des Ständerats"
@@ -185,11 +199,14 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 // to adopt the bill, so the verdict says what the vote did.
 func (c *Client) finalVoteProcess(id int64, group []votes.Vote) (*votes.Process, error) {
 	if len(group) != 1 {
-		return nil, nil
+		return nil, none(fmt.Sprintf("%d Abstimmungen am selben Tag (z. B. Detailberatung, Gesamtabstimmung): nur eine Schlussabstimmung allein hat eine Regel", len(group)))
 	}
 	v := group[0]
-	if !isFinalVote(v.Subtitle) || !plainMeanings[strings.ToLower(c.labels[v.SourceID].meaningYes)] {
-		return nil, nil
+	if !isFinalVote(v.Subtitle) {
+		return nil, none("keine Schlussabstimmung (" + strings.TrimSpace(v.Subtitle) + "): nächster Status nicht eindeutig")
+	}
+	if !plainMeanings[strings.ToLower(c.labels[v.SourceID].meaningYes)] {
+		return nil, none("Ja bedeutet nicht \"Annahme des Entwurfs\" (" + c.labels[v.SourceID].meaningYes + ")")
 	}
 	switch v.Decision {
 	case outcomeAdopted:
@@ -199,7 +216,7 @@ func (c *Client) finalVoteProcess(id int64, group []votes.Vote) (*votes.Process,
 		return c.closingProcess(id, v, votes.ProcessStep{
 			Label: "Nationalrat", Detail: "Ablehnung in der Schlussabstimmung", State: votes.StepEnded})
 	}
-	return nil, nil
+	return nil, none("kein Ausgang (Stimmengleichheit)")
 }
 
 // isFinalVote reports whether a vote's subtitle names a Schlussabstimmung, in

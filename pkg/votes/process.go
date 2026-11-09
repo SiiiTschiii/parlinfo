@@ -229,13 +229,21 @@ func (p Process) Validate() error {
 }
 
 // ProcessSource is implemented by a Source that can say where a group's
-// business stands. Process returns nil, and no error, for a business it has no
-// rule for or cannot read with certainty; an error is for a source it could not
-// reach. Either way the group posts without a process — see
-// voteposting.PrepareVoteGroups.
+// business stands. For a business it has no rule for, or cannot read with
+// certainty, Process returns a NoProcess saying why; any other error is a
+// source it could not reach. Either way the group posts without a process —
+// see voteposting.PrepareVoteGroups.
 type ProcessSource interface {
 	Process(group []Vote) (*Process, error)
 }
+
+// NoProcess is a ProcessSource's answer for a group it says no process for,
+// and why: "Gesamtabstimmung: nächster Status nicht eindeutig". It is an
+// expected answer, not a failure; the reason is there for the logs and for
+// whoever checks which posts went out without one.
+type NoProcess struct{ Reason string }
+
+func (n NoProcess) Error() string { return "kein Prozess: " + n.Reason }
 
 // Equal reports whether p and q describe the same process.
 func (p *Process) Equal(q *Process) bool {

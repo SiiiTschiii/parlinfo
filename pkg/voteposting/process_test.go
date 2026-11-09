@@ -46,9 +46,12 @@ func TestAttachProcesses(t *testing.T) {
 
 	src := processSource{
 		answers: map[string]*votes.Process{"ok": validProcess(), "invalid": invalid},
-		errs:    map[string]error{"down": errors.New("service unavailable")},
+		errs: map[string]error{
+			"down":    errors.New("service unavailable"),
+			"no-rule": votes.NoProcess{Reason: "Geschäftsart Petition: keine Regel"},
+		},
 	}
-	groups := [][]votes.Vote{group("ok", 2), group("none", 1), group("down", 1), group("invalid", 1)}
+	groups := [][]votes.Vote{group("ok", 2), group("none", 1), group("down", 1), group("invalid", 1), group("no-rule", 1)}
 	attachProcesses(src, groups)
 
 	for _, v := range groups[0] {
