@@ -59,7 +59,11 @@ func main() {
 	// An empty log shows every recent vote, not just unposted ones, and no age
 	// guard so the preview still works during a recess.
 	emptyLog := votelog.NewEmpty(jurisdiction.Key, votelog.PlatformX)
-	groups, err := voteposting.PrepareVoteGroups(jurisdiction.NewSource(), emptyLog, *fetchLimit, 0)
+	source, err := jurisdiction.Source()
+	if err != nil {
+		log.Fatal(err)
+	}
+	groups, err := voteposting.PrepareVoteGroups(source, emptyLog, *fetchLimit, 0)
 	if err != nil {
 		log.Fatalf("Error preparing votes: %v", err)
 	}

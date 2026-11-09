@@ -8,6 +8,7 @@ import (
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/igapi"
+	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -35,6 +36,9 @@ type PublishContainerFunc func(containerID string) (string, error)
 // PollContainerStatusFunc is the signature for polling container status.
 type PollContainerStatusFunc func(containerID string) (string, error)
 
+// GetPermalinkFunc is the signature for looking up a published media's URL.
+type GetPermalinkFunc func(mediaID string) (string, error)
+
 // UploadImagesFunc is the signature for uploading images to hosting.
 type UploadImagesFunc func(images [][]byte, names []string) ([]string, error)
 
@@ -59,6 +63,7 @@ type InstagramPlatform struct {
 	createSingleImageContainerFunc CreateSingleImageContainerFunc
 	publishContainerFunc           PublishContainerFunc
 	pollContainerStatusFunc        PollContainerStatusFunc
+	getPermalinkFunc               GetPermalinkFunc
 	uploadImagesFunc               UploadImagesFunc
 	cleanupImagesFunc              CleanupImagesFunc
 	waitForImagesFunc              func(urls []string) error
@@ -94,6 +99,7 @@ func NewInstagramPlatformWithCredentials(igUserID, accessToken, githubToken, rep
 	p.createSingleImageContainerFunc = igClient.CreateSingleImageContainer
 	p.publishContainerFunc = igClient.PublishContainer
 	p.pollContainerStatusFunc = igClient.PollContainerStatus
+	p.getPermalinkFunc = igClient.GetPermalink
 	p.uploadImagesFunc = hoster.UploadImages
 	p.cleanupImagesFunc = hoster.CleanupImages
 	p.waitForImagesFunc = waitForImageURLs
@@ -114,11 +120,12 @@ func (p *InstagramPlatform) SetContactMapper(contactMapper *contacts.Mapper) {
 // Post publishes content to Instagram.
 // In stub mode: logs preview, no real API calls.
 // In real mode: uploads images to GitHub Pages, creates carousel via IG API, polls for PUBLISHED, cleans up.
-// Returns shouldContinue=false when the post limit is reached.
-func (p *InstagramPlatform) Post(content platforms.Content) (bool, error) {
+// Returns a ref to the published media (none in stub mode), and
+// shouldContinue=false when the post limit is reached.
+func (p *InstagramPlatform) Post(content platforms.Content) (votelog.PostRef, bool, error) {
 	igContent, ok := content.(*InstagramContent)
 	if !ok {
-		return false, fmt.Errorf("unexpected content type for Instagram")
+		return votelog.PostRef{}, false, fmt.Errorf("unexpected content type for Instagram")
 	}
 
 	if p.stubMode {
@@ -129,7 +136,7 @@ func (p *InstagramPlatform) Post(content platforms.Content) (bool, error) {
 }
 
 // postStub logs what would be posted without making any API calls.
-func (p *InstagramPlatform) postStub(igContent *InstagramContent) (bool, error) {
+func (p *InstagramPlatform) postStub(igContent *InstagramContent) (votelog.PostRef, bool, error) {
 	fmt.Printf("📷 [Instagram stub] Would post %d image(s) with caption (%d chars):\n",
 		len(igContent.Images), len([]rune(igContent.Caption)))
 
@@ -140,7 +147,7 @@ func (p *InstagramPlatform) postStub(igContent *InstagramContent) (bool, error) 
 	fmt.Printf("   Caption preview: %s\n", preview)
 
 	p.postsThisRun++
-	return p.postsThisRun < p.maxPostsPerRun, nil
+	return votelog.PostRef{}, p.postsThisRun < p.maxPostsPerRun, nil
 }
 
 // postReal publishes a carousel to Instagram:
@@ -149,8 +156,9 @@ func (p *InstagramPlatform) postStub(igContent *InstagramContent) (bool, error) 
 // 3. Create carousel container with all children + caption
 // 4. Publish the carousel container
 // 5. Poll until PUBLISHED or error
-// 6. Clean up hosted images
-func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) {
+// 6. Look up the permalink
+// 7. Clean up hosted images
+func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostRef, bool, error) {
 	imageCount := len(igContent.Images)
 
 	// Generate unique filenames for this carousel
@@ -164,7 +172,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 	fmt.Printf("📤 Uploading %d image(s) to GitHub Pages...\n", imageCount)
 	imageURLs, err := p.uploadImagesFunc(igContent.Images, names)
 	if err != nil {
-		return false, fmt.Errorf("uploading images: %w", err)
+		return votelog.PostRef{}, false, fmt.Errorf("uploading images: %w", err)
 	}
 	fmt.Printf("   ✅ Images hosted at %d URL(s)\n", len(imageURLs))
 
@@ -172,7 +180,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 	fmt.Print("⏳ Waiting for GitHub Pages deployment...\n")
 	if err := p.waitForImagesFunc(imageURLs); err != nil {
 		logHostedImagesWarning(names)
-		return false, fmt.Errorf("waiting for GitHub Pages: %w", err)
+		return votelog.PostRef{}, false, fmt.Errorf("waiting for GitHub Pages: %w", err)
 	}
 	fmt.Print("   ✅ Images accessible\n")
 
@@ -183,7 +191,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 		containerID, err := p.createSingleImageContainerFunc(imageURLs[0], igContent.Caption)
 		if err != nil {
 			logHostedImagesWarning(names)
-			return false, fmt.Errorf("creating single image container: %w", err)
+			return votelog.PostRef{}, false, fmt.Errorf("creating single image container: %w", err)
 		}
 		fmt.Printf("   📦 Container: %s\n", containerID)
 		publishID = containerID
@@ -195,7 +203,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 			containerID, err := p.createMediaContainerFunc(imageURL)
 			if err != nil {
 				logHostedImagesWarning(names)
-				return false, fmt.Errorf("creating media container %d: %w", i, err)
+				return votelog.PostRef{}, false, fmt.Errorf("creating media container %d: %w", i, err)
 			}
 			childIDs[i] = containerID
 			fmt.Printf("   📦 Container %d: %s\n", i, containerID)
@@ -205,7 +213,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 		carouselID, err := p.createCarouselContainerFunc(childIDs, igContent.Caption)
 		if err != nil {
 			logHostedImagesWarning(names)
-			return false, fmt.Errorf("creating carousel container: %w", err)
+			return votelog.PostRef{}, false, fmt.Errorf("creating carousel container: %w", err)
 		}
 		fmt.Printf("   🎠 Carousel container: %s\n", carouselID)
 		publishID = carouselID
@@ -215,7 +223,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 	fmt.Print("⏳ Waiting for container to be ready...\n")
 	if err := p.pollUntilReady(publishID); err != nil {
 		logHostedImagesWarning(names)
-		return false, fmt.Errorf("waiting for container: %w", err)
+		return votelog.PostRef{}, false, fmt.Errorf("waiting for container: %w", err)
 	}
 
 	// Publish
@@ -223,7 +231,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 	mediaID, err := p.publishContainerFunc(publishID)
 	if err != nil {
 		logHostedImagesWarning(names)
-		return false, fmt.Errorf("publishing: %w", err)
+		return votelog.PostRef{}, false, fmt.Errorf("publishing: %w", err)
 	}
 	fmt.Printf("   ✅ Published! Media ID: %s\n", mediaID)
 
@@ -233,7 +241,17 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 		// Don't fail — the post may have succeeded
 	}
 
-	// Step 7: Clean up hosted images
+	// The post is live from here on, so a failed lookup only costs the URL:
+	// failing the run would leave the vote unposted and publish it again.
+	post := votelog.PostRef{ID: mediaID}
+	if permalink, err := p.getPermalinkFunc(mediaID); err != nil {
+		log.Printf("⚠️  Permalink lookup failed (logging the media ID alone): %v", err)
+	} else {
+		post.URL = permalink
+		fmt.Printf("   🔗 %s\n", permalink)
+	}
+
+	// Clean up hosted images
 	fmt.Print("🧹 Cleaning up hosted images...\n")
 	if err := p.cleanupImagesFunc(names); err != nil {
 		// Log but don't fail — the post was successful
@@ -243,7 +261,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (bool, error) 
 	}
 
 	p.postsThisRun++
-	return p.postsThisRun < p.maxPostsPerRun, nil
+	return post, p.postsThisRun < p.maxPostsPerRun, nil
 }
 
 // pollUntilPublished polls the container status until it reaches PUBLISHED, ERROR, or EXPIRED,

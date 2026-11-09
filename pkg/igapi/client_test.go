@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -138,6 +139,12 @@ func TestPollContainerStatus(t *testing.T) {
 		if r.URL.Query().Get("fields") != "status_code" {
 			t.Errorf("expected fields=status_code, got %s", r.URL.Query().Get("fields"))
 		}
+		if r.URL.Query().Has("access_token") {
+			t.Error("access token sent in the query string")
+		}
+		if got := r.Header.Get("Authorization"); got != "Bearer tok123" {
+			t.Errorf("expected Authorization: Bearer tok123, got %q", got)
+		}
 
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"status_code":"FINISHED"}`))
@@ -169,6 +176,67 @@ func TestPollContainerStatus_Error(t *testing.T) {
 	_, err := client.PollContainerStatus("container_1")
 	if err == nil {
 		t.Fatal("expected error for 500 response")
+	}
+}
+
+func TestGetPermalink(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("expected GET, got %s", r.Method)
+		}
+		if r.URL.Path != "/media_99" {
+			t.Errorf("expected path /media_99, got %s", r.URL.Path)
+		}
+		if r.URL.Query().Get("fields") != "permalink" {
+			t.Errorf("expected fields=permalink, got %s", r.URL.Query().Get("fields"))
+		}
+		// The token must stay out of the URL, which transport errors echo
+		if r.URL.Query().Has("access_token") {
+			t.Error("access token sent in the query string")
+		}
+		if got := r.Header.Get("Authorization"); got != "Bearer tok123" {
+			t.Errorf("expected Authorization: Bearer tok123, got %q", got)
+		}
+
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"permalink":"https://www.instagram.com/p/DAbC123/","id":"media_99"}`))
+	}))
+	defer server.Close()
+
+	client := NewClient("ig_user_1", "tok123")
+	client.SetAPIBase(server.URL)
+
+	permalink, err := client.GetPermalink("media_99")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if permalink != "https://www.instagram.com/p/DAbC123/" {
+		t.Errorf("unexpected permalink %q", permalink)
+	}
+}
+
+func TestGetPermalink_Errors(t *testing.T) {
+	for name, tc := range map[string]struct {
+		status int
+		body   string
+	}{
+		"server error":    {http.StatusInternalServerError, `server error`},
+		"empty permalink": {http.StatusOK, `{"id":"media_99"}`},
+	} {
+		t.Run(name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(tc.status)
+				_, _ = w.Write([]byte(tc.body))
+			}))
+			defer server.Close()
+
+			client := NewClient("ig_user_1", "tok123")
+			client.SetAPIBase(server.URL)
+
+			if _, err := client.GetPermalink("media_99"); err == nil {
+				t.Fatal("expected error")
+			}
+		})
 	}
 }
 
@@ -221,5 +289,27 @@ func TestRoundTrip_FullCarouselFlow(t *testing.T) {
 	}
 	if mediaID != "media_99" {
 		t.Errorf("expected media_99, got %s", mediaID)
+	}
+}
+
+// TestGET_TransportErrorOmitsToken pins why the GET calls send the token as a
+// header: a failed request's error names the URL, and postReal logs that error.
+func TestGET_TransportErrorOmitsToken(t *testing.T) {
+	client := NewClient("ig_user_1", "secret-token-123")
+	client.SetAPIBase("http://127.0.0.1:1") // nothing listens here
+
+	for name, call := range map[string]func(string) (string, error){
+		"GetPermalink":        client.GetPermalink,
+		"PollContainerStatus": client.PollContainerStatus,
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := call("media_99")
+			if err == nil {
+				t.Fatal("expected a transport error")
+			}
+			if strings.Contains(err.Error(), "secret-token-123") {
+				t.Errorf("error leaks the access token: %v", err)
+			}
+		})
 	}
 }

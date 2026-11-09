@@ -1,0 +1,1447 @@
+# Social media handles for members of the Nationalrat.
+#
+# The 200 names are seeded from the parliament's own roster and refreshed with:
+#
+#     go run ./cmd/update_contacts -jurisdiction nationalrat
+#
+# The Nationalrat's votes are posted to @chparlinfo; a verified handle here is
+# tagged there.
+#
+# The first candidates came from two places, both found through the member's
+# parlament.ch ID (P1307) on Wikidata rather than through the name: the handles
+# Wikidata itself records, and the social links on the personal website it
+# records. A link from the member's own site is the stronger lead, since they
+# control it; Wikidata is edited by anyone and lags behind renamed and abandoned
+# handles. Neither makes an account. Entries carrying `verified: false` are
+# tagged by nothing. To confirm one: open it, check it is the person named above it,
+# then set `verified: true` and delete the `confidence` line. `confidence` is
+# an ordering aid, never evidence.
+#
+# Getting one wrong puts a real person's handle next to a vote they did not cast,
+# which is the failure this whole mapping exists to prevent. A member with no
+# verified handle is fine: the post names them without tagging them.
+#
+# Work through them with the search links:
+#
+#     go run ./cmd/generate_search_urls -jurisdiction nationalrat
+#
+# The `kind: organization` entries are the national parties, tagged when a
+# Fraktion filed the business ("Parlamentarische Initiative der GLP-Fraktion").
+# Each account is one the party links from its own website, as of November
+# 2026, or one confirmed by hand: the Grüne and EVP Bluesky accounts, which the
+# sites do not link, and the GLP's Instagram, where glp.swiss still links a
+# stale handle. Lega dei Ticinesi and Mouvement Citoyens Genevois are cantonal
+# parties that sit in the SVP-Fraktion, so they go by their own names; see
+# pkg/contacts/fraktion.go. Left out on purpose: svpch.bsky.social, a
+# placeholder squatting the SVP's name, and grunliberale.bsky.social, which
+# says in its bio that it is not the GLP's official account.
+
+version: "1.0"
+contacts:
+  - name: Alex Farinelli
+    facebook:
+      - url: https://www.facebook.com/Alex.Comano
+        verified: true
+  - name: Alois Huber
+  - name: Andrea de Meuron
+    linkedin:
+      - url: https://www.linkedin.com/in/andrea-de-meuron
+        verified: true
+  - name: Andrea Zryd
+    facebook:
+      - url: https://www.facebook.com/andrea.zryd
+        verified: true
+  - name: Andreas Gafner
+  - name: Andreas Glarner
+    facebook:
+      - url: https://www.facebook.com/andreas.glarner.3
+        verified: true
+  - name: Andreas Meier
+  - name: Andri Silberschmidt
+    facebook:
+      - url: https://www.facebook.com/andrisilberschmidt
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/andrisilberschmidt/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/andrisilberschmidt
+        verified: true
+    x:
+      - url: https://x.com/andrisilber
+        verified: true
+  - name: Anna Giacometti
+  - name: Anna Rosenwasser
+    instagram:
+      - url: https://www.instagram.com/annarosenwasser/
+        verified: true
+  - name: Anna-Béatrice Schmaltz
+    facebook:
+      - url: https://www.facebook.com/annabeatrice.schmaltz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/anna.beatrice.schmaltz/
+        verified: true
+  - name: Arbër Bullakaj
+    facebook:
+      - url: https://www.facebook.com/bullakaj
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/arberbullakaj/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/arber-bullakaj
+        verified: true
+  - name: Barbara Gysi
+    instagram:
+      - url: https://www.instagram.com/barbara_gysi/
+        verified: true
+  - name: Barbara Portmann
+    facebook:
+      - url: https://www.facebook.com/barbara.portmannmueller
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/portmannmuller/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/barbara-portmann-m%C3%BCller-0b8591145
+        verified: true
+    x:
+      - url: https://x.com/BarbaraPortmann
+        verified: true
+  - name: Barbara Schaffner
+    facebook:
+      - url: https://www.facebook.com/Barbara.Schaffner.Politik
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/ba.schaffner/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/barbara-schaffner-7a300a11
+        verified: true
+    x:
+      - url: https://x.com/baschaffner
+        verified: true
+  - name: Barbara Steinemann
+    x:
+      - url: https://x.com/BabaSteinemann
+        verified: true
+  - name: Beat Walti
+  - name: Benjamin Fischer
+    facebook:
+      - url: https://www.facebook.com/benjamin.fischer.svp
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/benifischer/
+        verified: true
+    x:
+      - url: https://x.com/BeniFischer
+        verified: true
+  - name: Benjamin Giezendanner
+    facebook:
+      - url: https://www.facebook.com/benjamingiezendannerofficial
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/benjamingiezendanner/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/benjamin-giezendanner-a29700167
+        verified: true
+  - name: Benjamin Roduit
+    facebook:
+      - url: https://www.facebook.com/benjaminroduitsaillon
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/benjaminroduit/
+        verified: true
+    x:
+      - url: https://x.com/roduitbenjamin
+        verified: true
+  - name: Benoît Gaillard
+    instagram:
+      - url: https://www.instagram.com/b_gaillard/
+        verified: true
+    x:
+      - url: https://x.com/benoitgaillard
+        verified: true
+  - name: Bettina Balmer
+    facebook:
+      - url: https://www.facebook.com/bettina.balmer.5070
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/bettina-balmer-6ab71396
+        verified: true
+    x:
+      - url: https://x.com/balmer_bettina
+        verified: true
+  - name: Brenda Tuosto
+  - name: Brigitte Crottaz
+  - name: Bruno Storni
+  - name: Bruno Walliser
+  - name: Christian Dandrès
+    facebook:
+      - url: https://www.facebook.com/dandres.christian
+        verified: true
+  - name: Christian Glur
+    facebook:
+      - url: https://www.facebook.com/GlurChristian
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/christian_glur/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/christian-glur-a34b31121
+        verified: true
+  - name: Christian Imark
+    facebook:
+      - url: https://www.facebook.com/christian.imark
+        verified: true
+    x:
+      - url: https://x.com/ChristianImark
+        verified: true
+  - name: Christian Lohr
+  - name: Christian Wasserfallen
+    facebook:
+      - url: https://www.facebook.com/wasserfallen.news
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/christianwasserfallen/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/wasserfallen
+        verified: true
+    x:
+      - url: https://x.com/cwasi
+        verified: true
+  - name: Christine Badertscher
+    facebook:
+      - url: https://www.facebook.com/christine.badertscher
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/christinebadertscher/
+        verified: true
+    x:
+      - url: https://x.com/ChBadertscher
+        verified: true
+  - name: Christine Bulliard-Marbach
+    facebook:
+      - url: https://www.facebook.com/ChristineBulliardMarbach
+        verified: true
+  - name: Christoph Riner
+    facebook:
+      - url: https://www.facebook.com/christophriner
+        verified: true
+  - name: Christophe Clivaz
+  - name: Clarence Chollet
+  - name: Corina Gredig
+    instagram:
+      - url: https://www.instagram.com/corinagredig/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/corina-gredig-31601013a
+        verified: true
+    x:
+      - url: https://x.com/corinagredig
+        verified: true
+  - name: Cyril Aellen
+  - name: Cédric Wermuth
+    bluesky:
+      - url: https://bsky.app/profile/cedricwermuth.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/cedricwermuth
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/cedricwermuth/
+        verified: true
+    x:
+      - url: https://x.com/cedricwermuth
+        verified: true
+  - name: Céline Amaudruz
+  - name: Céline Weber
+    bluesky:
+      - url: https://bsky.app/profile/celineweber.ch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/celine_weber_koppenburg/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/c%C3%A9line-weber-koppenburg-3786b9159
+        verified: true
+    x:
+      - url: https://x.com/Celine_I_Weber
+        verified: true
+  - name: Damien Cottier
+  - name: Daniel Ruch
+  - name: Daniel Sormanni
+  - name: Daniela Schneeberger
+    linkedin:
+      - url: https://www.linkedin.com/in/daniela-schneeberger-91070a83
+        verified: true
+  - name: David Roth
+    facebook:
+      - url: https://www.facebook.com/davidsilvroth
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/davidsroth/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@davidsroth
+        verified: true
+  - name: Delphine Klopfenstein Broggini
+  - name: Diana Gutjahr
+    facebook:
+      - url: https://www.facebook.com/DianaGutjahrTG
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/diana_gutjahr_ch/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/diana-gutjahr-081a39a9
+        verified: true
+    x:
+      - url: https://x.com/DianaGutjahr1
+        verified: true
+  - name: Didier Calame
+    facebook:
+      - url: https://www.facebook.com/DidierCalame
+        verified: true
+  - name: Die Mitte Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/mitte.centre
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mitte_centre/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/mitte-centre
+        verified: true
+    x:
+      - url: https://x.com/Mitte_Centre
+        verified: true
+  - name: Dominik Blunschy
+    facebook:
+      - url: https://www.facebook.com/DominikBlunschy
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/dominikblunschy/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/dominik-blunschy
+        verified: true
+    x:
+      - url: https://x.com/blunschy
+        verified: true
+  - name: Edgar Bischof
+  - name: EDU Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/eduschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/edu_udf_ch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@edu.schweiz
+        verified: true
+    x:
+      - url: https://x.com/EDUSchweiz
+        verified: true
+  - name: Elisabeth Schneider-Schneiter
+    facebook:
+      - url: https://www.facebook.com/elisabeth.schneiderschneiter
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/schneiderschneiter/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/elisabeth-schneider-schneiter-27484b6a
+        verified: true
+    x:
+      - url: https://x.com/Elisabeth_S_S
+        verified: true
+  - name: Emmanuel Amoos
+    instagram:
+      - url: https://www.instagram.com/emmanuelamoos/
+        verified: true
+  - name: Erich Hess
+    x:
+      - url: https://x.com/Erich_Hess
+        verified: true
+  - name: Erich Vontobel
+    instagram:
+      - url: https://www.instagram.com/erichvontobel/
+        verified: true
+  - name: Ernst Wandfluh
+    facebook:
+      - url: https://www.facebook.com/profile.php?id=100095408656916
+        verified: true
+  - name: Estelle Revaz
+  - name: EVP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/evppev.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/evppev
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/evppev/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@evp_pev
+        verified: true
+  - name: Fabian Molina
+    bluesky:
+      - url: https://bsky.app/profile/fabianmolina.ch
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/FabianMolinaNR
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/fabianmolinanr/
+        verified: true
+  - name: Fabienne Stämpfli
+  - name: Farah Rumy
+    facebook:
+      - url: https://www.facebook.com/Farah-Rumy-100008638033294
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/farah.rumy/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/farah-rumy-46841b215
+        verified: true
+  - name: FDP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/fdp.dieliberalen
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/fdp_schweiz/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/fdp-die-liberalen-schweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@fdp_schweiz
+        verified: true
+    x:
+      - url: https://x.com/FDP_Liberalen
+        verified: true
+  - name: Florence Brenzikofer
+    facebook:
+      - url: https://www.facebook.com/flobrenzikofer
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/florencebrenzikofer/
+        verified: true
+    x:
+      - url: https://x.com/flobrenzikofer
+        verified: true
+  - name: Franz Grüter
+    facebook:
+      - url: https://www.facebook.com/GrueterFranz
+        verified: true
+    x:
+      - url: https://x.com/fgrueter
+        verified: true
+  - name: Franziska Ryser
+    facebook:
+      - url: https://www.facebook.com/FranziskaRyserSG
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/franziska__ryser/
+        verified: true
+    x:
+      - url: https://x.com/FranziskaRyser
+        verified: true
+  - name: Gabriela Suter
+    facebook:
+      - url: https://www.facebook.com/gabriela.suter.1
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/gabriela.suter/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/gabriela-suter-958990230
+        verified: true
+    x:
+      - url: https://x.com/suter_gabriela
+        verified: true
+  - name: Gerhard Andrey
+    x:
+      - url: https://x.com/anderageru
+        verified: true
+  - name: Gerhard Pfister
+    instagram:
+      - url: https://www.instagram.com/gerhardpfister/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/gerhard-pfister-a4333489
+        verified: true
+    x:
+      - url: https://x.com/gerhardpfister
+        verified: true
+  - name: Giorgio Fonio
+    facebook:
+      - url: https://www.facebook.com/giorgiofonio1984
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/giorgiofonio/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/giorgio-fonio-9ab18329b
+        verified: true
+    x:
+      - url: https://x.com/GiorgioFonio
+        verified: true
+  - name: GLP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/grunliberale
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/glp_grunliberale/
+        verified: true
+    x:
+      - url: https://x.com/grunliberale
+        verified: true
+  - name: Gregor Rutz
+    facebook:
+      - url: https://www.facebook.com/gregor.rutz
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/gregor-rutz-68844a7a
+        verified: true
+  - name: Greta Gysin
+    instagram:
+      - url: https://www.instagram.com/gretagysin/
+        verified: true
+  - name: Grüne Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/gruenech.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/gruenech/
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/gruenech/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/14013437
+        verified: true
+    x:
+      - url: https://x.com/GrueneCH
+        verified: true
+  - name: Hans Jörg Rüegsegger
+    facebook:
+      - url: https://www.facebook.com/hjruegsegger
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/hans.joerg.ruegsegger/
+        verified: true
+    x:
+      - url: https://x.com/hjruegsegger
+        verified: true
+  - name: Hans-Peter Portmann
+    x:
+      - url: https://x.com/HPPortmann
+        verified: true
+  - name: Hasan Candan
+    facebook:
+      - url: https://www.facebook.com/hasan.candan
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/hasan_candan_luzern/
+        verified: true
+    x:
+      - url: https://x.com/hasan_candan_
+        verified: true
+  - name: Heinz Theiler
+    facebook:
+      - url: https://www.facebook.com/heinztheiler.ch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/heinztheiler/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/heinz-theiler-298914177
+        verified: true
+  - name: Irène Kälin
+    x:
+      - url: https://x.com/KaelinIrene
+        verified: true
+  - name: Isabelle Chappuis
+    instagram:
+      - url: https://www.instagram.com/isabelle_chappuis/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/isabellechappuis
+        verified: true
+  - name: Islam Alijaj
+    facebook:
+      - url: https://www.facebook.com/islamalijajnr
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/islamalijaj/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/islamalijaj
+        verified: true
+  - name: Jacqueline Badran
+    x:
+      - url: https://x.com/jaybadran
+        verified: true
+  - name: Jacqueline de Quattro
+    facebook:
+      - url: https://www.facebook.com/JacquelineDeQuattro
+        verified: true
+  - name: Jacques Nicolet
+  - name: Jean Tschopp
+    bluesky:
+      - url: https://bsky.app/profile/jeantschopp.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/jean.tschopp
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/j_tschopp/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/jean-tschopp-a849a136
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@jeantschopp
+        verified: true
+  - name: Jean-Luc Addor
+    x:
+      - url: https://x.com/udcvr64
+        verified: true
+  - name: Jessica Jaccoud
+  - name: Jon Pult
+    facebook:
+      - url: https://www.facebook.com/jonpultpolitik
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/jonpult/
+        verified: true
+  - name: Jürg Grossen
+    facebook:
+      - url: https://www.facebook.com/JuergGrossenglp
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/juerg.grossen/
+        verified: true
+    x:
+      - url: https://x.com/Juerg_Grossen
+        verified: true
+  - name: Katharina Prelicz-Huber
+    facebook:
+      - url: https://www.facebook.com/katharina.preliczhuber
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/katharinapreliczhuber/
+        verified: true
+    x:
+      - url: https://x.com/K_PreliczHuber
+        verified: true
+  - name: Kathrin Bertschy
+    facebook:
+      - url: https://www.facebook.com/Bertschy-mit-Kpfli-631157893652360
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/kathrin_bertschy/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/kathrin-bertschy-367ab99b
+        verified: true
+    x:
+      - url: https://x.com/kathrinbertschy
+        verified: true
+  - name: Katja Christ
+    facebook:
+      - url: https://www.facebook.com/katja.christrudin
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/_katja_christ/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/katja-christ-44345bb4
+        verified: true
+    x:
+      - url: https://x.com/KatjaChrist
+        verified: true
+  - name: Katja Stettler-Riem
+    facebook:
+      - url: https://www.facebook.com/katja.riem
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/katja.riem/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/katja-riem-66a53919a
+        verified: true
+    x:
+      - url: https://x.com/katjariem
+        verified: true
+  - name: Kilian Baumann
+    bluesky:
+      - url: https://bsky.app/profile/kilianbaumann.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/kilian.baumann.520
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/baumann.kilian/
+        verified: true
+    x:
+      - url: https://x.com/Kilian_Baumann
+        verified: true
+  - name: Kris Vietze
+  - name: Lars Guggisberg
+    facebook:
+      - url: https://www.facebook.com/guggisberglars
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/lars.guggisberg/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/lars-guggisberg-a58aaa9b
+        verified: true
+    x:
+      - url: https://x.com/larsguggisberg
+        verified: true
+  - name: Laura Gantenbein
+    facebook:
+      - url: https://www.facebook.com/laura.gantenbein.5
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/lauragantenbeinso/
+        verified: true
+    x:
+      - url: https://x.com/LaJuGa
+        verified: true
+  - name: Laurence Fehlmann Rielle
+  - name: Laurent Wehrli
+    facebook:
+      - url: https://www.facebook.com/wehrlilaurent
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/wehrli.laurent/
+        verified: true
+    x:
+      - url: https://x.com/laurentwehrli
+        verified: true
+  - name: Lega dei Ticinesi
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/LegadeiTicinesi
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/legadeiticinesi/
+        verified: true
+  - name: Leo Müller
+  - name: Linda De Ventura
+    facebook:
+      - url: https://www.facebook.com/linda.deventura
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/linda_de_ventura/
+        verified: true
+  - name: Lorenz Hess
+  - name: Lorenzo Quadri
+  - name: Loïc Dobler
+  - name: Lukas Reimann
+  - name: Léonore Porchet
+    instagram:
+      - url: https://www.instagram.com/leonoreporchet/
+        verified: true
+  - name: Magdalena Martullo-Blocher
+  - name: Maja Riniker
+    facebook:
+      - url: https://www.facebook.com/rinikermaja
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/majariniker/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/majariniker
+        verified: true
+  - name: Manfred Bühler
+  - name: Manuel Strupler
+    facebook:
+      - url: https://www.facebook.com/manuelstrupler
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/manuelstrupler/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/manuel-strupler
+        verified: true
+  - name: Manuela Weichelt
+    facebook:
+      - url: https://www.facebook.com/manuela.weicheltpicard.39
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/manuela_weichelt/
+        verified: true
+  - name: Marc Jost
+    bluesky:
+      - url: https://bsky.app/profile/marcjost.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/MarcJostEVP
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/marcjostpolitician/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/marcjost
+        verified: true
+    x:
+      - url: https://x.com/marcjost
+        verified: true
+  - name: Marcel Dettling
+  - name: Marcel Dobler
+    facebook:
+      - url: https://www.facebook.com/marcel.dobler.politiker
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/dobler_marcel/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/marcel-dobler-63025348
+        verified: true
+    x:
+      - url: https://x.com/Marcel_Dobler
+        verified: true
+  - name: Marie-France Roth Pasquier
+    instagram:
+      - url: https://www.instagram.com/mariefrance.rothpasquier/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/marie-france-r-705bb2188
+        verified: true
+    x:
+      - url: https://x.com/MFRP2010
+        verified: true
+  - name: Marionna Schlatter
+    facebook:
+      - url: https://www.facebook.com/marionnaschlatter
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/marionnaschlatter/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/marionna-schlatter-b3800136b
+        verified: true
+  - name: Markus Ritter
+  - name: Markus Schnyder
+  - name: Martin Bäumle
+    x:
+      - url: https://x.com/Martin_Baeumle
+        verified: true
+  - name: Martin Candinas
+    facebook:
+      - url: https://www.facebook.com/candinas.martin
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/martincandinas/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/martin-candinas-857479208
+        verified: true
+    x:
+      - url: https://x.com/martin_candinas
+        verified: true
+  - name: Martin Haab
+    facebook:
+      - url: https://www.facebook.com/martin.haab.37
+        verified: true
+    x:
+      - url: https://x.com/martin_haab
+        verified: true
+  - name: Martin Hübscher
+    facebook:
+      - url: https://www.facebook.com/martin.huebscher.71
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/hubschermartin/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@hubschermartin
+        verified: true
+  - name: Martine Docourt
+  - name: Mattea Meyer
+    instagram:
+      - url: https://www.instagram.com/matteameyer.ch/
+        verified: true
+  - name: Matthias Samuel Jauslin
+  - name: Mauro Tuena
+  - name: Maya Bally
+    instagram:
+      - url: https://www.instagram.com/ballymaya/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/maya-bally-44b8aa111
+        verified: true
+    x:
+      - url: https://x.com/maya_bally
+        verified: true
+  - name: Meret Schneider
+    x:
+      - url: https://x.com/Schneimere
+        verified: true
+  - name: Michael Graber
+    facebook:
+      - url: https://www.facebook.com/NRMichaelGraber
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/michaelgraber81/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/michael-graber-256584a1
+        verified: true
+  - name: Michael Götte
+    facebook:
+      - url: https://www.facebook.com/MichiGoette
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/michigoette/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/michael-g%C3%B6tte-1257a6132
+        verified: true
+  - name: Michael Töngi
+    facebook:
+      - url: https://www.facebook.com/michael.tongi
+        verified: true
+      - url: https://www.facebook.com/michaeltoengi
+        verified: true
+    x:
+      - url: https://x.com/mtoengi
+        verified: true
+  - name: Michaël Buffat
+    x:
+      - url: https://x.com/michael_buffat
+        verified: true
+  - name: Michèle Dünki-Bättig
+    facebook:
+      - url: https://www.facebook.com/micheleduenkibaettig
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/michele.duenkibaettig/
+        verified: true
+    x:
+      - url: https://x.com/duenkim
+        verified: true
+  - name: Mike Egger
+    facebook:
+      - url: https://www.facebook.com/nationalrat.mike.egger
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/m_egger02/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/mike-egger-2a2bb487
+        verified: true
+  - name: Min Li Marti
+    facebook:
+      - url: https://www.facebook.com/minlimarti
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/minli.marti/
+        verified: true
+    x:
+      - url: https://x.com/minlimarti
+        verified: true
+  - name: Miriam Locher
+  - name: Monika Rüegger
+  - name: Mouvement Citoyens Genevois
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/MCGOfficiel
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mcg_geneve/
+        verified: true
+  - name: Nadine Gobet
+    facebook:
+      - url: https://www.facebook.com/gobetnadine
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nadine.gobet/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/nadinegobet
+        verified: true
+  - name: Nadine Masshardt
+    facebook:
+      - url: https://www.facebook.com/nmasshardt
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nadine.masshardt/
+        verified: true
+  - name: Nadja Umbricht Pieren
+  - name: Nicolas Kolly
+  - name: Nicole Barandun
+  - name: Nicolò Paganini
+    facebook:
+      - url: https://www.facebook.com/nicolopaganini.nationalrat
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nicolopaganini_nr/
+        verified: true
+    x:
+      - url: https://x.com/paganini_nr
+        verified: true
+  - name: Niklaus-Samuel Gugger
+    facebook:
+      - url: https://www.facebook.com/JetztNikGugger
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nikgugger/
+        verified: true
+    x:
+      - url: https://x.com/NikGugger
+        verified: true
+  - name: Nina Fehr Düsel
+  - name: Nina Schläfli
+    bluesky:
+      - url: https://bsky.app/profile/ninaschlaefli.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/nischl
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/ninaschlaefli/
+        verified: true
+  - name: Olivier Feller
+    facebook:
+      - url: https://www.facebook.com/olivierfeller
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/feller.olivier/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/fellerolivier
+        verified: true
+  - name: Paolo Pamini
+  - name: Pascal Schmid
+    facebook:
+      - url: https://www.facebook.com/pascalschmid.ch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/pascal.schmid.ch/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/pascal-schmid-ch
+        verified: true
+    x:
+      - url: https://x.com/pascalschmid_ch
+        verified: true
+  - name: Patricia von Falkenstein
+    facebook:
+      - url: https://www.facebook.com/patricia.vonfalkenstein
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/patriciavonfalkenstein/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/patricia-von-falkenstein-25a945a0
+        verified: true
+    x:
+      - url: https://x.com/PvonFalkenstein
+        verified: true
+  - name: Patrick Hässig
+    facebook:
+      - url: https://www.facebook.com/patrick.haessig.zh
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/patrickhaessig/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/patrick-h%C3%A4ssig-046b75236
+        verified: true
+    x:
+      - url: https://x.com/PatrickHaessig
+        verified: true
+  - name: Peter Schilliger
+    facebook:
+      - url: https://www.facebook.com/peter.schilliger.9
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/peter_schilliger/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/peter-schilliger-33b55199
+        verified: true
+    x:
+      - url: https://x.com/P_Schilliger
+        verified: true
+  - name: Philipp Kutter
+    x:
+      - url: https://x.com/PhilippKutter
+        verified: true
+  - name: Philipp Matthias Bregy
+    facebook:
+      - url: https://www.facebook.com/pmbregy
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/pmbregy/
+        verified: true
+    x:
+      - url: https://x.com/pmbregy
+        verified: true
+  - name: Philippe Nantermod
+    facebook:
+      - url: https://www.facebook.com/philippenantermodCN
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/nantermod/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/nantermod
+        verified: true
+    x:
+      - url: https://x.com/nantermod
+        verified: true
+  - name: Pierre-André Page
+    facebook:
+      - url: https://www.facebook.com/pierreandre.page.cn
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/pierreandrepage
+        verified: true
+  - name: Pius Kaufmann
+    facebook:
+      - url: https://www.facebook.com/profile.php?id=100092195315357
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/kaufmann_pius/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/pius-kaufmann-b920b6273
+        verified: true
+  - name: Priska Seiler Graf
+    facebook:
+      - url: https://www.facebook.com/priska.seilergraf
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/seilergraf/
+        verified: true
+    x:
+      - url: https://x.com/seilergraf
+        verified: true
+  - name: Priska Wismer-Felder
+    instagram:
+      - url: https://www.instagram.com/priska_wismer/
+        verified: true
+    x:
+      - url: https://x.com/PriskaWismer
+        verified: true
+  - name: Raphaël Mahaim
+  - name: Regina Durrer-Knobel
+    facebook:
+      - url: https://www.facebook.com/regina.durrerknobel
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/regina_durrer/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/regina-durrer-knobel-a90865218
+        verified: true
+    x:
+      - url: https://x.com/Regina_Durrer
+        verified: true
+  - name: Regine Sauter
+    facebook:
+      - url: https://www.facebook.com/RegineSauterPolitik
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/reginesauter/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/regine-sauter
+        verified: true
+  - name: Reto Nause
+    facebook:
+      - url: https://www.facebook.com/reto.nause
+        verified: true
+    x:
+      - url: https://x.com/retonause
+        verified: true
+  - name: Roberta Soldati
+  - name: Roger Golay
+  - name: Roland Rino Büchel
+  - name: Roman Bürgi
+    facebook:
+      - url: https://www.facebook.com/profile.php?id=100009035758169
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/roman.buergi/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/roman-b%C3%BCrgi-78998920a
+        verified: true
+  - name: Roman Hug
+  - name: Rudi Berli
+  - name: Rémy Wyssmann
+    facebook:
+      - url: https://www.facebook.com/claudiau.remy.wyssmann
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/remywyssmann/
+        verified: true
+    x:
+      - url: https://x.com/RWyssmann
+        verified: true
+  - name: Samira Marti
+    instagram:
+      - url: https://www.instagram.com/marti.samira/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/samira-marti-7b7027270
+        verified: true
+  - name: Samuel Bendahan
+    linkedin:
+      - url: https://www.linkedin.com/in/bendahan
+        verified: true
+  - name: Sandra Sollberger
+    facebook:
+      - url: https://www.facebook.com/nrsandrasollberger
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/sandrasollberger/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/sandra-sollberger-4691b793
+        verified: true
+  - name: Sarah Wyss
+    facebook:
+      - url: https://www.facebook.com/sarah.d.wyss
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/sarah_d_wyss/
+        verified: true
+    x:
+      - url: https://x.com/Sarah_Wyss
+        verified: true
+  - name: Sibel Arslan
+  - name: Sidney Kamerzin
+    facebook:
+      - url: https://www.facebook.com/sidneykamerzin.ch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/sidneykamerzin/
+        verified: true
+    x:
+      - url: https://x.com/sidney_kamerzin
+        verified: true
+  - name: Simon Michel
+    facebook:
+      - url: https://www.facebook.com/simonmichelfdp
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/simonmichel.ch/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/smichel
+        verified: true
+    x:
+      - url: https://x.com/simonmichel
+        verified: true
+  - name: Simon Stadler
+    facebook:
+      - url: https://www.facebook.com/simon.stadler.56
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/simon-stadler-062066269
+        verified: true
+    x:
+      - url: https://x.com/simonstadler7
+        verified: true
+  - name: Simona Brizzi
+    instagram:
+      - url: https://www.instagram.com/simonabrizzi_sp/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/simona-brizzi-6b115772
+        verified: true
+  - name: Simone de Montmollin
+    facebook:
+      - url: https://www.facebook.com/simone.demontmollin
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/simonedemontmollin
+        verified: true
+    x:
+      - url: https://x.com/montmollin_de
+        verified: true
+  - name: Simone Gianini
+    facebook:
+      - url: https://www.facebook.com/simonegianini.ch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/simogianini/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/simone-gianini-6a5ab2101
+        verified: true
+  - name: Sophie Michaud Gigon
+  - name: SP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/spschweiz.ch
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/spschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/spschweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@spschweiz
+        verified: true
+  - name: Stefan Müller-Altermatt
+  - name: Stefanie Heimgartner
+    facebook:
+      - url: https://www.facebook.com/stefanieheimgartner
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/stefanie_heimgartner/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/stefanie-heimgartner-6b0339b0
+        verified: true
+    x:
+      - url: https://x.com/heimgartnerstef
+        verified: true
+  - name: Susanne Vincenz-Stauffacher
+    facebook:
+      - url: https://www.facebook.com/SusanneVincenzStauffacherSG
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/susannevincenzstauffacher/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/susanne-vincenz-stauffacher-2a1571254
+        verified: true
+  - name: SVP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/SVPch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/SVPch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@svpch
+        verified: true
+    x:
+      - url: https://x.com/SVPch
+        verified: true
+  - name: Sylvain Freymond
+  - name: Tamara Funiciello
+    facebook:
+      - url: https://www.facebook.com/tamarafuniciell
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/tamarafuniciello/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@t.funiciello
+        verified: true
+  - name: Therese Schläpfer
+    x:
+      - url: https://x.com/SchlaepferThe
+        verified: true
+  - name: Thomas Aeschi
+    facebook:
+      - url: https://www.facebook.com/aeschi
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/thomasaeschi/
+        verified: true
+    x:
+      - url: https://x.com/thomas_aeschi
+        verified: true
+  - name: Thomas Bläsi
+  - name: Thomas Burgherr
+    facebook:
+      - url: https://www.facebook.com/thomas.burgherr
+        verified: true
+    x:
+      - url: https://x.com/ThomasBurgherr
+        verified: true
+  - name: Thomas de Courten
+    linkedin:
+      - url: https://www.linkedin.com/in/thomas-de-courten-99b96256
+        verified: true
+  - name: Thomas Hurter
+  - name: Thomas Knutti
+    facebook:
+      - url: https://www.facebook.com/thomas.knutti.3
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/knutti_thomas/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@thomasknutti
+        verified: true
+    x:
+      - url: https://x.com/ThomasKnutti
+        verified: true
+  - name: Thomas Matter
+    facebook:
+      - url: https://www.facebook.com/th.matter
+        verified: true
+  - name: Thomas Rechsteiner
+  - name: Thomas Stettler
+  - name: Ueli Schmezer
+  - name: Ursula Zybach
+    bluesky:
+      - url: https://bsky.app/profile/ursulazybach.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/u.zybach
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/ursulazybach/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/ursula-zybach-b89ab43a
+        verified: true
+  - name: Valérie Piller Carrard
+    instagram:
+      - url: https://www.instagram.com/valeriepillercarrard/
+        verified: true
+  - name: Vincent Maitre
+  - name: Vroni Thalmann-Bieri
+    facebook:
+      - url: https://www.facebook.com/vronthal
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/vronithalmann/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/in/vroni-thalmann-bieri-08926a149
+        verified: true
+  - name: Walter Gartmann
+    instagram:
+      - url: https://www.instagram.com/waltigartmann/
+        verified: true
+  - name: Yvan Pahud
+  - name: Yvonne Bürgin
+    facebook:
+      - url: https://www.facebook.com/YvonneBuergin.Rueti
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/yvonne.buergin/
+        verified: true
+    x:
+      - url: https://x.com/YvonneBuergin
+        verified: true

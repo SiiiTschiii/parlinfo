@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
 )
 
@@ -55,8 +56,13 @@ func TestPost_UploadsEveryCardThenPublishesOnePost(t *testing.T) {
 		t.Fatalf("fixture should give several cards, got %d", len(fb.Images))
 	}
 
-	if _, err := p.Post(content); err != nil {
+	post, _, err := p.Post(content)
+	if err != nil {
 		t.Fatalf("Post: %v", err)
+	}
+	want := votelog.PostRef{ID: "page_1_post_1", URL: "https://www.facebook.com/page_1_post_1"}
+	if post != want {
+		t.Errorf("returned ref %+v, want %+v", post, want)
 	}
 
 	if len(f.uploads) != len(fb.Images) {
@@ -91,7 +97,7 @@ func TestPost_UploadFailureStopsBeforePublishing(t *testing.T) {
 	p := newTestPlatform(f, 5)
 	content, _ := p.Format(testfixtures.MultiVoteGroup())
 
-	if _, err := p.Post(content); err == nil {
+	if _, _, err := p.Post(content); err == nil {
 		t.Fatal("expected error")
 	}
 	if f.message != "" {
@@ -107,7 +113,7 @@ func TestPost_PublishFailureIsAnError(t *testing.T) {
 	p := newTestPlatform(f, 5)
 	content, _ := p.Format(testfixtures.SingleVoteAngenommen())
 
-	if _, err := p.Post(content); err == nil {
+	if _, _, err := p.Post(content); err == nil {
 		t.Fatal("expected error")
 	}
 	if p.postsThisRun != 0 {
@@ -120,10 +126,10 @@ func TestPost_StopsAtBudget(t *testing.T) {
 	p := newTestPlatform(f, 2)
 	content, _ := p.Format(testfixtures.SingleVoteAngenommen())
 
-	if cont, _ := p.Post(content); !cont {
+	if _, cont, _ := p.Post(content); !cont {
 		t.Error("first post should leave budget to continue")
 	}
-	if cont, _ := p.Post(content); cont {
+	if _, cont, _ := p.Post(content); cont {
 		t.Error("second post should exhaust a budget of 2")
 	}
 }
@@ -132,18 +138,21 @@ func TestPost_StubModeCallsNoAPI(t *testing.T) {
 	p := NewFacebookPlatform(1)
 	content, _ := p.Format(testfixtures.SingleVoteAngenommen())
 
-	cont, err := p.Post(content)
+	post, cont, err := p.Post(content)
 	if err != nil {
 		t.Fatalf("Post: %v", err)
 	}
 	if cont {
 		t.Error("budget of 1 should be exhausted after one post")
 	}
+	if post != (votelog.PostRef{}) {
+		t.Errorf("stub mode published nothing, yet returned ref %+v", post)
+	}
 }
 
 func TestPost_RejectsForeignContent(t *testing.T) {
 	p := NewFacebookPlatform(1)
-	if _, err := p.Post(nil); err == nil {
+	if _, _, err := p.Post(nil); err == nil {
 		t.Fatal("expected error for non-Facebook content")
 	}
 }

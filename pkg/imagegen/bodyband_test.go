@@ -33,9 +33,17 @@ func TestBandColoursDifferPerBody(t *testing.T) {
 
 // TestEveryJurisdictionHasABandColour guards the one silent failure mode: a
 // body without a colour of its own shares the fallback with every other such
-// body, leaving their cards indistinguishable.
+// body, leaving their cards indistinguishable. A body with no vote source
+// renders no cards, so it needs a colour only once it gets one.
 func TestEveryJurisdictionHasABandColour(t *testing.T) {
 	for _, key := range config.JurisdictionKeys() {
+		j, err := config.LookupJurisdiction(key)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := j.Source(); err != nil {
+			continue
+		}
 		if _, ok := bodyAccents[key]; !ok {
 			t.Errorf("jurisdiction %q has no band colour in bodyAccents", key)
 		}
@@ -64,7 +72,7 @@ func TestCardContentClearsBand(t *testing.T) {
 	bg := SelectColor(v.Jurisdiction, v.Affair.Number)
 
 	cur := newCursor(bandInset(v), imgHeight)
-	if _, _, err := layoutCombinedCard(nil, cur, &v, bg, fonts); err != nil {
+	if _, _, err := layoutCombinedCard(nil, cur, bandInset(v), &v, bg, fonts); err != nil {
 		t.Fatalf("layoutCombinedCard failed: %v", err)
 	}
 	if cur.startY < bandHeight {

@@ -50,7 +50,9 @@ type Jurisdiction struct {
 	// and nothing else may write to it.
 	PostFrom time.Time
 
-	// NewSource builds the adapter that fetches this body's votes.
+	// NewSource builds the adapter that fetches this body's votes. Nil for a
+	// body whose contacts are curated but whose votes no source serves; read it
+	// through Source, which says so instead of panicking.
 	NewSource func() votes.Source
 
 	// NewMemberSource builds the adapter that enumerates this body's sitting
@@ -147,8 +149,10 @@ var nationalrat = votes.Jurisdiction{
 	ShortName: "Nationalrat",
 }
 
-// nationalratSubjects is the editorial policy for the Nationalrat: final and
-// overall votes only.
+// nationalratSubjects is the editorial policy for the Nationalrat's bills:
+// final and overall votes only. Beside them, WithFiledBusiness posts the vote
+// on each motion, postulate, parliamentary initiative and Standesinitiative,
+// where who filed it can be named and tagged.
 //
 // The chamber takes around 300 votes a three-week session, up to 102 in a day,
 // and most are on a single article or a procedural motion that means nothing
@@ -168,6 +172,15 @@ var nationalratSubjects = []string{
 	"Vote final",
 	"Gesamtabstimmung",
 	"Vote sur l'ensemble",
+}
+
+// StaenderatKey identifies the Ständerat.
+const StaenderatKey = "staenderat"
+
+var staenderat = votes.Jurisdiction{
+	Key:       StaenderatKey,
+	Name:      "Ständerat",
+	ShortName: "Ständerat",
 }
 
 // jurisdictions is the registry, keyed by Jurisdiction.Key.
@@ -203,9 +216,19 @@ var jurisdictions = map[string]Jurisdiction{
 		// keeping the previous session out of a run started early in the next.
 		MaxAgeDays: 14,
 		NewSource: func() votes.Source {
-			return parlamentch.New(nationalrat).WithSubjects(nationalratSubjects...)
+			return parlamentch.New(nationalrat).WithSubjects(nationalratSubjects...).WithFiledBusiness()
 		},
 		NewMemberSource: func() votes.MemberSource { return parlamentch.New(nationalrat) },
+	},
+	// A roster and no votes. parlament.ch serves the Nationalrat's votes only,
+	// so nothing can post the Ständerat yet; it is registered so its contacts
+	// are kept with the same tools as every other body's, and so prune can tell
+	// a Nationalrat who moved to the Ständerat from one who left.
+	StaenderatKey: {
+		Jurisdiction: staenderat,
+		NewMemberSource: func() votes.MemberSource {
+			return parlamentch.New(staenderat).WithCouncil(parlamentch.CouncilStaenderat)
+		},
 	},
 }
 
@@ -240,6 +263,15 @@ func postFromDate(key string) (time.Time, error) {
 		return time.Time{}, fmt.Errorf("%s: %w", name, err)
 	}
 	return d, nil
+}
+
+// Source builds the adapter that fetches the body's votes, or says there is
+// none.
+func (j Jurisdiction) Source() (votes.Source, error) {
+	if j.NewSource == nil {
+		return nil, fmt.Errorf("%s has no vote source: its contacts are kept, its votes are not posted", j.Key)
+	}
+	return j.NewSource(), nil
 }
 
 // enabled resolves the posting switch for a jurisdiction.

@@ -110,11 +110,14 @@ func TestMergeOldestFirst_TiesFollowArgumentOrder(t *testing.T) {
 type stubSource struct {
 	jurisdiction votes.Jurisdiction
 	fetched      []votes.Vote
+	// backfill is what grouping adds beyond what it was given, as the Zürich
+	// source does for the votes of a business that fell outside the window.
+	backfill []votes.Vote
 }
 
 func (s stubSource) FetchRecent(int) ([]votes.Vote, error) { return s.fetched, nil }
 func (s stubSource) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
-	return votes.GroupByAffairAndDate(vs), nil
+	return votes.GroupByAffairAndDate(append(append([]votes.Vote{}, vs...), s.backfill...)), nil
 }
 func (s stubSource) Jurisdiction() votes.Jurisdiction { return s.jurisdiction }
 
@@ -186,4 +189,34 @@ func prepare(t *testing.T, v votes.Vote) [][]votes.Vote {
 		t.Fatalf("got %d groups, want 1", len(groups))
 	}
 	return groups
+}
+
+// TestPrepareVoteGroups_BackfilledPostedVotesAreNotPostedAgain pins the
+// duplicate-post bug: an unposted vote makes the source back-fill its posted
+// siblings into the group, and they must not go out a second time.
+func TestPrepareVoteGroups_BackfilledPostedVotesAreNotPostedAgain(t *testing.T) {
+	defer setupTempDir(t)()
+
+	posted1 := createVote("posted-1", "2026/212", "2026-10-28")
+	posted2 := createVote("posted-2", "2026/212", "2026-10-28")
+	pending := createVote("pending", "2026/212", "2026-10-28")
+	unrelated := createVote("posted-elsewhere", "2026/300", "2026-10-28")
+
+	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
+	voteLog.MarkAsPosted("posted-1", votelog.PostRef{})
+	voteLog.MarkAsPosted("posted-2", votelog.PostRef{})
+	voteLog.MarkAsPosted("posted-elsewhere", votelog.PostRef{})
+
+	src := stubSource{
+		jurisdiction: votes.Jurisdiction{Key: testJurisdiction},
+		fetched:      []votes.Vote{pending},
+		backfill:     []votes.Vote{posted1, posted2, unrelated},
+	}
+	groups, err := PrepareVoteGroups(src, voteLog, 10, 0)
+	if err != nil {
+		t.Fatalf("PrepareVoteGroups: %v", err)
+	}
+	if len(groups) != 1 || len(groups[0]) != 1 || groups[0][0].SourceID != "pending" {
+		t.Fatalf("want one group holding only the pending vote, got %v", groups)
+	}
 }

@@ -385,37 +385,6 @@ func TestSubVoteLabelNamesTheVoteType(t *testing.T) {
 
 func intPtr(n int) *int { return &n }
 
-// A card carries no headline, so the caption's date and time do not travel with
-// it. Two votes under a recurring agenda item produce the same picture twice
-// unless the clock is on the card itself.
-func TestCardCountsLabel(t *testing.T) {
-	at0941 := time.Date(2026, 8, 17, 9, 41, 0, 0, time.UTC)
-
-	tests := []struct {
-		name     string
-		date     time.Time
-		voteType string
-		expected string
-	}{
-		{"clock and type together", at0941, "Ausgabenbremse", "Abstimmung (09:41) · Ausgabenbremse"},
-		{"clock alone", at0941, "Normal", "Abstimmung (09:41)"},
-		// Stadt Zürich supplies sitting dates at midnight, so a clock there
-		// would invent a precision the source does not have.
-		{"midnight leaves the type standing alone", time.Date(2026, 8, 17, 0, 0, 0, 0, time.UTC), "Quorum", "Quorum"},
-		{"nothing to say", time.Time{}, "Normal", ""},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := CardCountsLabel(votes.Vote{Date: tt.date, Type: tt.voteType})
-			if got != tt.expected {
-				t.Errorf("CardCountsLabel(date=%v, type=%q) = %q, want %q",
-					tt.date, tt.voteType, got, tt.expected)
-			}
-		})
-	}
-}
-
 func TestIsDecisionConsistent(t *testing.T) {
 	tests := []struct {
 		name            string
@@ -608,6 +577,45 @@ func TestSubVoteLabel(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if got := SubVoteLabel(tc.vote, tc.index, tc.groupSize); got != tc.want {
 				t.Errorf("SubVoteLabel = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+// A result card prints the vote's time in its corner, so its heading drops the
+// clock that SubVoteLabel gives the text posts — and nothing else.
+func TestCardSubVoteLabelLeavesTheClockToTheCorner(t *testing.T) {
+	timed := time.Date(2026, 6, 29, 14, 32, 11, 0, time.UTC)
+
+	untitled := votes.Vote{Date: timed, Type: "Quorum"}
+	if got := SubVoteLabel(untitled, 1, 3); got != "Abstimmung 2 (14:32) · Quorum" {
+		t.Fatalf("SubVoteLabel = %q, the text posts' label changed", got)
+	}
+	if got := CardSubVoteLabel(untitled, 1, 3); got != "Abstimmung 2 · Quorum" {
+		t.Errorf("CardSubVoteLabel = %q, want %q", got, "Abstimmung 2 · Quorum")
+	}
+
+	titled := votes.Vote{Subtitle: "Schlussabstimmung", Date: timed}
+	if got := CardSubVoteLabel(titled, 1, 3); got != "Schlussabstimmung" {
+		t.Errorf("CardSubVoteLabel = %q, want the vote's own title", got)
+	}
+}
+
+func TestFormatVoteDateTime(t *testing.T) {
+	tests := []struct {
+		name string
+		date time.Time
+		want string
+	}{
+		{"date and clock", time.Date(2026, 6, 15, 11, 29, 43, 0, time.UTC), "15.06.2026 11:29"},
+		// PARIS dates are midnight: the date stands alone rather than "00:00".
+		{"midnight is a date alone", time.Date(2025, 6, 15, 0, 0, 0, 0, time.UTC), "15.06.2025"},
+		{"unknown date", time.Time{}, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FormatVoteDateTime(tt.date); got != tt.want {
+				t.Errorf("FormatVoteDateTime(%v) = %q, want %q", tt.date, got, tt.want)
 			}
 		})
 	}
@@ -1065,17 +1073,140 @@ func TestFitAuthorPrefix(t *testing.T) {
 	})
 }
 
-func TestSignatoryLine(t *testing.T) {
-	if got := SignatoryLine(nil); got != "" {
-		t.Errorf("SignatoryLine(nil) = %q, want nothing to post", got)
+// blockTexts renders blocks the way a thread shows them, without a limit.
+func blockTexts(blocks []NameBlock) []string {
+	var out []string
+	for _, b := range blocks {
+		out = append(out, PackNames(b, nil, 10000, func(s string) int { return len(s) })...)
 	}
-	got := SignatoryLine([]votes.Author{
+	return out
+}
+
+func TestSignatoryBlocks_Zurich(t *testing.T) {
+	authors := []votes.Author{
+		{Name: "Ivo Bieri", Party: "SP"},
 		{Name: "Silvia Rigoni", Party: "Grüne"},
 		{Name: "Judith Anna Stofer", Party: "AL"},
-	})
-	want := "✍️ Weitere Unterzeichnende: Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"
-	if got != want {
-		t.Errorf("SignatoryLine() = %q, want %q", got, want)
+	}
+	group := []votes.Vote{{Affair: votes.Affair{Type: "Postulat", Authors: authors}}}
+
+	if got := SignatoryBlocks(group, nil); len(got) != 0 {
+		t.Errorf("nothing deferred: %v, want nothing to post", got)
+	}
+	got := blockTexts(SignatoryBlocks(group, authors[1:]))
+	want := []string{"✍️ Weitere Unterzeichnende: Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("some deferred: %q, want %q", got, want)
+	}
+	// Nobody was named beside the title, so nobody is "further".
+	got = blockTexts(SignatoryBlocks(group, authors))
+	want = []string{"✍️ Postulat von Ivo Bieri (SP), Silvia Rigoni (Grüne) und Judith Anna Stofer (AL)"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("all deferred: %q, want %q", got, want)
+	}
+	untyped := []votes.Vote{{Affair: votes.Affair{Authors: authors[:1]}}}
+	if got, want := blockTexts(SignatoryBlocks(untyped, authors[:1])), []string{"✍️ Von Ivo Bieri (SP)"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("all deferred, no type: %q, want %q", got, want)
+	}
+}
+
+// A member who took a business over is never listed as one of its
+// signatories, wherever the cut falls, and the co-signers are always named.
+func TestSignatoryBlocks_Roles(t *testing.T) {
+	filer := votes.Author{Name: "Stefania Prezioso Batou", Party: "EàG"}
+	took := votes.Author{Name: "Fabien Fivaz", Party: "Grüne", Role: votes.RoleTookOver}
+	co := []votes.Author{
+		{Name: "Tamara Funiciello", Party: "SP", Role: votes.RoleCoSigned},
+		{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+	}
+	group := []votes.Vote{{Affair: votes.Affair{
+		Type:    "Parlamentarische Initiative",
+		Authors: append([]votes.Author{filer, took}, co...),
+	}}}
+	coLine := "✍️ Mitunterzeichnet von Tamara Funiciello (SP) und Greta Gysin (Grüne)"
+
+	for _, tc := range []struct {
+		name     string
+		deferred []votes.Author
+		want     []string
+	}{
+		{"everyone fitted", nil, []string{coLine}},
+		{"the takeover shed", []votes.Author{took}, []string{"↪️ Übernommen von Fabien Fivaz (Grüne)", coLine}},
+		{"both shed", []votes.Author{filer, took}, []string{
+			"✍️ Parlamentarische Initiative von Stefania Prezioso Batou (EàG)",
+			"↪️ Übernommen von Fabien Fivaz (Grüne)",
+			coLine,
+		}},
+	} {
+		if got := blockTexts(SignatoryBlocks(group, tc.deferred)); !reflect.DeepEqual(got, tc.want) {
+			t.Errorf("%s:\n got %q\nwant %q", tc.name, got, tc.want)
+		}
+	}
+}
+
+// Co-signers never reach the label line, the card's title or its count.
+func TestLeadAuthorsOnly_OnTheLabelLine(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{
+		Type: "Parlamentarische Initiative",
+		Authors: []votes.Author{
+			{Name: "Andri Silberschmidt", Party: "FDP"},
+			{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+		},
+	}}}
+	if got, want := GroupPrefixLine(group), "Parlamentarische Initiative von Andri Silberschmidt (FDP)"; got != want {
+		t.Errorf("label line = %q, want %q", got, want)
+	}
+	if got := CountAuthors(group); got != 1 {
+		t.Errorf("CountAuthors = %d, want 1", got)
+	}
+	line, deferred := FitAuthorPrefix(group, 1000, func(s string) int { return len(s) })
+	if strings.Contains(line, "Gysin") || len(deferred) != 0 {
+		t.Errorf("FitAuthorPrefix = %q, %v; want no co-signer on the line or deferred", line, deferred)
+	}
+}
+
+func TestPackNames(t *testing.T) {
+	b := NameBlock{"✍️ Mitunterzeichnet von", []votes.Author{
+		{Name: "A", Party: "SP"}, {Name: "B", Party: "FDP"}, {Name: "C", Party: "AL"},
+	}}
+	measure := func(s string) int { return len([]rune(s)) }
+	tag := func(s string) string { return s + " @x" }
+
+	if got, want := PackNames(b, tag, 1000, measure), []string{"✍️ Mitunterzeichnet von A (SP) @x, B (FDP) @x und C (AL) @x"}; !reflect.DeepEqual(got, want) {
+		t.Errorf("roomy: %q, want %q", got, want)
+	}
+	// Room for the label and two names: the third moves on, and the cut is marked.
+	got := PackNames(b, tag, 47, measure)
+	want := []string{"✍️ Mitunterzeichnet von A (SP) @x, B (FDP) @x …", "… C (AL) @x"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("split: %q, want %q", got, want)
+	}
+	// No entry overruns, the "…" that marks the cut included, at any limit
+	// that holds the label with its marker and the longest continuation. Below
+	// 35 the label and first name fit only without the marker.
+	for limit := measure("✍️ Mitunterzeichnet von …"); limit <= 70; limit++ {
+		for _, e := range PackNames(b, tag, limit, measure) {
+			if measure(e) > limit {
+				t.Errorf("limit %d: entry %q is %d long", limit, e, measure(e))
+			}
+		}
+	}
+	if got := PackNames(NameBlock{"✍️ Von", nil}, nil, 100, measure); got != nil {
+		t.Errorf("no names: %q, want nothing", got)
+	}
+}
+
+func TestCoSignerLine(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{Authors: []votes.Author{
+		{Name: "Andri Silberschmidt", Party: "FDP"},
+		{Name: "Greta Gysin", Party: "Grüne", Role: votes.RoleCoSigned},
+	}}}}
+	if got, want := CoSignerLine(group), "✍️ Mitunterzeichnet von Greta Gysin (Grüne)"; got != want {
+		t.Errorf("CoSignerLine = %q, want %q", got, want)
+	}
+	group[0].Affair.Authors = group[0].Affair.Authors[:1]
+	if got := CoSignerLine(group); got != "" {
+		t.Errorf("no co-signers: %q, want empty", got)
 	}
 }
 
@@ -1106,7 +1237,7 @@ func TestGroupLinks(t *testing.T) {
 	)
 	canton := votes.Vote{
 		SourceURL: geschaeft, GroupURL: geschaeft,
-		ArchiveURL: segment, ArchiveGroupURL: item, SessionURL: sitting,
+		VideoURL: segment, VideoGroupURL: item, SessionURL: sitting,
 	}
 
 	t.Run("a lone vote links its own segment", func(t *testing.T) {
@@ -1124,7 +1255,7 @@ func TestGroupLinks(t *testing.T) {
 	t.Run("a group links the agenda item, not the first vote", func(t *testing.T) {
 		got := GroupLinks([]votes.Vote{canton, canton})
 		if len(got) != 3 || got[1].URL != item {
-			t.Errorf("archive link = %+v, want the widened %q", got, item)
+			t.Errorf("video link = %+v, want the widened %q", got, item)
 		}
 	})
 
@@ -1132,7 +1263,7 @@ func TestGroupLinks(t *testing.T) {
 		// applyAffair never ran, so both URL fields still hold the archive link.
 		noAffair := votes.Vote{
 			SourceURL: segment, GroupURL: segment,
-			ArchiveURL: segment, SessionURL: sitting,
+			VideoURL: segment, SessionURL: sitting,
 		}
 		got := GroupLinks([]votes.Vote{noAffair})
 		want := []Link{
@@ -1144,9 +1275,9 @@ func TestGroupLinks(t *testing.T) {
 		}
 	})
 
-	t.Run("a group whose archive has no agenda item drops the entry", func(t *testing.T) {
+	t.Run("a group whose recording has no agenda item drops the entry", func(t *testing.T) {
 		noItem := canton
-		noItem.ArchiveGroupURL = ""
+		noItem.VideoGroupURL = ""
 		got := GroupLinks([]votes.Vote{noItem, noItem})
 		for _, l := range got {
 			if l.URL == segment {
@@ -1155,6 +1286,42 @@ func TestGroupLinks(t *testing.T) {
 		}
 		if len(got) != 2 {
 			t.Errorf("GroupLinks() = %+v, want the Geschäft and the sitting", got)
+		}
+	})
+
+	const curia = "https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20250059"
+	nationalrat := func(ref string) votes.Vote {
+		return votes.Vote{
+			SourceURL: curia, GroupURL: curia,
+			ArchiveURL: "https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_" + ref + ".pdf",
+		}
+	}
+
+	t.Run("a lone Nationalrat vote links its Protokoll", func(t *testing.T) {
+		got := GroupLinks([]votes.Vote{nationalrat("33215")})
+		want := []Link{
+			{Icon: "🔗", Name: "Geschäft", URL: curia},
+			{Icon: "📋", Name: "Protokoll", URL: "https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33215.pdf"},
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("GroupLinks() = %+v, want %+v", got, want)
+		}
+	})
+
+	t.Run("a Nationalrat group leaves the Protokolle to the votes", func(t *testing.T) {
+		g := []votes.Vote{nationalrat("33215"), nationalrat("33216")}
+		got := GroupLinks(g)
+		for _, l := range got {
+			if l.Name == "Protokoll" {
+				t.Errorf("GroupLinks() = %+v, want no Protokoll: there is none for the group", got)
+			}
+		}
+		if len(got) != 1 {
+			t.Errorf("GroupLinks() = %+v, want only the Geschäft", got)
+		}
+		per := VoteLinks(g, 1)
+		if len(per) != 1 || per[0].Name != "Protokoll" || !strings.HasSuffix(per[0].URL, "vote_52_33216.pdf") {
+			t.Errorf("VoteLinks() = %+v, want the second vote's own Protokoll", per)
 		}
 	})
 }
@@ -1173,7 +1340,7 @@ func TestLinkLine(t *testing.T) {
 	t.Run("several links are named so a reader can tell them apart", func(t *testing.T) {
 		canton := []votes.Vote{{
 			SourceURL:  geschaeft,
-			ArchiveURL: "https://zh.recapp.ch/shareparl?agendaItemUid=item&segmentUid=seg",
+			VideoURL:   "https://zh.recapp.ch/shareparl?agendaItemUid=item&segmentUid=seg",
 			SessionURL: "https://www.kantonsrat.zh.ch/ratsbetrieb/sitzungenundprotokolle/?d=1",
 		}}
 		got := LinkLine(canton)
@@ -1193,8 +1360,8 @@ func TestLinkLine(t *testing.T) {
 
 func TestVoteLinks(t *testing.T) {
 	const group, item = "https://example.ch/geschaeft/1", "https://rec.example/s?agendaItemUid=A"
-	vote := func(source, archive string) votes.Vote {
-		return votes.Vote{SourceURL: source, GroupURL: group, ArchiveURL: archive, ArchiveGroupURL: item}
+	vote := func(source, video string) votes.Vote {
+		return votes.Vote{SourceURL: source, GroupURL: group, VideoURL: video, VideoGroupURL: item}
 	}
 
 	t.Run("recording at the vote's segment, business page not repeated", func(t *testing.T) {
@@ -1225,4 +1392,69 @@ func TestVoteLinks(t *testing.T) {
 			t.Errorf("got %+v, want nil", got)
 		}
 	})
+}
+
+// A business a Fraktion filed is labelled with the Fraktion, in the genitive
+// Stadt Zürich's titles use. A member filer takes precedence; without a type
+// there is nothing for the Fraktion to attach to.
+func TestGroupPrefixLineNamesTheFilingFraktion(t *testing.T) {
+	vote := func(affairType, fraktion string, authors ...votes.Author) []votes.Vote {
+		return []votes.Vote{{Affair: votes.Affair{Type: affairType, Fraktion: fraktion, Authors: authors}}}
+	}
+	tests := []struct {
+		name  string
+		group []votes.Vote
+		want  string
+	}{
+		{"a Fraktion", vote("Parlamentarische Initiative", "GLP-Fraktion"), "Parlamentarische Initiative der GLP-Fraktion"},
+		{"a member wins", vote("Motion", "SP-Fraktion", votes.Author{Name: "Anna Muster", Party: "SP"}), "Motion von Anna Muster (SP)"},
+		{"no type", vote("", "SVP-Fraktion"), ""},
+	}
+	for _, tt := range tests {
+		if got := GroupPrefixLine(tt.group); got != tt.want {
+			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+}
+
+// A vote's Outcome, where the source states one, is what a post says happened;
+// otherwise whether Ja carried. An initiative is given leave, not adopted.
+func TestVerdict(t *testing.T) {
+	tests := []struct {
+		decision, outcome, emoji, text string
+	}{
+		{"angenommen", "", "✅", "Angenommen"},
+		{"angenommen", "abgelehnt", "❌", "Abgelehnt"},
+		{"abgelehnt", "angenommen", "✅", "Angenommen"},
+		{"angenommen", "keine Folge gegeben", "❌", "Keine Folge gegeben"},
+		{"abgelehnt", "Folge gegeben", "✅", "Folge gegeben"},
+	}
+	for _, tt := range tests {
+		v := votes.Vote{Decision: tt.decision, Outcome: tt.outcome}
+		if e, x := GetVoteResultEmoji(Verdict(v)), GetVoteResultText(Verdict(v)); e != tt.emoji || x != tt.text {
+			t.Errorf("Decision %q Outcome %q: got %s %s, want %s %s", tt.decision, tt.outcome, e, x, tt.emoji, tt.text)
+		}
+	}
+}
+
+func TestGroupPrefixLineNamesTheFilingCanton(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{Type: "Standesinitiative", Canton: "St. Gallen"}}}
+	if got := GroupPrefixLine(group); got != "Standesinitiative des Kantons St. Gallen" {
+		t.Errorf("got %q", got)
+	}
+}
+
+// What Ja supported is printed on its own line below the title, so a ✕ above a
+// Ja majority reads as what it is.
+func TestLongFormHeadingPrintsTheQuestionBelowTheTitle(t *testing.T) {
+	v := votes.Vote{Title: "Der Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!", Question: "Ja: keine Folge geben",
+		Affair: votes.Affair{Type: "Parlamentarische Initiative"}}
+	got := LongFormHeading([]votes.Vote{v}, Tags{})
+	if !strings.Contains(got, "Parlamentarische Initiative\nDer Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!\nJa: keine Folge geben\n\n") {
+		t.Errorf("heading %q", got)
+	}
+	// A group's votes are each labelled by their own heading.
+	if QuestionLine([]votes.Vote{v, v}) != "" {
+		t.Error("a group printed a question line")
+	}
 }

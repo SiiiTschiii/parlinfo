@@ -27,7 +27,7 @@ func TestWeightedLen(t *testing.T) {
 		{"not a url", "xhttps://a.ch", 13},
 		{"ellipsis", "…", 2},
 		// X linkifies bare domains. This one is on every Kanton Zürich post.
-		{"attribution line", "Source: OpenParlData.ch", 8 + urlWeightedLen},
+		{"attribution line", "Daten: OpenParlData.ch", 7 + urlWeightedLen},
 		{"bare domain with path", "kantonsrat.zh.ch/geschaefte", urlWeightedLen},
 		// A date is not a link, and charging it 23 would waste header room.
 		{"date is not a domain", "15.06.2026", 10},
@@ -38,7 +38,7 @@ func TestWeightedLen(t *testing.T) {
 		// separately. Swallowing it into the flat 23 undercounts.
 		{"url followed by a comma", "https://a.ch,", urlWeightedLen + 1},
 		{"bare domain followed by a full stop", "OpenParlData.ch.", urlWeightedLen + 1},
-		{"attribution at the end of a sentence", "Source: OpenParlData.ch.", 8 + urlWeightedLen + 1},
+		{"attribution at the end of a sentence", "Daten: OpenParlData.ch.", 7 + urlWeightedLen + 1},
 		{"bare domain in parentheses", "(OpenParlData.ch)", 1 + urlWeightedLen + 1},
 		{"url with a query string keeps its punctuation", "https://a.ch/x?id=1&y=2", urlWeightedLen},
 	}

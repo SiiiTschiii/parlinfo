@@ -11,12 +11,15 @@
   <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/validate-contacts.yml">
     <img src="https://github.com/SiiiTschiii/parlinfo/actions/workflows/validate-contacts.yml/badge.svg" alt="Validate Contacts">
   </a>
-  <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot.yml">
-    <img src="https://img.shields.io/github/last-commit/SiiiTschiii/parlinfo/main?label=last%20bot%20run&logo=github" alt="Last Bot Run">
+  <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot-zhparl.yml">
+    <img src="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot-zhparl.yml/badge.svg" alt="ZH Parl Info Bot">
+  </a>
+  <a href="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot-chparl.yml">
+    <img src="https://github.com/SiiiTschiii/parlinfo/actions/workflows/bot-chparl.yml/badge.svg" alt="CH Parl Info Bot">
   </a>
 </p>
 
-A civic tech bot that shares Swiss parliamentary vote results on social media and tags the politicians involved, using a curated mapping of their accounts.
+A civic tech bot that brings parliamentary decisions to social media and tags the politicians involved, using a curated mapping of their accounts. It is built to grow: more parliaments, more platforms.
 
 We built it because a healthy democracy rests on two things that are easy to lose sight of:
 
@@ -25,7 +28,7 @@ We built it because a healthy democracy rests on two things that are easy to los
 
 **🇨🇭 Auf Deutsch**
 
-Ein Civic-Tech-Bot, der Abstimmungsergebnisse aus den Zürcher Parlamenten auf Social Media teilt und die beteiligten Politikerinnen und Politiker markiert, anhand einer manuell gepflegten Zuordnung ihrer Accounts.
+Ein Civic-Tech-Bot, der parlamentarische Entscheide auf Social Media bringt und die beteiligten Politikerinnen und Politiker markiert, anhand einer manuell gepflegten Zuordnung ihrer Accounts. Das Projekt ist auf Wachstum angelegt: mehr Parlamente, mehr Plattformen.
 
 Wir haben das Projekt ins Leben gerufen, weil eine gesunde Demokratie auf zwei Dingen beruht, die leicht aus dem Blick geraten:
 
@@ -38,34 +41,28 @@ Wir haben das Projekt ins Leben gerufen, weil eine gesunde Demokratie auf zwei D
 | ---------------------------- | ------------------------------------------------------------------------ | ------- |
 | **Gemeinderat Stadt Zürich** | [PARIS API](https://opendatazurich.github.io/paris-api/), City of Zurich | ✅ Live |
 | **Kantonsrat Zürich**        | [OpenParlData](https://api.openparldata.ch/documentation)                | ✅ Live |
-| **Nationalrat**              | [parlament.ch OData](https://ws.parlament.ch/odata.svc/), Parlamentsdienste | 🧪 Dry run |
-
-The two Zürich bodies post to the same accounts (Zürich Ratsinfo). Every post
-names which chamber voted, in the text and on the image, so the two are never
-confused. The Nationalrat posts only its Schluss- and Gesamtabstimmungen, to
-accounts of its own (CH Parl Info, [@chparlinfo](https://www.instagram.com/chparlinfo)
-on Instagram, with X, Bluesky and a Facebook Page to follow), from the separate
-`bot-chparl.yml` workflow.
+| **Nationalrat**              | [parlament.ch OData](https://ws.parlament.ch/odata.svc/), Parlamentsdienste | ✅ Live |
 
 ## Supported Platforms
 
-| Platform    | Status     | Politicians with a verified account | Account                                                                              |
-| ----------- | ---------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
-| LinkedIn    | ❌ Planned | 113                                 | -                                                                                    |
-| Facebook    | ✅ Active  | 92                                  | [ZueriRatsinfo](https://www.facebook.com/profile.php?id=1063164230212573)            |
-| Instagram   | ✅ Active  | 102                                 | [@zueriratsinfo](https://www.instagram.com/zueriratsinfo)                            |
-| X (Twitter) | ✅ Active  | 67                                  | [@zuerichratsinfo](https://x.com/zuerichratsinfo)                                    |
-| Bluesky     | ✅ Active  | 27                                  | [@zuerichratsinfo.bsky.social](https://bsky.app/profile/zuerichratsinfo.bsky.social) |
-| TikTok      | ❌ Planned | 19                                  | -                                                                                    |
+| Platform    | Status     | Zürich Ratsinfo (Gemeinderat, Kantonsrat)                                            | CH Parl Info (Nationalrat)                                                           |
+| ----------- | ---------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| Instagram   | ✅ Active  | [@zueriratsinfo](https://www.instagram.com/zueriratsinfo)                            | [@chparlinfo](https://www.instagram.com/chparlinfo)                                  |
+| Facebook    | ✅ Active  | [ZueriRatsinfo](https://www.facebook.com/people/ZueriRatsinfo/1063164230212573/)     | [CH Parl Info](https://www.facebook.com/profile.php?id=61595771216866)               |
+| X (Twitter) | ✅ Active  | [@zuerichratsinfo](https://x.com/zuerichratsinfo)                                    | [@chparlinfo](https://x.com/chparlinfo)                                              |
+| Bluesky     | ✅ Active  | [@zuerichratsinfo.bsky.social](https://bsky.app/profile/zuerichratsinfo.bsky.social) | [@chparlinfo.bsky.social](https://bsky.app/profile/chparlinfo.bsky.social)           |
+| LinkedIn    | ❌ Planned | -                                                                                    | -                                                                                    |
+| TikTok      | ❌ Planned | -                                                                                    | -                                                                                    |
+| YouTube     | ❌ Planned | -                                                                                    | -                                                                                    |
 
-_The count is how many politicians the bot can tag on that platform in case they are mentioned in a post. The curated mapping lives in [data/](data/)._
+_Politicians the bot can tag per platform, from the curated mapping in [data/](data/): LinkedIn 277, Facebook 272, Instagram 258, X 209, Bluesky 40, TikTok 30. Tagging is not available for every body yet._
 
 ## What It Does
 
-- **Automated Vote Posts**: Shares vote results (Abstimmungen) with the full per-faction breakdown. Timing depends on when each source publishes: the [PARIS API](https://opendatazurich.github.io/paris-api/) typically 5–7 days after a city vote (the same data behind [gemeinderat-zuerich.ch](https://www.gemeinderat-zuerich.ch/sitzungen/termine/?navid=968842968842)), and OpenParlData within a few days of a cantonal one.
+- **Automated Vote Posts**: Shares vote results (Abstimmungen) with the full per-faction breakdown, as image carousels. Each post names the body that voted, in the text and on the image. Posts go out once the source publishes the data, see the data sources above.
 - **Politician Tagging**: Automatically tags mentioned politicians using their social media accounts when available in our mapping
   - _Example: "Postulat von Ivo Bieri @ivo_bieri (SP) und Liv Mahrer @LivMahrer (SP)..."_
-- **Social Media Mapping**: Curates an extensive mapping of Zurich politicians to their social media accounts (X, Facebook, Instagram, LinkedIn, Bluesky, TikTok) - see [data/zurich-city/contacts.yaml](data/zurich-city/contacts.yaml)
+- **Social Media Mapping**: Curates a mapping of politicians to their social media accounts (X, Facebook, Instagram, LinkedIn, Bluesky, TikTok), see [data/](data/)
 
 ## Tech Stack
 

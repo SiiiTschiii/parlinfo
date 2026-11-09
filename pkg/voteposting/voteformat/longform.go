@@ -26,7 +26,11 @@ func orIdentity(f func(string, string) string) func(string, string) string {
 }
 
 // LongFormBody renders a group as one block of text, without its links: the
-// heading, then per vote the verdict, the counts and the Fraktion breakdown.
+// heading, the co-signers, then per vote the verdict, the counts and the
+// Fraktion breakdown.
+//
+// The business's next step (NextStepLine) is not part of it: callers put it
+// between the body and the links, where a caption cut for length keeps it.
 //
 // It is what the platforms that publish a vote as a single post carry — the
 // Instagram caption and the Facebook message — where X and Bluesky spread the
@@ -42,6 +46,7 @@ func orIdentity(f func(string, string) string) func(string, string) string {
 func LongFormBody(group []votes.Vote, tags Tags) string {
 	var sb strings.Builder
 	sb.WriteString(LongFormHeading(group, tags))
+	sb.WriteString(LongFormCoSigners(group, tags))
 	for i := range group {
 		sb.WriteString(LongFormVote(group, i, tags))
 		if i < len(group)-1 {
@@ -70,8 +75,24 @@ func LongFormHeading(group []votes.Vote, tags Tags) string {
 		sb.WriteString("\n")
 	}
 	sb.WriteString(tagHeading(CleanVoteTitle(group[0].Title), jurisdiction))
+	if q := QuestionLine(group); q != "" {
+		sb.WriteString("\n" + q)
+	}
 	sb.WriteString("\n\n")
 	return sb.String()
+}
+
+// LongFormCoSigners is the co-signers below the heading, tagged like it and
+// ending in a blank line; empty when there are none.
+//
+// Not part of the heading, which is also the card's alt text: the card names
+// who filed and who took over, never the co-signers.
+func LongFormCoSigners(group []votes.Vote, tags Tags) string {
+	line := CoSignerLine(group)
+	if line == "" {
+		return ""
+	}
+	return orIdentity(tags.Heading)(line, group[0].Jurisdiction) + "\n\n"
 }
 
 // LongFormVote is the part of LongFormBody that belongs to vote i of the group:
@@ -91,7 +112,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 			sb.WriteString(voteTitle)
 		} else {
 			sb.WriteString(fmt.Sprintf("%s %s: %s",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Decision), voteTitle))
+				GetVoteResultEmoji(Verdict(vote)), GetVoteResultText(Verdict(vote)), voteTitle))
 		}
 		sb.WriteString("\n")
 	} else {
@@ -103,7 +124,7 @@ func LongFormVote(group []votes.Vote, i int, tags Tags) string {
 		}
 		if HasVerdict(vote) {
 			sb.WriteString(fmt.Sprintf("%s %s\n",
-				GetVoteResultEmoji(vote.Decision), GetVoteResultText(vote.Decision)))
+				GetVoteResultEmoji(Verdict(vote)), GetVoteResultText(Verdict(vote))))
 		}
 	}
 

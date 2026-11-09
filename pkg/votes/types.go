@@ -70,20 +70,29 @@ type Vote struct {
 	SourceURL string
 	GroupURL  string
 
-	// ArchiveURL links to the parliament's own record of the vote itself,
-	// rather than of the business it belongs to: the debate, the tally and,
-	// where the body publishes one, the Namensliste. ArchiveGroupURL is the
-	// same thing widened to the agenda item, for a post covering several votes.
+	// VideoURL links to the recording of the debate, positioned at this vote:
+	// Kanton Zürich's Recapp segment, which also names the vote, states the
+	// result and offers the Namensliste. VideoGroupURL is the same recording
+	// widened to the agenda item, for a post covering several votes.
 	//
-	// They exist because the business page is the durable link but not the
-	// prompt one. Kanton Zürich adds a vote to its Geschäft page ten to sixteen
-	// days after the sitting, so for the first fortnight the permalink a post
-	// carries says nothing about the vote the post is about. The archive has it
-	// within the hour.
+	// It and ArchiveURL exist because the business page is the durable link
+	// but not the prompt one. Kanton Zürich adds a vote to its Geschäft page
+	// ten to sixteen days after the sitting, so for the first fortnight the
+	// permalink a post carries says nothing about the vote the post is about.
+	// The recording has it within the hour.
 	//
 	// Empty when the source publishes no such page.
-	ArchiveURL      string
-	ArchiveGroupURL string
+	VideoURL      string
+	VideoGroupURL string
+
+	// ArchiveURL links to the parliament's written record of this one vote:
+	// the Nationalrat's Abstimmungsprotokoll, a PDF with the tally and every
+	// member's vote, online within seconds of the vote closing. It has no
+	// widened form, so a post covering several votes carries it per vote
+	// rather than in the post's own link block.
+	//
+	// Empty when the source publishes no such record.
+	ArchiveURL string
 
 	// SessionURL links to the sitting this vote was taken in, where the body
 	// publishes the Traktandenliste, the Bulletin and the recording as one
@@ -110,9 +119,30 @@ type Vote struct {
 	// "Auswahl A"). Derived from the totals when the source omits it.
 	Decision string
 
-	// Attribution is the credit line the source's licence requires, or empty
-	// when it requires none. It rides on the vote rather than being looked up
-	// because it is a property of where this particular datum came from.
+	// Outcome is what the vote did to the business, when that differs in kind
+	// from whether Ja carried: "angenommen" or "abgelehnt" for a motion or
+	// postulate, "Folge gegeben" or "keine Folge gegeben" for an initiative.
+	// Posts state it in place of Decision. Empty for every other vote.
+	//
+	// It exists because on such a vote Ja is whatever the motion before the
+	// chamber proposed, often the committee's proposal to reject. A Ja carrying
+	// then means the business failed, and "✅ Angenommen" would say the
+	// opposite of what happened. Decision keeps meaning "Ja carried", which is
+	// what the consistency gate checks against the counts.
+	Outcome string
+
+	// Question says what a Ja vote supported, as a post prints it below the
+	// title: "Ja: keine Folge geben". Set where the verdict alone would read as
+	// a contradiction, a ✕ above 128 Ja, because Ja was a proposal to reject.
+	// Empty for every other vote.
+	Question string
+
+	// Attribution is the "Daten: …" line naming the source, closing the link
+	// block of every post. Two sources' terms require it (OpenParlData's CC BY
+	// 4.0, the Parlamentsdienste's open data terms); the others carry one too,
+	// so posts name their data the same way across parliaments. It rides on the
+	// vote rather than being looked up because it is a property of where this
+	// particular datum came from.
 	Attribution string
 
 	Affair      Affair
@@ -145,13 +175,32 @@ type Affair struct {
 	// a bare subject line. Formatters read this field; the city's titles are
 	// left exactly as they arrive.
 	Authors []Author
+
+	// Fraktion names the parliamentary group that filed this business, when a
+	// group and not a member did, written so it reads after "der" and names its
+	// parties: "SVP-Fraktion", "Mitte-EVP-Fraktion". Empty otherwise.
+	//
+	// parlament.ch records a Fraktion filing with the group as the filer and
+	// no member, so Authors stays empty for it. Zürich's sources leave this
+	// empty: the Gemeinderat writes the Fraktion into the title itself, and
+	// the tagger finds it there.
+	Fraktion string
+
+	// Canton names the canton that filed this business, a Standesinitiative,
+	// as a post names it after "des Kantons": "Thurgau". Empty otherwise.
+	Canton string
+
+	// Process is where the business stands as of this vote, and what comes
+	// next. Nil when the source adapter cannot say, which posts as if the
+	// feature did not exist. Read it through GroupProcess, never directly.
+	Process *Process
 }
 
 // Author is a member who signed a business matter into the chamber: the
 // Erstunterzeichnende first, then the Mitunterzeichnende in the order the
-// parliament lists them. Formatters render as many as a post can carry and
-// name the rest in their own block, so consumers should expect the whole list
-// rather than a lead alone.
+// parliament lists them, each with their Role where the source says.
+// Formatters render as many as a post can carry and name the rest in their own
+// block, so consumers should expect the whole list rather than a lead alone.
 //
 // Party is required rather than decorative: it is what distinguishes a member
 // acting in the chamber from a private person exercising a right of initiative,
@@ -160,7 +209,28 @@ type Affair struct {
 type Author struct {
 	Name  string
 	Party string
+	Role  AuthorRole
 }
+
+// AuthorRole is the part a member had in a business, where the source says.
+//
+// The zero value is what Stadt and Kanton Zürich give: a signatory, without
+// telling the one who filed from the ones who signed with them. parlament.ch
+// does tell, and the difference decides where a name goes: the label line
+// names who filed and who took the business over, while co-signers — up to
+// twenty on a federal initiative — would bury the subject of the vote there,
+// and are named only in the text below it.
+type AuthorRole int
+
+const (
+	// RoleSigned filed or signed the business; the label line names them.
+	RoleSigned AuthorRole = iota
+	// RoleTookOver continued a business whose filer left the chamber.
+	RoleTookOver
+	// RoleCoSigned signed beside the filer. Named in the text posts, where a
+	// handle can be tagged, never on the label line or the card.
+	RoleCoSigned
+)
 
 // MemberVote is one member's recorded vote.
 //

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/fbapi"
+	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -61,45 +62,50 @@ func (p *FacebookPlatform) Format(group []votes.Vote) (platforms.Content, error)
 // those itself after about a day, and the vote is not marked as posted, so the
 // next run starts the post again from scratch.
 //
-// Returns shouldContinue=false when the post limit is reached.
-func (p *FacebookPlatform) Post(content platforms.Content) (bool, error) {
+// Returns a ref to the published post (none in stub mode), and
+// shouldContinue=false when the post limit is reached.
+func (p *FacebookPlatform) Post(content platforms.Content) (votelog.PostRef, bool, error) {
 	fbContent, ok := content.(*FacebookContent)
 	if !ok {
-		return false, fmt.Errorf("unexpected content type for Facebook")
+		return votelog.PostRef{}, false, fmt.Errorf("unexpected content type for Facebook")
 	}
 
+	var post votelog.PostRef
 	if p.stubMode {
 		fmt.Printf("📘 [Facebook stub] Would post %d image(s) with a message of %d chars\n",
 			len(fbContent.Images), len([]rune(fbContent.Message)))
 	} else {
-		if err := p.publish(fbContent); err != nil {
-			return false, err
+		postID, err := p.publish(fbContent)
+		if err != nil {
+			return votelog.PostRef{}, false, err
 		}
+		post = votelog.PostRef{ID: postID, URL: fbapi.PostURL(postID)}
 	}
 
 	p.postsThisRun++
-	return p.postsThisRun < p.maxPostsPerRun, nil
+	return post, p.postsThisRun < p.maxPostsPerRun, nil
 }
 
-func (p *FacebookPlatform) publish(c *FacebookContent) error {
+// publish uploads the cards and publishes the post, returning its ID.
+func (p *FacebookPlatform) publish(c *FacebookContent) (string, error) {
 	fmt.Printf("📤 Uploading %d image(s) to Facebook...\n", len(c.Images))
 	ts := time.Now().UnixMilli()
 	photoIDs := make([]string, len(c.Images))
 	for i, img := range c.Images {
 		id, err := p.uploadPhotoFunc(img, fmt.Sprintf("carousel_%d_%d.jpg", ts, i), c.Captions[i])
 		if err != nil {
-			return fmt.Errorf("uploading image %d: %w", i, err)
+			return "", fmt.Errorf("uploading image %d: %w", i, err)
 		}
 		photoIDs[i] = id
 	}
 
 	postID, err := p.publishPhotoPostFunc(c.Message, photoIDs)
 	if err != nil {
-		return fmt.Errorf("publishing Facebook post: %w", err)
+		return "", fmt.Errorf("publishing Facebook post: %w", err)
 	}
 	fmt.Printf("✅ Facebook post created (id: %s)\n", postID)
 	fmt.Printf("   🔗 %s\n", fbapi.PostURL(postID))
-	return nil
+	return postID, nil
 }
 
 // MaxPostsPerRun returns the configured per-run posting limit.

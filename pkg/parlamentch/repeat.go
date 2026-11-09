@@ -1,0 +1,130 @@
+package parlamentch
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+
+	"github.com/siiitschiii/parlinfo/pkg/votes"
+)
+
+// A vote the Nationalrat takes twice. When a member moves that a vote be
+// repeated — "Ordnungsantrag Matter (Wiederholen der Gesamtabstimmung)" on
+// 25.060, 08.09.2025 — and the chamber agrees, it votes again, and the second
+// vote replaces the first: the minutes go on "Wir wiederholen also die
+// Gesamtabstimmung". Both votes pass the subject filter and land in one group,
+// labelled alike, so the card showed two Gesamtabstimmungen with different
+// counts and nothing to say which one stood.
+//
+// The Ordnungsantrag itself is in the service, on the same business, with the
+// repetition in its subject. It is the evidence used: two consecutive votes
+// alike and an adopted Ordnungsantrag to repeat between them. Two votes alike
+// without one, or with one the chamber rejected or whose outcome cannot be
+// read, are left as they are. On 24.314 (28.04.2026) the chamber did vote
+// twice with the same meanings, and the vote between was recorded with
+// neither a business nor a subject; nothing in the service says the second
+// replaced the first.
+
+// repeatOrderDTO is a vote on an Ordnungsantrag, as far as markRepeats reads it.
+type repeatOrderDTO struct {
+	ID      int64   `json:"ID"`
+	Subject *string `json:"Subject"`
+	VoteEnd string  `json:"VoteEnd"`
+}
+
+// isRepeatOrder reports whether a vote's subject is a motion to repeat a vote,
+// in the forms the service holds: "Wiederholen der Gesamtabstimmung",
+// "Wiederholung der Abstimmung", "Abstimmung … wiederholen".
+func isRepeatOrder(subject string) bool {
+	return strings.Contains(strings.ToLower(subject), "wiederhol")
+}
+
+// markRepeats marks, in a group, each vote that a later vote alike replaced
+// after an Ordnungsantrag to repeat it, and the vote that replaced it. Votes
+// are alike when they share subject, bill and both meanings; only consecutive
+// ones pair, so an order between the second and third of three votes alike
+// replaces the second alone.
+//
+// A group without two votes alike costs no request.
+func (c *Client) markRepeats(group []votes.Vote) error {
+	alike := func(i, j int) bool {
+		a, b := c.labels[group[i].SourceID], c.labels[group[j].SourceID]
+		return a.subject != "" && a.subject == b.subject && a.billNumber == b.billNumber &&
+			a.meaningYes == b.meaningYes && a.meaningNo == b.meaningNo
+	}
+	order := make([]int, len(group))
+	for i := range order {
+		order[i] = i
+	}
+	sort.SliceStable(order, func(a, b int) bool { return group[order[a]].Date.Before(group[order[b]].Date) })
+
+	type pair struct{ first, second int }
+	var pairs []pair
+	for a, i := range order {
+		for _, j := range order[a+1:] {
+			if alike(i, j) && group[j].Date.After(group[i].Date) {
+				pairs = append(pairs, pair{i, j})
+				break
+			}
+		}
+	}
+	if len(pairs) == 0 {
+		return nil
+	}
+
+	var orders []repeatOrderDTO
+	day := group[0].Date.Format("2006-01-02")
+	if err := c.get("/Vote", query{
+		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %s and substringof('wiederhol',tolower(Subject)) eq true", group[0].Affair.ID),
+		"$select": "ID,Subject,VoteEnd",
+	}, &orders); err != nil {
+		return fmt.Errorf("parlamentch: business %s: reading its Ordnungsanträge: %w", group[0].Affair.Number, err)
+	}
+	for _, p := range pairs {
+		first, second := group[p.first].Date, group[p.second].Date
+		for _, o := range orders {
+			at := parseODataDate(o.VoteEnd)
+			if !isRepeatOrder(deref(o.Subject)) || at.Format("2006-01-02") != day ||
+				!at.After(first) || !at.Before(second) {
+				continue
+			}
+			adopted, err := c.adopted(o.ID)
+			if err != nil {
+				return fmt.Errorf("parlamentch: business %s: reading Ordnungsantrag %d: %w", group[0].Affair.Number, o.ID, err)
+			}
+			if !adopted {
+				continue
+			}
+			a, b := c.labels[group[p.first].SourceID], c.labels[group[p.second].SourceID]
+			a.repeated, b.repeat = true, true
+			c.labels[group[p.first].SourceID], c.labels[group[p.second].SourceID] = a, b
+			break
+		}
+	}
+	return nil
+}
+
+// adopted reports whether a vote had more Ja than Nein, counted from its
+// member rows. A vote the rows do not decide counts as not adopted.
+func (c *Client) adopted(voteID int64) (bool, error) {
+	ja, err := c.count("/Voting", fmt.Sprintf("Language eq 'DE' and IdVote eq %d and Decision eq 1", voteID))
+	if err != nil {
+		return false, err
+	}
+	nein, err := c.count("/Voting", fmt.Sprintf("Language eq 'DE' and IdVote eq %d and Decision eq 2", voteID))
+	if err != nil {
+		return false, err
+	}
+	return ja > nein, nil
+}
+
+// standing is the group without the votes a repetition replaced.
+func (c *Client) standing(group []votes.Vote) []votes.Vote {
+	out := group[:0:0]
+	for _, v := range group {
+		if !c.labels[v.SourceID].repeated {
+			out = append(out, v)
+		}
+	}
+	return out
+}

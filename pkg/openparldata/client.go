@@ -24,7 +24,7 @@ import (
 const DefaultBaseURL = "https://api.openparldata.ch/v1"
 
 // Attribution is the credit line required by OpenParlData's CC BY 4.0 licence.
-const Attribution = "Source: OpenParlData.ch"
+const Attribution = "Daten: OpenParlData.ch"
 
 // Client fetches votes for one body.
 type Client struct {

@@ -26,9 +26,11 @@ import (
 // DefaultBaseURL is the OData service root.
 const DefaultBaseURL = "https://ws.parlament.ch/odata.svc"
 
-// Attribution credits the Parlamentsdienste, whose open data terms ask for the
-// source to be named.
-const Attribution = "Source: parlament.ch"
+// Attribution credits the Parlamentsdienste. Their open data terms allow use
+// only with the source named as «Parlamentsdienste der Bundesversammlung,
+// Bern», in those words:
+// https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services
+const Attribution = "Daten: Parlamentsdienste der Bundesversammlung, Bern"
 
 // Client fetches Nationalrat votes.
 type Client struct {
@@ -44,6 +46,10 @@ type Client struct {
 	// WithSubjects.
 	subjects []string
 
+	// filedBusiness adds the votes on motions, postulates and initiatives to
+	// those subjects selects. See WithFiledBusiness.
+	filedBusiness bool
+
 	// businessTypes caches each business's type, which every vote of a group
 	// would otherwise ask for separately.
 	businessTypes map[int64]string
@@ -52,9 +58,20 @@ type Client struct {
 	// BusinessNumber. See Client.hasSeveralBills.
 	multiBill map[int64]bool
 
+	// authors caches who filed each business, by BusinessNumber. See
+	// Client.authorshipOf.
+	authors map[int64]authorship
+
 	// labels holds what the listing says about each vote that votes.Vote has
 	// no field for, keyed by SourceID. See Client.label.
 	labels map[string]voteLabel
+
+	// billCounts caches how many numbered bills a business holds, by
+	// BusinessNumber, as billOf last read them.
+	billCounts map[int64]int
+
+	// council is the chamber whose roster FetchMembers reads. See WithCouncil.
+	council int
 }
 
 // New builds a client for the Nationalrat.
@@ -68,6 +85,8 @@ func New(jurisdiction votes.Jurisdiction) *Client {
 		businessTypes: make(map[int64]string),
 		labels:        make(map[string]voteLabel),
 		multiBill:     make(map[int64]bool),
+		authors:       make(map[int64]authorship),
+		council:       CouncilNationalrat,
 	}
 }
 

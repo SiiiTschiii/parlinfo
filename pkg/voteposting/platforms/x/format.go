@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
@@ -16,7 +18,8 @@ const DefaultMaxChars = 280
 
 // XPost holds the formatted text for a single post in an X thread
 type XPost struct {
-	Text string
+	Text   string
+	Images []imagegen.Card // carousel cards to attach, at most xapi.MaxMediaPerTweet
 }
 
 // FormatVoteThread creates an X thread for a group of related votes.
@@ -24,10 +27,18 @@ type XPost struct {
 // charLimit sets the per-post character limit (e.g. 280 for free accounts, 2000 for Premium).
 //
 // Root post contains: header, title, result (single vote), thread hint
-// Replies contain: vote details (counts per vote), link
+// Replies contain: the links, then vote details (counts per vote)
 func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper, charLimit int) []*XPost {
+	thread, _ := FormatVoteThreadWithCards(group, contactMapper, charLimit)
+	return thread
+}
+
+// FormatVoteThreadWithCards is FormatVoteThread, also returning for each post
+// the index of the carousel card it carries, or platforms.NoCard. See
+// platforms.ThreadCards.
+func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mapper, charLimit int) ([]*XPost, []int) {
 	if len(group) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	// A Wahlgeschäft gets one notice, not a thread: its only votes are
@@ -37,7 +48,7 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper, charLi
 	// headcount. It is checked on the whole group because a second ballot
 	// round adds a second roll call to the same business.
 	if votes.IsWahlgeschaeftGroup(group) {
-		return []*XPost{buildWahlgeschaeftPost(group, charLimit)}
+		return []*XPost{buildWahlgeschaeftPost(group, charLimit)}, []int{0}
 	}
 
 	firstVote := group[0]
@@ -55,24 +66,38 @@ func FormatVoteThread(group []votes.Vote, contactMapper *contacts.Mapper, charLi
 	root, deferred := buildRootPost(group, title, contactMapper, charLimit)
 
 	// --- Build reply posts ---
-	// Signatories the root had no room for lead the thread: naming them costs a
-	// line here, where truncating the title to keep them would have cost the
-	// subject of the vote.
+	// Members the root had no room for lead the thread, then the co-signers:
+	// naming them costs a line here, where truncating the title to keep them
+	// would have cost the subject of the vote.
 	//
 	// Tagged like the root's own line. X finds no mentions on its own, so a
 	// handle only exists where this puts one — and a member shed from the root
 	// for length has done nothing to deserve losing their tag.
-	signatories := voteformat.SignatoryLine(deferred)
+	var tag func(string) string
 	if contactMapper != nil {
-		signatories = contactMapper.TagXHandlesInText(signatories)
+		tag = contactMapper.TagXHandlesInText
 	}
-	replies := buildReplyPosts(group, signatories, voteformat.LinkLine(group), contactMapper, charLimit)
+	var signatories []string
+	for _, b := range voteformat.SignatoryBlocks(group, deferred) {
+		signatories = append(signatories, voteformat.PackNames(b, tag, charLimit, weightedLen)...)
+	}
+	replies, voteStarts := buildReplyPosts(group, signatories, voteformat.LinkLine(group), contactMapper, charLimit)
 
 	thread := make([]*XPost, 0, 1+len(replies))
 	thread = append(thread, root)
 	thread = append(thread, replies...)
 
-	return thread
+	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts, imagegen.HasStatusCard(group))
+}
+
+// replyEntry is one block of reply text: a link block (link) or a block of
+// names, both with vote -1, or a vote's counts (starts) or its Fraktion
+// breakdown.
+type replyEntry struct {
+	text   string
+	vote   int
+	starts bool
+	link   bool
 }
 
 // buildWahlgeschaeftPost builds the single post reporting that an election
@@ -114,6 +139,11 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
 	threadHint := "\n\n👇 Details im Thread"
+	// What Ja supported sits below the title. Carried with the hint, so the
+	// truncation below reserves room for it and shortens the title instead.
+	if q := voteformat.QuestionLine(group); q != "" {
+		threadHint = "\n" + q + threadHint
+	}
 
 	// The label line: what kind of business this is, who filed it, plus the
 	// Abstimmungsgegenstand when a lone vote makes that meaningful.
@@ -122,8 +152,8 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 	// into the thread rather than eating the subject of the vote.
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
-		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(group[0].Decision),
-			voteformat.GetVoteResultText(group[0].Decision), title)
+		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
+			voteformat.GetVoteResultText(voteformat.Verdict(group[0])), title)
 	}
 	available := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, weightedLen)
@@ -155,8 +185,8 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 				title = truncateText(title, available)
 				body = title
 			} else {
-				resultEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
-				result := voteformat.GetVoteResultText(vote.Decision)
+				resultEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
+				result := voteformat.GetVoteResultText(voteformat.Verdict(vote))
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := available - weightedLen(prefix)
 				if titleAvailable > 0 {
@@ -179,17 +209,32 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 }
 
 // buildReplyPosts creates reply posts with vote details and link.
-// Packs as many vote entries as fit into each reply (≤charLimit).
-// The link is appended to the last reply.
-func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contactMapper *contacts.Mapper, charLimit int) []*XPost {
+// Packs entries into replies (≤charLimit).
+// The link block leads, and each vote opens a reply of its own.
+func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, contactMapper *contacts.Mapper, charLimit int) ([]*XPost, []int) {
 
-	// Build individual vote entry strings
-	var entries []string
+	// Build individual vote entries
+	var entries []replyEntry
 
-	// The signatories the root could not hold come first, so a reader meets
-	// them before the tallies rather than after them.
-	if signatoryLine != "" {
-		entries = append(entries, signatoryLine)
+	// The next step opens the first reply, right under the verdict on the root
+	// it follows from. It is about the whole business, like the links below
+	// it, and this reply is the one that carries the status card it summarises
+	// (see platforms.ThreadCards).
+	if next := voteformat.NextStepLine(group); next != "" {
+		entries = append(entries, replyEntry{text: next, vote: -1})
+	}
+
+	// The links lead the thread. They are about the whole business, not about
+	// any one vote, so they sit where a reader meets them first rather than
+	// after the last vote — but not on the root, which needs its room for the
+	// title, and on Bluesky could not hold them at all.
+	if link := strings.Trim(linkLine, "\n"); link != "" {
+		entries = append(entries, replyEntry{text: link, vote: -1, link: true})
+	}
+	// The names the root could not hold come next, so a reader meets them
+	// before the tallies rather than after them. Each is at most one post long.
+	for _, s := range signatories {
+		entries = append(entries, replyEntry{text: s, vote: -1})
 	}
 
 	for i, vote := range group {
@@ -216,19 +261,19 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contact
 				// Auswahl: no ✅/❌ prefix
 				entry.WriteString(fmt.Sprintf("%s\n", voteTitle))
 			} else {
-				voteEmoji := voteformat.GetVoteResultEmoji(vote.Decision)
+				voteEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
 				entry.WriteString(fmt.Sprintf("%s %s\n", voteEmoji, voteTitle))
 			}
 			entry.WriteString(voteformat.FormatVoteCountsLong(counts))
 		}
 
-		entries = append(entries, entry.String())
+		entries = append(entries, replyEntry{text: entry.String(), vote: i, starts: true})
 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
 			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
-				entries = append(entries, breakdown)
+				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}
 	}
@@ -238,50 +283,47 @@ func buildReplyPosts(group []votes.Vote, signatoryLine, linkLine string, contact
 	var replies []*XPost
 	var currentEntries []string
 	currentLen := 0
+	// Each vote opens a reply of its own, so the reply carrying a vote's card
+	// talks about that vote and no other. What belongs to no vote — the links
+	// and the signatories — may share the first vote's reply, except that in a
+	// multi-vote group the links keep a reply to themselves: that first vote's
+	// reply carries its card, and the links are not about that vote.
+	multiVote := len(group) > 1
+	voteStarts := make([]int, len(group))
+	currentHasVote, currentHasLink := false, false
+	flush := func() {
+		if len(currentEntries) > 0 {
+			replies = append(replies, &XPost{Text: strings.Join(currentEntries, "\n\n")})
+		}
+		currentEntries, currentLen = nil, 0
+		currentHasVote, currentHasLink = false, false
+	}
 
-	for i, entry := range entries {
-		entryLen := weightedLen(entry)
+	for _, e := range entries {
+		entryLen := weightedLen(e.text)
+		if e.starts && (currentHasVote || (multiVote && currentHasLink)) {
+			flush()
+		}
 		separatorLen := 0
 		if len(currentEntries) > 0 {
 			separatorLen = 2 // "\n\n" between entries
 		}
-
-		// Check if adding this entry would exceed the limit.
-		// If this is the last entry, account for the link line too.
-		extraLen := 0
-		if i == len(entries)-1 {
-			extraLen = weightedLen(linkLine)
+		if currentLen+separatorLen+entryLen > charLimit && len(currentEntries) > 0 {
+			flush()
+			separatorLen = 0
 		}
 
-		if currentLen+separatorLen+entryLen+extraLen > charLimit && len(currentEntries) > 0 {
-			// Flush current reply (without link — not the last entry yet)
-			replyText := strings.Join(currentEntries, "\n\n")
-			replies = append(replies, &XPost{Text: replyText})
-			currentEntries = nil
-			currentLen = 0
+		if e.starts {
+			voteStarts[e.vote] = len(replies)
 		}
-
-		if len(currentEntries) > 0 {
-			currentLen += 2 // "\n\n"
-		}
-		currentEntries = append(currentEntries, entry)
-		currentLen += entryLen
+		currentHasVote = currentHasVote || e.vote >= 0
+		currentHasLink = currentHasLink || e.link
+		currentEntries = append(currentEntries, e.text)
+		currentLen += separatorLen + entryLen
 	}
+	flush()
 
-	// Flush remaining entries with the link.
-	// If the link doesn't fit together with the remaining entries, put it
-	// in its own reply so the URL is never truncated.
-	if len(currentEntries) > 0 {
-		body := strings.Join(currentEntries, "\n\n")
-		if weightedLen(body+linkLine) <= charLimit {
-			replies = append(replies, &XPost{Text: body + linkLine})
-		} else {
-			replies = append(replies, &XPost{Text: body})
-			replies = append(replies, &XPost{Text: strings.TrimLeft(linkLine, "\n")})
-		}
-	}
-
-	return replies
+	return replies, voteStarts
 }
 
 // truncateText truncates a string to X's weighted length maxLen, adding "…".

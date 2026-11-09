@@ -128,7 +128,11 @@ func check(
 		fmt.Printf("Loaded %s/%s vote log: %d votes already posted\n", j.Key, displayName, voteLog.Count())
 		logs[j.Key] = voteLog
 
-		groups, err := voteposting.PrepareVoteGroups(j.NewSource(), voteLog, maxVotesToCheck, j.MaxAgeDays)
+		source, err := j.Source()
+		if err != nil {
+			log.Fatal(err)
+		}
+		groups, err := voteposting.PrepareVoteGroups(source, voteLog, maxVotesToCheck, j.MaxAgeDays)
 		if err != nil {
 			log.Fatalf("Error preparing %s votes for %s: %v", j.Key, displayName, err)
 		}

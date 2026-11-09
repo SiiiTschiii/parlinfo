@@ -138,6 +138,15 @@ for p in x bluesky instagram; do
 done
 ```
 
+The logs double as an audit trail: each entry records the post it went out in
+as `post_id` and `post_url` — the root of the thread on X and Bluesky, and the
+same post for every vote grouped into it. Entries written before these fields
+existed have neither. To find where one vote was posted, on every platform:
+
+```bash
+jq -r --arg id "<vote id>" '.platform as $p | .votes[] | select(.id == $id) | "\($p)\t\(.post_url // .post_id // "-")"' data/zurich-city/posted_votes_*.json
+```
+
 ### Curating who gets tagged
 
 Tagging works by matching names in a post against `data/<jurisdiction>/contacts.yaml`.
@@ -162,9 +171,9 @@ go run ./cmd/update_contacts -jurisdiction zurich-canton -dry-run
 go run ./cmd/update_contacts -jurisdiction zurich-canton
 ```
 
-Both chambers are seeded whole, from the mandate register for Stadt Zürich and
-from OpenParlData for the Kantonsrat, so a sitting member with no handle arrives
-as a bare name. For Stadt Zürich it also imports the accounts PARIS publishes;
+Every body is seeded whole, from the mandate register for Stadt Zürich, from
+OpenParlData for the Kantonsrat and from parlament.ch for the Nationalrat and
+the Ständerat, so a sitting member with no handle arrives as a bare name. For Stadt Zürich it also imports the accounts PARIS publishes;
 for the Kantonsrat there are none to import. Each run ends by listing the people on file who no longer sit. Party
 and Fraktion accounts carry `kind: organization` so that list leaves them out.
 
@@ -293,7 +302,7 @@ its own here: the start date in step 5 holds for every platform.
 
 ### 3. X
 
-Create the X account, then sign in to <https://developer.x.com> **as that
+Create the X account (`@chparlinfo` exists), then sign in to <https://developer.x.com> **as that
 account** and create a project and app there, as in
 [section 1](#1-get-x-api-credentials). Tokens generated under **Keys and tokens**
 act for the account that owns the app, which is the point: reusing the Zürich
@@ -318,6 +327,33 @@ and add one for the bot. Never use the account password.
 ```bash
 gh variable set CHPARL_BLUESKY_HANDLE --body "chparlinfo.bsky.social"
 gh secret set CHPARL_BLUESKY_PASSWORD
+```
+
+### Adding a platform once the Nationalrat is live
+
+A platform added after `JURISDICTION_NATIONALRAT_ENABLED` is on starts from an
+empty log, so its first run posts every final vote still inside
+`MAX_VOTE_AGE_DAYS_NATIONALRAT`, up to its per-run cap, which defaults to 10.
+Set the cap **before** the last credential, since that one switches the
+platform on:
+
+```bash
+gh variable set CHPARL_X_MAX_POSTS_PER_RUN --body 1
+gh variable set CHPARL_BLUESKY_MAX_POSTS_PER_RUN --body 1
+```
+
+Then see what that backlog is, per platform and against the live logs, without
+posting. It runs in a throwaway worktree, because `check_unposted` reads the logs
+from `data/` and would otherwise overwrite the ones a local bot run relies on:
+
+```bash
+tmp="$(mktemp -d)"
+git fetch origin main state-log-chparl
+git worktree add --detach "$tmp" origin/main
+git -C "$tmp" checkout origin/state-log-chparl -- 'data/nationalrat/posted_votes_*.json'
+(cd "$tmp" && CHANNEL=chparl MAX_VOTES_TO_CHECK=35 MAX_VOTE_AGE_DAYS_NATIONALRAT="$(gh variable get MAX_VOTE_AGE_DAYS_NATIONALRAT)" \
+  go run ./cmd/check_unposted -jurisdiction nationalrat)
+git worktree remove --force "$tmp"
 ```
 
 ### 5. Go live
@@ -380,6 +416,11 @@ go run cmd/post_fixture/main.go --fixture=kantonsrat-vote --platform=bluesky
 
 # Post all fixtures to all platforms
 go run cmd/post_fixture/main.go --fixture=all
+
+# Live votes of any parliament through the same test accounts — the newest
+# Nationalrat business, or the newest one with several votes
+go run cmd/post_fixture/main.go --jurisdiction=nationalrat --platform=bluesky
+go run cmd/post_fixture/main.go --jurisdiction=nationalrat --min-votes=2 --fetch=300
 
 # Use real contacts (tags real accounts — use with care)
 go run cmd/post_fixture/main.go --contacts=data/zurich-city/contacts.yaml --fixture=vote-with-mentions

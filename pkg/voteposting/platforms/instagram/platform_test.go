@@ -1,11 +1,13 @@
 package instagram
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/igapi"
+	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
 )
@@ -44,7 +46,7 @@ func TestPlatform_FormatAndPost(t *testing.T) {
 		t.Error("expected non-empty caption")
 	}
 
-	shouldContinue, err := p.Post(content)
+	_, shouldContinue, err := p.Post(content)
 	if err != nil {
 		t.Fatalf("Post error: %v", err)
 	}
@@ -62,7 +64,7 @@ func TestPlatform_PostLimitReached(t *testing.T) {
 		t.Fatalf("Format error: %v", err)
 	}
 
-	shouldContinue, err := p.Post(content)
+	_, shouldContinue, err := p.Post(content)
 	if err != nil {
 		t.Fatalf("Post error: %v", err)
 	}
@@ -75,7 +77,7 @@ func TestPlatform_PostWrongContentType(t *testing.T) {
 	p := NewInstagramPlatform(5)
 
 	// Create a mock content that doesn't implement InstagramContent
-	_, err := p.Post(mockContent{})
+	_, _, err := p.Post(mockContent{})
 	if err == nil {
 		t.Error("expected error for wrong content type")
 	}
@@ -135,6 +137,13 @@ func TestPlatform_RealPostFlow(t *testing.T) {
 		return igapi.StatusPublished, nil
 	}
 
+	p.getPermalinkFunc = func(mediaID string) (string, error) {
+		if mediaID != "media_123" {
+			t.Errorf("permalink looked up for %q, want media_123", mediaID)
+		}
+		return "https://www.instagram.com/p/DAbC123/", nil
+	}
+
 	p.cleanupImagesFunc = func(names []string) error {
 		cleanedUpNames = names
 		return nil
@@ -147,12 +156,16 @@ func TestPlatform_RealPostFlow(t *testing.T) {
 		t.Fatalf("Format error: %v", err)
 	}
 
-	shouldContinue, err := p.Post(content)
+	post, shouldContinue, err := p.Post(content)
 	if err != nil {
 		t.Fatalf("Post error: %v", err)
 	}
 	if !shouldContinue {
 		t.Error("expected shouldContinue=true with limit=5")
+	}
+	want := votelog.PostRef{ID: "media_123", URL: "https://www.instagram.com/p/DAbC123/"}
+	if post != want {
+		t.Errorf("expected ref %+v, got %+v", want, post)
 	}
 
 	// Verify the full flow was executed
@@ -168,6 +181,37 @@ func TestPlatform_RealPostFlow(t *testing.T) {
 	// Upload and cleanup should use same names
 	if len(uploadedNames) != len(cleanedUpNames) {
 		t.Errorf("upload names (%d) != cleanup names (%d)", len(uploadedNames), len(cleanedUpNames))
+	}
+}
+
+// TestPlatform_RealPostFlow_PermalinkError covers a lookup failing after the
+// media is live: the post must still count as published, or the next run would
+// publish it a second time, and the media ID is kept so the post can be found.
+func TestPlatform_RealPostFlow_PermalinkError(t *testing.T) {
+	p := NewInstagramPlatform(5)
+	p.stubMode = false
+	p.sleepFunc = func(_ time.Duration) {}
+	p.waitForImagesFunc = func(_ []string) error { return nil }
+	p.uploadImagesFunc = func(images [][]byte, names []string) ([]string, error) {
+		return make([]string, len(images)), nil
+	}
+	p.createSingleImageContainerFunc = func(_ string, _ string) (string, error) { return "single_container", nil }
+	p.publishContainerFunc = func(_ string) (string, error) { return "media_123", nil }
+	p.pollContainerStatusFunc = func(_ string) (string, error) { return igapi.StatusPublished, nil }
+	p.getPermalinkFunc = func(_ string) (string, error) { return "", errors.New("graph api down") }
+	p.cleanupImagesFunc = func(_ []string) error { return nil }
+
+	content, err := p.Format(testfixtures.SingleVoteAngenommen())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+
+	post, _, err := p.Post(content)
+	if err != nil {
+		t.Fatalf("a failed permalink lookup must not fail the post: %v", err)
+	}
+	if want := (votelog.PostRef{ID: "media_123"}); post != want {
+		t.Errorf("expected ref %+v, got %+v", want, post)
 	}
 }
 
@@ -187,7 +231,7 @@ func TestPlatform_RealPostFlow_UploadError(t *testing.T) {
 		t.Fatalf("Format error: %v", err)
 	}
 
-	_, err = p.Post(content)
+	_, _, err = p.Post(content)
 	if err == nil {
 		t.Fatal("expected error when upload fails")
 	}
@@ -221,7 +265,7 @@ func TestPlatform_RealPostFlow_ContainerError(t *testing.T) {
 		t.Fatalf("Format error: %v", err)
 	}
 
-	_, err = p.Post(content)
+	_, _, err = p.Post(content)
 	if err == nil {
 		t.Fatal("expected error when container creation fails")
 	}

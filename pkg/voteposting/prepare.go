@@ -69,9 +69,77 @@ func PrepareVoteGroups(
 		return nil, err
 	}
 
+	groups = withoutPostedVotes(groups, voteLog)
+
 	applyCompletenessGate(groups)
 
+	attachProcesses(src, groups)
+
 	return groups, nil
+}
+
+// attachProcesses sets each group's process where the source can say one.
+//
+// It runs on the groups that survived dedup, so a run asks only about the
+// business it may post. Nothing here can hold a post back: a source without the
+// capability, a business with no rule, a process that fails votes.Validate and
+// a source that cannot be reached all leave the group without a process, and
+// the post goes out as it would have before the feature existed. The last is
+// logged, since it is the one case worth looking into.
+func attachProcesses(src votes.Source, groups [][]votes.Vote) {
+	ps, ok := src.(votes.ProcessSource)
+	if !ok {
+		return
+	}
+	for _, group := range groups {
+		if len(group) == 0 {
+			continue
+		}
+		p, err := ps.Process(group)
+		var none votes.NoProcess
+		if errors.As(err, &none) {
+			continue
+		}
+		if err != nil {
+			log.Printf("⚠️  no process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		if p == nil {
+			continue
+		}
+		if err := p.Validate(); err != nil {
+			log.Printf("⚠️  dropping invalid process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		for i := range group {
+			group[i].Affair.Process = p
+		}
+	}
+}
+
+// withoutPostedVotes drops votes the log already has from grouped output.
+//
+// Filtering before grouping is not enough, because a source may widen a group
+// while grouping it: the Zürich source back-fills every vote of a business from
+// the whole sitting, posted or not, so that a group is not published partial
+// just because its earlier votes fell outside the fetch window. That makes any
+// vote that stays unposted — one rejected as unpublishable is never logged, by
+// design — a standing invitation to publish its already-posted siblings again,
+// on every run until it ages out. On 2026-11-03 a zero-count Änderungsantrag
+// did exactly that to the two votes beside it on every platform, hourly.
+//
+// A group left empty is dropped, and a group left smaller is posted smaller:
+// the votes that were already out stay out.
+func withoutPostedVotes(groups [][]votes.Vote, voteLog *votelog.VoteLog) [][]votes.Vote {
+	kept := make([][]votes.Vote, 0, len(groups))
+	for _, group := range groups {
+		if remaining := filterUnpostedVotes(group, voteLog); len(remaining) > 0 {
+			kept = append(kept, remaining)
+		}
+	}
+	return kept
 }
 
 // applyCompletenessGate drops the member list from any vote whose recorded
@@ -281,20 +349,28 @@ func PostToPlatform(
 				fmt.Printf("   %s\n", v.SourceURL)
 			}
 
-			shouldContinue, err := platform.Post(content)
-			if err != nil {
-				return posted, err
+			post, shouldContinue, postErr := platform.Post(content)
+			if postErr != nil && post == (votelog.PostRef{}) {
+				return posted, postErr
 			}
+			// A ref with an error means the post is live but incomplete (a
+			// thread whose reply failed). It is logged all the same: the log is
+			// the only thing standing between a vote and its being published
+			// again by the next run. The error is returned after the save.
 
 			// Mark the posted votes. Any vote dropped above is deliberately
 			// absent from this slice, so it is retried rather than buried.
 			for _, v := range group {
-				voteLog.MarkAsPosted(v.SourceID)
+				voteLog.MarkAsPosted(v.SourceID, post)
 			}
 
 			// Save vote log after each successful post
 			if err := voteLog.Save(); err != nil {
-				return posted, err
+				return posted, errors.Join(err, postErr)
+			}
+
+			if postErr != nil {
+				return posted + 1, postErr
 			}
 
 			posted++
@@ -433,6 +509,14 @@ func validateVote(v votes.Vote) error {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) is a quorum round with no votes cast",
 			ErrUnpostableVoteType, v.SourceID, v.Subtitle, v.Type)
 	}
+	// The same holds for an ordinary vote with no counts at all: the source
+	// served a placeholder, and the run has nothing to report. On 2026-11-03 the
+	// Gemeinderat Zürich served 2026_0212 Änderungsantrag as one — its own page
+	// is blank — and reddened every run for it.
+	if voteformat.IsEmptyNormalVote(voteformat.CountsOf(v)) {
+		return withVoteLink(v, "%w: vote %s (%q, type=%q) has no counts recorded at all",
+			ErrUnpostableVoteType, v.SourceID, voteDescription(v), v.Type)
+	}
 	if voteformat.IsUnsupportedVoteType(voteformat.CountsOf(v)) {
 		return withVoteLink(v, "%w: vote %s (%q, type=%q) has all-zero counts",
 			ErrUnsupportedVoteType, v.SourceID, v.Subtitle, v.Type)
@@ -488,4 +572,31 @@ func countsSummary(v votes.Vote) string {
 	}
 	return fmt.Sprintf("%s/%s/%s/%s Ja/Nein/Enth/Abw",
 		n(v.Yes), n(v.No), n(v.Abstention), n(v.Absent))
+}
+
+// LatestGroups returns what the bot would post for a source right now, newest
+// first: at most numGroups groups (0 = all) from the latest fetchLimit votes.
+// It is for the tools that preview or test-post live votes.
+//
+// The vote log is empty and the age guard off, because previewing is exactly
+// when already-posted and out-of-window votes still need to show up. Groups
+// posting would refuse are dropped, as PostableGroups explains.
+//
+// Newest first, because a preview is nearly always about the most recent
+// sitting, where PrepareVoteGroups orders oldest first so the bot drains a
+// backlog chronologically.
+func LatestGroups(src votes.Source, jurisdictionKey string, fetchLimit, numGroups int) ([][]votes.Vote, error) {
+	emptyLog := votelog.NewEmpty(jurisdictionKey, votelog.PlatformInstagram)
+	groups, err := PrepareVoteGroups(src, emptyLog, fetchLimit, 0)
+	if err != nil {
+		return nil, err
+	}
+	groups = PostableGroups(groups)
+	for i, j := 0, len(groups)-1; i < j; i, j = i+1, j-1 {
+		groups[i], groups[j] = groups[j], groups[i]
+	}
+	if numGroups > 0 && len(groups) > numGroups {
+		groups = groups[:numGroups]
+	}
+	return groups, nil
 }

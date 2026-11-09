@@ -45,6 +45,9 @@ type MockPlatform struct {
 	postCalls      int
 	maxPosts       int
 	shouldFailPost bool
+	// partialPost makes Post fail after publishing: it returns a ref and an
+	// error, as a thread does when the root goes out and a reply is refused.
+	partialPost bool
 	// lastGroup records what the formatter was actually handed, so tests can
 	// assert on votes dropped before formatting.
 	lastGroup []votes.Vote
@@ -64,13 +67,17 @@ func (p *MockPlatform) Format(group []votes.Vote) (platforms.Content, error) {
 	return &MockContent{text: "mock post"}, nil
 }
 
-func (p *MockPlatform) Post(content platforms.Content) (bool, error) {
+func (p *MockPlatform) Post(content platforms.Content) (votelog.PostRef, bool, error) {
 	if p.shouldFailPost {
-		return false, errors.New("mock posting error")
+		return votelog.PostRef{}, false, errors.New("mock posting error")
 	}
 	p.postCalls++
 	shouldContinue := p.postCalls < p.maxPosts
-	return shouldContinue, nil
+	id := fmt.Sprintf("post%d", p.postCalls)
+	if p.partialPost {
+		return votelog.PostRef{ID: id, URL: "https://example.test/" + id}, false, errors.New("mock reply error")
+	}
+	return votelog.PostRef{ID: id, URL: "https://example.test/" + id}, shouldContinue, nil
 }
 
 func (p *MockPlatform) MaxPostsPerRun() int {
@@ -97,8 +104,8 @@ func createVote(guid, affair, date string) votes.Vote {
 
 func TestFilterUnpostedVotes(t *testing.T) {
 	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
-	voteLog.MarkAsPosted("vote1")
-	voteLog.MarkAsPosted("vote3")
+	voteLog.MarkAsPosted("vote1", votelog.PostRef{})
+	voteLog.MarkAsPosted("vote3", votelog.PostRef{})
 
 	group := []votes.Vote{
 		createVote("vote1", "2025/369", "2025-11-19"),
@@ -257,8 +264,8 @@ func TestPostToPlatform_ErrorHandling(t *testing.T) {
 
 func TestFilterUnpostedVotes_AllPosted(t *testing.T) {
 	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
-	voteLog.MarkAsPosted("vote1")
-	voteLog.MarkAsPosted("vote2")
+	voteLog.MarkAsPosted("vote1", votelog.PostRef{})
+	voteLog.MarkAsPosted("vote2", votelog.PostRef{})
 
 	group := []votes.Vote{
 		createVote("vote1", "2025/369", "2025-11-19"),
@@ -389,6 +396,39 @@ func TestPostToPlatform_MultipleGroupsAllVotesLogged(t *testing.T) {
 		voteID := fmt.Sprintf("vote%d", i)
 		if !voteLog.IsPosted(voteID) {
 			t.Errorf("Expected %s to be logged as posted", voteID)
+		}
+	}
+}
+
+// TestPostToPlatform_LogsEachVoteWithItsPost checks the audit half of the log:
+// every vote carries the ref of the post it went out in, and votes grouped into
+// one post share it.
+func TestPostToPlatform_LogsEachVoteWithItsPost(t *testing.T) {
+	defer setupTempDir(t)()
+
+	mockPlatform := &MockPlatform{maxPosts: 10}
+	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
+
+	groups := [][]votes.Vote{
+		{createVote("vote1", "2025/369", "2025-11-19")},
+		{
+			createVote("vote2", "2025/370", "2025-11-19"),
+			createVote("vote3", "2025/370", "2025-11-19"),
+		},
+	}
+
+	if _, err := PostToPlatform(groups, mockPlatform, SingleLog(testJurisdiction, voteLog), false); err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	want := map[string]votelog.PostRef{
+		"vote1": {ID: "post1", URL: "https://example.test/post1"},
+		"vote2": {ID: "post2", URL: "https://example.test/post2"},
+		"vote3": {ID: "post2", URL: "https://example.test/post2"},
+	}
+	for _, entry := range voteLog.Votes {
+		if entry.PostRef != want[entry.ID] {
+			t.Errorf("%s logged with %+v, want %+v", entry.ID, entry.PostRef, want[entry.ID])
 		}
 	}
 }
@@ -822,7 +862,6 @@ func TestValidateVoteEmptyQuorumRoundIsRoutine(t *testing.T) {
 		typ  string
 		ja   int
 	}{
-		{"normal", "Normal", 0},
 		{"ausgabenbremse", "Ausgabenbremse", 0},
 		{"negative", "Quorum", -1},
 	} {
@@ -833,5 +872,81 @@ func TestValidateVoteEmptyQuorumRoundIsRoutine(t *testing.T) {
 		if err := validateVote(w); !errors.Is(err, ErrUnsupportedVoteType) {
 			t.Errorf("%s: validateVote() = %v, want ErrUnsupportedVoteType", tc.name, err)
 		}
+	}
+}
+
+// A thread whose root went out and whose reply failed is live, so the vote must
+// be logged — and persisted — even though the run fails. Otherwise the next run
+// publishes it a second time.
+func TestPostToPlatform_PartiallyPostedThreadIsStillLogged(t *testing.T) {
+	cleanup := setupTempDir(t)
+	defer cleanup()
+
+	mockPlatform := &MockPlatform{maxPosts: 10, partialPost: true}
+	voteLog := votelog.NewEmpty(testJurisdiction, votelog.PlatformX)
+
+	groups := [][]votes.Vote{
+		{createVote("vote1", "2025/369", "2025-11-19")},
+		{createVote("vote2", "2025/370", "2025-11-19")},
+	}
+
+	posted, err := PostToPlatform(groups, mockPlatform, SingleLog(testJurisdiction, voteLog), false)
+	if err == nil {
+		t.Fatal("expected the reply failure to be reported")
+	}
+	if posted != 1 {
+		t.Errorf("expected the live post to count as posted, got %d", posted)
+	}
+	if mockPlatform.postCalls != 1 {
+		t.Errorf("expected the run to stop after the failure, got %d post calls", mockPlatform.postCalls)
+	}
+	if !voteLog.IsPosted("vote1") {
+		t.Error("vote1 went out but was not marked as posted")
+	}
+	if voteLog.IsPosted("vote2") {
+		t.Error("vote2 was never posted but is marked as posted")
+	}
+
+	reloaded, err := votelog.Load(testJurisdiction, votelog.PlatformX)
+	if err != nil {
+		t.Fatalf("reload: %v", err)
+	}
+	if !reloaded.IsPosted("vote1") {
+		t.Error("the log was not saved to disk before the error was returned")
+	}
+}
+
+// The Gemeinderat Zürich served 2026_0212 Änderungsantrag with every count
+// zero; its own page for the vote is blank. Nothing was recorded, so skipping
+// it is routine — but a Normal vote with anything counted, or a negative count,
+// is still the source's fault.
+func TestValidateVoteEmptyNormalVoteIsRoutine(t *testing.T) {
+	zero := 0
+	empty := createVote("normal-0", "2026/212", "2026-10-28")
+	empty.Yes, empty.No, empty.Abstention, empty.Absent = &zero, &zero, &zero, &zero
+
+	if err := validateVote(empty); !errors.Is(err, ErrUnpostableVoteType) {
+		t.Fatalf("all-zero Normal vote: validateVote() = %v, want ErrUnpostableVoteType", err)
+	}
+
+	noCounts := empty
+	noCounts.Yes, noCounts.No, noCounts.Abstention, noCounts.Absent = nil, nil, nil, nil
+	if err := validateVote(noCounts); !errors.Is(err, ErrUnpostableVoteType) {
+		t.Errorf("Normal vote with no counts: validateVote() = %v, want ErrUnpostableVoteType", err)
+	}
+
+	neg := -1
+	negative := empty
+	negative.Yes = &neg
+	if err := validateVote(negative); !errors.Is(err, ErrUnsupportedVoteType) {
+		t.Errorf("negative count: validateVote() = %v, want ErrUnsupportedVoteType", err)
+	}
+
+	// Only an Abwesend count: not empty, and not a format we render either.
+	five := 5
+	absentOnly := empty
+	absentOnly.Absent = &five
+	if err := validateVote(absentOnly); !errors.Is(err, ErrUnsupportedVoteType) {
+		t.Errorf("absent-only: validateVote() = %v, want ErrUnsupportedVoteType", err)
 	}
 }

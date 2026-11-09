@@ -372,11 +372,11 @@ func TestArchiveAndSessionLinksSurviveEnrichment(t *testing.T) {
 	if !strings.Contains(got.SourceURL, "kantonsrat.zh.ch") {
 		t.Fatalf("precondition: SourceURL = %q, want enrichment to have replaced it", got.SourceURL)
 	}
-	if !strings.Contains(got.ArchiveURL, "zh.recapp.ch") {
-		t.Errorf("ArchiveURL = %q, want the vote's own archive link kept", got.ArchiveURL)
+	if !strings.Contains(got.VideoURL, "zh.recapp.ch") {
+		t.Errorf("VideoURL = %q, want the vote's own archive link kept", got.VideoURL)
 	}
-	if want := "item:" + got.ArchiveURL; got.ArchiveGroupURL != want {
-		t.Errorf("ArchiveGroupURL = %q, want the LinkSource's widening %q", got.ArchiveGroupURL, want)
+	if want := "item:" + got.VideoURL; got.VideoGroupURL != want {
+		t.Errorf("VideoGroupURL = %q, want the LinkSource's widening %q", got.VideoGroupURL, want)
 	}
 	if want := "session:" + got.Date.Format("2006-01-02"); got.SessionURL != want {
 		t.Errorf("SessionURL = %q, want %q", got.SessionURL, want)
@@ -392,9 +392,9 @@ func TestNoLinkSourceLeavesTheExtraLinksEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("FetchRecent: %v", err)
 	}
-	if vs[0].ArchiveURL != "" || vs[0].ArchiveGroupURL != "" || vs[0].SessionURL != "" {
-		t.Errorf("got ArchiveURL %q, ArchiveGroupURL %q and SessionURL %q, want all empty",
-			vs[0].ArchiveURL, vs[0].ArchiveGroupURL, vs[0].SessionURL)
+	if vs[0].VideoURL != "" || vs[0].VideoGroupURL != "" || vs[0].SessionURL != "" {
+		t.Errorf("got VideoURL %q, VideoGroupURL %q and SessionURL %q, want all empty",
+			vs[0].VideoURL, vs[0].VideoGroupURL, vs[0].SessionURL)
 	}
 }
 

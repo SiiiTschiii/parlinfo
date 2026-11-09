@@ -2,9 +2,12 @@ package x
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
+	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/platforms"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 	"github.com/siiitschiii/parlinfo/pkg/xapi"
@@ -24,12 +27,24 @@ func (c *XContent) String() string {
 		} else {
 			sb.WriteString(fmt.Sprintf("\n  ↳ Reply %d:\n%s", i, post.Text))
 		}
+		if len(post.Images) > 0 {
+			sb.WriteString(fmt.Sprintf("\n  🖼️ %d image(s)", len(post.Images)))
+		}
 	}
 	return sb.String()
 }
 
 // PostTweetFunc is the signature for posting a tweet. Defaults to xapi.PostTweet.
-type PostTweetFunc func(apiKey, apiSecret, accessToken, accessSecret, message, inReplyToTweetID string) (string, error)
+type PostTweetFunc func(apiKey, apiSecret, accessToken, accessSecret, message, inReplyToTweetID string, mediaIDs []string) (string, error)
+
+// UploadImageFunc is the signature for uploading an image. Defaults to xapi.UploadImage.
+type UploadImageFunc func(apiKey, apiSecret, accessToken, accessSecret string, jpeg []byte) (string, error)
+
+// SetAltTextFunc is the signature for describing uploaded media. Defaults to xapi.SetAltText.
+type SetAltTextFunc func(apiKey, apiSecret, accessToken, accessSecret, mediaID, alt string) error
+
+// GenerateCardsFunc is the signature for rendering a group's cards. Defaults to imagegen.GenerateCards.
+type GenerateCardsFunc func(group []votes.Vote) ([]imagegen.Card, error)
 
 // XPlatform implements the Platform interface for X/Twitter
 type XPlatform struct {
@@ -42,6 +57,10 @@ type XPlatform struct {
 	maxPostsPerRun int
 	maxChars       int           // per-post character limit
 	postTweetFunc  PostTweetFunc // injectable for testing
+
+	uploadImageFunc   UploadImageFunc   // injectable for testing
+	setAltTextFunc    SetAltTextFunc    // injectable for testing
+	generateCardsFunc GenerateCardsFunc // injectable for testing
 }
 
 // NewXPlatform creates a new X platform poster
@@ -60,6 +79,10 @@ func NewXPlatform(
 		maxChars:       DefaultMaxChars,
 		postsThisRun:   0,
 		postTweetFunc:  xapi.PostTweet,
+
+		uploadImageFunc:   xapi.UploadImage,
+		setAltTextFunc:    xapi.SetAltText,
+		generateCardsFunc: imagegen.GenerateCards,
 	}
 }
 
@@ -68,53 +91,104 @@ func (p *XPlatform) SetMaxChars(n int) {
 	p.maxChars = n
 }
 
-// Format formats a group of votes into X-specific content
+// Format formats a group of votes into an X thread and attaches the group's
+// carousel cards to it: the first card on the root, and each vote's result
+// card on the reply that opens that vote (see platforms.ThreadCards), so every
+// post's image shows what that post's text says.
+//
+// A card that fails to render costs the thread its images, never its text: the
+// text carries every fact the cards do, and the tags and links besides.
 func (p *XPlatform) Format(group []votes.Vote) (platforms.Content, error) {
-	thread := FormatVoteThread(group, p.contactMapper, p.maxChars)
+	thread, cardOf := FormatVoteThreadWithCards(group, p.contactMapper, p.maxChars)
+	if p.generateCardsFunc == nil || len(thread) == 0 {
+		return &XContent{thread: thread}, nil
+	}
+	cards, err := p.generateCardsFunc(group)
+	if err != nil {
+		log.Printf("Warning: posting to X without images, rendering cards failed: %v", err)
+		return &XContent{thread: thread}, nil
+	}
+	for i, card := range cardOf {
+		if card != platforms.NoCard && card < len(cards) {
+			thread[i].Images = []imagegen.Card{cards[card]}
+		}
+	}
 	return &XContent{thread: thread}, nil
 }
 
-// Post posts a thread to X/Twitter (root post + reply chain).
+// uploadImages uploads a post's cards, describes each, and returns their media
+// IDs. A card that fails to upload or to take its description is left out with
+// a warning rather than failing the thread, for the same reason Format falls
+// back to text. An undescribed card is not posted: an image a screen reader
+// cannot read is better left to the post's text, which says the same.
+func (p *XPlatform) uploadImages(cards []imagegen.Card) []string {
+	var ids []string
+	for _, c := range cards {
+		id, err := p.uploadImageFunc(p.apiKey, p.apiSecret, p.accessToken, p.accessSecret, c.JPEG)
+		if err != nil {
+			log.Printf("Warning: posting without one image, upload failed: %v", err)
+			continue
+		}
+		if err := p.setAltTextFunc(p.apiKey, p.apiSecret, p.accessToken, p.accessSecret, id, c.Alt); err != nil {
+			log.Printf("Warning: posting without image %s, setting its alt text failed: %v", id, err)
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return ids
+}
+
+// Post posts a thread to X/Twitter (root post + reply chain) and returns a
+// ref to the root tweet.
 // Returns shouldContinue=false when the post limit is reached.
-func (p *XPlatform) Post(content platforms.Content) (bool, error) {
+func (p *XPlatform) Post(content platforms.Content) (votelog.PostRef, bool, error) {
 	xContent, ok := content.(*XContent)
 	if !ok {
-		return false, fmt.Errorf("unexpected content type for X")
+		return votelog.PostRef{}, false, fmt.Errorf("unexpected content type for X")
 	}
 
 	if len(xContent.thread) == 0 {
-		return false, fmt.Errorf("empty thread")
+		return votelog.PostRef{}, false, fmt.Errorf("empty thread")
 	}
 
 	// Post the root
 	root := xContent.thread[0]
 	rootTweetID, err := p.postTweetFunc(
 		p.apiKey, p.apiSecret, p.accessToken, p.accessSecret,
-		root.Text, "",
+		root.Text, "", p.uploadImages(root.Images),
 	)
 	if err != nil {
-		return false, fmt.Errorf("failed to post root: %w", err)
+		return votelog.PostRef{}, false, fmt.Errorf("failed to post root: %w", err)
 	}
-	fmt.Printf("   🔗 https://x.com/i/status/%s\n", rootTweetID)
+	fmt.Printf("   🔗 %s\n", tweetURL(rootTweetID))
 
 	// Post replies as a chain
 	parentTweetID := rootTweetID
 	for i, reply := range xContent.thread[1:] {
 		tweetID, err := p.postTweetFunc(
 			p.apiKey, p.apiSecret, p.accessToken, p.accessSecret,
-			reply.Text, parentTweetID,
+			reply.Text, parentTweetID, p.uploadImages(reply.Images),
 		)
 		if err != nil {
-			return false, fmt.Errorf("failed to post reply %d: %w", i+1, err)
+			// The root is live, so the vote is published and must be logged:
+			// returning the ref alongside the error is what stops the next run
+			// from posting it again. See platforms.Platform.Post.
+			return votelog.PostRef{ID: rootTweetID, URL: tweetURL(rootTweetID)}, false, fmt.Errorf("failed to post reply %d (root %s is already live): %w", i+1, tweetURL(rootTweetID), err)
 		}
-		fmt.Printf("   🔗 https://x.com/i/status/%s\n", tweetID)
+		fmt.Printf("   🔗 %s\n", tweetURL(tweetID))
 		parentTweetID = tweetID
 	}
 
 	p.postsThisRun++
 	shouldContinue := p.postsThisRun < p.maxPostsPerRun
 
-	return shouldContinue, nil
+	return votelog.PostRef{ID: rootTweetID, URL: tweetURL(rootTweetID)}, shouldContinue, nil
+}
+
+// tweetURL returns the public URL of a tweet. The /i/ form resolves without
+// the account's handle, so it survives a rename.
+func tweetURL(tweetID string) string {
+	return "https://x.com/i/status/" + tweetID
 }
 
 // MaxPostsPerRun returns the configured per-run posting limit.

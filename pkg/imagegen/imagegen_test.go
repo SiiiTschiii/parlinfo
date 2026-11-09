@@ -31,12 +31,16 @@ func TestGenerateCarousel_ValidJPEG(t *testing.T) {
 			// Single vote: 1 combined image. Multi-vote: 1 title + 1 result per
 			// vote. A Wahlgeschäft is one text card however many roll calls it
 			// holds, because a result card would render a headcount as a result.
+			// A group that reports its process adds the status card.
 			var expected int
 			switch {
 			case votes.IsWahlgeschaeftGroup(group), len(group) == 1:
 				expected = 1
 			default:
 				expected = 1 + len(group)
+			}
+			if HasStatusCard(group) {
+				expected++
 			}
 			if len(images) != expected {
 				t.Errorf("expected %d images, got %d", expected, len(images))
@@ -56,6 +60,138 @@ func TestGenerateCarousel_ValidJPEG(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// Every card carries alt text, and it says what that card shows: the title on
+// the first card, each vote's own counts on its result card.
+func TestGenerateCards_AltTextFollowsTheCards(t *testing.T) {
+	fixtures := testfixtures.AllFixtures()
+	// Its 1,739-character vote label would push the counts past the cap if the
+	// label did not give way first.
+	fixtures["instagram-long-multi-vote-truncation"] = testfixtures.InstagramLongMultiVoteTruncation()
+	for name, group := range fixtures {
+		t.Run(name, func(t *testing.T) {
+			cards, err := GenerateCards(group)
+			if err != nil {
+				t.Fatalf("GenerateCards failed: %v", err)
+			}
+			images, err := GenerateCarousel(group)
+			if err != nil {
+				t.Fatalf("GenerateCarousel failed: %v", err)
+			}
+			if len(cards) != len(images) {
+				t.Fatalf("got %d cards, want one per carousel image (%d)", len(cards), len(images))
+			}
+			for i, c := range cards {
+				if strings.TrimSpace(c.Alt) == "" {
+					t.Errorf("card %d has no alt text", i)
+				}
+				if n := len([]rune(c.Alt)); n > maxAltRunes {
+					t.Errorf("card %d alt text is %d runes, over the %d cap", i, n, maxAltRunes)
+				}
+			}
+
+			title := []rune(voteformat.CleanVoteTitle(group[0].Title))
+			if len(title) > 40 {
+				title = title[:40] // a long title is shortened, never dropped
+			}
+			if len(title) > 0 && !strings.Contains(cards[0].Alt, string(title)) {
+				t.Errorf("first card's alt text does not name the business %q:\n%s", string(title), cards[0].Alt)
+			}
+			multi := len(group) > 1 && !votes.IsWahlgeschaeftGroup(group)
+			if multi {
+				for i, v := range group {
+					// The overview lists every vote's result, as the card does.
+					// Where ten of them crowd the cap their labels are cut
+					// shorter, but every vote keeps its numbered line.
+					line, ok := formatSummaryLine(i+1, v, len(group))
+					if ok && len(group) <= 4 && !strings.Contains(cards[0].Alt, line) {
+						t.Errorf("overview alt text lacks vote %d's summary %q:\n%s", i+1, line, cards[0].Alt)
+					}
+					if ok && !strings.Contains(cards[0].Alt, fmt.Sprintf("\n%d. ", i+1)) {
+						t.Errorf("overview alt text does not list vote %d:\n%s", i+1, cards[0].Alt)
+					}
+					counts := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
+					if c := cards[ResultCardIndex(group, i)]; !strings.Contains(c.Alt, counts) {
+						t.Errorf("result card %d alt text lacks its counts %q:\n%s", i+1, counts, c.Alt)
+					}
+				}
+			}
+			// An Auswahl card prints the chosen option; so must its description.
+			for i, v := range group {
+				outcome := auswahlOutcome(v)
+				if outcome == "" || votes.IsWahlgeschaeftGroup(group) {
+					continue
+				}
+				card := cards[0]
+				if multi {
+					card = cards[ResultCardIndex(group, i)]
+				}
+				if !strings.Contains(card.Alt, outcome) {
+					t.Errorf("vote %d alt text lacks the Auswahl outcome %q:\n%s", i+1, outcome, card.Alt)
+				}
+			}
+		})
+	}
+}
+
+func TestAssembleAlt_LabelGivesWayToResult(t *testing.T) {
+	result := "📊 130 Ja | 44 Nein"
+	got := assembleAlt(strings.Repeat("Antrag ", 500), result)
+	if !strings.HasSuffix(got, result) {
+		t.Errorf("the result did not survive the cap:\n%s", got)
+	}
+	if n := len([]rune(got)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+	// A result longer than the cap still leaves the label its floor.
+	got = assembleAlt(strings.Repeat("Titel ", 200), strings.Repeat("1. ✅ Ziffer\n", 200))
+	if !strings.HasPrefix(got, strings.Repeat("Titel ", 40)) {
+		t.Errorf("the label lost its floor:\n%s", got)
+	}
+	if n := len([]rune(got)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+	if got := assembleAlt("Titel", "Ergebnis"); got != "Titel\n\nErgebnis" {
+		t.Errorf("short alt text changed: %q", got)
+	}
+}
+
+// A long election title gives way; the sentence saying there is no result
+// does not, as it does not on the card.
+func TestWahlgeschaeftAlt_KeepsTheNoResultNotice(t *testing.T) {
+	group := testfixtures.KantonsratWahlgeschaeft()
+	group[0].Title = strings.Repeat("Wahl eines Mitglieds der Kommission ", 60)
+	alt := wahlgeschaeftAlt(group)
+	if !strings.HasSuffix(alt, voteformat.WahlgeschaeftNoResult) {
+		t.Errorf("the no-result notice did not survive a long title:\n%s", alt)
+	}
+	if n := len([]rune(alt)); n > maxAltRunes {
+		t.Errorf("alt text is %d runes, over the %d cap", n, maxAltRunes)
+	}
+}
+
+// A result card's description dates the vote as the card's corner does.
+func TestResultAlt_CarriesTheCardTimestamp(t *testing.T) {
+	group := testfixtures.MultiVoteGroup()
+	for i, v := range group {
+		stamp := voteformat.FormatVoteDateTime(v.Date)
+		if stamp == "" {
+			t.Fatalf("fixture vote %d has no date", i+1)
+		}
+		if alt := resultAlt(group, i); !strings.HasPrefix(alt, stamp+"\n") {
+			t.Errorf("result card %d alt text does not open with %q:\n%s", i+1, stamp, alt)
+		}
+	}
+}
+
+func TestCapRunes(t *testing.T) {
+	if got := capRunes("Abstimmung", 20); got != "Abstimmung" {
+		t.Errorf("short text changed: %q", got)
+	}
+	if got := capRunes("Abstimmungsergebnis", 6); got != "Absti…" {
+		t.Errorf("capRunes = %q, want %q", got, "Absti…")
 	}
 }
 
@@ -82,10 +218,10 @@ func TestLayoutResultCard_WrapsLongSubtitle(t *testing.T) {
 	bg := SelectColor("zurich-city", shortVote.Affair.Number)
 
 	shortCur := newCursor(0, imgHeight)
-	layoutResultCard(nil, shortCur, &shortVote, bg, fonts, 1, 2)
+	layoutResultCard(nil, shortCur, bandInset(shortVote), &shortVote, bg, fonts, 1, 2)
 
 	longCur := newCursor(0, imgHeight)
-	layoutResultCard(nil, longCur, &longVote, bg, fonts, 2, 2)
+	layoutResultCard(nil, longCur, bandInset(longVote), &longVote, bg, fonts, 2, 2)
 
 	if longCur.contentHeight() <= shortCur.contentHeight() {
 		t.Fatalf("expected wrapped long subtitle to use more vertical space (short=%d, long=%d)", shortCur.contentHeight(), longCur.contentHeight())
@@ -109,13 +245,89 @@ func TestLayoutTitleCard_WrapsLongSummaryLine(t *testing.T) {
 	bg := SelectColor("zurich-city", shortVotes[0].Affair.Number)
 
 	shortCur := newCursor(0, imgHeight)
-	layoutTitleCard(nil, shortCur, shortVotes, bg, fonts)
+	layoutTitleCard(nil, shortCur, bandInset(shortVotes[0]), shortVotes, bg, fonts)
 
 	longCur := newCursor(0, imgHeight)
-	layoutTitleCard(nil, longCur, longVotes, bg, fonts)
+	layoutTitleCard(nil, longCur, bandInset(longVotes[0]), longVotes, bg, fonts)
 
 	if longCur.contentHeight() <= shortCur.contentHeight() {
 		t.Fatalf("expected wrapped long summary line to use more vertical space (short=%d, long=%d)", shortCur.contentHeight(), longCur.contentHeight())
+	}
+}
+
+// A long subtitle is wrapped, not cut, while the card has room for it.
+func TestFitOverview_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatalf("loadFontSet failed: %v", err)
+	}
+	group := testfixtures.MultiVoteGroup()
+	group[0].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 4)
+
+	_, titleLines, ol, err := fitOverview(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	if err != nil {
+		t.Fatalf("fitOverview failed: %v", err)
+	}
+	summaryLines := overviewLines(ol)
+	if got := strings.Join(summaryLines, " "); strings.Contains(got, "…") {
+		t.Fatalf("expected the subtitle to wrap whole, got %q", got)
+	}
+	if len(summaryLines) <= len(group) {
+		t.Fatalf("expected the long subtitle to take extra lines, got %d lines for %d votes", len(summaryLines), len(group))
+	}
+	if strings.Contains(strings.Join(titleLines, " "), "…") {
+		t.Fatalf("title should be whole, got %q", titleLines)
+	}
+}
+
+// When the title cannot be shown whole next to a full summary, the summary is
+// the one that gets cut.
+func TestFitOverview_CutsSubtitlesBeforeTheTitle(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatalf("loadFontSet failed: %v", err)
+	}
+	group := testfixtures.MultiVoteGroup()
+	for i := range group {
+		group[i].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 25)
+	}
+	group[0].Title = strings.Repeat("Geschäft des Bundesrates zur Pelzinitiative ", 14)
+	_, titleLines, ol, err := fitOverview(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	if err != nil {
+		t.Fatalf("fitOverview failed: %v", err)
+	}
+	summaryLines := overviewLines(ol)
+	if !strings.Contains(strings.Join(summaryLines, " "), "…") {
+		t.Fatalf("expected subtitles to be cut to keep the title whole, got %q", summaryLines)
+	}
+	if strings.Contains(strings.Join(titleLines, " "), "…") {
+		t.Fatalf("title should be whole, got %q", titleLines)
+	}
+}
+
+// A title that fits only with its signatories abbreviated is not whole, so the
+// overview retries with shorter subtitles to name everyone.
+func TestCardTitleFully_ReportsDroppedNamesAsNotWhole(t *testing.T) {
+	group := testfixtures.KantonsratCoSignedBusiness()
+	subject := voteformat.CleanVoteTitle(group[0].Title)
+	width := imgWidth - 2*padding
+
+	_, _, whole, err := cardTitleFully(group, subject, width, 900)
+	if err != nil {
+		t.Fatalf("cardTitleFully failed: %v", err)
+	}
+	if !whole {
+		t.Errorf("a roomy budget should name everyone and report whole")
+	}
+
+	// The squeeze TestCardTitleShedsNamesBeforeTheSubject uses: names go, the
+	// subject survives, and that still is not whole.
+	_, lines, whole, err := cardTitleFully(group, subject, width, 100)
+	if err != nil {
+		t.Fatalf("cardTitleFully failed: %v", err)
+	}
+	if whole || !strings.Contains(strings.Join(lines, " "), "u. a.") {
+		t.Errorf("a title with abbreviated names must not report whole: %q", lines)
 	}
 }
 
@@ -133,7 +345,7 @@ func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	withPrefix := base
 	withPrefix.Subtitle = "Dringlicherklärung"
 	prefixCur := newCursor(0, imgHeight)
-	_, prefixLines, err := layoutCombinedCard(nil, prefixCur, &withPrefix, bg, fonts)
+	_, prefixLines, err := layoutCombinedCard(nil, prefixCur, 0, &withPrefix, bg, fonts)
 	if err != nil {
 		t.Fatalf("layoutCombinedCard failed: %v", err)
 	}
@@ -147,7 +359,7 @@ func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	withType := withPrefix
 	withType.Type = "Ausgabenbremse"
 	typeCur := newCursor(0, imgHeight)
-	_, typeLines, err := layoutCombinedCard(nil, typeCur, &withType, bg, fonts)
+	_, typeLines, err := layoutCombinedCard(nil, typeCur, 0, &withType, bg, fonts)
 	if err != nil {
 		t.Fatalf("layoutCombinedCard failed: %v", err)
 	}
@@ -163,7 +375,7 @@ func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	schluss := base
 	schluss.Subtitle = "Schlussabstimmung"
 	schlussCur := newCursor(0, imgHeight)
-	_, schlussLines, err := layoutCombinedCard(nil, schlussCur, &schluss, bg, fonts)
+	_, schlussLines, err := layoutCombinedCard(nil, schlussCur, 0, &schluss, bg, fonts)
 	if err != nil {
 		t.Fatalf("layoutCombinedCard failed: %v", err)
 	}
@@ -175,7 +387,7 @@ func TestLayoutCombinedCard_AbstimmungsgegenstandPrefix(t *testing.T) {
 	none := base
 	none.Subtitle = ""
 	noneCur := newCursor(0, imgHeight)
-	_, noneLines, err := layoutCombinedCard(nil, noneCur, &none, bg, fonts)
+	_, noneLines, err := layoutCombinedCard(nil, noneCur, 0, &none, bg, fonts)
 	if err != nil {
 		t.Fatalf("layoutCombinedCard failed: %v", err)
 	}
@@ -297,7 +509,7 @@ func TestDrawFraktionTable_LimitsRowsWhenSpaceIsTight(t *testing.T) {
 	maxRows := 3
 
 	// The clamp is a drawing-pass guard, not a measuring one: the measuring
-	// pass has to report the card's true height so renderCombinedCard can
+	// pass has to report the card's true height so renderCard can
 	// centre it without pushing rows out of the frame. So this needs a real
 	// destination image to exercise it.
 	customImgHeight := padding + rowHeight + rowGap + maxRows*rowStride
@@ -358,7 +570,7 @@ func TestMeasureMixedTextLeavesPlainTextAlone(t *testing.T) {
 // drawFraktionTable stops at imgHeight-padding, so a card laid out too low
 // simply loses its last Fraktionen — with nothing on the card to say any were
 // dropped, and the breakdown is the one part of a vote a reader cannot
-// reconstruct from the caption. The check mirrors what render*Card does: it
+// reconstruct from the caption. The check mirrors what renderCard does: it
 // measures the card, centres it the way the real render does, and asserts the
 // drawing pass covers the same height the measuring pass reported. A dropped
 // row makes the drawn card shorter than the measured one.
@@ -368,20 +580,21 @@ func TestCardsKeepEveryFraktion(t *testing.T) {
 		t.Fatalf("loadFontSet failed: %v", err)
 	}
 
-	eachCard(t, fonts, func(t *testing.T, c cardLayout) {
-		dry := newCursor(c.inset, imgHeight)
-		c.layout(nil, dry)
+	eachCard(t, fonts, func(t *testing.T, c card, bg color.RGBA) {
+		inset := c.inset(fonts)
+		dry := newCursor(inset, imgHeight)
+		mustLayout(t, c, nil, dry, inset)
 
-		startY := centredStart(c.inset, dry.contentHeight())
+		startY := centredStart(inset, dry.contentHeight())
 		if bottom := startY + dry.contentHeight(); bottom > imgHeight-padding {
-			t.Errorf("%s: content ends at y=%d, past the %dpx bottom limit", c.label, bottom, imgHeight-padding)
+			t.Errorf("%s: content ends at y=%d, past the %dpx bottom limit", c.name, bottom, imgHeight-padding)
 		}
 
 		real := newCursor(startY, imgHeight)
-		c.layout(newImage(c.bg), real)
+		mustLayout(t, c, newImage(bg), real, inset)
 		if real.contentHeight() != dry.contentHeight() {
 			t.Errorf("%s: drawn card is %dpx tall against %dpx measured — the table dropped rows",
-				c.label, real.contentHeight(), dry.contentHeight())
+				c.name, real.contentHeight(), dry.contentHeight())
 		}
 	})
 }
@@ -399,57 +612,80 @@ func TestCardsClearTheBodyBand(t *testing.T) {
 		t.Fatalf("loadFontSet failed: %v", err)
 	}
 
-	eachCard(t, fonts, func(t *testing.T, c cardLayout) {
-		dry := newCursor(c.inset, imgHeight)
-		c.layout(nil, dry)
+	eachCard(t, fonts, func(t *testing.T, c card, _ color.RGBA) {
+		inset := c.inset(fonts)
+		dry := newCursor(inset, imgHeight)
+		mustLayout(t, c, nil, dry, inset)
 
-		startY := centredStart(c.inset, dry.contentHeight())
-		if gap := startY - c.inset; gap < padding {
+		startY := centredStart(inset, dry.contentHeight())
+		if gap := startY - inset; gap < padding {
 			t.Errorf("%s: content starts %dpx below the band, under the %dpx margin (card is %dpx tall)",
-				c.label, gap, padding, dry.contentHeight())
+				c.name, gap, padding, dry.contentHeight())
 		}
 	})
 }
 
-// cardLayout is one card of one fixture: everything eachCard's callers need to
-// lay it out the way render*Card does.
-type cardLayout struct {
-	label  string
-	bg     color.RGBA
-	inset  int
-	layout func(*image.RGBA, *layoutCursor)
-}
-
-// eachCard runs fn over every card every fixture produces — the same cards
-// GenerateCarousel draws — as a subtest per fixture.
-func eachCard(t *testing.T, fonts *fontSet, fn func(*testing.T, cardLayout)) {
+// eachCard runs fn over every card every fixture produces — the cards
+// carouselCards hands GenerateCarousel — as a subtest per fixture.
+func eachCard(t *testing.T, fonts *fontSet, fn func(*testing.T, card, color.RGBA)) {
 	t.Helper()
 
 	for name, group := range testfixtures.AllFixtures() {
 		t.Run(name, func(t *testing.T) {
 			bg := SelectColor(group[0].Jurisdiction, group[0].Affair.Number)
-			inset := bandInset(group[0])
-
-			if len(group) == 1 {
-				v := group[0]
-				fn(t, cardLayout{"combined card", bg, inset, func(img *image.RGBA, cur *layoutCursor) {
-					if _, _, err := layoutCombinedCard(img, cur, &v, bg, fonts); err != nil {
-						t.Fatalf("layoutCombinedCard failed: %v", err)
-					}
-				}})
-				return
-			}
-
-			fn(t, cardLayout{"title card", bg, inset, func(img *image.RGBA, cur *layoutCursor) {
-				layoutTitleCard(img, cur, group, bg, fonts)
-			}})
-			for i := range group {
-				v := group[i]
-				fn(t, cardLayout{fmt.Sprintf("result card %d", i+1), bg, inset, func(img *image.RGBA, cur *layoutCursor) {
-					layoutResultCard(img, cur, &v, bg, fonts, i+1, len(group))
-				}})
+			for _, c := range carouselCards(group, bg, fonts) {
+				fn(t, c, bg)
 			}
 		})
+	}
+}
+
+// mustLayout runs one layout pass of a card, failing the test on an error.
+func mustLayout(t *testing.T, c card, img *image.RGBA, cur *layoutCursor, inset int) {
+	t.Helper()
+	if err := c.layout(img, cur, inset); err != nil {
+		t.Fatalf("%s: layout failed: %v", c.name, err)
+	}
+}
+
+// TestResultCardHeadingClearsTheCornerRow checks that a result card's heading
+// never shares a row with the date and badge in its corners.
+//
+// The heading is centred, so a long one wraps to the full column width and
+// reaches both corners. On a card tall enough for centredStart to clamp the
+// content to the top margin, its first line would land on the corner row unless
+// the row is reserved. A full Fraktion roster under a heading that wraps to
+// several lines is that card.
+func TestResultCardHeadingClearsTheCornerRow(t *testing.T) {
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatalf("loadFontSet failed: %v", err)
+	}
+
+	v := testfixtures.ExtremeTitleFullRoster()[0]
+	v.Subtitle = strings.Repeat("Änderungsantrag zu Artikel 12 Absatz 3 der Gemeindeordnung ", 4)
+	if voteformat.FormatVoteDate(v.Date) == "" {
+		t.Fatal("fixture has no date, so no corner row to clear")
+	}
+	bg := SelectColor(v.Jurisdiction, v.Affair.Number)
+
+	// The second result card of a five-vote group, as GenerateCarousel builds it.
+	c := carouselCards([]votes.Vote{v, v, v, v, v}, bg, fonts)[2]
+	inset := c.inset(fonts)
+	dry := newCursor(inset, imgHeight)
+	mustLayout(t, c, nil, dry, inset)
+	startY := centredStart(inset, dry.contentHeight())
+
+	cornerBottom := bandInset(v) + padding + lineHeight(fonts.small)
+	if startY < cornerBottom {
+		t.Errorf("heading starts at y=%d, inside the corner row ending at y=%d", startY, cornerBottom)
+	}
+
+	real := newCursor(startY, imgHeight)
+	mustLayout(t, c, newImage(bg), real, inset)
+	if real.contentHeight() != dry.contentHeight() {
+		t.Errorf("drawn card is %dpx tall against %dpx measured — the table dropped rows",
+			real.contentHeight(), dry.contentHeight())
 	}
 }
 
@@ -700,5 +936,18 @@ func TestCardTitleWithoutAuthors(t *testing.T) {
 	}
 	if set := strings.Join(lines, " "); strings.Contains(set, " von ") {
 		t.Errorf("a card with no authors grew a 'von' clause:\n%s", set)
+	}
+}
+
+// A line break in the card title starts a paragraph of its own, which is how
+// the line saying what Ja supported sits below the title.
+func TestWrapTextKeepsParagraphs(t *testing.T) {
+	face, err := loadFace(goregular.TTF, 40)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := wrapText(face, "Kurzer Titel\nJa: keine Folge geben", 2000)
+	if len(got) != 2 || got[0] != "Kurzer Titel" || got[1] != "Ja: keine Folge geben" {
+		t.Errorf("wrapText = %q", got)
 	}
 }

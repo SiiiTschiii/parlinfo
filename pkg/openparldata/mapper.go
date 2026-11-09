@@ -102,8 +102,8 @@ func (c *Client) toVote(v votingDTO) votes.Vote {
 		// Kantonsrat's audio archive and not of whatever page the other twenty-odd
 		// bodies put there. A LinkSource is how a body says its archive is
 		// understood.
-		out.ArchiveURL = out.SourceURL
-		out.ArchiveGroupURL = c.links.ItemURL(out.ArchiveURL)
+		out.VideoURL = out.SourceURL
+		out.VideoGroupURL = c.links.ItemURL(out.VideoURL)
 		if !date.IsZero() {
 			// A vote whose date would not parse has no sitting to point at.
 			// Guessing one would send a reader to an empty list.
@@ -151,7 +151,7 @@ func applyAffair(v *votes.Vote, a affairDTO) {
 		// fortnight the permalink leads to a business matter with no sign of the
 		// vote the post is about. Durability was never the whole requirement.
 		// So the archive and sitting links ride alongside in their own fields
-		// (see ArchiveURL, SessionURL): the permalink stays first and stays the
+		// (see VideoURL, SessionURL): the permalink stays first and stays the
 		// one that will still resolve in a decade, and the links that have the
 		// vote today follow it.
 		v.GroupURL = u

@@ -74,6 +74,11 @@ func FormatPost(group []votes.Vote) (*FacebookContent, error) {
 	captions := make([]string, len(images))
 	var message string
 	links := strings.TrimLeft(voteformat.LinkLine(group), "\n")
+	// The next step goes just above the links, in the message rather than a
+	// photo caption: it is about the business, not about any one vote.
+	if next := voteformat.NextStepLine(group); next != "" {
+		links = next + "\n\n" + links
+	}
 
 	switch {
 	case votes.IsWahlgeschaeftGroup(group):
@@ -87,19 +92,21 @@ func FormatPost(group []votes.Vote) (*FacebookContent, error) {
 		message = body + "\n\n" + links
 
 	default:
-		// The title card comes first, then one card per vote, in order. Votes
-		// the cap left without a card have nowhere to caption, so their text
-		// goes in the post rather than being lost.
+		// The title card comes first, then the status card where there is one,
+		// then one card per vote, in order. Votes the cap left without a card
+		// have nowhere to caption, so their text goes in the post rather than
+		// being lost.
 		var uncovered strings.Builder
 		for i := range group {
 			block := voteBlock(group, i)
-			if card := i + 1; card < len(images) {
+			if card := imagegen.ResultCardIndex(group, i); card < len(images) {
 				captions[card] = block
 				continue
 			}
 			uncovered.WriteString("\n\n" + block)
 		}
-		heading := strings.TrimRight(voteformat.LongFormHeading(group, voteformat.Tags{}), "\n")
+		heading := strings.TrimRight(voteformat.LongFormHeading(group, voteformat.Tags{})+
+			voteformat.LongFormCoSigners(group, voteformat.Tags{}), "\n")
 		message = heading + uncovered.String() + "\n\n" + links
 	}
 	message = strings.TrimRight(message, "\n")

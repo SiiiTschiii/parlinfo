@@ -58,6 +58,11 @@ type statusResponse struct {
 	StatusCode string `json:"status_code"`
 }
 
+// permalinkResponse is the response from querying a media object's permalink.
+type permalinkResponse struct {
+	Permalink string `json:"permalink"`
+}
+
 // CreateMediaContainer creates a carousel item container for a single image.
 // The imageURL must be a publicly accessible JPEG URL.
 // Returns the container ID.
@@ -184,6 +189,9 @@ func (c *Client) PublishContainer(containerID string) (string, error) {
 
 // PollContainerStatus checks the status of a container.
 // Returns one of: PUBLISHED, FINISHED, IN_PROGRESS, ERROR, EXPIRED.
+//
+// Like GetPermalink, it sends the token as a header to keep it out of the URL
+// that a transport error carries into the log.
 func (c *Client) PollContainerStatus(containerID string) (string, error) {
 	endpoint := fmt.Sprintf("%s/%s", c.apiBase, containerID)
 
@@ -194,8 +202,8 @@ func (c *Client) PollContainerStatus(containerID string) (string, error) {
 
 	q := req.URL.Query()
 	q.Set("fields", "status_code")
-	q.Set("access_token", c.accessToken)
 	req.URL.RawQuery = q.Encode()
+	req.Header.Set("Authorization", "Bearer "+c.accessToken)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -214,4 +222,46 @@ func (c *Client) PollContainerStatus(containerID string) (string, error) {
 	}
 
 	return result.StatusCode, nil
+}
+
+// GetPermalink returns the public URL of a published media object, from the ID
+// PublishContainer returned. Instagram's /p/{shortcode} URLs cannot be derived
+// from the media ID, so this costs one call; instagram_basic covers it.
+//
+// The token travels in the Authorization header rather than the query string:
+// a transport failure comes back as a *url.Error carrying the request URL, and
+// the caller logs it, so a token in the URL would land in the log.
+func (c *Client) GetPermalink(mediaID string) (string, error) {
+	endpoint := fmt.Sprintf("%s/%s", c.apiBase, mediaID)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", fmt.Errorf("creating permalink request: %w", err)
+	}
+
+	q := req.URL.Query()
+	q.Set("fields", "permalink")
+	req.URL.RawQuery = q.Encode()
+	req.Header.Set("Authorization", "Bearer "+c.accessToken)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("fetching permalink: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("fetch permalink returned %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result permalinkResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", fmt.Errorf("parsing permalink response: %w", err)
+	}
+	if result.Permalink == "" {
+		return "", fmt.Errorf("permalink response carried no permalink: %s", string(body))
+	}
+
+	return result.Permalink, nil
 }

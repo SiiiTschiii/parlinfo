@@ -30,8 +30,9 @@ var finalAndOverall = []string{"Schlussabstimmung", "Vote final", "Gesamtabstimm
 // Abstimmungsprotokoll (Ref. 33215 and 33233); the fourth, 26.033, is a lone
 // vote on its business.
 var (
-	idVoting   = regexp.MustCompile(`IdVote eq (\d+)`)
-	idBusiness = regexp.MustCompile(`^/Business\(ID=(\d+),`)
+	idVoting       = regexp.MustCompile(`IdVote eq (\d+)`)
+	idBusiness     = regexp.MustCompile(`^/Business\(ID=(\d+),`)
+	businessNumber = regexp.MustCompile(`BusinessNumber eq (\d+)`)
 )
 
 // newTestClient serves recorded responses so the suite never touches the live
@@ -55,8 +56,23 @@ func newTestClient(t *testing.T) (*Client, *[]string) {
 			}
 			_, _ = w.Write([]byte(n))
 			return
+		case "/BusinessRole":
+			// Only 17.523 and 21.472 are recorded. The others are Federal
+			// Council business, for which the service answers with no rows.
+			m := businessNumber.FindStringSubmatch(r.URL.Query().Get("$filter"))
+			if m == nil || (m[1] != "20170523" && m[1] != "20210472") {
+				_, _ = w.Write([]byte(`{"d":{"results":[]}}`))
+				return
+			}
+			name = "roles_" + m[1] + ".json"
 		case "/MemberCouncil":
 			name = "members.json"
+			switch f := r.URL.Query().Get("$filter"); {
+			case strings.Contains(f, "ID eq 214 "):
+				name = "authors_20170523.json"
+			case strings.Contains(f, "ID eq 4301 "):
+				name = "authors_20210472.json"
+			}
 		case "/Voting":
 			m := idVoting.FindStringSubmatch(r.URL.Query().Get("$filter"))
 			if m == nil {
@@ -209,6 +225,29 @@ func TestGroupByAffair_TalliesMatchTheProtocol(t *testing.T) {
 		if got["Ja"] != tt.fJa || got["Nein"] != tt.fNein || got["Enthaltung"] != tt.fEn || got["Abwesend"] != tt.fAbw {
 			t.Errorf("%s %s: %v, want %d/%d/%d/%d", tt.id, tt.fraktion, got, tt.fJa, tt.fNein, tt.fEn, tt.fAbw)
 		}
+	}
+}
+
+func TestFetchRecent_LinksTheProtocol(t *testing.T) {
+	c, _ := newTestClient(t)
+
+	vs, err := c.FetchRecent(10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The PDF headed "Ref. 33225", fetched from this URL on 25.10.2026.
+	want := "https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33225.pdf"
+	if vs[0].ArchiveURL != want {
+		t.Errorf("archive URL = %q, want %q", vs[0].ArchiveURL, want)
+	}
+}
+
+func TestToVote_NoLegislatureNoProtocol(t *testing.T) {
+	c := New(testJurisdiction)
+	v := c.toVote(voteDTO{ID: 1, RegistrationNumber: 33225, BusinessNumber: 20260033})
+	// vote_0_33225.pdf does not exist, and a link to it would be a 404 in a post.
+	if v.ArchiveURL != "" {
+		t.Errorf("archive URL = %q, want none", v.ArchiveURL)
 	}
 }
 
@@ -488,4 +527,26 @@ func TestFetchMembers_MapsTheRow(t *testing.T) {
 		return
 	}
 	t.Error("Gerhard Pfister not in the roster")
+}
+
+// The roster is the chamber's and no other: a Ständerat contacts file seeded
+// from the Nationalrat would hold 200 people who never sit there.
+func TestFetchMembers_AsksForItsCouncil(t *testing.T) {
+	for _, tc := range []struct {
+		council int
+		want    string
+	}{
+		{CouncilNationalrat, "Council eq 1"},
+		{CouncilStaenderat, "Council eq 2"},
+	} {
+		c, requests := newTestClient(t)
+		c.WithCouncil(tc.council)
+		if _, err := c.FetchMembers(); err != nil {
+			t.Fatal(err)
+		}
+		filter := firstQueryValue(t, (*requests)[len(*requests)-1], "$filter")
+		if !strings.HasSuffix(filter, tc.want) {
+			t.Errorf("council %d: filter = %q, want it to end in %q", tc.council, filter, tc.want)
+		}
+	}
 }

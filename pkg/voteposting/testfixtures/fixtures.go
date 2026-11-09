@@ -142,9 +142,10 @@ func base(guid, title, grNr string) votes.Vote {
 		// they are exactly what must never reach a reader, so fixtures here
 		// model postable votes. "Normal" is the overwhelming majority in both
 		// bodies; fixtures needing another set it.
-		Type:      "Normal",
-		SourceURL: VoteURL(objGUID),
-		GroupURL:  TraktandumURL(sitzungGUID, traktandumGUID),
+		Type:        "Normal",
+		SourceURL:   VoteURL(objGUID),
+		GroupURL:    TraktandumURL(sitzungGUID, traktandumGUID),
+		Attribution: "Daten: Open Data Zürich",
 		Affair: votes.Affair{
 			Number: grNr,
 			Title:  title,
@@ -595,8 +596,8 @@ func PostulatWithGrNrPrefix() []votes.Vote {
 // fixture that left them empty would render a link block no cantonal post has.
 func withCantonLinks(v *votes.Vote, agendaItemUID, segmentUID string) {
 	item := "https://zh.recapp.ch/shareparl?agendaItemUid=" + agendaItemUID
-	v.ArchiveURL = item + "&segmentUid=" + segmentUID
-	v.ArchiveGroupURL = item
+	v.VideoURL = item + "&segmentUid=" + segmentUID
+	v.VideoGroupURL = item
 
 	day := v.Date.Format("2006-01-02")
 	q := url.Values{}
@@ -628,7 +629,7 @@ func KantonsratVote() []votes.Vote {
 		SourceURL:  "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e",
 		// OpenParlData is CC BY 4.0; the credit is a licence obligation, so it
 		// must actually appear in the rendered post.
-		Attribution: "Source: OpenParlData.ch",
+		Attribution: "Daten: OpenParlData.ch",
 		GroupURL:    "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=3e9a314a447f42f6bc8ed5995d9ae47e",
 		Affair: votes.Affair{
 			Number: "6087",
@@ -716,7 +717,7 @@ func KantonsratMultiVote() []votes.Vote {
 			Absent:      intPtr(sv.abw),
 			SourceURL:   geschaeft,
 			GroupURL:    geschaeft,
-			Attribution: "Source: OpenParlData.ch",
+			Attribution: "Daten: OpenParlData.ch",
 			Affair: votes.Affair{
 				Number: "6031",
 				Title:  title,
@@ -783,7 +784,7 @@ func KantonsratMemberBusiness() []votes.Vote {
 		Absent:       intPtr(4),
 		SourceURL:    "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1",
 		GroupURL:     "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=2904da3a36db41d8bcae242155d64ae1",
-		Attribution:  "Source: OpenParlData.ch",
+		Attribution:  "Daten: OpenParlData.ch",
 		Affair: votes.Affair{
 			Number: "367/2025",
 			Title:  title,
@@ -852,7 +853,7 @@ func KantonsratCoSignedBusiness() []votes.Vote {
 		Absent:       intPtr(7),
 		SourceURL:    "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01",
 		GroupURL:     "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=d463146e155b46589279b3228ea48c01",
-		Attribution:  "Source: OpenParlData.ch",
+		Attribution:  "Daten: OpenParlData.ch",
 		Affair: votes.Affair{
 			Number: "377/2020",
 			Title:  title,
@@ -953,7 +954,7 @@ func KantonsratCupVote() []votes.Vote {
 		Decision:    "",
 		SourceURL:   "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=250382",
 		GroupURL:    "https://www.kantonsrat.zh.ch/geschaefte/geschaeft/?id=250382",
-		Attribution: "Source: OpenParlData.ch",
+		Attribution: "Daten: OpenParlData.ch",
 		Affair: votes.Affair{
 			Number: "250382",
 			Title:  title,
@@ -1008,7 +1009,7 @@ func KantonsratWahlgeschaeft() []votes.Vote {
 		SourceURL:   geschaeftURL,
 		GroupURL:    geschaeftURL,
 		BulletinURL: "https://parlzhcdws.cmicloud.ch/parlzh3/cdws/Files/6e3f5290635f44f596a3f967499979bb-332/1/pdf",
-		Attribution: "Source: OpenParlData.ch",
+		Attribution: "Daten: OpenParlData.ch",
 		Affair: votes.Affair{
 			Number: "20/2026",
 			Title:  title,
@@ -1099,6 +1100,10 @@ var FixtureNames = []string{
 	"kantonsrat-co-signed-business",
 	"kantonsrat-wahlgeschaeft",
 	"kantonsrat-wahlgeschaeft-two-rounds",
+	"process-nationalrat-motion",
+	"process-gemeinderat-postulat",
+	"process-gemeinderat-abgelehnt",
+	"process-multi-vote",
 }
 
 // AllFixtures returns all fixtures keyed by kebab-case name.
@@ -1126,5 +1131,9 @@ func AllFixtures() map[string][]votes.Vote {
 		"kantonsrat-co-signed-business":       KantonsratCoSignedBusiness(),
 		"kantonsrat-wahlgeschaeft":            KantonsratWahlgeschaeft(),
 		"kantonsrat-wahlgeschaeft-two-rounds": KantonsratWahlgeschaeftTwoRounds(),
+		"process-nationalrat-motion":          ProcessNationalratMotion(),
+		"process-gemeinderat-postulat":        ProcessGemeinderatPostulat(),
+		"process-gemeinderat-abgelehnt":       ProcessGemeinderatAbgelehnt(),
+		"process-multi-vote":                  ProcessMultiVote(),
 	}
 }

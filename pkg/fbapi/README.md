@@ -117,7 +117,7 @@ Facebook starts with no vote log, so every vote the sources still return reads
 as unposted. A dry run on 24 October 2026 listed 40 groups back to 9 September.
 The log is not seeded to hide that: a seeded log would record posts that were
 never made. Instead Facebook posts only sittings from a start date, set in
-`.github/workflows/bot.yml`:
+`.github/workflows/bot-zhparl.yml`:
 
 ```yaml
 ZURICH_FB_POST_FROM: "2026-10-17"
@@ -162,7 +162,7 @@ Names are channel-scoped — the `zurich` channel reads `ZURICH_FB_PAGE_ID`.
 | `<CHANNEL>_FB_PAGE_ID`           | Facebook Page ID                                     |
 | `<CHANNEL>_FB_ACCESS_TOKEN`      | Page access token with `pages_manage_posts`          |
 | `<CHANNEL>_FB_POST_FROM`         | First sitting date to post, `YYYY-MM-DD` (required)  |
-| `<CHANNEL>_FB_MAX_POSTS_PER_RUN` | Posts per hourly run (default 5)                     |
+| `<CHANNEL>_FB_MAX_POSTS_PER_RUN` | Posts per run (default 5)                            |
 
 ## Trying it locally
 

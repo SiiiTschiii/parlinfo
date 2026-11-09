@@ -32,7 +32,7 @@ func partyMapper() *Mapper {
 		}),
 		org("AL Stadt Zürich", map[string][]string{
 			"x":         {"https://x.com/al_zuerich"},
-			"instagram": {"https://www.instagram.com/alternativelistezh/"},
+			"instagram": {"https://www.instagram.com/alternativelinkezh/"},
 		}),
 		org("SP Kanton Zürich", map[string][]string{
 			"x":         {"https://x.com/spkantonzh"},
@@ -94,7 +94,7 @@ func TestTagXFraktionen(t *testing.T) {
 func TestTagInstagramFraktionen(t *testing.T) {
 	m := partyMapper()
 	got := m.TagInstagramFraktionen(fraktionTitle, "zurich-city")
-	want := "Postulat der Grüne-, SP- und AL-Fraktion @gruenezuerich @spzuerich @alternativelistezh vom 18.03.2026: Vergabe von Schiffsplätzen"
+	want := "Postulat der Grüne-, SP- und AL-Fraktion @gruenezuerich @spzuerich @alternativelinkezh vom 18.03.2026: Vergabe von Schiffsplätzen"
 	if got != want {
 		t.Errorf("got  %q\nwant %q", got, want)
 	}
@@ -126,6 +126,17 @@ func TestPathsForLoadsCantonFallbackForCityOnly(t *testing.T) {
 	}
 	if got := PathsFor("zurich-canton"); !reflect.DeepEqual(got, []string{PathFor("zurich-canton")}) {
 		t.Errorf("canton only: got %v", got)
+	}
+}
+
+// A Nationalrat post names Ständerat members who filed the business, so their
+// file is loaded too; a Ständerat preview needs nothing from the Nationalrat.
+func TestPathsForLoadsStaenderatForNationalrat(t *testing.T) {
+	if got, want := PathsFor("nationalrat"), []string{PathFor("nationalrat"), PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("nationalrat: got %v, want %v", got, want)
+	}
+	if got, want := PathsFor("staenderat"), []string{PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
+		t.Errorf("staenderat: got %v, want %v", got, want)
 	}
 }
 
@@ -166,5 +177,42 @@ func TestFraktionPhrasesFromRealTitles(t *testing.T) {
 		if got := m.TagXFraktionen(tt.title, "zurich-city"); got != tt.want {
 			t.Errorf("%q\n got  %q\n want %q", tt.title, got, tt.want)
 		}
+	}
+}
+
+// A Nationalrat post names the Fraktion that filed the business, and tags every
+// party it seats: the Mitte-EVP-Fraktion names both, the SVP-Fraktion names the
+// SVP alone and seats EDU, Lega and MCG beside it. Lega and MCG are cantonal
+// parties, found under their own names.
+func TestTagXFraktionenNationalrat(t *testing.T) {
+	m := newMapper([]Contact{
+		{Name: "SVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/SVPch")},
+		{Name: "EDU Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/EDUSchweiz")},
+		{Name: "Lega dei Ticinesi", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/lega")},
+		{Name: "Die Mitte Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/Mitte_Centre")},
+		{Name: "EVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/evp")},
+		{Name: "GLP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/grunliberale")},
+		{Name: "Grüne Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/GrueneCH")},
+		{Name: "SP Kanton Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/spkantonzh")},
+	})
+	tests := []struct{ in, want string }{
+		// MCG has no account here, so it is skipped rather than guessed.
+		{"Parlamentarische Initiative der SVP-Fraktion", "Parlamentarische Initiative der SVP-Fraktion @SVPch @EDUSchweiz @lega"},
+		{"Parlamentarische Initiative der Mitte-EVP-Fraktion", "Parlamentarische Initiative der Mitte-EVP-Fraktion @Mitte_Centre @evp"},
+		{"Parlamentarische Initiative der GLP-Fraktion", "Parlamentarische Initiative der GLP-Fraktion @grunliberale"},
+		{"Parlamentarische Initiative der Grüne-Fraktion", "Parlamentarische Initiative der Grüne-Fraktion @GrueneCH"},
+		// The national level only: a cantonal account is never a federal tag.
+		{"Parlamentarische Initiative der SP-Fraktion", "Parlamentarische Initiative der SP-Fraktion"},
+	}
+	for _, tt := range tests {
+		if got := m.TagXFraktionen(tt.in, "nationalrat"); got != tt.want {
+			t.Errorf("%q\n got  %q\n want %q", tt.in, got, tt.want)
+		}
+	}
+
+	// The SVP-Fraktion of the Gemeinderat is the SVP's alone, and a cantonal
+	// party is not looked up for a jurisdiction that has none of its own.
+	if got := m.TagXFraktionen("Motion der SVP-Fraktion", "zurich-city"); got != "Motion der SVP-Fraktion" {
+		t.Errorf("zurich-city: got %q", got)
 	}
 }

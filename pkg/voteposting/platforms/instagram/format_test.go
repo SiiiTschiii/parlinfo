@@ -8,6 +8,7 @@ import (
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
@@ -177,8 +178,10 @@ func TestFormatCarousel_LongMultiVoteCaptionPreservesLink(t *testing.T) {
 		t.Errorf("caption should contain truncation notice %q\n%s", captionTruncatedNoticeLine, content.Caption)
 	}
 
-	if !strings.HasSuffix(content.Caption, expectedLinkLine) {
-		t.Errorf("caption should end with link line %q\n%s", expectedLinkLine, content.Caption)
+	// The link block, credit line included, survives truncation intact.
+	linkBlock := strings.TrimLeft(voteformat.LinkLine(group), "\n")
+	if !strings.HasSuffix(content.Caption, linkBlock) {
+		t.Errorf("caption should end with the link block %q\n%s", linkBlock, content.Caption)
 	}
 }
 

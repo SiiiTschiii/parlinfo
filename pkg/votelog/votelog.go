@@ -22,10 +22,23 @@ const (
 // dataDir is the root the logs live under, relative to the working directory.
 const dataDir = "data"
 
+// PostRef identifies the post a vote went out in, so the log doubles as an
+// audit trail from a vote to what the bot published for it.
+//
+// Both fields are optional: entries written before refs were recorded have
+// neither, and a platform that published but could not resolve a URL (an
+// Instagram permalink lookup failing, say) keeps the ID alone. The ID is kept
+// beside the URL because URL schemes change and tooling needs the ID anyway.
+type PostRef struct {
+	ID  string `json:"post_id,omitempty"`
+	URL string `json:"post_url,omitempty"`
+}
+
 // VoteEntry represents a single posted vote
 type VoteEntry struct {
 	ID       string    `json:"id"`
 	PostedAt time.Time `json:"posted_at"`
+	PostRef
 }
 
 // VoteLog tracks posted votes for one jurisdiction on one platform.
@@ -95,8 +108,9 @@ func (l *VoteLog) IsPosted(voteID string) bool {
 	return exists
 }
 
-// MarkAsPosted marks a vote as posted
-func (l *VoteLog) MarkAsPosted(voteID string) {
+// MarkAsPosted marks a vote as posted in the given post. Votes grouped into
+// one post all carry the same ref.
+func (l *VoteLog) MarkAsPosted(voteID string, post PostRef) {
 	if l.noOp {
 		return
 	}
@@ -109,6 +123,7 @@ func (l *VoteLog) MarkAsPosted(voteID string) {
 	entry := VoteEntry{
 		ID:       voteID,
 		PostedAt: time.Now(),
+		PostRef:  post,
 	}
 
 	l.Votes = append(l.Votes, entry)

@@ -20,7 +20,9 @@ type voteDTO struct {
 	BusinessNumber      int64   `json:"BusinessNumber"`
 	BusinessShortNumber string  `json:"BusinessShortNumber"`
 	BusinessTitle       string  `json:"BusinessTitle"`
+	BillNumber          int64   `json:"BillNumber"`
 	BillTitle           *string `json:"BillTitle"`
+	IdLegislativePeriod int64   `json:"IdLegislativePeriod"`
 	IdSession           int64   `json:"IdSession"`
 	// Subject, MeaningYes and MeaningNo are served in French in the German
 	// feed since the Wintersession 2025, and are published as the service
@@ -28,6 +30,7 @@ type voteDTO struct {
 	// is a final or overall vote.
 	Subject    *string `json:"Subject"`
 	MeaningYes *string `json:"MeaningYes"`
+	MeaningNo  *string `json:"MeaningNo"`
 	VoteEnd    string  `json:"VoteEnd"`
 }
 
@@ -62,7 +65,7 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 		"$filter":  c.voteFilter(),
 		"$orderby": "VoteEnd desc",
 		"$top":     strconv.Itoa(limit),
-		"$select":  "ID,RegistrationNumber,BusinessNumber,BusinessShortNumber,BusinessTitle,BillTitle,IdSession,Subject,MeaningYes,VoteEnd",
+		"$select":  "ID,RegistrationNumber,BusinessNumber,BusinessShortNumber,BusinessTitle,BillNumber,BillTitle,IdLegislativePeriod,IdSession,Subject,MeaningYes,MeaningNo,VoteEnd",
 	}, &rows)
 	if err != nil {
 		return nil, err
@@ -73,7 +76,10 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 		v := c.toVote(r)
 		c.labels[v.SourceID] = voteLabel{
 			bill:       strings.TrimSpace(deref(r.BillTitle)),
+			billNumber: r.BillNumber,
+			subject:    strings.TrimSpace(deref(r.Subject)),
 			meaningYes: strings.TrimSpace(deref(r.MeaningYes)),
+			meaningNo:  strings.TrimSpace(deref(r.MeaningNo)),
 		}
 		out = append(out, v)
 	}
@@ -83,14 +89,17 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 // voteFilter builds the $filter for FetchRecent.
 func (c *Client) voteFilter() string {
 	filter := "Language eq 'DE'"
-	if len(c.subjects) == 0 {
+	if len(c.subjects) == 0 && !c.filedBusiness {
 		return filter
 	}
-	clauses := make([]string, 0, len(c.subjects))
+	clauses := make([]string, 0, len(c.subjects)+1)
 	for _, s := range c.subjects {
 		// OData doubles a quote to escape it, and "Vote sur l'ensemble" has one.
 		lit := strings.ReplaceAll(strings.ToLower(s), "'", "''")
 		clauses = append(clauses, fmt.Sprintf("startswith(tolower(Subject),'%s') eq true", lit))
+	}
+	if c.filedBusiness {
+		clauses = append(clauses, "(Subject eq null and "+filedNumberBands+")")
 	}
 	return filter + " and (" + strings.Join(clauses, " or ") + ")"
 }
@@ -106,13 +115,35 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 	if len(vs) == 0 {
 		return nil, nil
 	}
+	kept := vs[:0:0]
 	for i := range vs {
 		if err := c.enrich(&vs[i]); err != nil {
 			return nil, err
 		}
+		// A vote without a Subject was fetched for being on filed business;
+		// the number it was selected by is a convention, the type is the
+		// service's word. Without the type there is no telling, and dropping
+		// the vote would lose it for good once it ages out of the fetch
+		// window, so the run fails instead and the next one asks again.
+		if c.filedBusiness && strings.TrimSpace(vs[i].Subtitle) == "" {
+			if vs[i].Affair.Type == "" {
+				return nil, fmt.Errorf("parlamentch: vote %s: the type of business %s is unknown, so it cannot be told whether to post it", vs[i].SourceID, vs[i].Affair.Number)
+			}
+			if !isFiledVote(vs[i]) {
+				continue
+			}
+		}
+		kept = append(kept, vs[i])
+	}
+	vs = kept
+	if len(vs) == 0 {
+		return nil, nil
 	}
 	groups := votes.GroupByAffairAndDate(vs)
 	for _, g := range groups {
+		if err := c.markRepeats(g); err != nil {
+			return nil, err
+		}
 		c.label(g)
 	}
 	return groups, nil
@@ -123,7 +154,13 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 // depends on the group. See Client.label.
 type voteLabel struct {
 	bill       string
+	billNumber int64 // which of the business's bills the vote was on; 0 when not served
+	subject    string
 	meaningYes string
+	meaningNo  string
+	// repeated marks a vote the chamber took again, after an Ordnungsantrag
+	// to repeat it, and repeat the vote that replaced it. See markRepeats.
+	repeated, repeat bool
 }
 
 // plainMeanings are the ways the service says that Ja adopts the bill, in both
@@ -170,6 +207,28 @@ func (c *Client) label(group []votes.Vote) {
 			parts = append(parts, l.bill)
 		}
 		sub := strings.Join(parts, ": ")
+		if l.repeat {
+			sub += " (Wiederholung)"
+		}
+		if isFiledVote(group[i]) {
+			// What the vote did to the business is stated as its verdict, and
+			// what Ja stood for below the title, in German: the verdict alone
+			// reads as a contradiction where Ja was a proposal to reject.
+			// Where the meanings cannot be read there is no verdict, and the
+			// meaning is printed as served, plain ones included, since it is
+			// then all that says what the counts decided.
+			group[i].Subtitle = strings.TrimSpace(sub)
+			group[i].Outcome = outcomeOf(group[i].Affair.Type, l.meaningYes, l.meaningNo, group[i].Decision)
+			if group[i].Outcome != "" {
+				group[i].Question = "Ja: " + jaPhrase(group[i].Affair.Type, l.meaningYes)
+				continue
+			}
+			group[i].Decision = ""
+			if l.meaningYes != "" {
+				group[i].Question = "Ja: " + l.meaningYes
+			}
+			continue
+		}
 		if l.meaningYes != "" && !plainMeanings[strings.ToLower(l.meaningYes)] {
 			sub += " (Ja: " + l.meaningYes + ")"
 		}
@@ -216,6 +275,8 @@ func (c *Client) enrich(v *votes.Vote) error {
 
 	if id, err := strconv.ParseInt(v.Affair.ID, 10, 64); err == nil {
 		v.Affair.Type = c.businessType(id)
+		a := c.authorshipOf(id)
+		v.Affair.Authors, v.Affair.Fraktion, v.Affair.Canton = a.authors, a.fraktion, a.canton
 	}
 	return nil
 }
@@ -381,6 +442,10 @@ func (c *Client) toVote(r voteDTO) votes.Vote {
 	id := strconv.FormatInt(r.ID, 10)
 	affairURL := BusinessURL(r.BusinessNumber)
 	title := strings.TrimSpace(r.BusinessTitle)
+	protocol := ""
+	if r.IdLegislativePeriod > 0 {
+		protocol = ProtocolURL(r.IdLegislativePeriod, r.RegistrationNumber)
+	}
 
 	return votes.Vote{
 		SourceID:     id,
@@ -396,6 +461,7 @@ func (c *Client) toVote(r voteDTO) votes.Vote {
 		Type:        "Normal",
 		SourceURL:   affairURL,
 		GroupURL:    affairURL,
+		ArchiveURL:  protocol,
 		Attribution: Attribution,
 		Affair: votes.Affair{
 			Number: r.BusinessShortNumber,
@@ -422,4 +488,13 @@ const Seats = 200
 // every vote taken on it.
 func BusinessURL(businessNumber int64) string {
 	return fmt.Sprintf("https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=%d", businessNumber)
+}
+
+// ProtocolURL is a vote's Abstimmungsprotokoll: the Parlamentsdienste's PDF of
+// the tally and every member's vote, headed "Ref." with the vote's
+// RegistrationNumber. It is built rather than looked up, because the service
+// names no document for it; the path is the one parlament.ch links from the
+// Amtliches Bulletin, and the file is there within seconds of the vote closing.
+func ProtocolURL(legislativePeriod, registrationNumber int64) string {
+	return fmt.Sprintf("https://www.parlament.ch/poly/Abstimmung/%d/out/vote_%d_%d.pdf", legislativePeriod, legislativePeriod, registrationNumber)
 }

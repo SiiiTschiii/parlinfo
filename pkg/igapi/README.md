@@ -4,7 +4,7 @@ This package implements a Go client for posting images to Instagram using the [I
 
 ## Packages
 
-- **`igapi.Client`** — Instagram Graph API client for carousel publishing (create containers, publish, poll status)
+- **`igapi.Client`** — Instagram Graph API client for carousel publishing (create containers, publish, poll status, look up the permalink)
 - **`igapi.ImageHoster`** — GitHub Pages image hosting via the GitHub Contents API (upload/cleanup JPEG files on `gh-pages` branch)
 
 ## Setup

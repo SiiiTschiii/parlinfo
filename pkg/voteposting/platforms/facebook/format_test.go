@@ -161,16 +161,16 @@ func TestFormatPost_CaptionsLinkTheVotesOwnRecording(t *testing.T) {
 	seen := map[string]bool{}
 	for i, v := range group {
 		caption := content.Captions[i+1]
-		if v.ArchiveURL == "" {
+		if v.VideoURL == "" {
 			t.Fatalf("fixture vote %d has no archive link", i)
 		}
-		if !strings.Contains(caption, "🎬 Video: "+v.ArchiveURL) {
-			t.Errorf("caption %d is missing the vote's own recording %s:\n%s", i+1, v.ArchiveURL, caption)
+		if !strings.Contains(caption, "🎬 Video: "+v.VideoURL) {
+			t.Errorf("caption %d is missing the vote's own recording %s:\n%s", i+1, v.VideoURL, caption)
 		}
-		if seen[v.ArchiveURL] {
-			t.Errorf("two votes share the recording link %s", v.ArchiveURL)
+		if seen[v.VideoURL] {
+			t.Errorf("two votes share the recording link %s", v.VideoURL)
 		}
-		seen[v.ArchiveURL] = true
+		seen[v.VideoURL] = true
 		// The business page is already in the post, so it is not repeated.
 		if strings.Contains(caption, "Abstimmung: "+v.SourceURL) {
 			t.Errorf("caption %d repeats the post's own Geschäft link", i+1)

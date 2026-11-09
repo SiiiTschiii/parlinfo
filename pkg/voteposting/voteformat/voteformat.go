@@ -21,10 +21,22 @@ func FormatVoteDate(t time.Time) string {
 	return t.Format("02.01.2006")
 }
 
+// FormatVoteDateTime renders a vote's timestamp as "DD.MM.YYYY HH:MM", or as
+// the date alone where the source has no time of day (see hasClockTime).
+func FormatVoteDateTime(t time.Time) string {
+	if !hasClockTime(t) {
+		return FormatVoteDate(t)
+	}
+	return t.Format("02.01.2006 15:04")
+}
+
 // GetVoteResultEmoji returns the appropriate emoji for a vote result
 func GetVoteResultEmoji(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
-	if strings.Contains(result, "angenommen") || result == "ja" {
+	if strings.Contains(result, "keine folge") {
+		return "❌"
+	}
+	if strings.Contains(result, "angenommen") || strings.Contains(result, "folge gegeben") || result == "ja" {
 		return "✅"
 	}
 	return "❌"
@@ -33,6 +45,14 @@ func GetVoteResultEmoji(result string) string {
 // GetVoteResultText returns the text for a vote result
 func GetVoteResultText(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
+	// An initiative is not adopted by the vote that lets it go on, only given
+	// leave to: "Folge gegeben". Checked first, since it contains the other.
+	if strings.Contains(result, "keine folge") {
+		return "Keine Folge gegeben"
+	}
+	if strings.Contains(result, "folge gegeben") {
+		return "Folge gegeben"
+	}
 	if strings.Contains(result, "angenommen") || result == "ja" {
 		return "Angenommen"
 	}
@@ -93,8 +113,15 @@ func GroupPrefixLine(group []votes.Vote) string {
 	// arrive from the same call, and "von Marc Bourgeois (FDP)" standing on its
 	// own would read as a sentence with its subject missing.
 	if prefix != "" {
-		if authors := AuthorList(group[0].Affair.Authors, 0); authors != "" {
+		if authors := AuthorList(LeadAuthors(group[0].Affair.Authors), 0); authors != "" {
 			prefix += " von " + authors
+		} else if fraktion := strings.TrimSpace(group[0].Affair.Fraktion); fraktion != "" {
+			// "Parlamentarische Initiative der GLP-Fraktion", the shape Stadt
+			// Zürich's titles use, which is also what the tagger reads to tag
+			// the Fraktion's parties.
+			prefix += " der " + fraktion
+		} else if canton := strings.TrimSpace(group[0].Affair.Canton); canton != "" {
+			prefix += " des Kantons " + canton
 		}
 	}
 
@@ -168,8 +195,8 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 	}
 	capped := make([]votes.Vote, len(group))
 	copy(capped, group)
-	full := AuthorList(capped[0].Affair.Authors, 0)
-	short := AuthorList(capped[0].Affair.Authors, max)
+	full := AuthorList(LeadAuthors(capped[0].Affair.Authors), 0)
+	short := AuthorList(LeadAuthors(capped[0].Affair.Authors), max)
 	line := GroupPrefixLine(capped)
 	if full == "" || full == short {
 		return line
@@ -183,7 +210,7 @@ func GroupPrefixLineCapped(group []votes.Vote, max int) string {
 // The title is never what gives way. A reader who loses the subject of the vote
 // has lost the post; a reader who finds three of five names in the next post of
 // the thread has lost nothing. So names are shed from the end until the line
-// fits, and the ones shed come back in their own block — see SignatoryLine.
+// fits, and the ones shed come back in their own block — see SignatoryBlocks.
 //
 // available is the space left for this line after the header, the title and
 // whatever the platform appends; measure is the platform's own length function,
@@ -192,7 +219,7 @@ func FitAuthorPrefix(group []votes.Vote, available int, measure func(string) int
 	if len(group) == 0 {
 		return "", nil
 	}
-	authors := group[0].Affair.Authors
+	authors := LeadAuthors(group[0].Affair.Authors)
 
 	full := GroupPrefixLine(group)
 	if len(authors) == 0 || measure(full) <= available {
@@ -218,28 +245,153 @@ func prefixWithoutAuthors(group []votes.Vote) string {
 	return GroupPrefixLine(bare)
 }
 
-// SignatoryLine names the members a post could not fit beside its title.
+// LeadAuthors are the members a label line names: who filed and who took over,
+// without the co-signers. See votes.AuthorRole.
+func LeadAuthors(authors []votes.Author) []votes.Author {
+	return authorsWhere(authors, func(r votes.AuthorRole) bool { return r != votes.RoleCoSigned })
+}
+
+func authorsWhere(authors []votes.Author, keep func(votes.AuthorRole) bool) []votes.Author {
+	var out []votes.Author
+	for _, a := range authors {
+		if keep(a.Role) {
+			out = append(out, a)
+		}
+	}
+	return out
+}
+
+// NameBlock is one labelled list of members, named below a post rather than on
+// its label line.
+type NameBlock struct {
+	Label   string
+	Authors []votes.Author
+}
+
+// SignatoryBlocks names, below the root of a thread, the members its label
+// line did not: the ones shed for length, and the co-signers, who are never on
+// it. Each role gets its own label, because a list that put a member who only
+// took a business over among its signatories would say something false about
+// them.
 //
-// "Weitere Unterzeichnende" rather than "Mitunterzeichnende" because the split
-// is made on length, not on role: the first signatory is named first and is
-// almost always the one that fits, but nothing guarantees the boundary falls
-// exactly there, and a label that is only usually right is worse than one that
-// is always right.
-func SignatoryLine(authors []votes.Author) string {
-	names := AuthorList(authors, 0)
+//   - Signatories shed for length are "Weitere Unterzeichnende" when the label
+//     line kept one of them, and otherwise carry its own "<type> von …": with
+//     nobody named above, there is nobody for them to be further to. A federal
+//     title is often long enough for that; 20.406's leaves no room for Andri
+//     Silberschmidt, its only author.
+//   - A member who took the business over is "Übernommen von", wherever the
+//     cut fell: 21.472 is Stefania Prezioso Batou's, continued by Fabien Fivaz.
+//   - Co-signers are "Mitunterzeichnet von", all of them, so each can be
+//     tagged.
+func SignatoryBlocks(group []votes.Vote, deferred []votes.Author) []NameBlock {
+	if len(group) == 0 {
+		return nil
+	}
+	all := group[0].Affair.Authors
+	var blocks []NameBlock
+
+	isSigned := func(r votes.AuthorRole) bool { return r == votes.RoleSigned }
+	if shed := authorsWhere(deferred, isSigned); len(shed) > 0 {
+		label := "✍️ Weitere Unterzeichnende:"
+		if len(shed) == len(authorsWhere(all, isSigned)) {
+			label = "✍️ Von"
+			if t := strings.TrimSpace(group[0].Affair.Type); t != "" {
+				label = "✍️ " + t + " von"
+			}
+		}
+		blocks = append(blocks, NameBlock{label, shed})
+	}
+	if took := authorsWhere(deferred, func(r votes.AuthorRole) bool { return r == votes.RoleTookOver }); len(took) > 0 {
+		blocks = append(blocks, NameBlock{"↪️ Übernommen von", took})
+	}
+	if co := CoSigners(all); len(co) > 0 {
+		blocks = append(blocks, NameBlock{"✍️ Mitunterzeichnet von", co})
+	}
+	return blocks
+}
+
+// CoSigners are the members who signed beside the filer.
+func CoSigners(authors []votes.Author) []votes.Author {
+	return authorsWhere(authors, func(r votes.AuthorRole) bool { return r == votes.RoleCoSigned })
+}
+
+// CoSignerLine is the co-signers as one line, for the platforms that publish a
+// vote as a single post; empty when there are none.
+func CoSignerLine(group []votes.Vote) string {
+	if len(group) == 0 {
+		return ""
+	}
+	names := AuthorList(CoSigners(group[0].Affair.Authors), 0)
 	if names == "" {
 		return ""
 	}
-	return "✍️ Weitere Unterzeichnende: " + names
+	return "✍️ Mitunterzeichnet von " + names
 }
 
-// CountAuthors reports how many of an affair's signatories a post would name.
+// PackNames renders a block as reply entries of at most limit each, by the
+// platform's own measure.
+//
+// A co-signer list runs to twenty names, past what one post holds once
+// handles are added, so it is split between names rather than cut: every name
+// is someone who can be tagged. A list that continues ends in " …" and the next
+// entry opens with "… ". tag marks up one rendered name, "Greta Gysin (Grüne)",
+// and may lengthen it; nil leaves the names as they are.
+func PackNames(b NameBlock, tag func(string) string, limit int, measure func(string) int) []string {
+	var names []string
+	for _, a := range b.Authors {
+		name := AuthorList([]votes.Author{a}, 0)
+		if name == "" {
+			continue
+		}
+		if tag != nil {
+			name = tag(name)
+		}
+		names = append(names, name)
+	}
+	if len(names) == 0 {
+		return nil
+	}
+
+	const more = " …"
+	var entries []string
+	cur, count := b.Label, 0
+	for i, name := range names {
+		sep := " "
+		switch {
+		case count == 0:
+		case i == len(names)-1:
+			sep = " und "
+		default:
+			sep = ", "
+		}
+		next := cur + sep + name
+		reserve := 0
+		if i < len(names)-1 {
+			reserve = measure(more)
+		}
+		// Past the limit, the entry so far is closed and the name opens the
+		// next. That includes a first name with only the label before it: the
+		// label then stands alone rather than overrunning by its marker. A
+		// continuation that cannot hold even one name keeps it regardless,
+		// since there is nowhere smaller to put it.
+		if measure(next)+reserve > limit && (count > 0 || cur == b.Label) {
+			entries = append(entries, cur+more)
+			cur, count = "…", 0
+			next = cur + " " + name
+		}
+		cur = next
+		count++
+	}
+	return append(entries, cur)
+}
+
+// CountAuthors reports how many members a label line would name.
 func CountAuthors(group []votes.Vote) int {
 	if len(group) == 0 {
 		return 0
 	}
 	n := 0
-	for _, a := range group[0].Affair.Authors {
+	for _, a := range LeadAuthors(group[0].Affair.Authors) {
 		if strings.TrimSpace(a.Name) != "" {
 			n++
 		}
@@ -339,6 +491,26 @@ func CountsOf(v votes.Vote) VoteCounts {
 // Kanton Zürich reports a decision for binary votes only, and the openparldata
 // client clears it again unless the business and the ballot both state their
 // outcome, so threshold votes still arrive here without one.
+// Verdict is the outcome a post states for a vote: what it did to the
+// business where the source says (votes.Vote.Outcome), otherwise whether Ja
+// carried. Feed it to GetVoteResultEmoji and GetVoteResultText.
+func Verdict(v votes.Vote) string {
+	if o := strings.TrimSpace(v.Outcome); o != "" {
+		return o
+	}
+	return v.Decision
+}
+
+// QuestionLine is the line a post prints below the title saying what a Ja
+// supported, or "" when there is none. Only a lone vote has one: a group's
+// votes are each labelled by their own heading.
+func QuestionLine(group []votes.Vote) string {
+	if len(group) != 1 {
+		return ""
+	}
+	return strings.TrimSpace(group[0].Question)
+}
+
 func HasVerdict(v votes.Vote) bool {
 	if IsAuswahlVote(CountsOf(v)) {
 		return false
@@ -439,6 +611,25 @@ func IsUnsupportedVoteType(c VoteCounts) bool {
 	fields := []*int{c.Ja, c.Nein, c.Enthaltung, c.A, c.B, c.C, c.D, c.E}
 	for _, f := range fields {
 		if f != nil && *f > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// IsEmptyNormalVote reports whether these counts belong to an ordinary
+// Ja/Nein vote with nothing recorded at all: type "Normal" exactly and every
+// count, Abwesend included, nil or zero. A real vote seats a chamber, so even a
+// unanimous one carries a non-zero Ja or Abwesend; a record with none is a
+// placeholder the source never filled in. The Gemeinderat Zürich page for one
+// shows no title, no Geschäft and a Stimmen Total of 0. A negative count is a
+// fault in the source, not an empty record.
+func IsEmptyNormalVote(c VoteCounts) bool {
+	if strings.TrimSpace(c.Type) != "Normal" {
+		return false
+	}
+	for _, f := range []*int{c.Ja, c.Nein, c.Enthaltung, c.Abwesend, c.A, c.B, c.C, c.D, c.E} {
+		if f != nil && *f != 0 {
 			return false
 		}
 	}
@@ -743,8 +934,8 @@ func PostHeadline(group []votes.Vote) string {
 	}
 
 	headline := prefix + "Abstimmung vom " + FormatVoteDate(group[0].Date)
-	if len(group) == 1 && hasClockTime(group[0].Date) {
-		headline += fmt.Sprintf(" (%s)", group[0].Date.Format("15:04"))
+	if len(group) == 1 {
+		headline += clockSuffix(group[0].Date)
 	}
 	return headline
 }
@@ -776,33 +967,36 @@ func (l Link) Line(labelled bool) string {
 //
 // The order is the argument. The Geschäft permalink comes first because it is
 // the one that will still resolve in a decade and the one a reader should keep;
-// the archive and the sitting follow because they are the ones that have the
-// vote this week. Sources that publish only a business page produce a
-// single-entry block, exactly as before.
+// the record of the vote, the recording and the sitting follow because they are
+// the ones that have the vote this week. Sources that publish only a business
+// page produce a single-entry block, exactly as before.
 //
-// The archive entry follows GroupLink's rule: a post covering several votes
+// The video entry follows GroupLink's rule: a post covering several votes
 // points at the agenda item holding them, not at whichever of them happened to
-// sort first.
+// sort first. The Protokoll has no such widened form, so it appears only on a
+// post about one vote; VoteLinks carries it for each vote of a larger group.
 func GroupLinks(group []votes.Vote) []Link {
 	if len(group) == 0 {
 		return nil
 	}
 	first := group[0]
 
-	archive := first.ArchiveURL
+	video := first.VideoURL
+	protocol := first.ArchiveURL
 	if len(group) > 1 {
-		// No widened link means no archive entry rather than an arbitrary one.
-		archive = first.ArchiveGroupURL
+		// No widened link means no entry rather than an arbitrary one.
+		video = first.VideoGroupURL
+		protocol = ""
 	}
 
 	// A vote that belongs to no business matter never had its URLs replaced by
 	// an affair page, so both fields still hold the archive link the listing
 	// supplied — 47 Kanton Zürich votings carry no affair_id at all. Printing it
 	// twice would label the first copy "Geschäft", which it is not, and give
-	// Bluesky two facets hunting the same byte offset. The archive naming is the
+	// Bluesky two facets hunting the same byte offset. The video naming is the
 	// honest one, so that is the copy that survives.
 	business := GroupLink(group)
-	if business == archive {
+	if business == video {
 		business = ""
 	}
 
@@ -818,7 +1012,8 @@ func GroupLinks(group []votes.Vote) []Link {
 	var out []Link
 	for _, l := range []Link{
 		{Icon: "🔗", Name: "Geschäft", URL: business},
-		{Icon: "🎬", Name: "Video", URL: archive},
+		{Icon: "📋", Name: "Protokoll", URL: protocol},
+		{Icon: "🎬", Name: "Video", URL: video},
 		sitting,
 	} {
 		if l.URL != "" {
@@ -874,33 +1069,37 @@ func LinkLine(group []votes.Vote) string {
 // typeLabels). Unlike the clock it is not there to tell two votes apart, but to
 // stop a quorum vote's lopsided tally reading as near-unanimous agreement.
 func SubVoteLabel(v votes.Vote, index, groupSize int) string {
+	return subVoteLabel(v, index, groupSize, true)
+}
+
+// CardSubVoteLabel is SubVoteLabel without the clock, for a result card that
+// prints the vote's full date and time in its corner instead. Splitting the
+// two — date in the corner, time in the heading — left a reader to put the
+// timestamp back together.
+func CardSubVoteLabel(v votes.Vote, index, groupSize int) string {
+	return subVoteLabel(v, index, groupSize, false)
+}
+
+func subVoteLabel(v votes.Vote, index, groupSize int, withClock bool) string {
 	base := CleanVoteSubtitle(v.Subtitle)
 	if base == "" {
 		base = fmt.Sprintf("Abstimmung %d", index+1)
 		// The clock disambiguates our own ordinals, so it belongs only on them.
 		// A source that titles its votes has already done the distinguishing.
-		if groupSize > 1 && hasClockTime(v.Date) {
-			base += fmt.Sprintf(" (%s)", v.Date.Format("15:04"))
+		if withClock && groupSize > 1 {
+			base += clockSuffix(v.Date)
 		}
 	}
 	return joinTypeLabel(base, v.Type)
 }
 
-// CardCountsLabel is the heading above the counts on a card showing a lone
-// vote: when it was taken, and what kind of ballot it was.
-//
-// It is what SubVoteLabel does for the entries of a group, for the one case
-// that has no group to be numbered within. The card needs the clock more than
-// the text post does, because a card carries no headline: the caption states
-// the sitting date and time, but the image travels on its own, and two votes
-// under a recurring agenda item ("Mitteilungen") produce the same picture
-// twice. The clock is the only fact the source offers that tells them apart.
-func CardCountsLabel(v votes.Vote) string {
-	base := ""
-	if hasClockTime(v.Date) {
-		base = fmt.Sprintf("Abstimmung (%s)", v.Date.Format("15:04"))
+// clockSuffix is the " (14:32)" a text label appends for the time a vote was
+// taken, or "" where the source has no time of day.
+func clockSuffix(t time.Time) string {
+	if !hasClockTime(t) {
+		return ""
 	}
-	return joinTypeLabel(base, v.Type)
+	return " (" + t.Format("15:04") + ")"
 }
 
 // hasClockTime reports whether a date carries a time of day worth showing.
@@ -915,11 +1114,12 @@ func hasClockTime(t time.Time) bool {
 //
 // A post covering several votes links the business and the agenda item, because
 // pointing at whichever vote sorted first would be arbitrary. That leaves each
-// vote's own pages unlinked: the archive recording positioned at this vote
-// (Kanton Zürich's Recapp segment) and this vote's own page (Stadt Zürich's
-// Abstimmung, beside the Traktandum the post links). Both are returned,
-// each only where the source has one and only where the post's own link block
-// does not already carry the same URL — for Kanton Zürich the vote's page is
+// vote's own pages unlinked: the recording positioned at this vote (Kanton
+// Zürich's Recapp segment), the record of this vote (the Nationalrat's
+// Abstimmungsprotokoll) and this vote's own page (Stadt Zürich's Abstimmung,
+// beside the Traktandum the post links). All are returned, each only where the
+// source has one and only where the post's own link block does not already
+// carry the same URL — for Kanton Zürich and the Nationalrat the vote's page is
 // the business page, which the post links already.
 func VoteLinks(group []votes.Vote, i int) []Link {
 	if i < 0 || i >= len(group) {
@@ -934,7 +1134,8 @@ func VoteLinks(group []votes.Vote, i int) []Link {
 
 	var out []Link
 	for _, l := range []Link{
-		{Icon: "🎬", Name: "Video", URL: v.ArchiveURL},
+		{Icon: "🎬", Name: "Video", URL: v.VideoURL},
+		{Icon: "📋", Name: "Protokoll", URL: v.ArchiveURL},
 		{Icon: "🔗", Name: "Abstimmung", URL: v.SourceURL},
 	} {
 		if l.URL == "" || have[l.URL] {

@@ -3,6 +3,7 @@ package votelog
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -45,8 +46,8 @@ func TestNewEmpty(t *testing.T) {
 func TestMarkAsPosted(t *testing.T) {
 	log := NewEmpty(testJurisdiction, PlatformX)
 
-	log.MarkAsPosted("vote1")
-	log.MarkAsPosted("vote2")
+	log.MarkAsPosted("vote1", PostRef{})
+	log.MarkAsPosted("vote2", PostRef{})
 
 	if len(log.Votes) != 2 {
 		t.Errorf("Expected 2 votes, got %d", len(log.Votes))
@@ -64,9 +65,9 @@ func TestMarkAsPosted(t *testing.T) {
 func TestMarkAsPosted_NoDuplicates(t *testing.T) {
 	log := NewEmpty(testJurisdiction, PlatformX)
 
-	log.MarkAsPosted("vote1")
-	log.MarkAsPosted("vote1")
-	log.MarkAsPosted("vote1")
+	log.MarkAsPosted("vote1", PostRef{})
+	log.MarkAsPosted("vote1", PostRef{})
+	log.MarkAsPosted("vote1", PostRef{})
 
 	if len(log.Votes) != 1 {
 		t.Errorf("Expected 1 vote (no duplicates), got %d", len(log.Votes))
@@ -80,7 +81,7 @@ func TestMarkAsPosted_NoDuplicates(t *testing.T) {
 func TestIsPosted(t *testing.T) {
 	log := NewEmpty(testJurisdiction, PlatformX)
 
-	log.MarkAsPosted("vote1")
+	log.MarkAsPosted("vote1", PostRef{})
 
 	if !log.IsPosted("vote1") {
 		t.Error("Expected vote1 to be posted")
@@ -98,7 +99,7 @@ func TestMarkMultipleVotes_SimulatingGroupPost(t *testing.T) {
 	voteGroup := []string{"vote1", "vote2", "vote3"}
 
 	for _, voteID := range voteGroup {
-		log.MarkAsPosted(voteID)
+		log.MarkAsPosted(voteID, PostRef{})
 	}
 
 	// Verify all votes are marked as posted
@@ -118,9 +119,9 @@ func TestSaveAndLoad(t *testing.T) {
 
 	// Create and save log
 	log := NewEmpty(testJurisdiction, PlatformX)
-	log.MarkAsPosted("vote1")
-	log.MarkAsPosted("vote2")
-	log.MarkAsPosted("vote3")
+	log.MarkAsPosted("vote1", PostRef{})
+	log.MarkAsPosted("vote2", PostRef{})
+	log.MarkAsPosted("vote3", PostRef{})
 
 	if err := log.Save(); err != nil {
 		t.Fatalf("Failed to save log: %v", err)
@@ -139,6 +140,75 @@ func TestSaveAndLoad(t *testing.T) {
 
 	if !loadedLog.IsPosted("vote1") || !loadedLog.IsPosted("vote2") || !loadedLog.IsPosted("vote3") {
 		t.Error("Expected all votes to be marked as posted after loading")
+	}
+}
+
+// TestSaveAndLoad_PostRef pins the on-disk shape: the ref sits flat on the entry
+// as post_id/post_url, and survives a round trip.
+func TestSaveAndLoad_PostRef(t *testing.T) {
+	defer setupTempDir(t)()
+
+	ref := PostRef{ID: "1234567890", URL: "https://x.com/i/status/1234567890"}
+	log := NewEmpty(testJurisdiction, PlatformX)
+	log.MarkAsPosted("vote1", ref)
+	if err := log.Save(); err != nil {
+		t.Fatalf("Failed to save log: %v", err)
+	}
+
+	data, err := os.ReadFile(LogFilePath(testJurisdiction, PlatformX))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`"post_id": "1234567890"`, `"post_url": "https://x.com/i/status/1234567890"`} {
+		if !strings.Contains(string(data), want) {
+			t.Errorf("saved log lacks %s:\n%s", want, data)
+		}
+	}
+
+	loaded, err := Load(testJurisdiction, PlatformX)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := loaded.Votes[0].PostRef; got != ref {
+		t.Errorf("loaded ref %+v, want %+v", got, ref)
+	}
+}
+
+// TestLoad_EntriesWithoutPostRef covers the logs already on the state branch,
+// written before refs were recorded: they load as posted, with an empty ref,
+// and an empty ref is not written back as empty fields.
+func TestLoad_EntriesWithoutPostRef(t *testing.T) {
+	defer setupTempDir(t)()
+
+	path := LogFilePath(testJurisdiction, PlatformX)
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	old := `{"platform": "x", "votes": [{"id": "vote1", "posted_at": "2025-11-19T10:00:00Z"}]}`
+	if err := os.WriteFile(path, []byte(old), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	log, err := Load(testJurisdiction, PlatformX)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !log.IsPosted("vote1") {
+		t.Error("Expected vote1 to be posted")
+	}
+	if log.Votes[0].PostRef != (PostRef{}) {
+		t.Errorf("Expected empty ref, got %+v", log.Votes[0].PostRef)
+	}
+
+	if err := log.Save(); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), "post_") {
+		t.Errorf("empty ref written to disk:\n%s", data)
 	}
 }
 
@@ -173,8 +243,8 @@ func TestPersistenceAcrossMultipleSaves(t *testing.T) {
 
 	// First save
 	log1 := NewEmpty(testJurisdiction, PlatformX)
-	log1.MarkAsPosted("vote1")
-	log1.MarkAsPosted("vote2")
+	log1.MarkAsPosted("vote1", PostRef{})
+	log1.MarkAsPosted("vote2", PostRef{})
 	if err := log1.Save(); err != nil {
 		t.Fatal(err)
 	}
@@ -184,8 +254,8 @@ func TestPersistenceAcrossMultipleSaves(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log2.MarkAsPosted("vote3")
-	log2.MarkAsPosted("vote4")
+	log2.MarkAsPosted("vote3", PostRef{})
+	log2.MarkAsPosted("vote4", PostRef{})
 	if err := log2.Save(); err != nil {
 		t.Fatal(err)
 	}
@@ -212,7 +282,7 @@ func TestNewNoOp(t *testing.T) {
 	log := NewNoOp(testJurisdiction, PlatformX)
 
 	// IsPosted always returns false
-	log.MarkAsPosted("vote1") // should be a no-op
+	log.MarkAsPosted("vote1", PostRef{}) // should be a no-op
 	if log.IsPosted("vote1") {
 		t.Error("NewNoOp: IsPosted should always return false")
 	}

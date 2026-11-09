@@ -83,70 +83,44 @@ func main() {
 	updateREADME(stats, curated)
 }
 
-func updateREADME(stats map[string]int, totalContacts int) {
-	// Read README.md
+// statsLine is the sentence in README.md that carries the per-platform counts.
+// The generator must find it: a README edit that stops matching would otherwise
+// leave the CI freshness check passing against numbers nobody updates.
+var statsLine = regexp.MustCompile(`(from the curated mapping in \[data/\]\(data/\): )[^.]*\.`)
+
+func updateREADME(stats map[string]int, _ int) {
 	readmeData, err := os.ReadFile("README.md")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: Could not read README.md: %v\n", err)
-		return
+		log.Fatalf("Could not read README.md: %v", err)
 	}
-
 	readme := string(readmeData)
-	originalReadme := readme
-
-	// Create a map for easier lookup with platform names as they appear in the table
-	platformMap := map[string]int{
-		"LinkedIn":    stats["LinkedIn"],
-		"Facebook":    stats["Facebook"],
-		"Instagram":   stats["Instagram"],
-		"X (Twitter)": stats["X (Twitter)"],
-		"Bluesky":     stats["Bluesky"],
-		"TikTok":      stats["TikTok"],
+	if !statsLine.MatchString(readme) {
+		log.Fatalf("README.md has no platform statistics sentence matching %s", statsLine)
 	}
 
-	// Update each platform's count in the table
-	// Try to match and replace, but don't fail if it doesn't match
-	platformsUpdated := 0
-	for platform, count := range platformMap {
-		// Pattern: | Platform     | Status (with emoji) | NUMBER | Account |
-		// The count cell is kept at its original width so the table stays
-		// aligned the way Markdown formatters (e.g. Prettier) write it.
-		pattern := regexp.MustCompile(fmt.Sprintf(`(\|\s*%s\s*\|[^|]+\|)( *\d+ *)(\|)`, regexp.QuoteMeta(platform)))
-		newReadme := pattern.ReplaceAllStringFunc(readme, func(match string) string {
-			groups := pattern.FindStringSubmatch(match)
-			cell := fmt.Sprintf(" %d ", count)
-			if pad := len(groups[2]) - len(cell); pad > 0 {
-				cell += strings.Repeat(" ", pad)
-			}
-			return groups[1] + cell + groups[3]
-		})
-		if newReadme != readme {
-			platformsUpdated++
-			readme = newReadme
+	// Most taggable first, ties by name, so the sentence is stable between runs.
+	names := make([]string, 0, len(stats))
+	for name := range stats {
+		names = append(names, name)
+	}
+	sort.Slice(names, func(i, j int) bool {
+		if stats[names[i]] != stats[names[j]] {
+			return stats[names[i]] > stats[names[j]]
 		}
+		return names[i] < names[j]
+	})
+	parts := make([]string, len(names))
+	for i, name := range names {
+		parts[i] = fmt.Sprintf("%s %d", strings.TrimSuffix(name, " (Twitter)"), stats[name])
 	}
 
-	// Update the total contacts count in the footer
-	footerPattern := regexp.MustCompile(`Out of \d+ total contacts`)
-	readme = footerPattern.ReplaceAllString(readme, fmt.Sprintf("Out of %d total contacts", totalContacts))
-
-	// Check if there were any changes
-	if readme == originalReadme {
+	updated := statsLine.ReplaceAllString(readme, "${1}"+strings.Join(parts, ", ")+".")
+	if updated == readme {
 		fmt.Fprintf(os.Stderr, "\n✓ README.md is already up to date (no changes needed)\n\n")
 		return
 	}
-
-	// Write back to README.md
-	err = os.WriteFile("README.md", []byte(readme), 0644)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: Could not write README.md: %v\n", err)
-		return
+	if err := os.WriteFile("README.md", []byte(updated), 0644); err != nil {
+		log.Fatalf("Could not write README.md: %v", err)
 	}
-
-	// Report what was updated
-	fmt.Fprintf(os.Stderr, "\n✓ Updated README.md with platform statistics (%d platforms updated)\n", platformsUpdated)
-	for platform, count := range platformMap {
-		fmt.Fprintf(os.Stderr, "  %s: %d\n", platform, count)
-	}
-	fmt.Fprintf(os.Stderr, "  Total contacts: %d\n\n", totalContacts)
+	fmt.Fprintf(os.Stderr, "\n✓ Updated README.md platform statistics: %s\n\n", strings.Join(parts, ", "))
 }
