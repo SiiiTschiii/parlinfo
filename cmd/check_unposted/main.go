@@ -70,7 +70,11 @@ func main() {
 			}
 		}
 
-		contactMapper := loadContacts(jurisdictions)
+		// As main.go: a channel with tagging off previews without tags.
+		var contactMapper *contacts.Mapper
+		if channel.Tags() {
+			contactMapper = loadContacts(jurisdictions)
+		}
 
 		if showX {
 			maxPosts := pick(*maxPostsFlag, channel.EnvInt("X_MAX_POSTS_PER_RUN", 10))
@@ -136,7 +140,10 @@ func check(
 		if err != nil {
 			log.Fatalf("Error preparing %s votes for %s: %v", j.Key, displayName, err)
 		}
-		perJurisdiction = append(perJurisdiction, voteposting.DropBefore(groups, postFrom))
+		// Both bounds apply, as in main.go: the platform's own, and the body's.
+		groups = voteposting.DropBefore(groups, postFrom)
+		groups = voteposting.DropBefore(groups, j.PostFrom)
+		perJurisdiction = append(perJurisdiction, groups)
 	}
 
 	merged := voteposting.MergeOldestFirst(perJurisdiction...)

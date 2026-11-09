@@ -308,3 +308,49 @@ func TestFormat_RenderFailureKeepsText(t *testing.T) {
 		}
 	}
 }
+
+// A reply that fails after the root is live must hand back the root's ref, so
+// the caller logs the vote instead of publishing it again on the next run.
+func TestPost_FailedReplyStillReturnsTheLiveRoot(t *testing.T) {
+	var calls []tweetCall
+	p := newTestXPlatform(&calls, 10)
+	ok := mockPostTweet(&calls)
+	p.postTweetFunc = func(k, s, t, a, message, inReplyTo string, mediaIDs []string) (string, error) {
+		if inReplyTo != "" {
+			return "", errors.New("account locked")
+		}
+		return ok(k, s, t, a, message, inReplyTo, mediaIDs)
+	}
+
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+
+	post, _, err := p.Post(content)
+	if err == nil {
+		t.Fatal("expected the reply failure to be returned")
+	}
+	if post.ID != "fake-tweet-1" || post.URL != tweetURL("fake-tweet-1") {
+		t.Errorf("expected the root's ref alongside the error, got %+v", post)
+	}
+}
+
+func TestPost_FailedRootReturnsNoRef(t *testing.T) {
+	var calls []tweetCall
+	p := newTestXPlatform(&calls, 10)
+	p.postTweetFunc = func(k, s, t, a, message, inReplyTo string, mediaIDs []string) (string, error) {
+		return "", errors.New("account locked")
+	}
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	post, _, err := p.Post(content)
+	if err == nil {
+		t.Fatal("expected an error")
+	}
+	if post != (votelog.PostRef{}) {
+		t.Errorf("nothing was published, so the ref must be empty, got %+v", post)
+	}
+}

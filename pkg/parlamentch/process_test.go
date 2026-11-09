@@ -1,0 +1,309 @@
+package parlamentch
+
+import (
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/siiitschiii/parlinfo/pkg/votes"
+)
+
+// The process fixtures are the service's responses for four businesses,
+// recorded on 08.11.2026 with __metadata stripped. They hold the businesses'
+// whole histories, including what came after the vote each test posts, which
+// the adapter has to leave out.
+var (
+	processBusiness = regexp.MustCompile(`(?:ID|BusinessNumber) eq (\d+)`)
+	processBill     = regexp.MustCompile(`IdBill eq guid'([0-9a-f-]+)'`)
+)
+
+func newProcessClient(t *testing.T) *Client {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		filter := r.URL.Query().Get("$filter")
+		entity := r.URL.Path[1:]
+		if entity == "Vote/$count" {
+			// None of the recorded businesses has a second bill.
+			_, _ = w.Write([]byte("0"))
+			return
+		}
+		var name string
+		if entity == "Resolution" {
+			m := processBill.FindStringSubmatch(filter)
+			if m == nil {
+				http.NotFound(w, r)
+				return
+			}
+			matches, _ := filepath.Glob(filepath.Join("testdata", "process", "*_Resolution_"+m[1]+".json"))
+			if len(matches) != 1 {
+				http.NotFound(w, r)
+				return
+			}
+			name = matches[0]
+		} else {
+			m := processBusiness.FindStringSubmatch(filter)
+			if m == nil {
+				http.NotFound(w, r)
+				return
+			}
+			name = filepath.Join("testdata", "process", m[1]+"_"+entity+".json")
+		}
+		data, err := os.ReadFile(name)
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		_, _ = w.Write(data)
+	}))
+	t.Cleanup(srv.Close)
+	c := New(testJurisdiction)
+	c.SetBaseURL(srv.URL)
+	c.retryDelay = 0
+	return c
+}
+
+// processVote is a vote as the client hands it on after labelling it, with
+// the meanings the service served for it.
+func processVote(c *Client, sourceID, businessID, businessType, subtitle, decision, outcome, meaningYes, meaningNo string, at time.Time) votes.Vote {
+	c.labels[sourceID] = voteLabel{meaningYes: meaningYes, meaningNo: meaningNo}
+	return votes.Vote{
+		SourceID: sourceID, Jurisdiction: "nationalrat", Body: "Nationalrat",
+		Date: at, Subtitle: subtitle, Decision: decision, Outcome: outcome,
+		Affair: votes.Affair{ID: businessID, Type: businessType},
+	}
+}
+
+func swiss(y int, m time.Month, d, h, min int) time.Time {
+	return time.Date(y, m, d, h, min, 0, 0, zurich)
+}
+
+func TestProcess_RealBusinesses(t *testing.T) {
+	c := newProcessClient(t)
+
+	tests := []struct {
+		name  string
+		vote  votes.Vote
+		steps []votes.ProcessStep
+		next  string
+	}{
+		{
+			// Adopted as first chamber against the Bundesrat; the Ständerat's
+			// committee has since been named, and the business was still with
+			// it when recorded.
+			name: "motion adopted as first chamber",
+			vote: processVote(c, "32084", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
+				"Antrag der Mehrheit (Annahme der Motion)", "Antrag der Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)",
+				swiss(2024, 3, 7, 12, 51)),
+			steps: []votes.ProcessStep{
+				{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
+				{Label: "Antrag des Bundesrates", Detail: "21.02.2024 · Ablehnung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
+				{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
+			},
+			next: "In Kommission des Ständerats (SGK-S)",
+		},
+		{
+			name: "motion adopted as second chamber",
+			vote: processVote(c, "36159", "20254179", typeMotion, "", "angenommen", outcomeAdopted,
+				"Proposition de la majorité (adopter la motion)", "Proposition de la minorité Ryser et du Conseil fédéral (rejeter la motion)",
+				swiss(2026, 6, 1, 18, 38)),
+			next: "Überwiesen an den Bundesrat",
+		},
+		{
+			name: "initiative given no leave",
+			vote: processVote(c, "38790", "20250408", typeParlIv, "", "angenommen", outcomeNoLeave,
+				"Proposition de la majorité (ne pas donner suite)", "Proposition de la minorité (donner suite)",
+				swiss(2026, 9, 24, 17, 15)),
+			next: processDone,
+		},
+		{
+			// 24.065 has two bills; the vote names its own, and the history
+			// is that bill's chronology, as the business page lists it under
+			// Entwurf 1, after the business's filing: the Ständerat's
+			// Schlussabstimmung of the same day included.
+			name: "Schlussabstimmung adopted",
+			vote: onBill(c, processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
+				"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8)), 1),
+			steps: []votes.ProcessStep{
+				{Label: "Eingereicht", Detail: "14.08.2024", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "16.09.2025 · Beschluss abweichend vom Entwurf", State: votes.StepDone},
+				{Label: "Ständerat", Detail: "08.06.2026 · Abweichung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "11.06.2026 · Zustimmung", State: votes.StepDone},
+				{Label: "Ständerat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepCompleted},
+			},
+			next: processDone,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p, err := c.Process([]votes.Vote{tt.vote})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if p == nil {
+				t.Fatal("no process")
+			}
+			if err := p.Validate(); err != nil {
+				t.Fatalf("invalid process %+v: %v", p, err)
+			}
+			if p.Next != tt.next {
+				t.Errorf("Next = %q, want %q", p.Next, tt.next)
+			}
+			if tt.steps != nil && !(&votes.Process{Steps: p.Steps, Next: p.Next}).Equal(&votes.Process{Steps: tt.steps, Next: tt.next}) {
+				t.Errorf("steps =\n%+v\nwant\n%+v", p.Steps, tt.steps)
+			}
+			for _, s := range p.Steps {
+				if s.State == votes.StepDone && s.Label == "Nationalrat" && strings.HasPrefix(s.Detail, tt.vote.Date.Format("02.01.2006")) {
+					t.Errorf("a decision taken on the vote's own day or later is listed as history: %+v", s)
+				}
+			}
+		})
+	}
+}
+
+// The second-chamber motion lists the Ständerat's decision before it, which
+// is how the adapter knows the Nationalrat was second.
+func TestProcess_SecondChamberNamesTheFirst(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "36159", "20254179", typeMotion, "", "angenommen", outcomeAdopted,
+		"Proposition de la majorité (adopter la motion)", "Proposition de la minorité Ryser et du Conseil fédéral (rejeter la motion)",
+		swiss(2026, 6, 1, 18, 38))
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil {
+		t.Fatalf("process = %v, %v", p, err)
+	}
+	var sawStaenderat bool
+	for _, s := range p.Steps {
+		if s.Label == "Ständerat" && s.State == votes.StepDone {
+			sawStaenderat = true
+		}
+	}
+	if !sawStaenderat {
+		t.Errorf("no Ständerat decision in %+v", p.Steps)
+	}
+}
+
+// What has no rule gets no process, and asks the service nothing.
+func TestProcess_NoRuleNoProcess(t *testing.T) {
+	c := newProcessClient(t)
+
+	cases := map[string][]votes.Vote{
+		"amended motion": {processVote(c, "a", "20253007", typeMotion, "", "angenommen", outcomeAdopted,
+			"Proposition de la majorité (adopter la motion modifiée)", "Proposition de la minorité (rejeter la motion)", swiss(2026, 9, 14, 18, 1))},
+		"initiative given leave": {processVote(c, "b", "20264000", typeParlIv, "", "angenommen", outcomeLeave,
+			"donner suite", "ne pas donner suite", swiss(2026, 9, 14, 18, 1))},
+		"Gesamtabstimmung": {processVote(c, "c", "20260033", typeFederalCouncil, "Vote sur l'ensemble", "angenommen", "",
+			"Adopter le projet", "Rejeter le projet", swiss(2026, 9, 14, 18, 1))},
+		"final vote whose Ja is not adopting the bill": {processVote(c, "d", "20250059", typeFederalCouncil, "Vote final", "angenommen", "",
+			"Recommander de rejeter l'initiative", "Rejeter le projet", swiss(2026, 9, 14, 18, 1))},
+		"no readable outcome": {processVote(c, "e", "20264001", typeMotion, "", "", "",
+			"Adopter le point 1", "Rejeter le point 1", swiss(2026, 9, 14, 18, 1))},
+		"unknown type": {processVote(c, "f", "20264002", "Petition", "", "angenommen", "",
+			"", "", swiss(2026, 9, 14, 18, 1))},
+		"no vote date": {processVote(c, "g", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
+			"Antrag der Mehrheit (Annahme der Motion)", "Antrag des Bundesrates (Ablehnung der Motion)", time.Time{})},
+	}
+	for name, group := range cases {
+		t.Run(name, func(t *testing.T) {
+			p, err := c.Process(group)
+			var none votes.NoProcess
+			if p != nil || !errors.As(err, &none) || none.Reason == "" {
+				t.Errorf("Process = %+v, %v; want no process, with a reason", p, err)
+			}
+		})
+	}
+}
+
+// The rules and the card are German, so a French or Italian post gets no
+// process rather than a German card: the same motion the German test above
+// gives a process.
+func TestProcess_OnlyInGerman(t *testing.T) {
+	for _, l := range []votes.Language{votes.French, votes.Italian} {
+		c := newProcessClient(t)
+		c.jurisdiction.Language = l
+		group := []votes.Vote{processVote(c, "32084", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
+			"Antrag der Mehrheit (Annahme der Motion)", "Antrag der Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)",
+			swiss(2024, 3, 7, 12, 51))}
+		p, err := c.Process(group)
+		var none votes.NoProcess
+		if p != nil || !errors.As(err, &none) {
+			t.Errorf("%s: Process = %+v, %v; want no process", l, p, err)
+		}
+	}
+}
+
+// onBill records which bill a vote was on, as the listing serves it.
+func onBill(c *Client, v votes.Vote, bill int64) votes.Vote {
+	l := c.labels[v.SourceID]
+	l.billNumber = bill
+	c.labels[v.SourceID] = l
+	return v
+}
+
+// A business with several bills gets no process where the vote does not say
+// which it was on: its decisions are filed per bill, and a card merging them
+// read as one bill rejected and then adopted. 24.065 has two bills.
+func TestProcess_SeveralBillsNoProcess(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "36539", "20240065", typeFederalCouncil, "Vote final", "angenommen", "",
+		"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8))
+	var none votes.NoProcess
+	if p, err := c.Process([]votes.Vote{v}); p != nil || !errors.As(err, &none) {
+		t.Errorf("Process = %+v, %v; want no process, with a reason", p, err)
+	}
+}
+
+// A vote whose meanings the service does not serve takes the decision it
+// records for the Nationalrat that day, once it has: 25.301, recorded here
+// after the decision was.
+func TestProcess_RecordedOutcome(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "35999", "20250301", typeStandesIv, "", "", "", "", "", swiss(2026, 4, 28, 9, 21))
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil {
+		t.Fatalf("Process = %+v, %v", p, err)
+	}
+	last := p.Steps[len(p.Steps)-1]
+	want := votes.ProcessStep{Label: "Nationalrat", Detail: "28.04.2026 · Keine Folge gegeben", State: votes.StepEnded}
+	if last != want {
+		t.Errorf("this vote's step = %+v, want %+v", last, want)
+	}
+	if p.Next != processDone || p.StatusLabel != "Stand der Beratungen:" {
+		t.Errorf("status = %q %q", p.StatusLabel, p.Next)
+	}
+	if p.About != typeAbout[typeStandesIv] {
+		t.Errorf("About = %q", p.About)
+	}
+}
+
+// The committees' decisions on an initiative are steps of its history, as the
+// business page lists them, labelled by the committee: 20.454.
+func TestProcess_CommitteeDecisions(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "x", "20200454", typeParlIv, "", "angenommen", outcomeNoLeave,
+		"Antrag der Minderheit (keine Folge geben)", "Antrag der Mehrheit (Folge geben)", swiss(2023, 2, 27, 18, 44))
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil {
+		t.Fatalf("Process = %+v, %v", p, err)
+	}
+	var got []string
+	for _, s := range p.Steps {
+		got = append(got, s.Label+" | "+s.Detail)
+	}
+	want := []string{
+		"Eingereicht | 19.06.2020",
+		"Kommission WBK-N | 01.07.2021 · Folge geben (Erstrat)",
+		"Kommission WBK-S | 16.11.2021 · Keine Zustimmung",
+		"Nationalrat | 27.02.2023 · Keine Folge gegeben",
+	}
+	if strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("steps =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+}

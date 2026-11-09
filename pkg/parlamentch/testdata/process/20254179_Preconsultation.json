@@ -1,0 +1,22 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Kommission für Wirtschaft und Abgaben Ständerat",
+    "Abbreviation1": "WAK-S"
+   },
+   {
+    "CommitteeName": "Kommission für Wirtschaft und Abgaben Nationalrat",
+    "Abbreviation1": "WAK-N"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   }
+  ]
+ }
+}

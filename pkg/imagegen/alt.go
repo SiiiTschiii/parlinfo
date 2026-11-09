@@ -60,6 +60,9 @@ func combinedAlt(group []votes.Vote) string {
 	if outcome := auswahlOutcome(group[0]); outcome != "" {
 		result = outcome + "\n" + result
 	}
+	if next := voteformat.NextStepLine(group); next != "" {
+		result += "\n" + next
+	}
 	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
 }
 
@@ -76,7 +79,7 @@ func combinedAlt(group []votes.Vote) string {
 // overviewAltHeadingFloor: a group that long is named by its business number
 // and the start of its title, and every result stays.
 func titleAlt(group []votes.Vote) string {
-	head := fmt.Sprintf("%d Abstimmungen\n", len(group))
+	head := fmt.Sprintf(voteformat.W(group[0].Language).CardOverview+"\n", len(group))
 	// Labels shorten first, then go, then the tallies take their short form:
 	// what a vote is called can be found on its own card, its result is what
 	// this description is for.
@@ -104,6 +107,9 @@ func titleAlt(group []votes.Vote) string {
 			}
 		}
 		result = head + strings.Join(lines, "\n")
+		if next := voteformat.NextStepLine(group); next != "" {
+			result += "\n\n" + next
+		}
 		if len([]rune(result)) <= maxAltRunes-altLabelFloor-2 {
 			break
 		}

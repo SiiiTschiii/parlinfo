@@ -72,6 +72,10 @@ type Client struct {
 	// no field for, keyed by SourceID. See Client.label.
 	labels map[string]voteLabel
 
+	// billCounts caches how many numbered bills a business holds, by
+	// BusinessNumber, as billOf last read them.
+	billCounts map[int64]int
+
 	// council is the chamber whose roster FetchMembers reads. See WithCouncil.
 	council int
 }

@@ -294,12 +294,11 @@ channels; what differs is the Page, and so the token.
 gh secret set CHPARL_IG_ACCESS_TOKEN
 gh secret set CHPARL_IG_USER_ID
 gh variable set CHPARL_FB_PAGE_ID --body "<page id>"
-gh variable set CHPARL_FB_POST_FROM --body "<go-live date, YYYY-MM-DD>"
 ```
 
 Facebook uses the same token secret, so a rotation covers both. Leave
-`CHPARL_FB_PAGE_ID` unset to post to Instagram only; set it and
-`CHPARL_FB_POST_FROM` is required too, or the run stops.
+`CHPARL_FB_PAGE_ID` unset to post to Instagram only. Facebook needs no date of
+its own here: the start date in step 5 holds for every platform.
 
 ### 3. X
 
@@ -359,23 +358,110 @@ git worktree remove --force "$tmp"
 
 ### 5. Go live
 
-Check what would be posted, then turn the switch on and run once by hand:
+Choose the first sitting date to post, check what would be posted, then turn the
+switch on and run once by hand:
 
 ```bash
 go run ./cmd/generate_vote_post -jurisdiction nationalrat -n 3
+gh variable set JURISDICTION_NATIONALRAT_POST_FROM --body "<YYYY-MM-DD>"
 gh variable set JURISDICTION_NATIONALRAT_ENABLED --body true
 gh workflow run bot-chparl.yml
 ```
 
-The first run posts the final votes of the last 14 days
-(`MAX_VOTE_AGE_DAYS_NATIONALRAT`), so outside a session it posts nothing and
-the first posts follow the next session's final votes. Until the switch is set,
+`JURISDICTION_NATIONALRAT_POST_FROM` is the first sitting date posted, on every
+platform. The vote logs start empty on that date, so nothing before it is ever
+posted and nothing has to be seeded. Votes also have to be inside the age
+window (`MAX_VOTE_AGE_DAYS_NATIONALRAT`, 14 days unless overridden). To backfill
+votes older than that window, raise the override; newer eligible votes still
+post regardless of how far back the start date is. Until the switch is set,
 every scheduled run fails with "No jurisdiction is enabled". That is the switch
 working as designed; `gh workflow disable bot-chparl.yml` silences it until
 then. To stop posting again (the runs then fail the same way):
 
 ```bash
 gh variable set JURISDICTION_NATIONALRAT_ENABLED --body false
+```
+
+## The French and Italian accounts
+
+The Nationalrat's votes in French and Italian post from
+[bot-chparl-languages.yml](.github/workflows/bot-chparl-languages.yml), one job
+per language. The channels are `chparl-fr` and `chparl-it`: every setting is the
+`chparl` one with a `CHPARL_FR_` or `CHPARL_IT_` prefix, the jurisdictions are
+`nationalrat-fr` and `nationalrat-it`, and each has its own state branch. A job
+does not even start until its `JURISDICTION_NATIONALRAT_<FR|IT>_ENABLED` is
+`true`.
+
+Tagging is on unless `CHPARL_<FR|IT>_TAGGING` is `false`, as on every
+channel. Set it to `false` in step 3 to go live without notifying anyone, and
+delete it when tagging should start.
+
+Every command below works for either language. Set which one first:
+
+```bash
+l=fr L=FR   # or: l=it L=IT
+```
+
+### 1. Credentials
+
+As for `chparl` (sections 2–4 above), under the language's prefix: at least
+`CHPARL_${L}_IG_USER_ID` and `CHPARL_${L}_IG_ACCESS_TOKEN`. Facebook posts when
+`CHPARL_${L}_FB_PAGE_ID` is set, with the same token.
+
+### 2. Create the state branch
+
+In a throwaway worktree, so your checkout stays where it is:
+
+```bash
+tmp="$(mktemp -d)" && git worktree add --detach "$tmp" && git -C "$tmp" switch --orphan "state-log-chparl-$l" && mkdir -p "$tmp/data/nationalrat-$l" && for p in instagram facebook x bluesky; do printf '{\n  "jurisdiction": "nationalrat-%s",\n  "platform": "%s",\n  "votes": []\n}\n' "$l" "$p" > "$tmp/data/nationalrat-$l/posted_votes_$p.json"; done && git -C "$tmp" add data && git -C "$tmp" commit -m "Start the nationalrat-$l vote logs" && git -C "$tmp" push origin "state-log-chparl-$l"; git worktree remove --force "$tmp"
+```
+
+### 3. Bound the first runs
+
+The logs start empty, so the start date decides the backlog and the per-run
+cap how fast it drains. A backlog reaching back weeks needs a wider fetch than
+the other bots', and an age limit that still covers its oldest vote when its
+turn comes:
+
+```bash
+gh variable set CHPARL_${L}_TAGGING --body false
+gh variable set JURISDICTION_NATIONALRAT_${L}_POST_FROM --body 2026-09-28
+gh variable set CHPARL_${L}_IG_MAX_POSTS_PER_RUN --body 1
+gh variable set CHPARL_${L}_FB_MAX_POSTS_PER_RUN --body 1
+gh variable set MAX_VOTES_TO_CHECK_NATIONALRAT_${L} --body 150
+gh variable set MAX_VOTE_AGE_DAYS_NATIONALRAT_${L} --body 60
+```
+
+See the backlog, without posting:
+
+```bash
+env "JURISDICTION_NATIONALRAT_${L}_POST_FROM=2026-09-28" "MAX_VOTE_AGE_DAYS_NATIONALRAT_${L}=60" MAX_VOTES_TO_CHECK=150 CHANNEL="chparl-$l" go run ./cmd/check_unposted -jurisdiction "nationalrat-$l" -platform x | grep -E 'Found|📋'
+```
+
+### 4. Go live
+
+Check that tagging is off, if it should be: this prints `false`.
+
+```bash
+gh variable get CHPARL_${L}_TAGGING
+```
+
+```bash
+gh variable set JURISDICTION_NATIONALRAT_${L}_ENABLED --body true
+gh workflow run bot-chparl-languages.yml
+```
+
+To stop again:
+
+```bash
+gh variable set JURISDICTION_NATIONALRAT_${L}_ENABLED --body false
+```
+
+Once the backlog is posted, return to the defaults the German account uses:
+
+```bash
+gh variable delete MAX_VOTES_TO_CHECK_NATIONALRAT_${L}
+gh variable set MAX_VOTE_AGE_DAYS_NATIONALRAT_${L} --body 30
 ```
 
 ## Development

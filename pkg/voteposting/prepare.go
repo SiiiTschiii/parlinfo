@@ -73,7 +73,50 @@ func PrepareVoteGroups(
 
 	applyCompletenessGate(groups)
 
+	attachProcesses(src, groups)
+
 	return groups, nil
+}
+
+// attachProcesses sets each group's process where the source can say one.
+//
+// It runs on the groups that survived dedup, so a run asks only about the
+// business it may post. Nothing here can hold a post back: a source without the
+// capability, a business with no rule, a process that fails votes.Validate and
+// a source that cannot be reached all leave the group without a process, and
+// the post goes out as it would have before the feature existed. The last is
+// logged, since it is the one case worth looking into.
+func attachProcesses(src votes.Source, groups [][]votes.Vote) {
+	ps, ok := src.(votes.ProcessSource)
+	if !ok {
+		return
+	}
+	for _, group := range groups {
+		if len(group) == 0 {
+			continue
+		}
+		p, err := ps.Process(group)
+		var none votes.NoProcess
+		if errors.As(err, &none) {
+			continue
+		}
+		if err != nil {
+			log.Printf("⚠️  no process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		if p == nil {
+			continue
+		}
+		if err := p.Validate(); err != nil {
+			log.Printf("⚠️  dropping invalid process for %s %s (%s): %v",
+				group[0].Jurisdiction, group[0].Affair.Number, group[0].DateString(), err)
+			continue
+		}
+		for i := range group {
+			group[i].Affair.Process = p
+		}
+	}
 }
 
 // withoutPostedVotes drops votes the log already has from grouped output.
@@ -306,10 +349,14 @@ func PostToPlatform(
 				fmt.Printf("   %s\n", v.SourceURL)
 			}
 
-			post, shouldContinue, err := platform.Post(content)
-			if err != nil {
-				return posted, err
+			post, shouldContinue, postErr := platform.Post(content)
+			if postErr != nil && post == (votelog.PostRef{}) {
+				return posted, postErr
 			}
+			// A ref with an error means the post is live but incomplete (a
+			// thread whose reply failed). It is logged all the same: the log is
+			// the only thing standing between a vote and its being published
+			// again by the next run. The error is returned after the save.
 
 			// Mark the posted votes. Any vote dropped above is deliberately
 			// absent from this slice, so it is retried rather than buried.
@@ -319,7 +366,11 @@ func PostToPlatform(
 
 			// Save vote log after each successful post
 			if err := voteLog.Save(); err != nil {
-				return posted, err
+				return posted, errors.Join(err, postErr)
+			}
+
+			if postErr != nil {
+				return posted + 1, postErr
 			}
 
 			posted++

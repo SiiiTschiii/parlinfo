@@ -239,6 +239,23 @@ func TestTitleAlt_CountsVotesWithoutTotals(t *testing.T) {
 	}
 }
 
+// The count is in the post's language, as the card prints it: the alt text is
+// what a screen reader reads out in place of the card.
+func TestTitleAlt_CountsInThePostsLanguage(t *testing.T) {
+	for _, c := range []struct {
+		lang votes.Language
+		want string
+	}{{votes.French, "2 votes\n1. "}, {votes.Italian, "2 votazioni\n1. "}} {
+		group := testfixtures.MultiVoteGroup()
+		for i := range group {
+			group[i].Language = c.lang
+		}
+		if alt := titleAlt(group); !strings.Contains(alt, c.want) {
+			t.Errorf("%s: alt text lacks %q:\n%s", c.lang, c.want, alt)
+		}
+	}
+}
+
 // A row without a verdict draws no mark, and a group where no row has one
 // gives the mark column to the labels; a group with any verdict keeps the
 // column, so its labels still line up.

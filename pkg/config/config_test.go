@@ -65,6 +65,37 @@ func TestLanguageRegistrationsShareTheirChambersRoster(t *testing.T) {
 	}
 }
 
+func TestPostFrom(t *testing.T) {
+	j, err := LookupJurisdiction(NationalratKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !j.PostFrom.IsZero() {
+		t.Errorf("PostFrom = %v, want unset by default", j.PostFrom)
+	}
+
+	t.Setenv("JURISDICTION_NATIONALRAT_POST_FROM", "2026-09-28")
+	j, err = LookupJurisdiction(NationalratKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := time.Date(2026, 9, 28, 0, 0, 0, 0, time.UTC); !j.PostFrom.Equal(want) {
+		t.Errorf("PostFrom = %v, want %v", j.PostFrom, want)
+	}
+}
+
+func TestPostFrom_MistypedDateIsAnError(t *testing.T) {
+	// A bound that read as "none" would post the whole backlog, and Validate
+	// runs at startup so this has to stop the bot rather than be skipped.
+	t.Setenv("JURISDICTION_NATIONALRAT_POST_FROM", "28.09.2026")
+	if _, err := LookupJurisdiction(NationalratKey); err == nil {
+		t.Fatal("expected an error for a mistyped date")
+	}
+	if err := Validate(); err == nil {
+		t.Error("Validate accepted a mistyped start date")
+	}
+}
+
 func TestEnvKey(t *testing.T) {
 	tests := map[string]string{
 		"zurich":        "ZURICH",
@@ -110,6 +141,16 @@ func TestChannelEnvInt(t *testing.T) {
 	t.Setenv("ZURICH_X_MAX_POSTS_PER_RUN", "not a number")
 	if got := c.EnvInt("X_MAX_POSTS_PER_RUN", 10); got != 10 {
 		t.Errorf("an unparseable value should fall back, got %d", got)
+	}
+}
+
+func TestChannelTags(t *testing.T) {
+	c := Channel{Key: "chparl-fr"}
+	for raw, want := range map[string]bool{"": true, "true": true, "false": false, "off": false} {
+		t.Setenv("CHPARL_FR_TAGGING", raw)
+		if got := c.Tags(); got != want {
+			t.Errorf("CHPARL_FR_TAGGING=%q: Tags() = %v, want %v", raw, got, want)
+		}
 	}
 }
 

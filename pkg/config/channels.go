@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -107,6 +108,21 @@ func (c Channel) EnvInt(name string, fallback int) int {
 		return v
 	}
 	return fallback
+}
+
+// Tags reports whether the channel's posts tag members, Fraktionen and
+// parties: <CHANNEL>_TAGGING, on unless set to false. A tag notifies the person
+// tagged, so an account can go live with it off.
+//
+// A value that is not a boolean turns tagging off, the side on which a typo
+// notifies nobody.
+func (c Channel) Tags() bool {
+	raw := c.Env("TAGGING")
+	if raw == "" {
+		return true
+	}
+	on, err := strconv.ParseBool(raw)
+	return err == nil && on
 }
 
 // ResolveJurisdictions looks up every jurisdiction on this channel, in order.

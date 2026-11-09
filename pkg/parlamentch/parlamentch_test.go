@@ -469,7 +469,13 @@ func TestFetchRecent_AsksForTheJurisdictionsLanguage(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if f := q.Get("$filter"); f != "" && !strings.Contains(f, "Language eq 'IT'") {
+		// The search for a repeated vote reads the German wording on purpose;
+		// see Client.markRepeats.
+		f := q.Get("$filter")
+		if strings.Contains(f, "substringof('wiederhol'") {
+			continue
+		}
+		if f != "" && !strings.Contains(f, "Language eq 'IT'") {
 			t.Errorf("request asks for another language: %s", f)
 		}
 	}

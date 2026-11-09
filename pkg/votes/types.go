@@ -219,6 +219,11 @@ type Affair struct {
 	// Canton names the canton that filed this business, a Standesinitiative,
 	// as a post names it after "des Kantons": "Thurgau". Empty otherwise.
 	Canton string
+
+	// Process is where the business stands as of this vote, and what comes
+	// next. Nil when the source adapter cannot say, which posts as if the
+	// feature did not exist. Read it through GroupProcess, never directly.
+	Process *Process
 }
 
 // Author is a member who signed a business matter into the chamber: the

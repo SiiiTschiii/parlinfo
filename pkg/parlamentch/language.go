@@ -113,6 +113,14 @@ var yesLabels = map[votes.Language]string{
 	votes.Italian: "Sì",
 }
 
+// repeatLabels mark a vote the council took again, after its first count was
+// contested. See repeat.go.
+var repeatLabels = map[votes.Language]string{
+	votes.German:  "(Wiederholung)",
+	votes.French:  "(répétition)",
+	votes.Italian: "(ripetizione)",
+}
+
 // urlLanguages are the path segments parlament.ch serves each language under.
 // They match the codes, but the site is the authority on its own paths.
 var urlLanguages = map[votes.Language]string{
