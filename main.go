@@ -124,7 +124,12 @@ func selectedChannels(key string) ([]config.Channel, error) {
 func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction) []channelPlatform {
 	// Tagging is configured per jurisdiction but a platform instance is per
 	// channel, so its mapper has to cover every jurisdiction the channel serves.
-	contactMapper := loadContacts(jurisdictions)
+	var contactMapper *contacts.Mapper
+	if channel.Tags() {
+		contactMapper = loadContacts(jurisdictions)
+	} else {
+		log.Printf("Channel %q: tagging off (%sTAGGING)", channel.Key, channel.EnvPrefix())
+	}
 
 	var plats []channelPlatform
 

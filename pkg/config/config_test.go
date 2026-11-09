@@ -113,6 +113,16 @@ func TestChannelEnvInt(t *testing.T) {
 	}
 }
 
+func TestChannelTags(t *testing.T) {
+	c := Channel{Key: "chparl-fr"}
+	for raw, want := range map[string]bool{"": true, "true": true, "false": false, "off": false} {
+		t.Setenv("CHPARL_FR_TAGGING", raw)
+		if got := c.Tags(); got != want {
+			t.Errorf("CHPARL_FR_TAGGING=%q: Tags() = %v, want %v", raw, got, want)
+		}
+	}
+}
+
 func TestMaxAgeDaysOverrides(t *testing.T) {
 	j, err := LookupJurisdiction("zurich-city")
 	if err != nil {
