@@ -1393,3 +1393,68 @@ func TestVoteLinks(t *testing.T) {
 		}
 	})
 }
+
+// A business a Fraktion filed is labelled with the Fraktion, in the genitive
+// Stadt Zürich's titles use. A member filer takes precedence; without a type
+// there is nothing for the Fraktion to attach to.
+func TestGroupPrefixLineNamesTheFilingFraktion(t *testing.T) {
+	vote := func(affairType, fraktion string, authors ...votes.Author) []votes.Vote {
+		return []votes.Vote{{Affair: votes.Affair{Type: affairType, Fraktion: fraktion, Authors: authors}}}
+	}
+	tests := []struct {
+		name  string
+		group []votes.Vote
+		want  string
+	}{
+		{"a Fraktion", vote("Parlamentarische Initiative", "GLP-Fraktion"), "Parlamentarische Initiative der GLP-Fraktion"},
+		{"a member wins", vote("Motion", "SP-Fraktion", votes.Author{Name: "Anna Muster", Party: "SP"}), "Motion von Anna Muster (SP)"},
+		{"no type", vote("", "SVP-Fraktion"), ""},
+	}
+	for _, tt := range tests {
+		if got := GroupPrefixLine(tt.group); got != tt.want {
+			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+}
+
+// A vote's Outcome, where the source states one, is what a post says happened;
+// otherwise whether Ja carried. An initiative is given leave, not adopted.
+func TestVerdict(t *testing.T) {
+	tests := []struct {
+		decision, outcome, emoji, text string
+	}{
+		{"angenommen", "", "✅", "Angenommen"},
+		{"angenommen", "abgelehnt", "❌", "Abgelehnt"},
+		{"abgelehnt", "angenommen", "✅", "Angenommen"},
+		{"angenommen", "keine Folge gegeben", "❌", "Keine Folge gegeben"},
+		{"abgelehnt", "Folge gegeben", "✅", "Folge gegeben"},
+	}
+	for _, tt := range tests {
+		v := votes.Vote{Decision: tt.decision, Outcome: tt.outcome}
+		if e, x := GetVoteResultEmoji(Verdict(v)), GetVoteResultText(Verdict(v)); e != tt.emoji || x != tt.text {
+			t.Errorf("Decision %q Outcome %q: got %s %s, want %s %s", tt.decision, tt.outcome, e, x, tt.emoji, tt.text)
+		}
+	}
+}
+
+func TestGroupPrefixLineNamesTheFilingCanton(t *testing.T) {
+	group := []votes.Vote{{Affair: votes.Affair{Type: "Standesinitiative", Canton: "St. Gallen"}}}
+	if got := GroupPrefixLine(group); got != "Standesinitiative des Kantons St. Gallen" {
+		t.Errorf("got %q", got)
+	}
+}
+
+// What Ja supported is printed on its own line below the title, so a ✕ above a
+// Ja majority reads as what it is.
+func TestLongFormHeadingPrintsTheQuestionBelowTheTitle(t *testing.T) {
+	v := votes.Vote{Title: "Der Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!", Question: "Ja: keine Folge geben",
+		Affair: votes.Affair{Type: "Parlamentarische Initiative"}}
+	got := LongFormHeading([]votes.Vote{v}, Tags{})
+	if !strings.Contains(got, "Parlamentarische Initiative\nDer Bundesrat muss gegenüber dem Parlament die Wahrheit sagen!\nJa: keine Folge geben\n\n") {
+		t.Errorf("heading %q", got)
+	}
+	// A group's votes are each labelled by their own heading.
+	if QuestionLine([]votes.Vote{v, v}) != "" {
+		t.Error("a group printed a question line")
+	}
+}

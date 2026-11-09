@@ -24,190 +24,156 @@
 # Work through them with the search links:
 #
 #     go run ./cmd/generate_search_urls -jurisdiction nationalrat
+#
+# The `kind: organization` entries are the national parties, tagged when a
+# Fraktion filed the business ("Parlamentarische Initiative der GLP-Fraktion").
+# Each account is one the party links from its own website, as of November
+# 2026, or one confirmed by hand: the Grüne and EVP Bluesky accounts, which the
+# sites do not link, and the GLP's Instagram, where glp.swiss still links a
+# stale handle. Lega dei Ticinesi and Mouvement Citoyens Genevois are cantonal
+# parties that sit in the SVP-Fraktion, so they go by their own names; see
+# pkg/contacts/fraktion.go. Left out on purpose: svpch.bsky.social, a
+# placeholder squatting the SVP's name, and grunliberale.bsky.social, which
+# says in its bio that it is not the GLP's official account.
 
 version: "1.0"
 contacts:
   - name: Alex Farinelli
     facebook:
       - url: https://www.facebook.com/Alex.Comano
-        verified: false
-        confidence: high
+        verified: true
   - name: Alois Huber
   - name: Andrea de Meuron
     linkedin:
       - url: https://www.linkedin.com/in/andrea-de-meuron
-        verified: false
-        confidence: high
+        verified: true
   - name: Andrea Zryd
     facebook:
       - url: https://www.facebook.com/andrea.zryd
-        verified: false
-        confidence: high
+        verified: true
   - name: Andreas Gafner
   - name: Andreas Glarner
     facebook:
       - url: https://www.facebook.com/andreas.glarner.3
-        verified: false
-        confidence: high
+        verified: true
   - name: Andreas Meier
   - name: Andri Silberschmidt
     facebook:
       - url: https://www.facebook.com/andrisilberschmidt
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/andrisilberschmidt/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/andrisilberschmidt
-        verified: false
-        confidence: high
+        verified: true
     x:
-      - url: https://x.com/andrisilbi_
-        verified: false
-        confidence: high
       - url: https://x.com/andrisilber
-        verified: false
-        confidence: high
+        verified: true
   - name: Anna Giacometti
   - name: Anna Rosenwasser
     instagram:
       - url: https://www.instagram.com/annarosenwasser/
-        verified: false
-        confidence: high
+        verified: true
   - name: Anna-Béatrice Schmaltz
     facebook:
       - url: https://www.facebook.com/annabeatrice.schmaltz
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/anna.beatrice.schmaltz/
-        verified: false
-        confidence: high
+        verified: true
   - name: Arbër Bullakaj
     facebook:
       - url: https://www.facebook.com/bullakaj
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/arberbullakaj/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/arber-bullakaj
-        verified: false
-        confidence: high
+        verified: true
   - name: Barbara Gysi
     instagram:
       - url: https://www.instagram.com/barbara_gysi/
-        verified: false
-        confidence: high
+        verified: true
   - name: Barbara Portmann
     facebook:
       - url: https://www.facebook.com/barbara.portmannmueller
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/portmannmuller/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/barbara-portmann-m%C3%BCller-0b8591145
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/BarbaraPortmann
-        verified: false
-        confidence: high
+        verified: true
   - name: Barbara Schaffner
     facebook:
       - url: https://www.facebook.com/Barbara.Schaffner.Politik
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/ba.schaffner/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/barbara-schaffner-7a300a11
-        verified: false
-        confidence: high
-    tiktok:
-      - url: https://www.tiktok.com/@barbaraschaffner1
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/baschaffner
-        verified: false
-        confidence: high
+        verified: true
   - name: Barbara Steinemann
     x:
       - url: https://x.com/BabaSteinemann
-        verified: false
-        confidence: high
+        verified: true
   - name: Beat Walti
   - name: Benjamin Fischer
     facebook:
       - url: https://www.facebook.com/benjamin.fischer.svp
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/benifischer/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/BeniFischer
-        verified: false
-        confidence: high
+        verified: true
   - name: Benjamin Giezendanner
     facebook:
       - url: https://www.facebook.com/benjamingiezendannerofficial
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/benjamingiezendanner/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/benjamin-giezendanner-a29700167
-        verified: false
-        confidence: high
+        verified: true
   - name: Benjamin Roduit
     facebook:
       - url: https://www.facebook.com/benjaminroduitsaillon
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/benjaminroduit/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/roduitbenjamin
-        verified: false
-        confidence: high
+        verified: true
   - name: Benoît Gaillard
     instagram:
       - url: https://www.instagram.com/b_gaillard/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/benoitgaillard
-        verified: false
-        confidence: high
+        verified: true
   - name: Bettina Balmer
     facebook:
       - url: https://www.facebook.com/bettina.balmer.5070
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/bettina-balmer-6ab71396
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/balmer_bettina
-        verified: false
-        confidence: high
+        verified: true
   - name: Brenda Tuosto
   - name: Brigitte Crottaz
   - name: Bruno Storni
@@ -215,641 +181,576 @@ contacts:
   - name: Christian Dandrès
     facebook:
       - url: https://www.facebook.com/dandres.christian
-        verified: false
-        confidence: high
+        verified: true
   - name: Christian Glur
     facebook:
       - url: https://www.facebook.com/GlurChristian
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/christian_glur/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/christian-glur-a34b31121
-        verified: false
-        confidence: high
+        verified: true
   - name: Christian Imark
     facebook:
       - url: https://www.facebook.com/christian.imark
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/ChristianImark
-        verified: false
-        confidence: high
+        verified: true
   - name: Christian Lohr
   - name: Christian Wasserfallen
     facebook:
       - url: https://www.facebook.com/wasserfallen.news
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/christianwasserfallen/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/wasserfallen
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/cwasi
-        verified: false
-        confidence: low
+        verified: true
   - name: Christine Badertscher
     facebook:
       - url: https://www.facebook.com/christine.badertscher
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/christinebadertscher/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/ChBadertscher
-        verified: false
-        confidence: high
+        verified: true
   - name: Christine Bulliard-Marbach
     facebook:
       - url: https://www.facebook.com/ChristineBulliardMarbach
-        verified: false
-        confidence: high
+        verified: true
   - name: Christoph Riner
     facebook:
       - url: https://www.facebook.com/christophriner
-        verified: false
-        confidence: high
+        verified: true
   - name: Christophe Clivaz
-    x:
-      - url: https://x.com/ChristopheCliv1
-        verified: false
-        confidence: high
   - name: Clarence Chollet
   - name: Corina Gredig
-    facebook:
-      - url: https://www.facebook.com/corina.gredigzihlmann
-        verified: false
-        confidence: high
     instagram:
       - url: https://www.instagram.com/corinagredig/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/corina-gredig-31601013a
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/corinagredig
-        verified: false
-        confidence: high
+        verified: true
   - name: Cyril Aellen
   - name: Cédric Wermuth
     bluesky:
       - url: https://bsky.app/profile/cedricwermuth.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/cedricwermuth
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/cedricwermuth/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/cedricwermuth
-        verified: false
-        confidence: high
+        verified: true
   - name: Céline Amaudruz
   - name: Céline Weber
     bluesky:
       - url: https://bsky.app/profile/celineweber.ch
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/celine_weber_koppenburg/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/c%C3%A9line-weber-koppenburg-3786b9159
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Celine_I_Weber
-        verified: false
-        confidence: high
+        verified: true
   - name: Damien Cottier
   - name: Daniel Ruch
   - name: Daniel Sormanni
   - name: Daniela Schneeberger
-    instagram:
-      - url: https://www.instagram.com/schneebutz1909/
-        verified: false
-        confidence: low
     linkedin:
       - url: https://www.linkedin.com/in/daniela-schneeberger-91070a83
-        verified: false
-        confidence: high
+        verified: true
   - name: David Roth
     facebook:
       - url: https://www.facebook.com/davidsilvroth
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/davidsroth/
-        verified: false
-        confidence: high
+        verified: true
     tiktok:
       - url: https://www.tiktok.com/@davidsroth
-        verified: false
-        confidence: high
+        verified: true
   - name: Delphine Klopfenstein Broggini
   - name: Diana Gutjahr
     facebook:
       - url: https://www.facebook.com/DianaGutjahrTG
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/diana_gutjahr_ch/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/diana-gutjahr-081a39a9
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/DianaGutjahr1
-        verified: false
-        confidence: high
+        verified: true
   - name: Didier Calame
     facebook:
       - url: https://www.facebook.com/DidierCalame
-        verified: false
-        confidence: high
+        verified: true
+  - name: Die Mitte Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/mitte.centre
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mitte_centre/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/mitte-centre
+        verified: true
+    x:
+      - url: https://x.com/Mitte_Centre
+        verified: true
   - name: Dominik Blunschy
     facebook:
       - url: https://www.facebook.com/DominikBlunschy
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/dominikblunschy/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/dominik-blunschy
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/blunschy
-        verified: false
-        confidence: high
+        verified: true
   - name: Edgar Bischof
+  - name: EDU Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/eduschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/edu_udf_ch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@edu.schweiz
+        verified: true
+    x:
+      - url: https://x.com/EDUSchweiz
+        verified: true
   - name: Elisabeth Schneider-Schneiter
     facebook:
       - url: https://www.facebook.com/elisabeth.schneiderschneiter
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/schneiderschneiter/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/elisabeth-schneider-schneiter-27484b6a
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Elisabeth_S_S
-        verified: false
-        confidence: high
+        verified: true
   - name: Emmanuel Amoos
     instagram:
       - url: https://www.instagram.com/emmanuelamoos/
-        verified: false
-        confidence: high
+        verified: true
   - name: Erich Hess
     x:
       - url: https://x.com/Erich_Hess
-        verified: false
-        confidence: high
+        verified: true
   - name: Erich Vontobel
     instagram:
       - url: https://www.instagram.com/erichvontobel/
-        verified: false
-        confidence: high
+        verified: true
   - name: Ernst Wandfluh
     facebook:
       - url: https://www.facebook.com/profile.php?id=100095408656916
-        verified: false
-        confidence: low
+        verified: true
   - name: Estelle Revaz
+  - name: EVP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/evppev.bsky.social
+        verified: true
     facebook:
-      - url: https://www.facebook.com/EstelleRevazCellist
-        verified: false
-        confidence: high
+      - url: https://www.facebook.com/evppev
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/evppev/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@evp_pev
+        verified: true
   - name: Fabian Molina
     bluesky:
       - url: https://bsky.app/profile/fabianmolina.ch
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/FabianMolinaNR
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/fabianmolinanr/
-        verified: false
-        confidence: high
+        verified: true
   - name: Fabienne Stämpfli
   - name: Farah Rumy
     facebook:
       - url: https://www.facebook.com/Farah-Rumy-100008638033294
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/farah.rumy/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/farah-rumy-46841b215
-        verified: false
-        confidence: high
+        verified: true
+  - name: FDP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/fdp.dieliberalen
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/fdp_schweiz/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/fdp-die-liberalen-schweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@fdp_schweiz
+        verified: true
+    x:
+      - url: https://x.com/FDP_Liberalen
+        verified: true
   - name: Florence Brenzikofer
     facebook:
       - url: https://www.facebook.com/flobrenzikofer
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/florencebrenzikofer/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/flobrenzikofer
-        verified: false
-        confidence: high
+        verified: true
   - name: Franz Grüter
     facebook:
       - url: https://www.facebook.com/GrueterFranz
-        verified: false
-        confidence: high
-    instagram:
-      - url: https://www.instagram.com/fgrueter/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/fgrueter
-        verified: false
-        confidence: high
+        verified: true
   - name: Franziska Ryser
     facebook:
       - url: https://www.facebook.com/FranziskaRyserSG
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/franziska__ryser/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/FranziskaRyser
-        verified: false
-        confidence: high
+        verified: true
   - name: Gabriela Suter
     facebook:
       - url: https://www.facebook.com/gabriela.suter.1
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/gabriela.suter/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/gabriela-suter-958990230
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/suter_gabriela
-        verified: false
-        confidence: high
+        verified: true
   - name: Gerhard Andrey
     x:
       - url: https://x.com/anderageru
-        verified: false
-        confidence: medium
+        verified: true
   - name: Gerhard Pfister
     instagram:
       - url: https://www.instagram.com/gerhardpfister/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/gerhard-pfister-a4333489
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/gerhardpfister
-        verified: false
-        confidence: high
+        verified: true
   - name: Giorgio Fonio
     facebook:
       - url: https://www.facebook.com/giorgiofonio1984
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/giorgiofonio/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/giorgio-fonio-9ab18329b
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/GiorgioFonio
-        verified: false
-        confidence: high
+        verified: true
+  - name: GLP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/grunliberale
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/glp_grunliberale/
+        verified: true
+    x:
+      - url: https://x.com/grunliberale
+        verified: true
   - name: Gregor Rutz
     facebook:
       - url: https://www.facebook.com/gregor.rutz
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/gregor-rutz-68844a7a
-        verified: false
-        confidence: high
+        verified: true
   - name: Greta Gysin
     instagram:
       - url: https://www.instagram.com/gretagysin/
-        verified: false
-        confidence: high
+        verified: true
+  - name: Grüne Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/gruenech.bsky.social
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/gruenech/
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/gruenech/
+        verified: true
+    linkedin:
+      - url: https://www.linkedin.com/company/14013437
+        verified: true
+    x:
+      - url: https://x.com/GrueneCH
+        verified: true
   - name: Hans Jörg Rüegsegger
     facebook:
       - url: https://www.facebook.com/hjruegsegger
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/hans.joerg.ruegsegger/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/hjruegsegger
-        verified: false
-        confidence: high
+        verified: true
   - name: Hans-Peter Portmann
     x:
       - url: https://x.com/HPPortmann
-        verified: false
-        confidence: high
+        verified: true
   - name: Hasan Candan
     facebook:
       - url: https://www.facebook.com/hasan.candan
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/hasan_candan_luzern/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/hasan_candan_
-        verified: false
-        confidence: high
+        verified: true
   - name: Heinz Theiler
     facebook:
       - url: https://www.facebook.com/heinztheiler.ch
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/heinztheiler/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/heinz-theiler-298914177
-        verified: false
-        confidence: high
+        verified: true
   - name: Irène Kälin
     x:
       - url: https://x.com/KaelinIrene
-        verified: false
-        confidence: high
+        verified: true
   - name: Isabelle Chappuis
     instagram:
       - url: https://www.instagram.com/isabelle_chappuis/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/isabellechappuis
-        verified: false
-        confidence: high
+        verified: true
   - name: Islam Alijaj
     facebook:
       - url: https://www.facebook.com/islamalijajnr
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/islamalijaj/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/islamalijaj
-        verified: false
-        confidence: high
+        verified: true
   - name: Jacqueline Badran
     x:
       - url: https://x.com/jaybadran
-        verified: false
-        confidence: high
+        verified: true
   - name: Jacqueline de Quattro
     facebook:
       - url: https://www.facebook.com/JacquelineDeQuattro
-        verified: false
-        confidence: high
+        verified: true
   - name: Jacques Nicolet
   - name: Jean Tschopp
     bluesky:
       - url: https://bsky.app/profile/jeantschopp.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/jean.tschopp
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/j_tschopp/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/jean-tschopp-a849a136
-        verified: false
-        confidence: high
+        verified: true
     tiktok:
       - url: https://www.tiktok.com/@jeantschopp
-        verified: false
-        confidence: high
+        verified: true
   - name: Jean-Luc Addor
     x:
       - url: https://x.com/udcvr64
-        verified: false
-        confidence: medium
+        verified: true
   - name: Jessica Jaccoud
   - name: Jon Pult
     facebook:
       - url: https://www.facebook.com/jonpultpolitik
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/jonpult/
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/jonpult
-        verified: false
-        confidence: high
+        verified: true
   - name: Jürg Grossen
     facebook:
       - url: https://www.facebook.com/JuergGrossenglp
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/juerg.grossen/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Juerg_Grossen
-        verified: false
-        confidence: high
+        verified: true
   - name: Katharina Prelicz-Huber
     facebook:
       - url: https://www.facebook.com/katharina.preliczhuber
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/katharinapreliczhuber/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/K_PreliczHuber
-        verified: false
-        confidence: high
+        verified: true
   - name: Kathrin Bertschy
     facebook:
       - url: https://www.facebook.com/Bertschy-mit-Kpfli-631157893652360
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/kathrin_bertschy/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/kathrin-bertschy-367ab99b
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/kathrinbertschy
-        verified: false
-        confidence: high
+        verified: true
   - name: Katja Christ
     facebook:
       - url: https://www.facebook.com/katja.christrudin
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/_katja_christ/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/katja-christ-44345bb4
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/KatjaChrist
-        verified: false
-        confidence: high
+        verified: true
   - name: Katja Stettler-Riem
     facebook:
       - url: https://www.facebook.com/katja.riem
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/katja.riem/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/katja-riem-66a53919a
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/katjariem
-        verified: false
-        confidence: high
+        verified: true
   - name: Kilian Baumann
     bluesky:
       - url: https://bsky.app/profile/kilianbaumann.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/kilian.baumann.520
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/baumann.kilian/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Kilian_Baumann
-        verified: false
-        confidence: high
+        verified: true
   - name: Kris Vietze
   - name: Lars Guggisberg
     facebook:
       - url: https://www.facebook.com/guggisberglars
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/lars.guggisberg/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/lars-guggisberg-a58aaa9b
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/larsguggisberg
-        verified: false
-        confidence: high
+        verified: true
   - name: Laura Gantenbein
     facebook:
       - url: https://www.facebook.com/laura.gantenbein.5
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/lauragantenbeinso/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/LaJuGa
-        verified: false
-        confidence: medium
+        verified: true
   - name: Laurence Fehlmann Rielle
   - name: Laurent Wehrli
     facebook:
       - url: https://www.facebook.com/wehrlilaurent
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/wehrli.laurent/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/laurentwehrli
-        verified: false
-        confidence: high
+        verified: true
+  - name: Lega dei Ticinesi
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/LegadeiTicinesi
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/legadeiticinesi/
+        verified: true
   - name: Leo Müller
   - name: Linda De Ventura
     facebook:
       - url: https://www.facebook.com/linda.deventura
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/linda_de_ventura/
-        verified: false
-        confidence: high
+        verified: true
   - name: Lorenz Hess
   - name: Lorenzo Quadri
   - name: Loïc Dobler
@@ -857,895 +758,690 @@ contacts:
   - name: Léonore Porchet
     instagram:
       - url: https://www.instagram.com/leonoreporchet/
-        verified: false
-        confidence: high
+        verified: true
   - name: Magdalena Martullo-Blocher
   - name: Maja Riniker
     facebook:
       - url: https://www.facebook.com/rinikermaja
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/majariniker/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/majariniker
-        verified: false
-        confidence: high
+        verified: true
   - name: Manfred Bühler
   - name: Manuel Strupler
     facebook:
       - url: https://www.facebook.com/manuelstrupler
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/manuelstrupler/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/manuel-strupler
-        verified: false
-        confidence: high
+        verified: true
   - name: Manuela Weichelt
     facebook:
       - url: https://www.facebook.com/manuela.weicheltpicard.39
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/manuela_weichelt/
-        verified: false
-        confidence: high
+        verified: true
   - name: Marc Jost
     bluesky:
       - url: https://bsky.app/profile/marcjost.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/MarcJostEVP
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/marcjostpolitician/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/marcjost
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/marcjost
-        verified: false
-        confidence: high
+        verified: true
   - name: Marcel Dettling
   - name: Marcel Dobler
     facebook:
       - url: https://www.facebook.com/marcel.dobler.politiker
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/dobler_marcel/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/marcel-dobler-63025348
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Marcel_Dobler
-        verified: false
-        confidence: high
+        verified: true
   - name: Marie-France Roth Pasquier
     instagram:
       - url: https://www.instagram.com/mariefrance.rothpasquier/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/marie-france-r-705bb2188
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/MFRP2010
-        verified: false
-        confidence: medium
+        verified: true
   - name: Marionna Schlatter
     facebook:
       - url: https://www.facebook.com/marionnaschlatter
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/marionnaschlatter/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/marionna-schlatter-b3800136b
-        verified: false
-        confidence: high
+        verified: true
   - name: Markus Ritter
   - name: Markus Schnyder
   - name: Martin Bäumle
     x:
       - url: https://x.com/Martin_Baeumle
-        verified: false
-        confidence: high
+        verified: true
   - name: Martin Candinas
     facebook:
       - url: https://www.facebook.com/candinas.martin
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/martincandinas/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/martin-candinas-857479208
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/martin_candinas
-        verified: false
-        confidence: high
+        verified: true
   - name: Martin Haab
     facebook:
       - url: https://www.facebook.com/martin.haab.37
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/martin_haab
-        verified: false
-        confidence: high
+        verified: true
   - name: Martin Hübscher
     facebook:
       - url: https://www.facebook.com/martin.huebscher.71
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/hubschermartin/
-        verified: false
-        confidence: high
+        verified: true
     tiktok:
       - url: https://www.tiktok.com/@hubschermartin
-        verified: false
-        confidence: high
+        verified: true
   - name: Martine Docourt
   - name: Mattea Meyer
-    facebook:
-      - url: https://www.facebook.com/Mattea-Meyer-in-den-Nationalrat-106170682821351
-        verified: false
-        confidence: high
     instagram:
       - url: https://www.instagram.com/matteameyer.ch/
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/meyer_mattea
-        verified: false
-        confidence: high
+        verified: true
   - name: Matthias Samuel Jauslin
   - name: Mauro Tuena
   - name: Maya Bally
-    facebook:
-      - url: https://www.facebook.com/Grossraetin
-        verified: false
-        confidence: low
     instagram:
       - url: https://www.instagram.com/ballymaya/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/maya-bally-44b8aa111
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/maya_bally
-        verified: false
-        confidence: high
+        verified: true
   - name: Meret Schneider
     x:
       - url: https://x.com/Schneimere
-        verified: false
-        confidence: medium
+        verified: true
   - name: Michael Graber
     facebook:
       - url: https://www.facebook.com/NRMichaelGraber
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/michaelgraber81/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/michael-graber-256584a1
-        verified: false
-        confidence: high
+        verified: true
   - name: Michael Götte
     facebook:
       - url: https://www.facebook.com/MichiGoette
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/michigoette/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/michael-g%C3%B6tte-1257a6132
-        verified: false
-        confidence: high
+        verified: true
   - name: Michael Töngi
     facebook:
       - url: https://www.facebook.com/michael.tongi
-        verified: false
-        confidence: high
+        verified: true
       - url: https://www.facebook.com/michaeltoengi
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/mtoengi
-        verified: false
-        confidence: high
+        verified: true
   - name: Michaël Buffat
     x:
       - url: https://x.com/michael_buffat
-        verified: false
-        confidence: high
+        verified: true
   - name: Michèle Dünki-Bättig
     facebook:
       - url: https://www.facebook.com/micheleduenkibaettig
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/michele.duenkibaettig/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/duenkim
-        verified: false
-        confidence: high
+        verified: true
   - name: Mike Egger
     facebook:
       - url: https://www.facebook.com/nationalrat.mike.egger
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/m_egger02/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/mike-egger-2a2bb487
-        verified: false
-        confidence: high
+        verified: true
   - name: Min Li Marti
     facebook:
       - url: https://www.facebook.com/minlimarti
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/minli.marti/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/minlimarti
-        verified: false
-        confidence: high
+        verified: true
   - name: Miriam Locher
   - name: Monika Rüegger
+  - name: Mouvement Citoyens Genevois
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/MCGOfficiel
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/mcg_geneve/
+        verified: true
   - name: Nadine Gobet
     facebook:
       - url: https://www.facebook.com/gobetnadine
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/nadine.gobet/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/nadinegobet
-        verified: false
-        confidence: high
+        verified: true
   - name: Nadine Masshardt
     facebook:
-      - url: https://www.facebook.com/nadine.masshardt
-        verified: false
-        confidence: high
       - url: https://www.facebook.com/nmasshardt
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/nadine.masshardt/
-        verified: false
-        confidence: high
+        verified: true
   - name: Nadja Umbricht Pieren
   - name: Nicolas Kolly
   - name: Nicole Barandun
   - name: Nicolò Paganini
     facebook:
       - url: https://www.facebook.com/nicolopaganini.nationalrat
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/nicolopaganini_nr/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/paganini_nr
-        verified: false
-        confidence: high
+        verified: true
   - name: Niklaus-Samuel Gugger
     facebook:
       - url: https://www.facebook.com/JetztNikGugger
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/nikgugger/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/NikGugger
-        verified: false
-        confidence: high
+        verified: true
   - name: Nina Fehr Düsel
   - name: Nina Schläfli
     bluesky:
       - url: https://bsky.app/profile/ninaschlaefli.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/nischl
-        verified: false
-        confidence: low
+        verified: true
     instagram:
       - url: https://www.instagram.com/ninaschlaefli/
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/NinaSchlaefli
-        verified: false
-        confidence: high
+        verified: true
   - name: Olivier Feller
     facebook:
       - url: https://www.facebook.com/olivierfeller
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/feller.olivier/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/fellerolivier
-        verified: false
-        confidence: high
+        verified: true
   - name: Paolo Pamini
   - name: Pascal Schmid
     facebook:
       - url: https://www.facebook.com/pascalschmid.ch
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/pascal.schmid.ch/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
-      - url: https://www.linkedin.com/in/pascal-schmid-4185b3160
-        verified: false
-        confidence: high
       - url: https://www.linkedin.com/in/pascal-schmid-ch
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/pascalschmid_ch
-        verified: false
-        confidence: high
+        verified: true
   - name: Patricia von Falkenstein
     facebook:
       - url: https://www.facebook.com/patricia.vonfalkenstein
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/patriciavonfalkenstein/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/patricia-von-falkenstein-25a945a0
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/PvonFalkenstein
-        verified: false
-        confidence: high
+        verified: true
   - name: Patrick Hässig
     facebook:
       - url: https://www.facebook.com/patrick.haessig.zh
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/patrickhaessig/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/patrick-h%C3%A4ssig-046b75236
-        verified: false
-        confidence: high
-      - url: https://www.linkedin.com/in/patrick-hssig-046b75236
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/PatrickHaessig
-        verified: false
-        confidence: high
+        verified: true
   - name: Peter Schilliger
     facebook:
       - url: https://www.facebook.com/peter.schilliger.9
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/peter_schilliger/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/peter-schilliger-33b55199
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/P_Schilliger
-        verified: false
-        confidence: high
+        verified: true
   - name: Philipp Kutter
     x:
       - url: https://x.com/PhilippKutter
-        verified: false
-        confidence: high
+        verified: true
   - name: Philipp Matthias Bregy
     facebook:
       - url: https://www.facebook.com/pmbregy
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/pmbregy/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/pmbregy
-        verified: false
-        confidence: high
+        verified: true
   - name: Philippe Nantermod
     facebook:
       - url: https://www.facebook.com/philippenantermodCN
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/nantermod/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/nantermod
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/nantermod
-        verified: false
-        confidence: high
+        verified: true
   - name: Pierre-André Page
     facebook:
-      - url: https://www.facebook.com/pierreandre.page
-        verified: false
-        confidence: high
       - url: https://www.facebook.com/pierreandre.page.cn
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/pierreandrepage
-        verified: false
-        confidence: high
+        verified: true
   - name: Pius Kaufmann
     facebook:
       - url: https://www.facebook.com/profile.php?id=100092195315357
-        verified: false
-        confidence: low
+        verified: true
     instagram:
       - url: https://www.instagram.com/kaufmann_pius/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/pius-kaufmann-b920b6273
-        verified: false
-        confidence: high
+        verified: true
   - name: Priska Seiler Graf
     facebook:
       - url: https://www.facebook.com/priska.seilergraf
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/seilergraf/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/seilergraf
-        verified: false
-        confidence: high
+        verified: true
   - name: Priska Wismer-Felder
-    facebook:
-      - url: https://www.facebook.com/priskawismer
-        verified: false
-        confidence: high
     instagram:
       - url: https://www.instagram.com/priska_wismer/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/PriskaWismer
-        verified: false
-        confidence: high
+        verified: true
   - name: Raphaël Mahaim
   - name: Regina Durrer-Knobel
     facebook:
       - url: https://www.facebook.com/regina.durrerknobel
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/regina_durrer/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/regina-durrer-knobel-a90865218
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Regina_Durrer
-        verified: false
-        confidence: high
+        verified: true
   - name: Regine Sauter
     facebook:
       - url: https://www.facebook.com/RegineSauterPolitik
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/reginesauter/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/regine-sauter
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/regine_sauter
-        verified: false
-        confidence: high
+        verified: true
   - name: Reto Nause
     facebook:
       - url: https://www.facebook.com/reto.nause
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/retonause
-        verified: false
-        confidence: high
+        verified: true
   - name: Roberta Soldati
   - name: Roger Golay
   - name: Roland Rino Büchel
   - name: Roman Bürgi
     facebook:
       - url: https://www.facebook.com/profile.php?id=100009035758169
-        verified: false
-        confidence: low
+        verified: true
     instagram:
       - url: https://www.instagram.com/roman.buergi/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/roman-b%C3%BCrgi-78998920a
-        verified: false
-        confidence: high
+        verified: true
   - name: Roman Hug
   - name: Rudi Berli
   - name: Rémy Wyssmann
     facebook:
       - url: https://www.facebook.com/claudiau.remy.wyssmann
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/remywyssmann/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/RWyssmann
-        verified: false
-        confidence: high
+        verified: true
   - name: Samira Marti
     instagram:
       - url: https://www.instagram.com/marti.samira/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/samira-marti-7b7027270
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/SamiraMarti
-        verified: false
-        confidence: high
+        verified: true
   - name: Samuel Bendahan
     linkedin:
       - url: https://www.linkedin.com/in/bendahan
-        verified: false
-        confidence: high
+        verified: true
   - name: Sandra Sollberger
     facebook:
       - url: https://www.facebook.com/nrsandrasollberger
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/sandrasollberger/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/sandra-sollberger-4691b793
-        verified: false
-        confidence: high
+        verified: true
   - name: Sarah Wyss
     facebook:
       - url: https://www.facebook.com/sarah.d.wyss
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/sarah_d_wyss/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/Sarah_Wyss
-        verified: false
-        confidence: high
+        verified: true
   - name: Sibel Arslan
-    x:
-      - url: https://x.com/ronkay
-        verified: false
-        confidence: medium
   - name: Sidney Kamerzin
     facebook:
       - url: https://www.facebook.com/sidneykamerzin.ch
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/sidneykamerzin/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/sidney_kamerzin
-        verified: false
-        confidence: high
+        verified: true
   - name: Simon Michel
     facebook:
       - url: https://www.facebook.com/simonmichelfdp
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/simonmichel.ch/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/smichel
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/simonmichel
-        verified: false
-        confidence: high
+        verified: true
   - name: Simon Stadler
     facebook:
       - url: https://www.facebook.com/simon.stadler.56
-        verified: false
-        confidence: high
-    instagram:
-      - url: https://www.instagram.com/haggliger_pici/
-        verified: false
-        confidence: low
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/simon-stadler-062066269
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/simonstadler7
-        verified: false
-        confidence: high
+        verified: true
   - name: Simona Brizzi
     instagram:
       - url: https://www.instagram.com/simonabrizzi_sp/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/simona-brizzi-6b115772
-        verified: false
-        confidence: high
+        verified: true
   - name: Simone de Montmollin
     facebook:
       - url: https://www.facebook.com/simone.demontmollin
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/simonedemontmollin
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/montmollin_de
-        verified: false
-        confidence: high
+        verified: true
   - name: Simone Gianini
     facebook:
       - url: https://www.facebook.com/simonegianini.ch
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/simogianini/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/simone-gianini-6a5ab2101
-        verified: false
-        confidence: high
+        verified: true
   - name: Sophie Michaud Gigon
+  - name: SP Schweiz
+    kind: organization
+    bluesky:
+      - url: https://bsky.app/profile/spschweiz.ch
+        verified: true
+    facebook:
+      - url: https://www.facebook.com/spschweiz
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/spschweiz/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@spschweiz
+        verified: true
   - name: Stefan Müller-Altermatt
   - name: Stefanie Heimgartner
     facebook:
       - url: https://www.facebook.com/stefanieheimgartner
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/stefanie_heimgartner/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/stefanie-heimgartner-6b0339b0
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/heimgartnerstef
-        verified: false
-        confidence: high
+        verified: true
   - name: Susanne Vincenz-Stauffacher
     facebook:
       - url: https://www.facebook.com/SusanneVincenzStauffacherSG
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/susannevincenzstauffacher/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/susanne-vincenz-stauffacher-2a1571254
-        verified: false
-        confidence: high
+        verified: true
+  - name: SVP Schweiz
+    kind: organization
+    facebook:
+      - url: https://www.facebook.com/SVPch
+        verified: true
+    instagram:
+      - url: https://www.instagram.com/SVPch/
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@svpch
+        verified: true
+    x:
+      - url: https://x.com/SVPch
+        verified: true
   - name: Sylvain Freymond
   - name: Tamara Funiciello
     facebook:
       - url: https://www.facebook.com/tamarafuniciell
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/tamarafuniciello/
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/tamarafuniciell
-        verified: false
-        confidence: high
+        verified: true
+    tiktok:
+      - url: https://www.tiktok.com/@t.funiciello
+        verified: true
   - name: Therese Schläpfer
     x:
       - url: https://x.com/SchlaepferThe
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas Aeschi
     facebook:
       - url: https://www.facebook.com/aeschi
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/thomasaeschi/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/thomas_aeschi
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas Bläsi
   - name: Thomas Burgherr
     facebook:
       - url: https://www.facebook.com/thomas.burgherr
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/ThomasBurgherr
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas de Courten
     linkedin:
       - url: https://www.linkedin.com/in/thomas-de-courten-99b96256
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas Hurter
   - name: Thomas Knutti
     facebook:
       - url: https://www.facebook.com/thomas.knutti.3
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/knutti_thomas/
-        verified: false
-        confidence: high
+        verified: true
     tiktok:
       - url: https://www.tiktok.com/@thomasknutti
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/ThomasKnutti
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas Matter
     facebook:
       - url: https://www.facebook.com/th.matter
-        verified: false
-        confidence: high
+        verified: true
   - name: Thomas Rechsteiner
   - name: Thomas Stettler
   - name: Ueli Schmezer
   - name: Ursula Zybach
     bluesky:
       - url: https://bsky.app/profile/ursulazybach.bsky.social
-        verified: false
-        confidence: high
+        verified: true
     facebook:
       - url: https://www.facebook.com/u.zybach
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/ursulazybach/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/ursula-zybach-b89ab43a
-        verified: false
-        confidence: high
+        verified: true
   - name: Valérie Piller Carrard
     instagram:
       - url: https://www.instagram.com/valeriepillercarrard/
-        verified: false
-        confidence: high
+        verified: true
   - name: Vincent Maitre
   - name: Vroni Thalmann-Bieri
     facebook:
       - url: https://www.facebook.com/vronthal
-        verified: false
-        confidence: low
+        verified: true
     instagram:
       - url: https://www.instagram.com/vronithalmann/
-        verified: false
-        confidence: high
+        verified: true
     linkedin:
       - url: https://www.linkedin.com/in/vroni-thalmann-bieri-08926a149
-        verified: false
-        confidence: high
-    x:
-      - url: https://x.com/vronthal69
-        verified: false
-        confidence: low
+        verified: true
   - name: Walter Gartmann
-    facebook:
-      - url: https://www.facebook.com/walter.gartmann.ch
-        verified: false
-        confidence: high
     instagram:
       - url: https://www.instagram.com/waltigartmann/
-        verified: false
-        confidence: high
+        verified: true
   - name: Yvan Pahud
   - name: Yvonne Bürgin
     facebook:
       - url: https://www.facebook.com/YvonneBuergin.Rueti
-        verified: false
-        confidence: high
+        verified: true
     instagram:
       - url: https://www.instagram.com/yvonne.buergin/
-        verified: false
-        confidence: high
+        verified: true
     x:
       - url: https://x.com/YvonneBuergin
-        verified: false
-        confidence: high
+        verified: true

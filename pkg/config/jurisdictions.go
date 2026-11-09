@@ -139,8 +139,10 @@ var nationalrat = votes.Jurisdiction{
 	ShortName: "Nationalrat",
 }
 
-// nationalratSubjects is the editorial policy for the Nationalrat: final and
-// overall votes only.
+// nationalratSubjects is the editorial policy for the Nationalrat's bills:
+// final and overall votes only. Beside them, WithFiledBusiness posts the vote
+// on each motion, postulate, parliamentary initiative and Standesinitiative,
+// where who filed it can be named and tagged.
 //
 // The chamber takes around 300 votes a three-week session, up to 102 in a day,
 // and most are on a single article or a procedural motion that means nothing
@@ -204,7 +206,7 @@ var jurisdictions = map[string]Jurisdiction{
 		// keeping the previous session out of a run started early in the next.
 		MaxAgeDays: 14,
 		NewSource: func() votes.Source {
-			return parlamentch.New(nationalrat).WithSubjects(nationalratSubjects...)
+			return parlamentch.New(nationalrat).WithSubjects(nationalratSubjects...).WithFiledBusiness()
 		},
 		NewMemberSource: func() votes.MemberSource { return parlamentch.New(nationalrat) },
 	},

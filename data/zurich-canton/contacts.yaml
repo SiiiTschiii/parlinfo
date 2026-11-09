@@ -36,7 +36,7 @@ contacts:
   - name: AL Kanton Zürich
     kind: organization
     bluesky:
-      - url: https://bsky.app/profile/alternativelinkezh.bsky.social
+      - url: https://bsky.app/profile/alternativeliste.bsky.social
         verified: true
     facebook:
       - url: https://www.facebook.com/ALZuerich
@@ -425,7 +425,7 @@ contacts:
       - url: https://www.facebook.com/gruenezuerich
         verified: true
     instagram:
-      - url: https://www.instagram.com/gruene.zuerich/
+      - url: https://www.instagram.com/gruenezh/
         verified: true
     x:
       - url: https://x.com/gruenezuerich

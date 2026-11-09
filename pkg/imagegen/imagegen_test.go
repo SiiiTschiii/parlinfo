@@ -251,7 +251,7 @@ func TestLayoutTitleCard_WrapsLongSummaryLine(t *testing.T) {
 }
 
 // A long subtitle is wrapped, not cut, while the card has room for it.
-func TestFitTitleAndSummary_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
+func TestFitOverview_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
 	fonts, err := loadFontSet()
 	if err != nil {
 		t.Fatalf("loadFontSet failed: %v", err)
@@ -259,10 +259,11 @@ func TestFitTitleAndSummary_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
 	group := testfixtures.MultiVoteGroup()
 	group[0].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 4)
 
-	_, titleLines, summaryLines, err := fitTitleAndSummary(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	_, titleLines, ol, err := fitOverview(group, bandInset(group[0]), imgWidth-2*padding, fonts)
 	if err != nil {
-		t.Fatalf("fitTitleAndSummary failed: %v", err)
+		t.Fatalf("fitOverview failed: %v", err)
 	}
+	summaryLines := overviewLines(ol)
 	if got := strings.Join(summaryLines, " "); strings.Contains(got, "…") {
 		t.Fatalf("expected the subtitle to wrap whole, got %q", got)
 	}
@@ -276,7 +277,7 @@ func TestFitTitleAndSummary_WrapsLongSubtitleWhenThereIsRoom(t *testing.T) {
 
 // When the title cannot be shown whole next to a full summary, the summary is
 // the one that gets cut.
-func TestFitTitleAndSummary_CutsSubtitlesBeforeTheTitle(t *testing.T) {
+func TestFitOverview_CutsSubtitlesBeforeTheTitle(t *testing.T) {
 	fonts, err := loadFontSet()
 	if err != nil {
 		t.Fatalf("loadFontSet failed: %v", err)
@@ -286,10 +287,11 @@ func TestFitTitleAndSummary_CutsSubtitlesBeforeTheTitle(t *testing.T) {
 		group[i].Subtitle = strings.Repeat("Bundesbeschluss über die Volksinitiative ", 25)
 	}
 	group[0].Title = strings.Repeat("Geschäft des Bundesrates zur Pelzinitiative ", 14)
-	_, titleLines, summaryLines, err := fitTitleAndSummary(group, bandInset(group[0]), imgWidth-2*padding, fonts)
+	_, titleLines, ol, err := fitOverview(group, bandInset(group[0]), imgWidth-2*padding, fonts)
 	if err != nil {
-		t.Fatalf("fitTitleAndSummary failed: %v", err)
+		t.Fatalf("fitOverview failed: %v", err)
 	}
+	summaryLines := overviewLines(ol)
 	if !strings.Contains(strings.Join(summaryLines, " "), "…") {
 		t.Fatalf("expected subtitles to be cut to keep the title whole, got %q", summaryLines)
 	}
@@ -929,5 +931,18 @@ func TestCardTitleWithoutAuthors(t *testing.T) {
 	}
 	if set := strings.Join(lines, " "); strings.Contains(set, " von ") {
 		t.Errorf("a card with no authors grew a 'von' clause:\n%s", set)
+	}
+}
+
+// A line break in the card title starts a paragraph of its own, which is how
+// the line saying what Ja supported sits below the title.
+func TestWrapTextKeepsParagraphs(t *testing.T) {
+	face, err := loadFace(goregular.TTF, 40)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := wrapText(face, "Kurzer Titel\nJa: keine Folge geben", 2000)
+	if len(got) != 2 || got[0] != "Kurzer Titel" || got[1] != "Ja: keine Folge geben" {
+		t.Errorf("wrapText = %q", got)
 	}
 }

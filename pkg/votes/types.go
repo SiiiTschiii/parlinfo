@@ -119,6 +119,24 @@ type Vote struct {
 	// "Auswahl A"). Derived from the totals when the source omits it.
 	Decision string
 
+	// Outcome is what the vote did to the business, when that differs in kind
+	// from whether Ja carried: "angenommen" or "abgelehnt" for a motion or
+	// postulate, "Folge gegeben" or "keine Folge gegeben" for an initiative.
+	// Posts state it in place of Decision. Empty for every other vote.
+	//
+	// It exists because on such a vote Ja is whatever the motion before the
+	// chamber proposed, often the committee's proposal to reject. A Ja carrying
+	// then means the business failed, and "✅ Angenommen" would say the
+	// opposite of what happened. Decision keeps meaning "Ja carried", which is
+	// what the consistency gate checks against the counts.
+	Outcome string
+
+	// Question says what a Ja vote supported, as a post prints it below the
+	// title: "Ja: keine Folge geben". Set where the verdict alone would read as
+	// a contradiction, a ✕ above 128 Ja, because Ja was a proposal to reject.
+	// Empty for every other vote.
+	Question string
+
 	// Attribution is the "Daten: …" line naming the source, closing the link
 	// block of every post. Two sources' terms require it (OpenParlData's CC BY
 	// 4.0, the Parlamentsdienste's open data terms); the others carry one too,
@@ -157,6 +175,20 @@ type Affair struct {
 	// a bare subject line. Formatters read this field; the city's titles are
 	// left exactly as they arrive.
 	Authors []Author
+
+	// Fraktion names the parliamentary group that filed this business, when a
+	// group and not a member did, written so it reads after "der" and names its
+	// parties: "SVP-Fraktion", "Mitte-EVP-Fraktion". Empty otherwise.
+	//
+	// parlament.ch records a Fraktion filing with the group as the filer and
+	// no member, so Authors stays empty for it. Zürich's sources leave this
+	// empty: the Gemeinderat writes the Fraktion into the title itself, and
+	// the tagger finds it there.
+	Fraktion string
+
+	// Canton names the canton that filed this business, a Standesinitiative,
+	// as a post names it after "des Kantons": "Thurgau". Empty otherwise.
+	Canton string
 }
 
 // Author is a member who signed a business matter into the chamber: the

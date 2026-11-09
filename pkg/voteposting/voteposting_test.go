@@ -862,7 +862,6 @@ func TestValidateVoteEmptyQuorumRoundIsRoutine(t *testing.T) {
 		typ  string
 		ja   int
 	}{
-		{"normal", "Normal", 0},
 		{"ausgabenbremse", "Ausgabenbremse", 0},
 		{"negative", "Quorum", -1},
 	} {
@@ -914,5 +913,40 @@ func TestPostToPlatform_PartiallyPostedThreadIsStillLogged(t *testing.T) {
 	}
 	if !reloaded.IsPosted("vote1") {
 		t.Error("the log was not saved to disk before the error was returned")
+	}
+}
+
+// The Gemeinderat Zürich served 2026_0212 Änderungsantrag with every count
+// zero; its own page for the vote is blank. Nothing was recorded, so skipping
+// it is routine — but a Normal vote with anything counted, or a negative count,
+// is still the source's fault.
+func TestValidateVoteEmptyNormalVoteIsRoutine(t *testing.T) {
+	zero := 0
+	empty := createVote("normal-0", "2026/212", "2026-10-28")
+	empty.Yes, empty.No, empty.Abstention, empty.Absent = &zero, &zero, &zero, &zero
+
+	if err := validateVote(empty); !errors.Is(err, ErrUnpostableVoteType) {
+		t.Fatalf("all-zero Normal vote: validateVote() = %v, want ErrUnpostableVoteType", err)
+	}
+
+	noCounts := empty
+	noCounts.Yes, noCounts.No, noCounts.Abstention, noCounts.Absent = nil, nil, nil, nil
+	if err := validateVote(noCounts); !errors.Is(err, ErrUnpostableVoteType) {
+		t.Errorf("Normal vote with no counts: validateVote() = %v, want ErrUnpostableVoteType", err)
+	}
+
+	neg := -1
+	negative := empty
+	negative.Yes = &neg
+	if err := validateVote(negative); !errors.Is(err, ErrUnsupportedVoteType) {
+		t.Errorf("negative count: validateVote() = %v, want ErrUnsupportedVoteType", err)
+	}
+
+	// Only an Abwesend count: not empty, and not a format we render either.
+	five := 5
+	absentOnly := empty
+	absentOnly.Absent = &five
+	if err := validateVote(absentOnly); !errors.Is(err, ErrUnsupportedVoteType) {
+		t.Errorf("absent-only: validateVote() = %v, want ErrUnsupportedVoteType", err)
 	}
 }

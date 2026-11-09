@@ -33,7 +33,10 @@ func FormatVoteDateTime(t time.Time) string {
 // GetVoteResultEmoji returns the appropriate emoji for a vote result
 func GetVoteResultEmoji(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
-	if strings.Contains(result, "angenommen") || result == "ja" {
+	if strings.Contains(result, "keine folge") {
+		return "❌"
+	}
+	if strings.Contains(result, "angenommen") || strings.Contains(result, "folge gegeben") || result == "ja" {
 		return "✅"
 	}
 	return "❌"
@@ -42,6 +45,14 @@ func GetVoteResultEmoji(result string) string {
 // GetVoteResultText returns the text for a vote result
 func GetVoteResultText(result string) string {
 	result = strings.TrimSpace(strings.ToLower(result))
+	// An initiative is not adopted by the vote that lets it go on, only given
+	// leave to: "Folge gegeben". Checked first, since it contains the other.
+	if strings.Contains(result, "keine folge") {
+		return "Keine Folge gegeben"
+	}
+	if strings.Contains(result, "folge gegeben") {
+		return "Folge gegeben"
+	}
 	if strings.Contains(result, "angenommen") || result == "ja" {
 		return "Angenommen"
 	}
@@ -104,6 +115,13 @@ func GroupPrefixLine(group []votes.Vote) string {
 	if prefix != "" {
 		if authors := AuthorList(LeadAuthors(group[0].Affair.Authors), 0); authors != "" {
 			prefix += " von " + authors
+		} else if fraktion := strings.TrimSpace(group[0].Affair.Fraktion); fraktion != "" {
+			// "Parlamentarische Initiative der GLP-Fraktion", the shape Stadt
+			// Zürich's titles use, which is also what the tagger reads to tag
+			// the Fraktion's parties.
+			prefix += " der " + fraktion
+		} else if canton := strings.TrimSpace(group[0].Affair.Canton); canton != "" {
+			prefix += " des Kantons " + canton
 		}
 	}
 
@@ -473,6 +491,26 @@ func CountsOf(v votes.Vote) VoteCounts {
 // Kanton Zürich reports a decision for binary votes only, and the openparldata
 // client clears it again unless the business and the ballot both state their
 // outcome, so threshold votes still arrive here without one.
+// Verdict is the outcome a post states for a vote: what it did to the
+// business where the source says (votes.Vote.Outcome), otherwise whether Ja
+// carried. Feed it to GetVoteResultEmoji and GetVoteResultText.
+func Verdict(v votes.Vote) string {
+	if o := strings.TrimSpace(v.Outcome); o != "" {
+		return o
+	}
+	return v.Decision
+}
+
+// QuestionLine is the line a post prints below the title saying what a Ja
+// supported, or "" when there is none. Only a lone vote has one: a group's
+// votes are each labelled by their own heading.
+func QuestionLine(group []votes.Vote) string {
+	if len(group) != 1 {
+		return ""
+	}
+	return strings.TrimSpace(group[0].Question)
+}
+
 func HasVerdict(v votes.Vote) bool {
 	if IsAuswahlVote(CountsOf(v)) {
 		return false
@@ -573,6 +611,25 @@ func IsUnsupportedVoteType(c VoteCounts) bool {
 	fields := []*int{c.Ja, c.Nein, c.Enthaltung, c.A, c.B, c.C, c.D, c.E}
 	for _, f := range fields {
 		if f != nil && *f > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// IsEmptyNormalVote reports whether these counts belong to an ordinary
+// Ja/Nein vote with nothing recorded at all: type "Normal" exactly and every
+// count, Abwesend included, nil or zero. A real vote seats a chamber, so even a
+// unanimous one carries a non-zero Ja or Abwesend; a record with none is a
+// placeholder the source never filled in. The Gemeinderat Zürich page for one
+// shows no title, no Geschäft and a Stimmen Total of 0. A negative count is a
+// fault in the source, not an empty record.
+func IsEmptyNormalVote(c VoteCounts) bool {
+	if strings.TrimSpace(c.Type) != "Normal" {
+		return false
+	}
+	for _, f := range []*int{c.Ja, c.Nein, c.Enthaltung, c.Abwesend, c.A, c.B, c.C, c.D, c.E} {
+		if f != nil && *f != 0 {
 			return false
 		}
 	}
