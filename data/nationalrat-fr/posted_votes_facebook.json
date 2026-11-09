@@ -1,5 +1,12 @@
 {
   "jurisdiction": "nationalrat-fr",
   "platform": "facebook",
-  "votes": []
+  "votes": [
+    {
+      "id": "38832",
+      "posted_at": "2026-11-09T20:29:14.228457754Z",
+      "post_id": "1413274428539302_122096250111549598",
+      "post_url": "https://www.facebook.com/1413274428539302_122096250111549598"
+    }
+  ]
 }
