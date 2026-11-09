@@ -1,45 +1,90 @@
 name: CH Parl Info Bot
 
+# The Nationalrat's votes, once per language: German (chparl), French
+# (chparl-fr) and Italian (chparl-it). Each job is a bot of its own, with its
+# own accounts, vote log and state branch, so the three run side by side. They
+# run the same steps, written out once under the de job and reused by the
+# others, with what differs between them in each job's env. See SETUP.md.
+
 on:
   schedule:
-    # Every four hours, at minute 6: half an hour off the Zürich bot's hourly
-    # minute, so the two rarely queue behind each other in the shared
-    # concurrency group below.
+    # Every four hours. The minute only keeps clear of the top of the hour,
+    # when GitHub starts scheduled runs latest.
     - cron: "6 */4 * * *"
 
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
 
-  # Optional: Also run on push to main for testing
-  # push:
-  #   branches: [ main ]
-
-# Shares the Zürich bot's group rather than having its own. Both publish
-# carousel images to this repo's gh-pages branch, one commit per file through
-# the Contents API, and two runs doing that at once can have a commit rejected
-# for a stale parent — losing the image after the post has been announced. The
-# vote logs do not need this: each workflow has its own state branch.
-concurrency:
-  group: bot
-  cancel-in-progress: false
+# Every job below has a concurrency group of its own, named for its channel,
+# and none is shared with another job or with bot-zhparl.yml.
+#
+# One run of a channel at a time: every run pushes the vote log to the channel's
+# state branch from a worktree branched at fetch time, and the push is not
+# forced. If a slow run overlapped the next one, both would post the same votes,
+# and the second push would be rejected and lose its record of them. Queue
+# rather than cancel: a run that has already posted must still be allowed to
+# write down that it did. GitHub keeps one run waiting per group and drops an
+# older waiting one, which loses nothing: the newer run does the same work.
+#
+# Channels do not wait for each other. All of them commit carousel images to
+# this repo's gh-pages branch, where two commits at once can conflict; the
+# upload retries a conflict (pkg/igapi/hosting.go) and each channel's file
+# names carry its key.
 
 jobs:
-  post-update:
+  de:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    concurrency:
+      group: bot-chparl
+      cancel-in-progress: false
     env:
       # Isolated branch that holds the mutable state log (posted votes).
       # Keeping it off `main` lets this Action update state without tripping
       # the pull request ruleset / branch protection on the primary branch.
-      # Its own branch, so this bot and the Zürich bot never push to the same
-      # ref. It must exist before the first run; see SETUP.md.
+      # Its own branch, so no two bots ever push to the same ref. It must
+      # exist before the first run; see SETUP.md.
       STATE_BRANCH: state-log-chparl
       # Vote logs live at data/<jurisdiction>/posted_votes_<platform>.json.
       STATE_FILES: "data/nationalrat/posted_votes_*.json"
+      # Only this job's channel. main.go walks every channel when this is unset.
+      CHANNEL: chparl
+      # Each platform skips itself while its credentials are unset, so a
+      # platform goes live by setting them; see SETUP.md.
+      CHPARL_X_API_KEY: ${{ secrets.CHPARL_X_API_KEY }}
+      CHPARL_X_API_SECRET: ${{ secrets.CHPARL_X_API_SECRET }}
+      CHPARL_X_ACCESS_TOKEN: ${{ secrets.CHPARL_X_ACCESS_TOKEN }}
+      CHPARL_X_ACCESS_SECRET: ${{ secrets.CHPARL_X_ACCESS_SECRET }}
+      CHPARL_BLUESKY_HANDLE: ${{ vars.CHPARL_BLUESKY_HANDLE }}
+      CHPARL_BLUESKY_PASSWORD: ${{ secrets.CHPARL_BLUESKY_PASSWORD }}
+      CHPARL_IG_USER_ID: ${{ secrets.CHPARL_IG_USER_ID }}
+      CHPARL_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
+      # See bot-zhparl.yml: images are hosted on this repo's gh-pages branch, and
+      # github.token can write nowhere else.
+      CHPARL_IMAGE_HOST_REPO: ${{ github.repository }}
+      CHPARL_IMAGE_HOST_TOKEN: ${{ github.token }}
+      # Same Page token as Instagram, as on the Zürich bot. The Page ID is
+      # the switch. Facebook takes its start date from the jurisdiction's
+      # JURISDICTION_NATIONALRAT_POST_FROM below, like every platform here.
+      CHPARL_FB_PAGE_ID: ${{ vars.CHPARL_FB_PAGE_ID }}
+      CHPARL_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
+      CHPARL_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_X_MAX_POSTS_PER_RUN }}
+      CHPARL_X_MAX_CHARS: ${{ vars.CHPARL_X_MAX_CHARS }}
+      CHPARL_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_BLUESKY_MAX_POSTS_PER_RUN }}
+      CHPARL_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IG_MAX_POSTS_PER_RUN }}
+      # Tagging is on unless this is "false"; see Channel.Tags.
+      CHPARL_TAGGING: ${{ vars.CHPARL_TAGGING }}
+      CHPARL_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FB_MAX_POSTS_PER_RUN }}
 
-    steps:
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
+      # Nothing posts until this is "true". See bot-zhparl.yml.
+      JURISDICTION_NATIONALRAT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_ENABLED }}
+      # The first sitting date posted, on every platform (YYYY-MM-DD). The
+      # vote logs start empty on it, so nothing earlier is ever posted.
+      JURISDICTION_NATIONALRAT_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_POST_FROM }}
+    steps: &steps
       - name: Checkout code
         uses: actions/checkout@v5
 
@@ -82,44 +127,6 @@ jobs:
         run: go mod download
 
       - name: Run bot
-        env:
-          # Only the chparl channel's accounts. main.go walks every channel
-          # when this is unset.
-          CHANNEL: chparl
-          # Each platform skips itself while its credentials are unset, so a
-          # platform goes live by setting them; see SETUP.md.
-          CHPARL_X_API_KEY: ${{ secrets.CHPARL_X_API_KEY }}
-          CHPARL_X_API_SECRET: ${{ secrets.CHPARL_X_API_SECRET }}
-          CHPARL_X_ACCESS_TOKEN: ${{ secrets.CHPARL_X_ACCESS_TOKEN }}
-          CHPARL_X_ACCESS_SECRET: ${{ secrets.CHPARL_X_ACCESS_SECRET }}
-          CHPARL_BLUESKY_HANDLE: ${{ vars.CHPARL_BLUESKY_HANDLE }}
-          CHPARL_BLUESKY_PASSWORD: ${{ secrets.CHPARL_BLUESKY_PASSWORD }}
-          CHPARL_IG_USER_ID: ${{ secrets.CHPARL_IG_USER_ID }}
-          CHPARL_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
-          # See bot-zhparl.yml: images are hosted on this repo's gh-pages branch, and
-          # github.token can write nowhere else.
-          CHPARL_IMAGE_HOST_REPO: ${{ github.repository }}
-          CHPARL_IMAGE_HOST_TOKEN: ${{ github.token }}
-          # Same Page token as Instagram, as on the Zürich bot. The Page ID is
-          # the switch. Facebook takes its start date from the jurisdiction's
-          # JURISDICTION_NATIONALRAT_POST_FROM below, like every platform here.
-          CHPARL_FB_PAGE_ID: ${{ vars.CHPARL_FB_PAGE_ID }}
-          CHPARL_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IG_ACCESS_TOKEN }}
-          CHPARL_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_X_MAX_POSTS_PER_RUN }}
-          CHPARL_X_MAX_CHARS: ${{ vars.CHPARL_X_MAX_CHARS }}
-          CHPARL_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_BLUESKY_MAX_POSTS_PER_RUN }}
-          CHPARL_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IG_MAX_POSTS_PER_RUN }}
-          # Tagging is on unless this is "false"; see Channel.Tags.
-          CHPARL_TAGGING: ${{ vars.CHPARL_TAGGING }}
-          CHPARL_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FB_MAX_POSTS_PER_RUN }}
-
-          MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK }}
-          MAX_VOTE_AGE_DAYS_NATIONALRAT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
-          # Nothing posts until this is "true". See bot-zhparl.yml.
-          JURISDICTION_NATIONALRAT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_ENABLED }}
-          # The first sitting date posted, on every platform (YYYY-MM-DD). The
-          # vote logs start empty on it, so nothing earlier is ever posted.
-          JURISDICTION_NATIONALRAT_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_POST_FROM }}
         run: go run main.go
 
       # Runs even when the bot itself fails, so a partial run still records what
@@ -152,3 +159,81 @@ jobs:
           fi
 
           git worktree remove --force "$worktree"
+
+  # A language job runs only once its jurisdiction is switched on, so it can
+  # ship before the state branch it restores from exists.
+  fr:
+    if: vars.JURISDICTION_NATIONALRAT_FR_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: bot-chparl-fr
+      cancel-in-progress: false
+    env:
+      CHANNEL: chparl-fr
+      STATE_BRANCH: state-log-chparl-fr
+      STATE_FILES: "data/nationalrat-fr/posted_votes_*.json"
+      CHPARL_FR_X_API_KEY: ${{ secrets.CHPARL_FR_X_API_KEY }}
+      CHPARL_FR_X_API_SECRET: ${{ secrets.CHPARL_FR_X_API_SECRET }}
+      CHPARL_FR_X_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_X_ACCESS_TOKEN }}
+      CHPARL_FR_X_ACCESS_SECRET: ${{ secrets.CHPARL_FR_X_ACCESS_SECRET }}
+      CHPARL_FR_BLUESKY_HANDLE: ${{ vars.CHPARL_FR_BLUESKY_HANDLE }}
+      CHPARL_FR_BLUESKY_PASSWORD: ${{ secrets.CHPARL_FR_BLUESKY_PASSWORD }}
+      CHPARL_FR_IG_USER_ID: ${{ secrets.CHPARL_FR_IG_USER_ID }}
+      CHPARL_FR_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
+      CHPARL_FR_IMAGE_HOST_REPO: ${{ github.repository }}
+      CHPARL_FR_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_FR_FB_PAGE_ID: ${{ vars.CHPARL_FR_FB_PAGE_ID }}
+      CHPARL_FR_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
+      CHPARL_FR_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_X_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_X_MAX_CHARS: ${{ vars.CHPARL_FR_X_MAX_CHARS }}
+      CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_IG_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_FB_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_TAGGING: ${{ vars.CHPARL_FR_TAGGING }}
+      # Its own override, so a catch-up can look further back than the other
+      # bots without changing what they fetch.
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_FR || vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT_FR: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT_FR }}
+      JURISDICTION_NATIONALRAT_FR_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_FR_POST_FROM }}
+      JURISDICTION_NATIONALRAT_FR_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_FR_ENABLED }}
+    steps: *steps
+
+  it:
+    if: vars.JURISDICTION_NATIONALRAT_IT_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: bot-chparl-it
+      cancel-in-progress: false
+    env:
+      CHANNEL: chparl-it
+      STATE_BRANCH: state-log-chparl-it
+      STATE_FILES: "data/nationalrat-it/posted_votes_*.json"
+      CHPARL_IT_X_API_KEY: ${{ secrets.CHPARL_IT_X_API_KEY }}
+      CHPARL_IT_X_API_SECRET: ${{ secrets.CHPARL_IT_X_API_SECRET }}
+      CHPARL_IT_X_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_X_ACCESS_TOKEN }}
+      CHPARL_IT_X_ACCESS_SECRET: ${{ secrets.CHPARL_IT_X_ACCESS_SECRET }}
+      CHPARL_IT_BLUESKY_HANDLE: ${{ vars.CHPARL_IT_BLUESKY_HANDLE }}
+      CHPARL_IT_BLUESKY_PASSWORD: ${{ secrets.CHPARL_IT_BLUESKY_PASSWORD }}
+      CHPARL_IT_IG_USER_ID: ${{ secrets.CHPARL_IT_IG_USER_ID }}
+      CHPARL_IT_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
+      CHPARL_IT_IMAGE_HOST_REPO: ${{ github.repository }}
+      CHPARL_IT_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_IT_FB_PAGE_ID: ${{ vars.CHPARL_IT_FB_PAGE_ID }}
+      CHPARL_IT_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
+      CHPARL_IT_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_X_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_X_MAX_CHARS: ${{ vars.CHPARL_IT_X_MAX_CHARS }}
+      CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_IG_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_FB_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_TAGGING: ${{ vars.CHPARL_IT_TAGGING }}
+      # Its own override, so a catch-up can look further back than the other
+      # bots without changing what they fetch.
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_IT || vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT_IT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT_IT }}
+      JURISDICTION_NATIONALRAT_IT_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_IT_POST_FROM }}
+      JURISDICTION_NATIONALRAT_IT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_IT_ENABLED }}
+    steps: *steps

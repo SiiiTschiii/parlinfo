@@ -56,6 +56,8 @@ type InstagramPlatform struct {
 	imageHoster    *igapi.ImageHoster
 	contactMapper  *contacts.Mapper
 	stubMode       bool // true when no credentials are configured
+	// imageNamePrefix starts every hosted image's file name; see SetImageNamePrefix.
+	imageNamePrefix string
 
 	// Injectable functions for testing
 	createMediaContainerFunc       CreateMediaContainerFunc
@@ -112,6 +114,13 @@ func (p *InstagramPlatform) Format(group []votes.Vote) (platforms.Content, error
 	return FormatCarouselWithContacts(group, p.contactMapper)
 }
 
+// SetImageNamePrefix puts the channel's key in front of every hosted image's
+// file name. Every channel hosts its images in the same directory of the same
+// branch, and their bots run side by side.
+func (p *InstagramPlatform) SetImageNamePrefix(channelKey string) {
+	p.imageNamePrefix = channelKey + "_"
+}
+
 // SetContactMapper configures mapped contacts for @mention tagging in generated captions.
 func (p *InstagramPlatform) SetContactMapper(contactMapper *contacts.Mapper) {
 	p.contactMapper = contactMapper
@@ -161,11 +170,12 @@ func (p *InstagramPlatform) postStub(igContent *InstagramContent) (votelog.PostR
 func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostRef, bool, error) {
 	imageCount := len(igContent.Images)
 
-	// Generate unique filenames for this carousel
+	// Generate unique filenames for this carousel. The prefix keeps two
+	// channels posting in the same millisecond from sharing a file.
 	names := make([]string, imageCount)
 	ts := time.Now().UnixMilli()
 	for i := range names {
-		names[i] = fmt.Sprintf("carousel_%d_%d.jpg", ts, i)
+		names[i] = fmt.Sprintf("%scarousel_%d_%d.jpg", p.imageNamePrefix, ts, i)
 	}
 
 	// Step 1: Upload images to GitHub Pages

@@ -3,6 +3,7 @@ package instagram
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -181,6 +182,38 @@ func TestPlatform_RealPostFlow(t *testing.T) {
 	// Upload and cleanup should use same names
 	if len(uploadedNames) != len(cleanedUpNames) {
 		t.Errorf("upload names (%d) != cleanup names (%d)", len(uploadedNames), len(cleanedUpNames))
+	}
+}
+
+// Channels share one image directory and post side by side, so each one's
+// files carry its key.
+func TestPlatform_RealPostFlow_ImageNamesCarryChannel(t *testing.T) {
+	p := NewInstagramPlatform(5)
+	p.stubMode = false
+	p.sleepFunc = func(_ time.Duration) {}
+	p.waitForImagesFunc = func(_ []string) error { return nil }
+	p.SetImageNamePrefix("chparl-fr")
+
+	var uploaded, cleaned []string
+	p.uploadImagesFunc = func(images [][]byte, names []string) ([]string, error) {
+		uploaded = names
+		return make([]string, len(images)), nil
+	}
+	p.createSingleImageContainerFunc = func(_, _ string) (string, error) { return "c", nil }
+	p.pollContainerStatusFunc = func(_ string) (string, error) { return igapi.StatusFinished, nil }
+	p.publishContainerFunc = func(_ string) (string, error) { return "m", nil }
+	p.getPermalinkFunc = func(_ string) (string, error) { return "https://example.com/p", nil }
+	p.cleanupImagesFunc = func(names []string) error { cleaned = names; return nil }
+
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "c"}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post: %v", err)
+	}
+	if len(uploaded) != 1 || !strings.HasPrefix(uploaded[0], "chparl-fr_carousel_") {
+		t.Errorf("uploaded %v, want one name starting chparl-fr_carousel_", uploaded)
+	}
+	if len(cleaned) != 1 || cleaned[0] != uploaded[0] {
+		t.Errorf("cleaned up %v, want %v", cleaned, uploaded)
 	}
 }
 

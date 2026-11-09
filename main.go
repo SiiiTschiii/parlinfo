@@ -186,6 +186,7 @@ func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction)
 			channel.EnvInt("IG_MAX_POSTS_PER_RUN", 5),
 		)
 		igPlatform.SetContactMapper(contactMapper)
+		igPlatform.SetImageNamePrefix(channel.Key)
 		plats = append(plats, channelPlatform{displayName: "Instagram", logPlatform: votelog.PlatformInstagram, poster: igPlatform})
 	} else {
 		log.Printf("⚠️  Channel %q: Instagram not configured (missing IG_USER_ID/IG_ACCESS_TOKEN/IMAGE_HOST_REPO/IMAGE_HOST_TOKEN)", channel.Key)
