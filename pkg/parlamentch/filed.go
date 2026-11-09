@@ -2,6 +2,7 @@ package parlamentch
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/siiitschiii/parlinfo/pkg/votes"
@@ -22,6 +23,12 @@ const (
 )
 
 var filedTypes = map[string]bool{typeMotion: true, typePostulat: true, typeParlIv: true, typeStandesIv: true}
+
+// filedKinds are the filed types by the service's BusinessType code, which is
+// the same in every language's feed where the type's name is not: the French
+// feed calls a parliamentary initiative "Initiative parlementaire". The German
+// name is what the rest of this file reads.
+var filedKinds = map[int]string{3: typeStandesIv, 4: typeParlIv, 5: typeMotion, 6: typePostulat}
 
 // filedNumberBands selects the votes on filed business by business number, on
 // the server: the Vote entity carries no business type to filter on, but the
@@ -48,10 +55,23 @@ func (c *Client) WithFiledBusiness() *Client {
 	return c
 }
 
-// isFiledVote reports whether a vote is one WithFiledBusiness admitted: no
-// Subject, on business of one of the filed types.
-func isFiledVote(v votes.Vote) bool {
-	return strings.TrimSpace(v.Subtitle) == "" && filedTypes[v.Affair.Type]
+// filedKind returns the German type of a vote WithFiledBusiness admitted — no
+// Subject, on business of one of the filed types — or "" for any other vote.
+// The type is read from the business's type code where it was fetched, and
+// otherwise from its name, which is the German one in the German feed.
+func (c *Client) filedKind(v votes.Vote) string {
+	if strings.TrimSpace(v.Subtitle) != "" {
+		return ""
+	}
+	if id, err := strconv.ParseInt(v.Affair.ID, 10, 64); err == nil {
+		if code, ok := c.businessCodes[id]; ok {
+			return filedKinds[code]
+		}
+	}
+	if filedTypes[v.Affair.Type] {
+		return v.Affair.Type
+	}
+	return ""
 }
 
 // side is the position a vote's Ja or Nein stands for, as one of its meanings
@@ -122,27 +142,40 @@ func meaningSide(meaning, businessType string) side {
 	return sideUnknown
 }
 
-// jaPhrase says in German what a Ja supported, read from its meaning: "Annahme
-// der Motion", "keine Folge geben". Empty where the meaning cannot be read.
-func jaPhrase(businessType, meaningYes string) string {
-	s := meaningSide(meaningYes, businessType)
-	switch {
-	case s == sideUnknown:
-		return ""
-	case businessType == typeParlIv || businessType == typeStandesIv:
-		if s == sideFor {
-			return "Folge geben"
-		}
-		return "keine Folge geben"
+// jaPhrases say what a Ja supported, by what it did and to which kind of
+// business, in each post language.
+var jaPhrases = map[votes.Language]map[string][2]string{ // type → {for, against}
+	votes.German: {
+		typeMotion:    {"Annahme der Motion", "Ablehnung der Motion"},
+		typePostulat:  {"Annahme des Postulats", "Ablehnung des Postulats"},
+		typeParlIv:    {"Folge geben", "keine Folge geben"},
+		typeStandesIv: {"Folge geben", "keine Folge geben"},
+	},
+	votes.French: {
+		typeMotion:    {"adopter la motion", "rejeter la motion"},
+		typePostulat:  {"adopter le postulat", "rejeter le postulat"},
+		typeParlIv:    {"donner suite", "ne pas donner suite"},
+		typeStandesIv: {"donner suite", "ne pas donner suite"},
+	},
+	votes.Italian: {
+		typeMotion:    {"accogliere la mozione", "respingere la mozione"},
+		typePostulat:  {"accogliere il postulato", "respingere il postulato"},
+		typeParlIv:    {"dare seguito", "non dare seguito"},
+		typeStandesIv: {"dare seguito", "non dare seguito"},
+	},
+}
+
+// jaPhrase says in l what a Ja supported, read from its meaning: "Annahme der
+// Motion", "keine Folge geben". Empty where the meaning cannot be read.
+func jaPhrase(l votes.Language, businessType, meaningYes string) string {
+	phrases := jaPhrases[l.OrGerman()][businessType]
+	switch meaningSide(meaningYes, businessType) {
+	case sideFor:
+		return phrases[0]
+	case sideAgainst:
+		return phrases[1]
 	}
-	object := "der Motion"
-	if businessType == typePostulat {
-		object = "des Postulats"
-	}
-	if s == sideFor {
-		return "Annahme " + object
-	}
-	return "Ablehnung " + object
+	return ""
 }
 
 // outcomeOf returns what a vote did to its business, or "" when the meanings

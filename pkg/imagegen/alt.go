@@ -79,7 +79,7 @@ func combinedAlt(group []votes.Vote) string {
 // overviewAltHeadingFloor: a group that long is named by its business number
 // and the start of its title, and every result stays.
 func titleAlt(group []votes.Vote) string {
-	head := fmt.Sprintf("%d Abstimmungen\n", len(group))
+	head := fmt.Sprintf(voteformat.W(group[0].Language).CardOverview+"\n", len(group))
 	// Labels shorten first, then go, then the tallies take their short form:
 	// what a vote is called can be found on its own card, its result is what
 	// this description is for.
@@ -146,7 +146,7 @@ func resultAlt(group []votes.Vote, i int) string {
 	case auswahlOutcome(v) != "":
 		label = auswahlOutcome(v) + ": " + label
 	case voteformat.HasVerdict(v):
-		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(v)), voteformat.GetVoteResultText(voteformat.Verdict(v)), label)
+		label = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(v)), voteformat.GetVoteResultText(v.Language, voteformat.Verdict(v)), label)
 	}
 
 	if stamp := voteformat.FormatVoteDateTime(v.Date); stamp != "" {
@@ -155,7 +155,7 @@ func resultAlt(group []votes.Vote, i int) string {
 
 	result := voteformat.FormatVoteCountsLong(voteformat.CountsOf(v))
 	if len(v.MemberVotes) > 0 {
-		if breakdown := voteformat.FormatFraktionBreakdown(voteformat.AggregateFraktionCounts(v)); breakdown != "" {
+		if breakdown := voteformat.FormatFraktionBreakdown(voteformat.AggregateFraktionCounts(v), v.Language); breakdown != "" {
 			result += "\n\n" + breakdown
 		}
 	}

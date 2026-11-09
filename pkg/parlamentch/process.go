@@ -77,6 +77,12 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 	if len(group) == 0 || group[0].DateString() == "" {
 		return nil, none("Abstimmung ohne Datum")
 	}
+	// The rules below match the German feed's type names and statuses, and
+	// the card states them in German, so the other languages get no process
+	// until each has its own wording.
+	if c.language() != votes.German {
+		return nil, none("Stand der Beratungen nur auf Deutsch")
+	}
 	id, err := strconv.ParseInt(group[0].Affair.ID, 10, 64)
 	if err != nil {
 		return nil, none("Geschäftsnummer nicht lesbar")
@@ -121,7 +127,7 @@ func none(reason string) error { return votes.NoProcess{Reason: reason} }
 var errSeveralBills = errors.New("business has several bills, and the vote names none")
 
 func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
-	if l := c.labels[group[0].SourceID]; len(group) == 1 && group[0].Outcome == "" && isFiledVote(group[0]) && l.meaningYes == "" && l.meaningNo == "" {
+	if l := c.labels[group[0].SourceID]; len(group) == 1 && group[0].Outcome == "" && c.filedKind(group[0]) != "" && l.meaningYes == "" && l.meaningNo == "" {
 		v, err := c.recordedOutcome(id, group[0])
 		if err != nil {
 			return nil, err

@@ -55,20 +55,37 @@ type authorDTO struct {
 	PartyAbbreviation string `json:"PartyAbbreviation"`
 }
 
-// partyLabels maps the service's party abbreviations onto the names posts use
-// elsewhere. Unlisted abbreviations (SVP, SP, EVP, EDU, Lega, MCG) already are
-// those names and pass through.
-var partyLabels = map[string]string{
-	"M-E":          "Mitte",
-	"FDP-Liberale": "FDP",
-	"GRÜNE":        "Grüne",
-	"glp":          "GLP",
-	"-":            "parteilos",
+// partyLabels maps the service's party abbreviations, as each language's feed
+// spells them, onto the names posts use elsewhere. Unlisted abbreviations
+// (SVP, SP, EVP, EDU, Lega, MCG in German; UDC, PLR, PEV, UDF in French and
+// Italian) already are those names and pass through.
+var partyLabels = map[votes.Language]map[string]string{
+	votes.German: {
+		"M-E":          "Mitte",
+		"FDP-Liberale": "FDP",
+		"GRÜNE":        "Grüne",
+		"glp":          "GLP",
+		"-":            "parteilos",
+	},
+	votes.French: {
+		"M-E":      "Centre",
+		"PSS":      "PS",
+		"VERT-E-S": "Vert-e-s",
+		"pvl":      "PVL",
+		"-":        "sans parti",
+	},
+	votes.Italian: {
+		"M-E":   "Centro",
+		"PSS":   "PS",
+		"VERDI": "Verdi",
+		"pvl":   "PVL",
+		"-":     "senza partito",
+	},
 }
 
-func partyLabel(abbreviation string) string {
+func partyLabel(l votes.Language, abbreviation string) string {
 	abbreviation = strings.TrimSpace(abbreviation)
-	if label, ok := partyLabels[abbreviation]; ok {
+	if label, ok := partyLabels[l.OrGerman()][abbreviation]; ok {
 		return label
 	}
 	return abbreviation
@@ -86,24 +103,63 @@ func partyLabel(abbreviation string) string {
 // Business filed by one and still on the agenda is rare enough that the post
 // does without the name rather than guess at a group that has since
 // dissolved or merged.
-var fraktionNames = map[int64]string{
-	1:   "FDP-Fraktion",
-	2:   "SP-Fraktion",
-	3:   "Mitte-EVP-Fraktion",
-	4:   "SVP-Fraktion",
-	6:   "Grüne-Fraktion",
-	137: "GLP-Fraktion",
+//
+// The French and Italian names are what those languages' posts print after
+// "du" and "del"; the tagger reads only the German ones, so they carry no
+// party list.
+var fraktionNames = map[votes.Language]map[int64]string{
+	votes.German: {
+		1:   "FDP-Fraktion",
+		2:   "SP-Fraktion",
+		3:   "Mitte-EVP-Fraktion",
+		4:   "SVP-Fraktion",
+		6:   "Grüne-Fraktion",
+		137: "GLP-Fraktion",
+	},
+	votes.French: {
+		1:   "groupe PLR",
+		2:   "groupe PS",
+		3:   "groupe Centre-PEV",
+		4:   "groupe UDC",
+		6:   "groupe des Vert-e-s",
+		137: "groupe PVL",
+	},
+	votes.Italian: {
+		1:   "gruppo PLR",
+		2:   "gruppo PS",
+		3:   "gruppo Centro-PEV",
+		4:   "gruppo UDC",
+		6:   "gruppo dei Verdi",
+		137: "gruppo PVL",
+	},
 }
 
-// cantonNames are the cantons by the service's CantonNumber, as a post names
-// them after "des Kantons". The numbers follow the federal order except Tessin,
-// which the service numbers 27; its own names abbreviate the two Appenzells.
-var cantonNames = map[int64]string{
-	1: "Zürich", 2: "Bern", 3: "Luzern", 4: "Uri", 5: "Schwyz", 6: "Obwalden", 7: "Nidwalden",
-	8: "Glarus", 9: "Zug", 10: "Freiburg", 11: "Solothurn", 12: "Basel-Stadt", 13: "Basel-Landschaft",
-	14: "Schaffhausen", 15: "Appenzell Ausserrhoden", 16: "Appenzell Innerrhoden", 17: "St. Gallen",
-	18: "Graubünden", 19: "Aargau", 20: "Thurgau", 22: "Waadt", 23: "Wallis",
-	24: "Neuenburg", 25: "Genf", 26: "Jura", 27: "Tessin",
+// cantonNames are the cantons by the service's CantonNumber, in each language,
+// as a post names them after "des Kantons" or in brackets after the type. The
+// numbers follow the federal order except Tessin, which the service numbers
+// 27; the French and Italian names are the service's own.
+var cantonNames = map[votes.Language]map[int64]string{
+	votes.German: {
+		1: "Zürich", 2: "Bern", 3: "Luzern", 4: "Uri", 5: "Schwyz", 6: "Obwalden", 7: "Nidwalden",
+		8: "Glarus", 9: "Zug", 10: "Freiburg", 11: "Solothurn", 12: "Basel-Stadt", 13: "Basel-Landschaft",
+		14: "Schaffhausen", 15: "Appenzell Ausserrhoden", 16: "Appenzell Innerrhoden", 17: "St. Gallen",
+		18: "Graubünden", 19: "Aargau", 20: "Thurgau", 22: "Waadt", 23: "Wallis",
+		24: "Neuenburg", 25: "Genf", 26: "Jura", 27: "Tessin",
+	},
+	votes.French: {
+		1: "Zurich", 2: "Berne", 3: "Lucerne", 4: "Uri", 5: "Schwyz", 6: "Obwald", 7: "Nidwald",
+		8: "Glaris", 9: "Zoug", 10: "Fribourg", 11: "Soleure", 12: "Bâle-Ville", 13: "Bâle-Campagne",
+		14: "Schaffhouse", 15: "Appenzell Rh.-Ext.", 16: "Appenzell Rh.-Int.", 17: "St-Gall",
+		18: "Grisons", 19: "Argovie", 20: "Thurgovie", 22: "Vaud", 23: "Valais",
+		24: "Neuchâtel", 25: "Genève", 26: "Jura", 27: "Tessin",
+	},
+	votes.Italian: {
+		1: "Zurigo", 2: "Berna", 3: "Lucerna", 4: "Uri", 5: "Svitto", 6: "Obvaldo", 7: "Nidvaldo",
+		8: "Glarona", 9: "Zugo", 10: "Friburgo", 11: "Soletta", 12: "Basilea-Città", 13: "Basilea-Campagna",
+		14: "Sciaffusa", 15: "Appenzello Esterno", 16: "Appenzello Interno", 17: "San Gallo",
+		18: "Grigioni", 19: "Argovia", 20: "Turgovia", 22: "Vaud", 23: "Vallese",
+		24: "Neuchâtel", 25: "Ginevra", 26: "Giura", 27: "Ticino",
+	},
 }
 
 // authorship is who filed a business: members, a Fraktion, or a canton.
@@ -151,14 +207,14 @@ func (c *Client) authorshipOf(businessNumber int64) authorship {
 func (c *Client) businessAuthors(businessNumber int64) (authorship, error) {
 	var roles []businessRoleDTO
 	err := c.get("/BusinessRole", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
-			businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
+		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d and (Role eq %d or Role eq %d or Role eq %d)",
+			c.odataLanguage(), businessNumber, roleAuthor, roleTakenOver, roleCoSigned),
 		"$select": "Role,MemberCouncilNumber,ParlGroupNumber,CantonNumber",
 	}, &roles)
 	if err != nil {
 		return authorship{}, err
 	}
-	a := authorship{fraktion: filingFraktion(roles), canton: filingCanton(roles)}
+	a := authorship{fraktion: filingFraktion(c.language(), roles), canton: filingCanton(c.language(), roles)}
 	held := authorOrder(roles)
 	if len(held) == 0 {
 		return a, nil
@@ -170,33 +226,33 @@ func (c *Client) businessAuthors(businessNumber int64) (authorship, error) {
 	}
 	var members []authorDTO
 	err = c.get("/MemberCouncil", query{
-		"$filter": "Language eq 'DE' and (" + strings.Join(clauses, " or ") + ")",
+		"$filter": "Language eq '" + c.odataLanguage() + "' and (" + strings.Join(clauses, " or ") + ")",
 		"$select": "ID,FirstName,LastName,PartyAbbreviation",
 	}, &members)
 	if err != nil {
 		return authorship{}, err
 	}
-	a.authors = namedAuthors(held, members)
+	a.authors = namedAuthors(c.language(), held, members)
 	return a, nil
 }
 
 // filingCanton returns the name of the canton that filed a business, a
-// Standesinitiative, or "" when no canton did.
-func filingCanton(roles []businessRoleDTO) string {
+// Standesinitiative, in l, or "" when no canton did.
+func filingCanton(l votes.Language, roles []businessRoleDTO) string {
 	for _, r := range roles {
 		if r.Role == roleAuthor && r.CantonNumber != nil {
-			return cantonNames[*r.CantonNumber]
+			return cantonNames[l.OrGerman()][*r.CantonNumber]
 		}
 	}
 	return ""
 }
 
-// filingFraktion returns the name of the Fraktion that filed a business, or ""
-// when no Fraktion did or the one that did is not in fraktionNames.
-func filingFraktion(roles []businessRoleDTO) string {
+// filingFraktion returns the name of the Fraktion that filed a business, in l,
+// or "" when no Fraktion did or the one that did is not in fraktionNames.
+func filingFraktion(l votes.Language, roles []businessRoleDTO) string {
 	for _, r := range roles {
 		if r.Role == roleAuthor && r.ParlGroupNumber != nil {
-			return fraktionNames[*r.ParlGroupNumber]
+			return fraktionNames[l.OrGerman()][*r.ParlGroupNumber]
 		}
 	}
 	return ""
@@ -235,7 +291,7 @@ func authorOrder(roles []businessRoleDTO) []heldRole {
 // out: the formatters treat the party as what marks a member acting in the
 // chamber, and a filer who has left is still a member of record with their
 // party.
-func namedAuthors(held []heldRole, members []authorDTO) []votes.Author {
+func namedAuthors(l votes.Language, held []heldRole, members []authorDTO) []votes.Author {
 	byID := make(map[int64]authorDTO, len(members))
 	for _, m := range members {
 		byID[m.ID] = m
@@ -252,7 +308,7 @@ func namedAuthors(held []heldRole, members []authorDTO) []votes.Author {
 		}
 		first, last := strings.TrimSpace(m.FirstName), strings.TrimSpace(m.LastName)
 		name := strings.TrimSpace(first + " " + last)
-		party := partyLabel(m.PartyAbbreviation)
+		party := partyLabel(l, m.PartyAbbreviation)
 		if name == "" || party == "" {
 			continue
 		}

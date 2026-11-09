@@ -138,7 +138,7 @@ func buildWahlgeschaeftPost(group []votes.Vote, charLimit int) *XPost {
 // If the title is too long, it is truncated with "…".
 func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Mapper, charLimit int) (*XPost, []votes.Author) {
 	header := fmt.Sprintf("🗳️  %s\n\n", voteformat.PostHeadline(group))
-	threadHint := "\n\n👇 Details im Thread"
+	threadHint := "\n\n👇 " + voteformat.W(group[0].Language).ThreadHint
 	// What Ja supported sits below the title. Carried with the hint, so the
 	// truncation below reserves room for it and shortens the title instead.
 	if q := voteformat.QuestionLine(group); q != "" {
@@ -153,7 +153,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 	body := title
 	if len(group) == 1 && voteformat.HasVerdict(group[0]) {
 		body = fmt.Sprintf("%s %s: %s", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
-			voteformat.GetVoteResultText(voteformat.Verdict(group[0])), title)
+			voteformat.GetVoteResultText(group[0].Language, voteformat.Verdict(group[0])), title)
 	}
 	available := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(body) - 1
 	subtitlePrefix, deferred := voteformat.FitAuthorPrefix(group, available, weightedLen)
@@ -186,7 +186,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 				body = title
 			} else {
 				resultEmoji := voteformat.GetVoteResultEmoji(voteformat.Verdict(vote))
-				result := voteformat.GetVoteResultText(voteformat.Verdict(vote))
+				result := voteformat.GetVoteResultText(vote.Language, voteformat.Verdict(vote))
 				prefix := fmt.Sprintf("%s %s: ", resultEmoji, result)
 				titleAvailable := available - weightedLen(prefix)
 				if titleAvailable > 0 {
@@ -272,7 +272,7 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 		// Add Fraktion breakdown as separate entry
 		if len(vote.MemberVotes) > 0 {
 			fraktionCounts := voteformat.AggregateFraktionCounts(vote)
-			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts); breakdown != "" {
+			if breakdown := voteformat.FormatFraktionBreakdown(fraktionCounts, vote.Language); breakdown != "" {
 				entries = append(entries, replyEntry{text: breakdown, vote: i})
 			}
 		}

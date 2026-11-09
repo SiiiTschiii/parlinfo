@@ -1,0 +1,168 @@
+name: CH Parl Info Bot (FR, IT)
+
+# The Nationalrat's votes in French (chparl-fr) and Italian (chparl-it), each
+# to accounts of its own; bot-chparl.yml posts them in German. The two jobs run
+# the same steps, written out once under the fr job and reused by the it job,
+# with what differs between them in each job's env. See SETUP.md.
+
+on:
+  schedule:
+    # Every four hours, two hours off bot-chparl.yml and at minute 21, so it
+    # never queues behind the German run or the hourly Zürich one at :36.
+    - cron: "21 2-23/4 * * *"
+  workflow_dispatch:
+
+# The same group as the other bots: all of them publish carousel images to
+# gh-pages, and two at once can lose an image. See bot-chparl.yml.
+concurrency:
+  group: bot
+  cancel-in-progress: false
+
+jobs:
+  # A job runs only once its jurisdiction is switched on, so the workflow can
+  # ship before the state branch it restores from exists.
+  fr:
+    if: vars.JURISDICTION_NATIONALRAT_FR_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CHANNEL: chparl-fr
+      STATE_BRANCH: state-log-chparl-fr
+      STATE_FILES: "data/nationalrat-fr/posted_votes_*.json"
+      CHPARL_FR_X_API_KEY: ${{ secrets.CHPARL_FR_X_API_KEY }}
+      CHPARL_FR_X_API_SECRET: ${{ secrets.CHPARL_FR_X_API_SECRET }}
+      CHPARL_FR_X_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_X_ACCESS_TOKEN }}
+      CHPARL_FR_X_ACCESS_SECRET: ${{ secrets.CHPARL_FR_X_ACCESS_SECRET }}
+      CHPARL_FR_BLUESKY_HANDLE: ${{ vars.CHPARL_FR_BLUESKY_HANDLE }}
+      CHPARL_FR_BLUESKY_PASSWORD: ${{ secrets.CHPARL_FR_BLUESKY_PASSWORD }}
+      CHPARL_FR_IG_USER_ID: ${{ secrets.CHPARL_FR_IG_USER_ID }}
+      CHPARL_FR_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
+      CHPARL_FR_IMAGE_HOST_REPO: ${{ github.repository }}
+      CHPARL_FR_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_FR_FB_PAGE_ID: ${{ vars.CHPARL_FR_FB_PAGE_ID }}
+      CHPARL_FR_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
+      CHPARL_FR_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_X_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_X_MAX_CHARS: ${{ vars.CHPARL_FR_X_MAX_CHARS }}
+      CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_BLUESKY_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_IG_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_FB_MAX_POSTS_PER_RUN }}
+      CHPARL_FR_TAGGING: ${{ vars.CHPARL_FR_TAGGING }}
+      # Its own override, so a catch-up can look further back than the other
+      # bots without changing what they fetch.
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_FR || vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT_FR: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT_FR }}
+      JURISDICTION_NATIONALRAT_FR_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_FR_POST_FROM }}
+      JURISDICTION_NATIONALRAT_FR_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_FR_ENABLED }}
+    steps: &steps
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Restore vote log from state branch
+        id: restore
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # '$STATE_BRANCH' holds the only copy of the vote log, so every failure
+          # below is fatal: votelog.Load treats a missing log file as an *empty*
+          # log with no error, which reads as "nothing was ever posted" and would
+          # re-post everything inside MAX_VOTE_AGE_DAYS.
+          if ! state_ref="$(git ls-remote --heads origin "$STATE_BRANCH")"; then
+            echo "::error::Cannot reach origin to look up '$STATE_BRANCH'."
+            exit 1
+          fi
+
+          if [ -z "$state_ref" ]; then
+            echo "::error::State branch '$STATE_BRANCH' does not exist. It holds the only copy of the vote log; running without it would re-post already-published votes. Recreate it from a known-good log before running again."
+            exit 1
+          fi
+
+          echo "State branch '$STATE_BRANCH' found; restoring vote logs from it."
+          git fetch origin "$STATE_BRANCH"
+
+          if ! git checkout FETCH_HEAD -- "$STATE_FILES"; then
+            echo "::error::'$STATE_BRANCH' contains no vote logs matching $STATE_FILES."
+            exit 1
+          fi
+          echo "Restored:"
+          find data -name 'posted_votes_*.json' | sort
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25.5"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run bot
+        run: go run main.go
+
+      # Runs even when the bot itself fails, so a partial run still records what
+      # it posted — but not when the restore failed, since the logs on disk would
+      # then be missing or stale rather than the real state.
+      - name: Commit updated vote log to state branch
+        if: always() && steps.restore.outcome == 'success'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Update the state log on the isolated STATE_BRANCH using a dedicated
+          # worktree, so nothing is ever committed to the protected primary branch.
+          # The restore step guarantees the branch exists and is fetched.
+          worktree="$(mktemp -d)"
+          git worktree add -B "$STATE_BRANCH" "$worktree" "origin/$STATE_BRANCH"
+
+          # --parents preserves data/<jurisdiction>/, without which two
+          # jurisdictions' logs would overwrite each other in the state branch
+          # and votes would look unposted on the next run.
+          mapfile -t state_files < <(find data -name 'posted_votes_*.json' | sort)
+          cp --parents "${state_files[@]}" "$worktree/"
+
+          git -C "$worktree" add -- data
+          if git -C "$worktree" diff --staged --quiet; then
+            echo "No vote log changes to commit."
+          else
+            git -C "$worktree" commit -m "Update posted votes log [skip ci]"
+            git -C "$worktree" push origin "$STATE_BRANCH"
+          fi
+
+          git worktree remove --force "$worktree"
+
+  # After fr, never beside it: the two would publish images to gh-pages at once.
+  it:
+    needs: fr
+    if: ${{ !cancelled() && vars.JURISDICTION_NATIONALRAT_IT_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CHANNEL: chparl-it
+      STATE_BRANCH: state-log-chparl-it
+      STATE_FILES: "data/nationalrat-it/posted_votes_*.json"
+      CHPARL_IT_X_API_KEY: ${{ secrets.CHPARL_IT_X_API_KEY }}
+      CHPARL_IT_X_API_SECRET: ${{ secrets.CHPARL_IT_X_API_SECRET }}
+      CHPARL_IT_X_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_X_ACCESS_TOKEN }}
+      CHPARL_IT_X_ACCESS_SECRET: ${{ secrets.CHPARL_IT_X_ACCESS_SECRET }}
+      CHPARL_IT_BLUESKY_HANDLE: ${{ vars.CHPARL_IT_BLUESKY_HANDLE }}
+      CHPARL_IT_BLUESKY_PASSWORD: ${{ secrets.CHPARL_IT_BLUESKY_PASSWORD }}
+      CHPARL_IT_IG_USER_ID: ${{ secrets.CHPARL_IT_IG_USER_ID }}
+      CHPARL_IT_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
+      CHPARL_IT_IMAGE_HOST_REPO: ${{ github.repository }}
+      CHPARL_IT_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_IT_FB_PAGE_ID: ${{ vars.CHPARL_IT_FB_PAGE_ID }}
+      CHPARL_IT_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
+      CHPARL_IT_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_X_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_X_MAX_CHARS: ${{ vars.CHPARL_IT_X_MAX_CHARS }}
+      CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_BLUESKY_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_IG_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_IG_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_FB_MAX_POSTS_PER_RUN }}
+      CHPARL_IT_TAGGING: ${{ vars.CHPARL_IT_TAGGING }}
+      # Its own override, so a catch-up can look further back than the other
+      # bots without changing what they fetch.
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT_IT || vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT_IT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT_IT }}
+      JURISDICTION_NATIONALRAT_IT_POST_FROM: ${{ vars.JURISDICTION_NATIONALRAT_IT_POST_FROM }}
+      JURISDICTION_NATIONALRAT_IT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_IT_ENABLED }}
+    steps: *steps

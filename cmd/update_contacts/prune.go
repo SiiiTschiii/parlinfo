@@ -25,7 +25,7 @@ func sittingNames(j config.Jurisdiction) ([]string, error) {
 // sitsElsewhere returns the key of another jurisdiction each person sits in.
 func sitsElsewhere(own string) (map[string]string, error) {
 	elsewhere := map[string]string{}
-	for _, key := range config.JurisdictionKeys() {
+	for _, key := range config.ChamberKeys() {
 		if key == own {
 			continue
 		}

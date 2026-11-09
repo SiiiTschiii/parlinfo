@@ -72,6 +72,9 @@ func (c *Client) markRepeats(group []votes.Vote) error {
 		return nil
 	}
 
+	// Asked in German whatever the jurisdiction's language: isRepeatOrder
+	// reads the German wording of the Ordnungsantrag, and a vote's ID is the
+	// same in every language.
 	var orders []repeatOrderDTO
 	day := group[0].Date.Format("2006-01-02")
 	if err := c.get("/Vote", query{

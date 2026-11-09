@@ -24,9 +24,9 @@ type voteDTO struct {
 	BillTitle           *string `json:"BillTitle"`
 	IdLegislativePeriod int64   `json:"IdLegislativePeriod"`
 	IdSession           int64   `json:"IdSession"`
-	// Subject, MeaningYes and MeaningNo are served in French in the German
-	// feed since the Wintersession 2025, and are published as the service
-	// serves them. Subject is null on about a third of votes; none of those
+	// Subject, MeaningYes and MeaningNo are served in French in every
+	// language's feed since the Wintersession 2025. The German posts publish
+	// them as served; see subjectLabels for the others. Subject is null on about a third of votes; none of those
 	// is a final or overall vote.
 	Subject    *string `json:"Subject"`
 	MeaningYes *string `json:"MeaningYes"`
@@ -46,6 +46,7 @@ type votingDTO struct {
 
 // businessDTO is the part of a Business the posts use.
 type businessDTO struct {
+	BusinessType     int    `json:"BusinessType"`
 	BusinessTypeName string `json:"BusinessTypeName"`
 }
 
@@ -88,7 +89,7 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 
 // voteFilter builds the $filter for FetchRecent.
 func (c *Client) voteFilter() string {
-	filter := "Language eq 'DE'"
+	filter := fmt.Sprintf("Language eq '%s'", c.odataLanguage())
 	if len(c.subjects) == 0 && !c.filedBusiness {
 		return filter
 	}
@@ -129,7 +130,7 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 			if vs[i].Affair.Type == "" {
 				return nil, fmt.Errorf("parlamentch: vote %s: the type of business %s is unknown, so it cannot be told whether to post it", vs[i].SourceID, vs[i].Affair.Number)
 			}
-			if !isFiledVote(vs[i]) {
+			if c.filedKind(vs[i]) == "" {
 				continue
 			}
 		}
@@ -194,43 +195,45 @@ var plainMeanings = map[string]bool{
 // is the one recommending that the people reject the initiative, so
 // "Angenommen" on its own reads as the opposite of what happened.
 //
-// Both are published as the service serves them, French included; see
-// voteDTO.
+// The bill is published as the service serves it, which is in the post's
+// language; the Subject is renamed into it where the service has not — see
+// subjectLabels.
 func (c *Client) label(group []votes.Vote) {
 	for i := range group {
 		l := c.labels[group[i].SourceID]
 		parts := []string{}
 		if group[i].Subtitle != "" {
-			parts = append(parts, group[i].Subtitle)
+			parts = append(parts, subjectLabel(c.language(), group[i].Subtitle))
 		}
 		if l.bill != "" && !strings.EqualFold(l.bill, group[i].Affair.Title) && c.hasSeveralBills(group[i].Affair.ID) {
 			parts = append(parts, l.bill)
 		}
 		sub := strings.Join(parts, ": ")
 		if l.repeat {
-			sub += " (Wiederholung)"
+			sub += " " + repeatLabels[c.language()]
 		}
-		if isFiledVote(group[i]) {
+		if kind := c.filedKind(group[i]); kind != "" {
 			// What the vote did to the business is stated as its verdict, and
-			// what Ja stood for below the title, in German: the verdict alone
+			// what Ja stood for below the title: the verdict alone
 			// reads as a contradiction where Ja was a proposal to reject.
 			// Where the meanings cannot be read there is no verdict, and the
 			// meaning is printed as served, plain ones included, since it is
 			// then all that says what the counts decided.
 			group[i].Subtitle = strings.TrimSpace(sub)
-			group[i].Outcome = outcomeOf(group[i].Affair.Type, l.meaningYes, l.meaningNo, group[i].Decision)
+			yes := yesLabels[c.language()] + ": "
+			group[i].Outcome = outcomeOf(kind, l.meaningYes, l.meaningNo, group[i].Decision)
 			if group[i].Outcome != "" {
-				group[i].Question = "Ja: " + jaPhrase(group[i].Affair.Type, l.meaningYes)
+				group[i].Question = yes + jaPhrase(c.language(), kind, l.meaningYes)
 				continue
 			}
 			group[i].Decision = ""
 			if l.meaningYes != "" {
-				group[i].Question = "Ja: " + l.meaningYes
+				group[i].Question = yes + l.meaningYes
 			}
 			continue
 		}
 		if l.meaningYes != "" && !plainMeanings[strings.ToLower(l.meaningYes)] {
-			sub += " (Ja: " + l.meaningYes + ")"
+			sub += " (" + yesLabels[c.language()] + ": " + l.meaningYes + ")"
 		}
 		group[i].Subtitle = strings.TrimSpace(sub)
 	}
@@ -251,7 +254,7 @@ func (c *Client) hasSeveralBills(affairID string) bool {
 	if several, ok := c.multiBill[id]; ok {
 		return several
 	}
-	n, err := c.count("/Vote", fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d and BillNumber gt 1", id))
+	n, err := c.count("/Vote", fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d and BillNumber gt 1", c.odataLanguage(), id))
 	if err != nil {
 		log.Printf("⚠️  parlamentch: could not count the bills of business %d, naming the bill: %v", id, err)
 		return true
@@ -265,13 +268,13 @@ func (c *Client) hasSeveralBills(affairID string) bool {
 func (c *Client) enrich(v *votes.Vote) error {
 	var rows []votingDTO
 	err := c.get("/Voting", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and IdVote eq %s", v.SourceID),
+		"$filter": fmt.Sprintf("Language eq '%s' and IdVote eq %s", c.odataLanguage(), v.SourceID),
 		"$select": "FirstName,LastName,ParlGroupCode,ParlGroupNameAbbreviation,Decision,DecisionText",
 	}, &rows)
 	if err != nil {
 		return err
 	}
-	applyMemberVotes(v, rows)
+	c.applyMemberVotes(v, rows)
 
 	if id, err := strconv.ParseInt(v.Affair.ID, 10, 64); err == nil {
 		v.Affair.Type = c.businessType(id)
@@ -294,7 +297,7 @@ func (c *Client) enrich(v *votes.Vote) error {
 // President's included, so a response with fewer is a partial snapshot and
 // would publish a wrong result with a confident verdict. It is refused, as is a
 // row this adapter cannot classify.
-func applyMemberVotes(v *votes.Vote, rows []votingDTO) {
+func (c *Client) applyMemberVotes(v *votes.Vote, rows []votingDTO) {
 	if len(rows) != Seats {
 		// Not published yet, cut short, or a vacant seat. Leaving the type
 		// empty refuses the vote loudly rather than posting a tally that
@@ -333,7 +336,7 @@ func applyMemberVotes(v *votes.Vote, rows []votingDTO) {
 		}
 		members = append(members, votes.MemberVote{
 			Name:     strings.TrimSpace(r.FirstName + " " + r.LastName),
-			Fraktion: fraktionLabel(r.ParlGroupCode, r.ParlGroupNameAbbreviation),
+			Fraktion: c.fraktionLabel(r.ParlGroupCode, r.ParlGroupNameAbbreviation),
 			Choice:   choice,
 		})
 	}
@@ -388,28 +391,21 @@ func decisionFor(ja, nein int) string {
 	return ""
 }
 
-// fraktionLabels names each parliamentary group the way the city and canton
-// posts already name theirs, so the table reads the same on every account. The
-// keys are the service's group codes, which are stable across legislatures.
-var fraktionLabels = map[string]string{
-	"V":   "SVP",
-	"S":   "SP",
-	"RL":  "FDP",
-	"M-E": "Mitte-EVP",
-	"G":   "Grüne",
-	"GL":  "GLP",
-}
-
-// fraktionLabel returns the table label for a member's group. A code nobody
-// has mapped falls back to the service's own abbreviation, minus the
-// "Fraktion " it opens with: a new group should appear under its official
-// short name rather than vanish from the table.
-func fraktionLabel(code, abbreviation string) string {
-	if label, ok := fraktionLabels[code]; ok {
+// fraktionLabel returns the table label for a member's group, in the post's
+// language; see fraktionLabels. The keys are the service's group codes, which
+// are stable across legislatures and languages.
+//
+// A code nobody has mapped falls back to the service's own abbreviation, minus
+// the "Fraktion " (or "Groupe ", "Gruppo ") it opens with: a new group should
+// appear under its official short name rather than vanish from the table.
+func (c *Client) fraktionLabel(code, abbreviation string) string {
+	if label, ok := fraktionLabels[c.language()][code]; ok {
 		return label
 	}
-	if rest, ok := strings.CutPrefix(abbreviation, "Fraktion "); ok {
-		return rest
+	for _, word := range []string{"Fraktion ", "Groupe ", "Gruppo "} {
+		if rest, ok := strings.CutPrefix(abbreviation, word); ok {
+			return rest
+		}
 	}
 	if abbreviation != "" {
 		return abbreviation
@@ -425,14 +421,17 @@ func (c *Client) businessType(id int64) string {
 		return t
 	}
 	var b businessDTO
-	if err := c.getOne(fmt.Sprintf("/Business(ID=%d,Language='DE')", id), query{
-		"$select": "BusinessTypeName",
+	if err := c.getOne(fmt.Sprintf("/Business(ID=%d,Language='%s')", id, c.odataLanguage()), query{
+		"$select": "BusinessType,BusinessTypeName",
 	}, &b); err != nil {
 		log.Printf("⚠️  parlamentch: could not fetch business %d: %v", id, err)
 		return ""
 	}
 	t := strings.TrimSpace(b.BusinessTypeName)
 	c.businessTypes[id] = t
+	if b.BusinessType != 0 {
+		c.businessCodes[id] = b.BusinessType
+	}
 	return t
 }
 
@@ -440,7 +439,7 @@ func (c *Client) businessType(id int64) string {
 // enrich.
 func (c *Client) toVote(r voteDTO) votes.Vote {
 	id := strconv.FormatInt(r.ID, 10)
-	affairURL := BusinessURL(r.BusinessNumber)
+	affairURL := BusinessURL(c.language(), r.BusinessNumber)
 	title := strings.TrimSpace(r.BusinessTitle)
 	protocol := ""
 	if r.IdLegislativePeriod > 0 {
@@ -451,6 +450,7 @@ func (c *Client) toVote(r voteDTO) votes.Vote {
 		SourceID:     id,
 		Jurisdiction: c.jurisdiction.Key,
 		Body:         c.jurisdiction.ShortName,
+		Language:     c.jurisdiction.Language,
 		SessionID:    strconv.FormatInt(r.IdSession, 10),
 		Sequence:     strconv.FormatInt(r.RegistrationNumber, 10),
 		Date:         parseODataDate(r.VoteEnd),
@@ -462,7 +462,7 @@ func (c *Client) toVote(r voteDTO) votes.Vote {
 		SourceURL:   affairURL,
 		GroupURL:    affairURL,
 		ArchiveURL:  protocol,
-		Attribution: Attribution,
+		Attribution: AttributionFor(c.language()),
 		Affair: votes.Affair{
 			Number: r.BusinessShortNumber,
 			Title:  title,
@@ -485,9 +485,12 @@ func deref(s *string) string {
 const Seats = 200
 
 // BusinessURL is the business's page in Curia Vista, the durable link for
-// every vote taken on it.
-func BusinessURL(businessNumber int64) string {
-	return fmt.Sprintf("https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=%d", businessNumber)
+// every vote taken on it, in the post's language.
+//
+// Only the language segment changes: the site serves the French and Italian
+// page under /fr/ and /it/ at the same German path.
+func BusinessURL(l votes.Language, businessNumber int64) string {
+	return fmt.Sprintf("https://www.parlament.ch/%s/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=%d", urlLanguages[l.OrGerman()], businessNumber)
 }
 
 // ProtocolURL is a vote's Abstimmungsprotokoll: the Parlamentsdienste's PDF of

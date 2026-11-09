@@ -114,7 +114,7 @@ func TestFilingCanton(t *testing.T) {
 		{[]businessRoleDTO{{Role: roleCoSigned, CantonNumber: n(1)}}, ""},
 		{[]businessRoleDTO{{Role: roleAuthor, MemberCouncilNumber: n(214)}}, ""},
 	} {
-		if got := filingCanton(tt.roles); got != tt.want {
+		if got := filingCanton(votes.German, tt.roles); got != tt.want {
 			t.Errorf("filingCanton(%v) = %q, want %q", tt.roles[0], got, tt.want)
 		}
 	}
@@ -150,8 +150,55 @@ func TestJaPhrase(t *testing.T) {
 		{typeStandesIv, "Proposition de la majorité (donner suite)", "Folge geben"},
 		{typeMotion, "Proposition de la commission (classer)", ""},
 	} {
-		if got := jaPhrase(tt.typ, tt.yes); got != tt.want {
+		if got := jaPhrase(votes.German, tt.typ, tt.yes); got != tt.want {
 			t.Errorf("jaPhrase(%q) = %q, want %q", tt.yes, got, tt.want)
 		}
+	}
+}
+
+// The French and Italian feeds name a business type in their own words, so a
+// filed vote is recognised by the type's code, and what Ja supported is said in
+// the post's language.
+func TestLabel_FiledVoteInFrench(t *testing.T) {
+	j := testJurisdiction
+	j.Language = votes.French
+	c := New(j)
+	c.businessCodes[20250474] = 4 // the French feed's "Initiative parlementaire"
+	v := votes.Vote{SourceID: "1", Decision: "angenommen", Affair: votes.Affair{ID: "20250474", Type: "Initiative parlementaire"}}
+	c.labels["1"] = voteLabel{meaningYes: "Proposition de la majorité (ne pas donner suite)", meaningNo: "Proposition de la minorité (donner suite)"}
+	group := []votes.Vote{v}
+	c.label(group)
+	if g := group[0]; g.Outcome != outcomeNoLeave || g.Question != "Oui: ne pas donner suite" {
+		t.Errorf("Outcome %q, Question %q; want %q and the French question", g.Outcome, g.Question, outcomeNoLeave)
+	}
+	// Named in French without the code, it is not a filed vote at all.
+	c2 := New(j)
+	if kind := c2.filedKind(v); kind != "" {
+		t.Errorf("filedKind without a code = %q, want none", kind)
+	}
+}
+
+func TestJaPhrase_EveryLanguageSaysBothSides(t *testing.T) {
+	for l, byType := range jaPhrases {
+		for typ := range filedTypes {
+			if p := byType[typ]; p[0] == "" || p[1] == "" {
+				t.Errorf("%s has no phrase for %s", l, typ)
+			}
+		}
+	}
+	if got := jaPhrase(votes.Italian, typeMotion, "Adopter la motion"); got != "accogliere la mozione" {
+		t.Errorf("Italian motion: %q", got)
+	}
+}
+
+func TestCantonNames_EveryLanguageNamesEveryCanton(t *testing.T) {
+	for l, names := range cantonNames {
+		if len(names) != len(cantonNames[votes.German]) {
+			t.Errorf("%s names %d cantons, German %d", l, len(names), len(cantonNames[votes.German]))
+		}
+	}
+	thurgau := []businessRoleDTO{{Role: roleAuthor, CantonNumber: func() *int64 { n := int64(20); return &n }()}}
+	if got := filingCanton(votes.French, thurgau); got != "Thurgovie" {
+		t.Errorf("French Thurgau = %q", got)
 	}
 }

@@ -221,6 +221,24 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 	}
 }
 
+// The rules and the card are German, so a French or Italian post gets no
+// process rather than a German card: the same motion the German test above
+// gives a process.
+func TestProcess_OnlyInGerman(t *testing.T) {
+	for _, l := range []votes.Language{votes.French, votes.Italian} {
+		c := newProcessClient(t)
+		c.jurisdiction.Language = l
+		group := []votes.Vote{processVote(c, "32084", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
+			"Antrag der Mehrheit (Annahme der Motion)", "Antrag der Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)",
+			swiss(2024, 3, 7, 12, 51))}
+		p, err := c.Process(group)
+		var none votes.NoProcess
+		if p != nil || !errors.As(err, &none) {
+			t.Errorf("%s: Process = %+v, %v; want no process", l, p, err)
+		}
+	}
+}
+
 // onBill records which bill a vote was on, as the listing serves it.
 func onBill(c *Client, v votes.Vote, bill int64) votes.Vote {
 	l := c.labels[v.SourceID]

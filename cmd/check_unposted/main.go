@@ -70,7 +70,11 @@ func main() {
 			}
 		}
 
-		contactMapper := loadContacts(jurisdictions)
+		// As main.go: a channel with tagging off previews without tags.
+		var contactMapper *contacts.Mapper
+		if channel.Tags() {
+			contactMapper = loadContacts(jurisdictions)
+		}
 
 		if showX {
 			maxPosts := pick(*maxPostsFlag, channel.EnvInt("X_MAX_POSTS_PER_RUN", 10))
@@ -155,11 +159,7 @@ func check(
 }
 
 func loadContacts(jurisdictions []config.Jurisdiction) *contacts.Mapper {
-	keys := make([]string, 0, len(jurisdictions))
-	for _, j := range jurisdictions {
-		keys = append(keys, j.Key)
-	}
-	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(keys...)...)
+	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(config.ContactsKeys(jurisdictions)...)...)
 	if err != nil {
 		log.Printf("Warning: Could not load contacts for tagging: %v", err)
 		return nil

@@ -124,7 +124,7 @@ func TestAuthorOrder(t *testing.T) {
 }
 
 func TestNamedAuthors_DropsWhoCannotBeNamed(t *testing.T) {
-	got := namedAuthors([]heldRole{{1, votes.RoleSigned}, {2, votes.RoleSigned}, {3, votes.RoleSigned}, {4, votes.RoleSigned}}, []authorDTO{
+	got := namedAuthors(votes.German, []heldRole{{1, votes.RoleSigned}, {2, votes.RoleSigned}, {3, votes.RoleSigned}, {4, votes.RoleSigned}}, []authorDTO{
 		{ID: 4, FirstName: "Thomas", LastName: "Minder", PartyAbbreviation: "-"},
 		{ID: 2, FirstName: "Ohne", LastName: "Partei"},
 		{ID: 1, FirstName: "Andrea", LastName: "Caroni", PartyAbbreviation: "FDP-Liberale"},
@@ -136,11 +136,19 @@ func TestNamedAuthors_DropsWhoCannotBeNamed(t *testing.T) {
 }
 
 func TestPartyLabel(t *testing.T) {
-	for in, want := range map[string]string{
-		"M-E": "Mitte", "FDP-Liberale": "FDP", "GRÜNE": "Grüne", "glp": "GLP", "SVP": "SVP", "": "",
+	for _, c := range []struct {
+		lang     votes.Language
+		in, want string
+	}{
+		{votes.German, "M-E", "Mitte"}, {votes.German, "FDP-Liberale", "FDP"}, {votes.German, "GRÜNE", "Grüne"},
+		{votes.German, "glp", "GLP"}, {votes.German, "SVP", "SVP"}, {votes.German, "", ""},
+		// Each feed spells the parties its own way; the labels match the
+		// group table's for that language.
+		{votes.French, "PSS", "PS"}, {votes.French, "VERT-E-S", "Vert-e-s"}, {votes.French, "UDC", "UDC"},
+		{votes.Italian, "VERDI", "Verdi"}, {votes.Italian, "M-E", "Centro"}, {votes.Italian, "pvl", "PVL"},
 	} {
-		if got := partyLabel(in); got != want {
-			t.Errorf("partyLabel(%q) = %q, want %q", in, got, want)
+		if got := partyLabel(c.lang, c.in); got != c.want {
+			t.Errorf("partyLabel(%s, %q) = %q, want %q", c.lang, c.in, got, c.want)
 		}
 	}
 }
@@ -162,8 +170,28 @@ func TestFilingFraktion(t *testing.T) {
 		{"nobody", nil, ""},
 	}
 	for _, tt := range tests {
-		if got := filingFraktion(tt.roles); got != tt.want {
+		if got := filingFraktion(votes.German, tt.roles); got != tt.want {
 			t.Errorf("%s: got %q, want %q", tt.name, got, tt.want)
+		}
+	}
+	// The other languages name the group in their own words.
+	glp := []businessRoleDTO{{Role: roleAuthor, ParlGroupNumber: n(137)}}
+	if got := filingFraktion(votes.French, glp); got != "groupe PVL" {
+		t.Errorf("French: got %q, want groupe PVL", got)
+	}
+	if got := filingFraktion(votes.Italian, glp); got != "gruppo PVL" {
+		t.Errorf("Italian: got %q, want gruppo PVL", got)
+	}
+}
+
+// Every language names the same Fraktionen, so a business filed by one reads
+// the same in every language's posts.
+func TestFraktionNames_EveryLanguageNamesEveryGroup(t *testing.T) {
+	for l, names := range fraktionNames {
+		for n := range fraktionNames[votes.German] {
+			if names[n] == "" {
+				t.Errorf("%s has no name for group %d", l, n)
+			}
 		}
 	}
 }

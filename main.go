@@ -125,7 +125,12 @@ func selectedChannels(key string) ([]config.Channel, error) {
 func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction) []channelPlatform {
 	// Tagging is configured per jurisdiction but a platform instance is per
 	// channel, so its mapper has to cover every jurisdiction the channel serves.
-	contactMapper := loadContacts(jurisdictions)
+	var contactMapper *contacts.Mapper
+	if channel.Tags() {
+		contactMapper = loadContacts(jurisdictions)
+	} else {
+		log.Printf("Channel %q: tagging off (%sTAGGING)", channel.Key, channel.EnvPrefix())
+	}
 
 	var plats []channelPlatform
 
@@ -256,11 +261,7 @@ func skipBefore(groups [][]votes.Vote, from time.Time, jurisdiction string) [][]
 // or empty file is normal — a jurisdiction ships before its contacts are
 // curated — so this degrades to no tagging rather than failing the run.
 func loadContacts(jurisdictions []config.Jurisdiction) *contacts.Mapper {
-	keys := make([]string, 0, len(jurisdictions))
-	for _, j := range jurisdictions {
-		keys = append(keys, j.Key)
-	}
-	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(keys...)...)
+	mapper, err := contacts.LoadContactFiles(contacts.PathsFor(config.ContactsKeys(jurisdictions)...)...)
 	if err != nil {
 		log.Printf("Warning: Could not load contacts for tagging: %v", err)
 		return nil

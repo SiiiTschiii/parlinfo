@@ -913,7 +913,7 @@ func layoutCombinedCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.
 	cur.gap(fonts.partyBold, 1.25)
 
 	// Party breakdown table
-	drawFraktionTable(img, cur, fraktionCounts, bg, fonts.partyBold, fonts.partyNum)
+	drawFraktionTable(img, cur, fraktionCounts, v.Language, bg, fonts.partyBold, fonts.partyNum)
 
 	return titleFace, titleLines, nil
 }
@@ -1003,9 +1003,9 @@ type statCol struct {
 // drawStandardStatsDashboard draws Ja/Nein/Enthaltung as large centered numbers.
 func drawStandardStatsDashboard(img *image.RGBA, cur *layoutCursor, counts voteformat.VoteCounts, bg color.RGBA, numFace, labelFace font.Face) {
 	cols := []statCol{
-		{voteformat.FormatVoteCount(counts.Ja), "Ja"},
-		{voteformat.FormatVoteCount(counts.Nein), "Nein"},
-		{voteformat.FormatVoteCount(counts.Enthaltung), "Enth."},
+		{voteformat.FormatVoteCount(counts.Ja), voteformat.W(counts.Language).Yes},
+		{voteformat.FormatVoteCount(counts.Nein), voteformat.W(counts.Language).No},
+		{voteformat.FormatVoteCount(counts.Enthaltung), voteformat.W(counts.Language).AbstainShort},
 	}
 	drawStatColumns(img, cur, cols, bg, numFace, labelFace)
 }
@@ -1085,7 +1085,7 @@ type fraktionEntry struct {
 }
 
 // drawFraktionTable draws a simple party breakdown table sorted by faction size descending.
-func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[string]*voteformat.FraktionCounts, bg color.RGBA, nameFace, numFace font.Face) {
+func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[string]*voteformat.FraktionCounts, lang votes.Language, bg color.RGBA, nameFace, numFace font.Face) {
 	if len(fraktionCounts) == 0 {
 		return
 	}
@@ -1139,15 +1139,22 @@ func drawFraktionTable(img *image.RGBA, cur *layoutCursor, fraktionCounts map[st
 	for _, k := range primary {
 		// "Auswahl A" is too wide for a column and runs into its neighbours;
 		// the option letter alone is unambiguous under the "AUSWAHL" heading.
-		allCols = append(allCols, strings.TrimPrefix(k, "Auswahl "))
+		header := strings.TrimPrefix(k, "Auswahl ")
+		switch k {
+		case "Ja":
+			header = voteformat.W(lang).Yes
+		case "Nein":
+			header = voteformat.W(lang).No
+		}
+		allCols = append(allCols, header)
 		colKeys = append(colKeys, k)
 	}
 	if hasEnth {
-		allCols = append(allCols, "Enth.")
+		allCols = append(allCols, voteformat.W(lang).AbstainShort)
 		colKeys = append(colKeys, "Enthaltung")
 	}
 	if hasAbw {
-		allCols = append(allCols, "Abw.")
+		allCols = append(allCols, voteformat.W(lang).AbsentShort)
 		colKeys = append(colKeys, "Abwesend")
 	}
 	if len(allCols) == 0 {
@@ -1368,7 +1375,7 @@ func layoutResultCard(img *image.RGBA, cur *layoutCursor, inset int, v *votes.Vo
 	cur.gap(fonts.partyBold, 1.25)
 
 	// Party breakdown table
-	drawFraktionTable(img, cur, fraktionCounts, bg, fonts.partyBold, fonts.partyNum)
+	drawFraktionTable(img, cur, fraktionCounts, v.Language, bg, fonts.partyBold, fonts.partyNum)
 }
 
 func formatSummaryLine(index int, vote votes.Vote, groupSize int) (string, bool) {

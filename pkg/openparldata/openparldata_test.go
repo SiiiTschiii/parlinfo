@@ -600,9 +600,9 @@ func TestFraktionBreakdownMatchesTheParisAdapter(t *testing.T) {
 	}
 
 	parisOut := voteformat.FormatFraktionBreakdown(
-		voteformat.AggregateFraktionCounts(votes.Vote{MemberVotes: zurichapi.ToMemberVotes(paris)}))
+		voteformat.AggregateFraktionCounts(votes.Vote{MemberVotes: zurichapi.ToMemberVotes(paris)}), votes.German)
 	opdOut := voteformat.FormatFraktionBreakdown(
-		voteformat.AggregateFraktionCounts(votes.Vote{MemberVotes: opdMembers}))
+		voteformat.AggregateFraktionCounts(votes.Vote{MemberVotes: opdMembers}), votes.German)
 
 	if parisOut != opdOut {
 		t.Errorf("the same vote must render identically whichever source produced it:\n--- PARIS ---\n%s\n--- OpenParlData ---\n%s", parisOut, opdOut)

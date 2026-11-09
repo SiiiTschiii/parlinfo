@@ -23,6 +23,33 @@ type Jurisdiction struct {
 	// ShortName labels posts, e.g. "Gemeinderat". Kept separate from Name so
 	// post copy stays short while logs and config stay unambiguous.
 	ShortName string
+	// Language is what the body's posts are written in, and what its source is
+	// asked to serve. The zero value is German.
+	Language Language
+}
+
+// Language is a post language, as the lower-case code parlament.ch puts in its
+// URLs.
+//
+// A body posting in two languages is two jurisdictions, not one with a
+// setting, because what makes a jurisdiction is its vote log: a vote posted
+// to the German account has not been posted to the French one.
+type Language string
+
+// The post languages. Romansh and English are absent on purpose: parlament.ch
+// accepts both codes but serves the German and the French text under them.
+const (
+	German  Language = "de"
+	French  Language = "fr"
+	Italian Language = "it"
+)
+
+// OrGerman returns l, or German for the zero value.
+func (l Language) OrGerman() Language {
+	if l == "" {
+		return German
+	}
+	return l
 }
 
 // Vote is a single recorded vote in a parliamentary body.
@@ -43,6 +70,9 @@ type Vote struct {
 	// because two bodies share one account and a reader seeing a single post
 	// has nothing else to go on.
 	Body string
+	// Language is the jurisdiction's post language, denormalised for the same
+	// reason as Body: formatters render from the vote alone.
+	Language Language
 	// SessionID identifies the sitting this vote was taken in. May be empty
 	// when the source has no session concept.
 	SessionID string

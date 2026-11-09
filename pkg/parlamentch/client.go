@@ -26,11 +26,13 @@ import (
 // DefaultBaseURL is the OData service root.
 const DefaultBaseURL = "https://ws.parlament.ch/odata.svc"
 
-// Attribution credits the Parlamentsdienste. Their open data terms allow use
-// only with the source named as «Parlamentsdienste der Bundesversammlung,
-// Bern», in those words:
+// Attribution credits the Parlamentsdienste on a German post. Their open data
+// terms allow use only with the source named as «Parlamentsdienste der
+// Bundesversammlung, Bern», in those words:
 // https://www.parlament.ch/de/über-das-parlament/fakten-und-zahlen/open-data-web-services
-const Attribution = "Daten: Parlamentsdienste der Bundesversammlung, Bern"
+//
+// Posts in other languages use AttributionFor.
+var Attribution = AttributionFor(votes.German)
 
 // Client fetches Nationalrat votes.
 type Client struct {
@@ -54,6 +56,10 @@ type Client struct {
 	// would otherwise ask for separately.
 	businessTypes map[int64]string
 
+	// businessCodes caches each business's type code, by which filedKind
+	// tells a motion from a postulate in any language. See filedKinds.
+	businessCodes map[int64]int
+
 	// multiBill caches whether a business holds more than one bill, by
 	// BusinessNumber. See Client.hasSeveralBills.
 	multiBill map[int64]bool
@@ -74,7 +80,8 @@ type Client struct {
 	council int
 }
 
-// New builds a client for the Nationalrat.
+// New builds a client for the Nationalrat. It asks the service for the
+// jurisdiction's language and labels what it returns in that language.
 func New(jurisdiction votes.Jurisdiction) *Client {
 	return &Client{
 		baseURL:       DefaultBaseURL,
@@ -83,6 +90,7 @@ func New(jurisdiction votes.Jurisdiction) *Client {
 		maxAttempts:   3,
 		retryDelay:    2 * time.Second,
 		businessTypes: make(map[int64]string),
+		businessCodes: make(map[int64]int),
 		labels:        make(map[string]voteLabel),
 		multiBill:     make(map[int64]bool),
 		authors:       make(map[int64]authorship),
