@@ -246,26 +246,71 @@ func stepsHeight(steps []statusStep, fonts *fontSet) int {
 // statusHeading is the line above the business title naming the business as
 // the source does: its type and number ("Motion 24.3004"), or the number alone
 // where the source gives no type ("2026/519"), or "" when it gives neither.
+// The type is the vote's, or else the process's (the Gemeinderat's votes carry
+// none). Where the business has several bills it names the vote's, since the
+// steps below are that bill's alone: "Geschäft des Bundesrates 22.040 ·
+// Entwurf 1 von 4".
 //
 // The card carries no heading of ours saying what it shows. The ticks, the ring
 // and the next-step footer say that, and a label in our words would be the one
 // text on the card that is not the parliament's.
-func statusHeading(v votes.Vote) string {
-	return strings.TrimSpace(strings.TrimSpace(v.Affair.Type) + " " + strings.TrimSpace(v.Affair.Number))
+func statusHeading(v votes.Vote, p *votes.Process) string {
+	kind := strings.TrimSpace(v.Affair.Type)
+	if kind == "" && p != nil {
+		kind = strings.TrimSpace(p.Kind)
+	}
+	h := strings.TrimSpace(kind + " " + strings.TrimSpace(v.Affair.Number))
+	if p != nil && strings.TrimSpace(p.Bill) != "" && h != "" {
+		h += " · " + strings.TrimSpace(p.Bill)
+	}
+	return h
+}
+
+// statusTitle is the business title the status card sets: the business's own
+// where the source gives one, which for the Gemeinderat leaves out the
+// "Postulat von … vom …:" the vote's title opens with. The heading already
+// names the type, and the card needs the room.
+func statusTitle(v votes.Vote) string {
+	if t := strings.TrimSpace(v.Affair.Title); t != "" {
+		return voteformat.CleanVoteTitle(t)
+	}
+	return voteformat.CleanVoteTitle(v.Title)
 }
 
 // statusHeadingHeight is the space the heading line takes, or 0 without one.
-func statusHeadingHeight(v votes.Vote, fonts *fontSet) int {
-	if statusHeading(v) == "" {
+func statusHeadingHeight(v votes.Vote, p *votes.Process, fonts *fontSet) int {
+	if statusHeading(v, p) == "" {
 		return 0
 	}
 	return lineHeight(fonts.small) + frac(fonts.small, 0.6)
 }
 
+// aboutMaxLines bounds the sentence on what the business type asks for.
+const aboutMaxLines = 3
+
+// statusAbout is the process's sentence on the business type, wrapped to the
+// column, or nil without one.
+func statusAbout(p *votes.Process, fonts *fontSet) []string {
+	text := strings.TrimSpace(p.About)
+	if text == "" {
+		return nil
+	}
+	width := imgWidth - 2*padding
+	return ellipsizeLines(fonts.small, wrapText(fonts.small, text, width), width, titleBlockHeight(fonts.small, aboutMaxLines))
+}
+
+// aboutHeight is the space the sentence takes below the title, or 0.
+func aboutHeight(about []string, fonts *fontSet) int {
+	if len(about) == 0 {
+		return 0
+	}
+	return frac(fonts.small, 0.5) + len(about)*lineHeight(fonts.small)
+}
+
 // statusReserve is the space the status card needs for everything but the
 // title, mirroring layoutStatusCard.
-func statusReserve(v votes.Vote, steps []statusStep, fonts *fontSet) int {
-	reserve := statusHeadingHeight(v, fonts)
+func statusReserve(v votes.Vote, p *votes.Process, about []string, steps []statusStep, fonts *fontSet) int {
+	reserve := statusHeadingHeight(v, p, fonts) + aboutHeight(about, fonts)
 	reserve += titleTrailingGap() + frac(fonts.stepLabel, 0.75)
 	reserve += stepsHeight(steps, fonts)
 	return reserve + padding
@@ -285,17 +330,23 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	// not: a business with votes.MaxProcessSteps steps, each detail running to
 	// two lines, under a two-line footer would otherwise leave the title
 	// nothing.
+	// The sentence on the business type goes first when room runs short:
+	// the steps are what the card is for.
 	steps := statusSteps(p, fonts, 2)
-	if titleBudget(inset, statusReserve(v, steps, fonts)) < statusMinTitle {
+	about := statusAbout(p, fonts)
+	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
 		steps = statusSteps(p, fonts, 1)
 	}
+	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
+		about = nil
+	}
 
-	titleFace, titleLines, err := fitTitle(voteformat.CleanVoteTitle(v.Title), maxTextWidth, titleBudget(inset, statusReserve(v, steps, fonts)))
+	titleFace, titleLines, err := fitTitle(statusTitle(v), maxTextWidth, titleBudget(inset, statusReserve(v, p, about, steps, fonts)))
 	if err != nil {
 		return err
 	}
 
-	if heading := statusHeading(v); heading != "" {
+	if heading := statusHeading(v, p); heading != "" {
 		if img != nil {
 			drawCenteredText(img, fonts.small, nil, cur.baseline(fonts.small), heading, bg)
 		}
@@ -309,6 +360,16 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 		}
 		cur.advance(titleFace)
 		cur.gap(titleFace, titleLineGapFactor)
+	}
+	if len(about) > 0 {
+		cur.y += frac(fonts.small, 0.5)
+		for _, line := range about {
+			if img != nil {
+				x := (imgWidth - font.MeasureString(fonts.small, line).Ceil()) / 2
+				drawTrackedText(img, fonts.small, x, cur.baseline(fonts.small), line, 0, blend(bg, 0xD8))
+			}
+			cur.advance(fonts.small)
+		}
 	}
 	cur.gap(titleFace, 0.75)
 	if img != nil {
@@ -450,9 +511,12 @@ func statusAlt(group []votes.Vote) string {
 		return ""
 	}
 	v := group[0]
-	label := voteformat.CleanVoteTitle(v.Title)
-	if heading := statusHeading(v); heading != "" {
+	label := statusTitle(v)
+	if heading := statusHeading(v, p); heading != "" {
 		label = heading + "\n\n" + label
+	}
+	if about := strings.TrimSpace(p.About); about != "" {
+		label += "\n" + about
 	}
 
 	var lines []string

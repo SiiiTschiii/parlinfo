@@ -53,7 +53,7 @@ func TestProcessFor_RecordedPostulate(t *testing.T) {
 				{Label: "Gemeinderat", Detail: "28.10.2026 · Überweisung", State: votes.StepCurrent},
 				{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext},
 			},
-			Next: "Stadtrat, Weisung, Frist 24 Monate",
+			Next: "Stadtrat, Weisung, Frist 24 Monate", Kind: "Postulat", About: typeAbout["Postulat"],
 		}},
 		{"2026/303", "Nein", day(2026, 10, 28), votes.Process{
 			Steps: []votes.ProcessStep{
@@ -62,7 +62,7 @@ func TestProcessFor_RecordedPostulate(t *testing.T) {
 				{Label: "Ablehnung, beantragt", Detail: "19.08.2026", State: votes.StepDone},
 				{Label: "Gemeinderat", Detail: "28.10.2026 · Ablehnung", State: votes.StepEnded},
 			},
-			Next: "Abgeschlossen",
+			Next: "Abgeschlossen", StatusLabel: "Geschäftsstatus:", Kind: "Postulat", About: typeAbout["Postulat"],
 		}},
 	}
 	for _, tt := range tests {

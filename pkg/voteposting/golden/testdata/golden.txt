@@ -3995,7 +3995,7 @@ Daten: Open Data Zürich
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
 Daten: Open Data Zürich
@@ -4020,7 +4020,7 @@ Die Mitte 0/7/0/0
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
 Daten: Open Data Zürich
@@ -4045,13 +4045,13 @@ Die Mitte 0/7/0/0
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
 Daten: Open Data Zürich
 
 📊 51 Ja | 69 Nein | 0 Enth. | 5 Abw.
-[facet] {Index:{ByteStart:44 ByteEnd:123} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392 DID: Tag:}]}
+[facet] {Index:{ByteStart:43 ByteEnd:122} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392 DID: Tag:}]}
 
 [post 2]
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
@@ -4082,7 +4082,7 @@ Grüne 12/0/0/2
 AL 0/8/0/0
 Die Mitte 0/7/0/0
 
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
 Daten: Open Data Zürich
@@ -4106,7 +4106,7 @@ Grüne 12/0/0/2
 AL 0/8/0/0
 Die Mitte 0/7/0/0
 
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/abstimmungen/detail.php?aid=objguid-2026-392
 Daten: Open Data Zürich
@@ -4122,7 +4122,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4162,7 +4162,7 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4202,11 +4202,11 @@ Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen i
 👇 Details im Thread
 
 [post 1]
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
-[facet] {Index:{ByteStart:44 ByteEnd:127} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
+[facet] {Index:{ByteStart:43 ByteEnd:126} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi DID: Tag:}]}
 
 [post 2]
 ✅ Einleitungsartikel
@@ -4265,7 +4265,7 @@ Grüne 10/0/3/1
 Die Mitte 0/12/0/1
 AL 0/8/0/1
 
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich
@@ -4277,7 +4277,7 @@ Daten: Open Data Zürich
 
 Teilrevision der Gemeindeordnung der Stadt Zürich, Neuordnung der Kompetenzen im Bereich Stadtentwicklung
 
-🏁 Nächster Schritt: Abgeschlossen
+🏁 Geschäftsstatus: Abgeschlossen
 
 🔗 https://www.gemeinderat-zuerich.ch/sitzungen/sitzung/?gid=sitzung-multi#trakt-multi
 Daten: Open Data Zürich

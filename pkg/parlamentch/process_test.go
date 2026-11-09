@@ -102,7 +102,7 @@ func TestProcess_RealBusinesses(t *testing.T) {
 				swiss(2024, 3, 7, 12, 51)),
 			steps: []votes.ProcessStep{
 				{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
-				{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "26.02.2024 · Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
+				{Label: "Antrag des Bundesrates", Detail: "21.02.2024 · Ablehnung", State: votes.StepDone},
 				{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
 				{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
 			},
@@ -239,5 +239,28 @@ func TestProcess_SeveralBillsNoProcess(t *testing.T) {
 	var none votes.NoProcess
 	if p, err := c.Process([]votes.Vote{v}); p != nil || !errors.As(err, &none) {
 		t.Errorf("Process = %+v, %v; want no process, with a reason", p, err)
+	}
+}
+
+// A vote whose meanings the service does not serve takes the decision it
+// records for the Nationalrat that day, once it has: 25.301, recorded here
+// after the decision was.
+func TestProcess_RecordedOutcome(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "35999", "20250301", typeStandesIv, "", "", "", "", "", swiss(2026, 4, 28, 9, 21))
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil {
+		t.Fatalf("Process = %+v, %v", p, err)
+	}
+	last := p.Steps[len(p.Steps)-1]
+	want := votes.ProcessStep{Label: "Nationalrat", Detail: "28.04.2026 · Keine Folge gegeben", State: votes.StepEnded}
+	if last != want {
+		t.Errorf("this vote's step = %+v, want %+v", last, want)
+	}
+	if p.Next != processDone || p.StatusLabel != "Stand der Beratungen:" {
+		t.Errorf("status = %q %q", p.StatusLabel, p.Next)
+	}
+	if p.About != typeAbout[typeStandesIv] {
+		t.Errorf("About = %q", p.About)
 	}
 }

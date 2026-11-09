@@ -74,7 +74,7 @@ func TestStatusCard_FitsTheCrowdedCase(t *testing.T) {
 	if got := stepsHeight(steps, fonts); got <= 0 {
 		t.Fatalf("steps measure %dpx", got)
 	}
-	if titleBudget(cards[1].inset(fonts), statusReserve(group[0], statusSteps(&p, fonts, 2), fonts)) >= statusMinTitle {
+	if titleBudget(cards[1].inset(fonts), statusReserve(group[0], &p, nil, statusSteps(&p, fonts, 2), fonts)) >= statusMinTitle {
 		t.Error("the crowded case no longer needs the one-line fallback; make it more crowded so the fallback stays tested")
 	}
 }

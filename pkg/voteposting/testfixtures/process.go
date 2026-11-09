@@ -81,11 +81,12 @@ func ProcessNationalratMotion() []votes.Vote {
 	return withProcess([]votes.Vote{v}, votes.Process{
 		Steps: []votes.ProcessStep{
 			{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
-			{Label: "Stellungnahme zum Vorstoss liegt vor", Detail: "26.02.2024 · Antrag des Bundesrates: Ablehnung", State: votes.StepDone},
+			{Label: "Antrag des Bundesrates", Detail: "21.02.2024 · Ablehnung", State: votes.StepDone},
 			{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
 			{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
 		},
-		Next: "In Kommission des Ständerats (SGK-S)",
+		Next:  "In Kommission des Ständerats (SGK-S)",
+		About: "Mit einer Motion wird der Bundesrat beauftragt, einen Entwurf zu einem Erlass der Bundesversammlung vorzulegen oder eine Massnahme zu treffen.",
 	})
 }
 
@@ -121,7 +122,9 @@ func ProcessGemeinderatPostulat() []votes.Vote {
 			{Label: "Gemeinderat", Detail: "21.10.2026 · Überweisung", State: votes.StepCurrent},
 			{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext},
 		},
-		Next: "Stadtrat, Weisung, Frist 24 Monate",
+		Next:  "Stadtrat, Weisung, Frist 24 Monate",
+		Kind:  "Postulat",
+		About: "Ein Postulat fordert den Stadtrat auf zu prüfen, ob und wie er ein Anliegen oder eine Idee umsetzen kann.",
 	})
 }
 
@@ -152,7 +155,10 @@ func ProcessGemeinderatAbgelehnt() []votes.Vote {
 			{Label: "Stadtrat, Entgegennahme", Detail: "26.08.2026", State: votes.StepDone},
 			{Label: "Gemeinderat", Detail: "26.08.2026 · Ablehnung", State: votes.StepEnded},
 		},
-		Next: "Abgeschlossen",
+		Next:        "Abgeschlossen",
+		StatusLabel: "Geschäftsstatus:",
+		Kind:        "Postulat",
+		About:       "Ein Postulat fordert den Stadtrat auf zu prüfen, ob und wie er ein Anliegen oder eine Idee umsetzen kann.",
 	})
 }
 
@@ -167,6 +173,7 @@ func ProcessMultiVote() []votes.Vote {
 			{Label: "Überweisung, SK PRD/SSD", Detail: "Sachkommission Präsidialdepartement, Schul- und Sportdepartement", State: votes.StepDone},
 			{Label: "Gemeinderat", Detail: "Schlussabstimmung: Nein", State: votes.StepEnded},
 		},
-		Next: "Abgeschlossen",
+		Next:        "Abgeschlossen",
+		StatusLabel: "Geschäftsstatus:",
 	})
 }

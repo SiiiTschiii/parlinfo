@@ -23,7 +23,8 @@ func ended() Process {
 			{Label: "Eingereicht", State: StepDone},
 			{Label: "Nationalrat", Detail: "Ablehnung", State: StepEnded},
 		},
-		Next: "Erledigt",
+		Next:        "Erledigt",
+		StatusLabel: "Stand der Beratungen:",
 	}
 }
 
@@ -35,6 +36,11 @@ func TestProcessValidate(t *testing.T) {
 	}{
 		{"open business", open, true},
 		{"ended business", ended, true},
+		{"ended business without the source's status heading", func() Process {
+			p := ended()
+			p.StatusLabel = ""
+			return p
+		}, false},
 		{"no steps", func() Process { return Process{Next: "x"} }, false},
 		{"too many steps", func() Process {
 			p := open()

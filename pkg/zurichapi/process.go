@@ -48,6 +48,10 @@ const (
 	// processClosed is PARIS's Geschaeftsstatus for a business nothing
 	// follows. It is set some days after the vote; the post says it at once.
 	processClosed = "Abgeschlossen"
+	// statusHeading names PARIS's Geschaeftsstatus before it, as a post
+	// prints it for a business this vote closed: "Geschäftsstatus:
+	// Abgeschlossen".
+	statusHeading = "Geschäftsstatus:"
 )
 
 // processGeschaeft is the part of a PARIS Geschäft the adapter reads.
@@ -164,7 +168,7 @@ func processFor(v votes.Vote, g processGeschaeft) (*votes.Process, string) {
 	case "Nein":
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
 		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepAblehnung, State: votes.StepEnded})
-		return &votes.Process{Steps: steps, Next: processClosed}, ""
+		return &votes.Process{Steps: steps, Next: processClosed, StatusLabel: statusHeading, Kind: g.Art, About: typeAbout[g.Art]}, ""
 	case "Ja":
 		if g.Art == "Motion" && !motionGoesToStadtrat(steps) {
 			return nil, "Motion, die der Stadtrat nur als Postulat oder gar nicht entgegennehmen will: ein Ja ist ebenso oft eine \"Umwandlung in Postulat\" wie eine Überweisung"
@@ -173,9 +177,17 @@ func processFor(v votes.Vote, g processGeschaeft) (*votes.Process, string) {
 		steps = append(steps,
 			votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepUeberweisung, State: votes.StepCurrent},
 			votes.ProcessStep{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext})
-		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate"}, ""
+		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate", Kind: g.Art, About: typeAbout[g.Art]}, ""
 	}
 	return nil, "Schlussresultat \"" + v.Decision + "\": keine Regel"
+}
+
+// typeAbout is the Gemeinderat's own sentence on what each business type
+// asks of the Stadtrat, the first of its entry on the page "Geschäftsarten"
+// (gemeinderat-zuerich.ch), read 09.11.2026.
+var typeAbout = map[string]string{
+	"Motion":   "Eine Motion verpflichtet den Stadtrat, einen Entwurf auszuarbeiten, wie ein Beschluss erlassen, geändert oder aufgehoben werden kann.",
+	"Postulat": "Ein Postulat fordert den Stadtrat auf zu prüfen, ob und wie er ein Anliegen oder eine Idee umsetzen kann.",
 }
 
 // isResultStep reports whether a PARIS step records the result of a

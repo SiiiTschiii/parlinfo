@@ -77,6 +77,7 @@ func (c *Client) FetchRecent(limit int) ([]votes.Vote, error) {
 		c.labels[v.SourceID] = voteLabel{
 			bill:       strings.TrimSpace(deref(r.BillTitle)),
 			billNumber: r.BillNumber,
+			subject:    strings.TrimSpace(deref(r.Subject)),
 			meaningYes: strings.TrimSpace(deref(r.MeaningYes)),
 			meaningNo:  strings.TrimSpace(deref(r.MeaningNo)),
 		}
@@ -140,6 +141,9 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 	}
 	groups := votes.GroupByAffairAndDate(vs)
 	for _, g := range groups {
+		if err := c.markRepeats(g); err != nil {
+			return nil, err
+		}
 		c.label(g)
 	}
 	return groups, nil
@@ -151,8 +155,12 @@ func (c *Client) GroupByAffair(vs []votes.Vote) ([][]votes.Vote, error) {
 type voteLabel struct {
 	bill       string
 	billNumber int64 // which of the business's bills the vote was on; 0 when not served
+	subject    string
 	meaningYes string
 	meaningNo  string
+	// repeated marks a vote the chamber took again, after an Ordnungsantrag
+	// to repeat it, and repeat the vote that replaced it. See markRepeats.
+	repeated, repeat bool
 }
 
 // plainMeanings are the ways the service says that Ja adopts the bill, in both
@@ -199,6 +207,9 @@ func (c *Client) label(group []votes.Vote) {
 			parts = append(parts, l.bill)
 		}
 		sub := strings.Join(parts, ": ")
+		if l.repeat {
+			sub += " (Wiederholung)"
+		}
 		if isFiledVote(group[i]) {
 			// What the vote did to the business is stated as its verdict, and
 			// what Ja stood for below the title, in German: the verdict alone

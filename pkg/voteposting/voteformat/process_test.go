@@ -21,7 +21,8 @@ func TestNextStepLine(t *testing.T) {
 	}
 	ended := &votes.Process{
 		Steps: []votes.ProcessStep{{Label: "Nationalrat", State: votes.StepEnded}},
-		Next:  "Erledigt",
+		Next:        "Erledigt",
+		StatusLabel: "Stand der Beratungen:",
 	}
 
 	tests := []struct {
@@ -31,7 +32,7 @@ func TestNextStepLine(t *testing.T) {
 	}{
 		{"no process", group(nil), ""},
 		{"open business", group(open), "➡️ Nächster Schritt: In Kommission des Ständerats"},
-		{"ended business", group(ended), "🏁 Nächster Schritt: Erledigt"},
+		{"ended business", group(ended), "🏁 Stand der Beratungen: Erledigt"},
 		{"invalid process", group(&votes.Process{Next: "In Kommission des Ständerats"}), ""},
 	}
 	for _, tt := range tests {

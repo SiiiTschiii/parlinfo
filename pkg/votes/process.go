@@ -68,8 +68,33 @@ type Process struct {
 	// after "Nächster Schritt:": "In Kommission des Ständerats". When this vote
 	// ended the business it is instead the source's word for a closed one —
 	// "Erledigt" on parlament.ch, "Abgeschlossen" in the Gemeinderat — under
-	// the same label. Required either way; at most MaxNextRunes long.
+	// StatusLabel. Required either way; at most MaxNextRunes long.
 	Next string
+
+	// StatusLabel is the source's own heading for a business's status, which
+	// a post prints before Next instead of "Nächster Schritt:" when this vote
+	// ended the business: "Stand der Beratungen:" on parlament.ch's business
+	// page, "Geschäftsstatus:" for PARIS's Geschaeftsstatus. Nothing comes
+	// next for a closed business, so "Nächster Schritt: Erledigt" answered a
+	// question it had just made moot. Required when the vote ended the
+	// business; unused otherwise.
+	StatusLabel string
+
+	// Kind is the business type as the source names it ("Postulat"), for the
+	// status card's heading where the vote itself carries none. Optional.
+	Kind string
+
+	// Bill names which of a business's bills the vote was on, where it has
+	// more than one: "Entwurf 1 von 4". The history is that bill's alone, and
+	// the heading says so. Optional.
+	Bill string
+
+	// About is the source's own sentence on what a business of this type
+	// asks for: "Mit einer Motion wird der Bundesrat beauftragt, …" from
+	// parlament.ch, "Ein Postulat fordert den Stadtrat auf zu prüfen, …" from
+	// the Gemeinderat. Without it "Überwiesen an den Bundesrat" leaves open
+	// what the Bundesrat now has to do. Optional.
+	About string
 }
 
 // ProcessStep is one stage of a business: who acts, and what they did or will
@@ -218,6 +243,9 @@ func (p Process) Validate() error {
 	case p.Steps[current].State == StepCurrent && next != 1:
 		return fmt.Errorf("an open business shows exactly one next step, not %d", next)
 	}
+	if p.Steps[current].State.closes() && strings.TrimSpace(p.StatusLabel) == "" {
+		return errors.New("a closed business needs the source's heading for its status")
+	}
 	text := strings.TrimSpace(p.Next)
 	if text == "" {
 		return errors.New("a process needs a next step, or the source's word for a closed business")
@@ -250,7 +278,7 @@ func (p *Process) Equal(q *Process) bool {
 	if p == nil || q == nil {
 		return p == q
 	}
-	if p.Next != q.Next || len(p.Steps) != len(q.Steps) {
+	if p.Next != q.Next || p.StatusLabel != q.StatusLabel || p.Kind != q.Kind || p.Bill != q.Bill || p.About != q.About || len(p.Steps) != len(q.Steps) {
 		return false
 	}
 	for i := range p.Steps {
