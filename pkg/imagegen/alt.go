@@ -60,6 +60,9 @@ func combinedAlt(group []votes.Vote) string {
 	if outcome := auswahlOutcome(group[0]); outcome != "" {
 		result = outcome + "\n" + result
 	}
+	if next := voteformat.NextStepLine(group); next != "" {
+		result += "\n" + next
+	}
 	return assembleAlt(voteformat.LongFormHeading(group, voteformat.Tags{}), result)
 }
 
@@ -104,6 +107,9 @@ func titleAlt(group []votes.Vote) string {
 			}
 		}
 		result = head + strings.Join(lines, "\n")
+		if next := voteformat.NextStepLine(group); next != "" {
+			result += "\n\n" + next
+		}
 		if len([]rune(result)) <= maxAltRunes-altLabelFloor-2 {
 			break
 		}

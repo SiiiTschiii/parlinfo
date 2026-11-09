@@ -51,7 +51,7 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 	// the text belongs to the member being replaced, not to anyone elected.
 	if votes.IsWahlgeschaeftGroup(group) {
 		posts := buildWahlgeschaeftPosts(group)
-		return posts, platforms.ThreadCards(1, len(posts), nil)
+		return posts, platforms.ThreadCards(1, len(posts), nil, false)
 	}
 
 	firstVote := group[0]
@@ -85,7 +85,7 @@ func FormatVoteThreadWithCards(group []votes.Vote, contactMapper *contacts.Mappe
 		}
 	}
 
-	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts)
+	return thread, platforms.ThreadCards(len(group), len(thread), voteStarts, imagegen.HasStatusCard(group))
 }
 
 // replyEntry is one block of reply text: a link block (link) or a block of
@@ -211,6 +211,14 @@ func buildReplyPosts(group []votes.Vote, signatories []string, linkLine string, 
 
 	// Build individual vote entries
 	var entries []replyEntry
+
+	// The next step opens the first reply, right under the verdict on the root
+	// it follows from. It is about the whole business, like the links below
+	// it, and this reply is the one that carries the status card it summarises
+	// (see platforms.ThreadCards).
+	if next := voteformat.NextStepLine(group); next != "" {
+		entries = append(entries, replyEntry{text: next, vote: -1})
+	}
 
 	// The links lead the thread. They are about the whole business, not about
 	// any one vote, so they sit where a reader meets them first rather than

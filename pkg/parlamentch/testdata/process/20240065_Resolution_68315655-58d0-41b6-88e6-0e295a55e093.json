@@ -1,0 +1,31 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1780876800000)/",
+    "ResolutionText": "Abweichung",
+    "CouncilName": "Ständerat"
+   },
+   {
+    "ResolutionDate": "/Date(1781136000000)/",
+    "ResolutionText": "Zustimmung",
+    "CouncilName": "Nationalrat"
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "CouncilName": "Nationalrat"
+   },
+   {
+    "ResolutionDate": "/Date(1757980800000)/",
+    "ResolutionText": "Beschluss abweichend vom Entwurf",
+    "CouncilName": "Nationalrat"
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "CouncilName": "Ständerat"
+   }
+  ]
+ }
+}
