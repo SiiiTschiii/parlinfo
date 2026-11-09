@@ -6,12 +6,9 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
-// NextStepLabel opens the line saying what happens to a business next. It is
-// the one piece of the line that is ours; what follows it is the source's.
-const NextStepLabel = "Nächster Schritt:"
-
 // NextStep is what a group's posts say about the business's next step, as the
-// label and the source's text: ("Nächster Schritt:", "In Kommission des
+// label and the source's text. The label, Words.NextStep, is the one piece of
+// the line that is ours; what follows it is the source's: ("Nächster Schritt:", "In Kommission des
 // Ständerats") for a business that goes on. For one this vote ended there is
 // no next step, so the label is the source's own heading for a business's
 // status instead — ("Stand der Beratungen:", "Erledigt") as parlament.ch's
@@ -28,7 +25,7 @@ func NextStep(group []votes.Vote) (label, text string) {
 	if p.Ended() {
 		return strings.TrimSpace(p.StatusLabel), strings.TrimSpace(p.Next)
 	}
-	return NextStepLabel, strings.TrimSpace(p.Next)
+	return W(groupLanguage(group)).NextStep, strings.TrimSpace(p.Next)
 }
 
 // NextStepLine is NextStep as a text post prints it, or "" when the group

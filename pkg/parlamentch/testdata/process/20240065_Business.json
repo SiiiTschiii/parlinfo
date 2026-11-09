@@ -2,9 +2,10 @@
  "d": {
   "results": [
    {
+    "SubmissionCouncil": null,
     "FederalCouncilProposalText": null,
-    "SubmissionDate": "/Date(1723593600000)/",
-    "SubmissionCouncil": null
+    "FederalCouncilProposalDate": null,
+    "SubmissionDate": "/Date(1723593600000)/"
    }
   ]
  }

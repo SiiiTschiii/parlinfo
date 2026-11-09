@@ -3,28 +3,48 @@
   "results": [
    {
     "ResolutionDate": "/Date(1780876800000)/",
+    "ResolutionId": 37,
     "ResolutionText": "Abweichung",
-    "CouncilName": "Ständerat"
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    },
    {
     "ResolutionDate": "/Date(1781136000000)/",
+    "ResolutionId": 3,
     "ResolutionText": "Zustimmung",
-    "CouncilName": "Nationalrat"
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    },
    {
     "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
     "ResolutionText": "Annahme in der Schlussabstimmung",
-    "CouncilName": "Nationalrat"
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    },
    {
     "ResolutionDate": "/Date(1757980800000)/",
+    "ResolutionId": 52,
     "ResolutionText": "Beschluss abweichend vom Entwurf",
-    "CouncilName": "Nationalrat"
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    },
    {
     "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
     "ResolutionText": "Annahme in der Schlussabstimmung",
-    "CouncilName": "Ständerat"
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    }
   ]
  }

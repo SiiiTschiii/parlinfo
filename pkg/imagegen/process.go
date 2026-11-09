@@ -198,12 +198,12 @@ var statusMinTitle = int(math.Ceil(2 * titleFontMin * 1.2 * (1 + titleLineGapFac
 // statusSteps wraps each step's detail to at most maxLines, cutting what does
 // not fit with an ellipsis. Details are meant to be one short sentence; the
 // bound keeps one that is not from crowding out the title.
-func statusSteps(p *votes.Process, fonts *fontSet, maxLines int) []statusStep {
+func statusSteps(p *votes.Process, lang votes.Language, fonts *fontSet, maxLines int) []statusStep {
 	width := imgWidth - 2*padding - stepMarkCol - stepTextGap
 	steps := make([]statusStep, len(p.Steps))
 	for i, s := range p.Steps {
 		if s.State == votes.StepSkipped {
-			steps[i] = statusStep{label: skippedLabel(s.Skipped), state: s.State}
+			steps[i] = statusStep{label: skippedLabel(lang, s.Skipped), state: s.State}
 			continue
 		}
 		detail := wrapText(fonts.partyNum, s.Detail, width)
@@ -215,11 +215,12 @@ func statusSteps(p *votes.Process, fonts *fontSet, maxLines int) []statusStep {
 
 // skippedLabel is what the card prints where steps were left out: the count,
 // so a reader knows the path was longer than the card shows.
-func skippedLabel(n int) string {
+func skippedLabel(lang votes.Language, n int) string {
+	w := voteformat.W(lang)
 	if n == 1 {
-		return "1 weiterer Schritt"
+		return w.StepSkipped
 	}
-	return fmt.Sprintf("%d weitere Schritte", n)
+	return fmt.Sprintf(w.StepsSkipped, n)
 }
 
 // stepHeight is the space one step takes: its label line and its detail.
@@ -332,10 +333,10 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	// nothing.
 	// The sentence on the business type goes first when room runs short:
 	// the steps are what the card is for.
-	steps := statusSteps(p, fonts, 2)
+	steps := statusSteps(p, v.Language, fonts, 2)
 	about := statusAbout(p, fonts)
 	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
-		steps = statusSteps(p, fonts, 1)
+		steps = statusSteps(p, v.Language, fonts, 1)
 	}
 	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
 		about = nil
@@ -519,18 +520,19 @@ func statusAlt(group []votes.Vote) string {
 		label += "\n" + about
 	}
 
+	w := voteformat.W(v.Language)
 	var lines []string
 	for _, s := range p.Steps {
 		var state string
 		switch s.State {
 		case votes.StepDone:
-			state = "Erledigt"
+			state = w.StepDone
 		case votes.StepCurrent, votes.StepEnded, votes.StepCompleted:
-			state = "Diese Abstimmung"
+			state = w.StepThisVote
 		case votes.StepNext:
-			state = "Noch offen"
+			state = w.StepOpen
 		case votes.StepSkipped:
-			lines = append(lines, "… "+skippedLabel(s.Skipped))
+			lines = append(lines, "… "+skippedLabel(v.Language, s.Skipped))
 			continue
 		}
 		line := state + ": " + s.Label

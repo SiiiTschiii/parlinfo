@@ -3,21 +3,27 @@
   "results": [
    {
     "ResolutionDate": "/Date(1625097600000)/",
+    "ResolutionId": 16,
     "ResolutionText": "Folge geben (Erstrat)",
+    "Council": null,
     "CouncilName": null,
     "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Nationalrat",
     "CommitteeAbbreviation1": "WBK-N"
    },
    {
     "ResolutionDate": "/Date(1637020800000)/",
+    "ResolutionId": 49,
     "ResolutionText": "Keine Zustimmung",
+    "Council": null,
     "CouncilName": null,
     "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Ständerat",
     "CommitteeAbbreviation1": "WBK-S"
    },
    {
     "ResolutionDate": "/Date(1677456000000)/",
+    "ResolutionId": 51,
     "ResolutionText": "Keine Folge gegeben",
+    "Council": 1,
     "CouncilName": "Nationalrat",
     "CommitteeName": null,
     "CommitteeAbbreviation1": null

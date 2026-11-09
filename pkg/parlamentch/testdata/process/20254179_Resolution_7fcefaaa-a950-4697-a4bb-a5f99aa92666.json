@@ -3,13 +3,21 @@
   "results": [
    {
     "ResolutionDate": "/Date(1780272000000)/",
+    "ResolutionId": 20,
     "ResolutionText": "Annahme",
-    "CouncilName": "Nationalrat"
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    },
    {
     "ResolutionDate": "/Date(1764806400000)/",
+    "ResolutionId": 20,
     "ResolutionText": "Annahme",
-    "CouncilName": "Ständerat"
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    }
   ]
  }

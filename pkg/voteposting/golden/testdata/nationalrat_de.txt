@@ -308,3 +308,137 @@ GLP 10/0/0/1
 
 📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
 
+################ FIXTURE nationalrat-motion-process ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 07.03.2024 (14:51)
+
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
+
+👇 Details im Thread
+
+[post 1]
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
+
+[post 2]
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Nationalrat | Abstimmung vom 07.03.2024 (14:51)
+
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
+
+👇 Details im Thread
+
+[post 1]
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (14:51)
+
+Motion
+✅ Angenommen: Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
+
+👇 Details im Thread
+
+[post 1]
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+[facet] {Index:{ByteStart:81 ByteEnd:166} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
+[facet] {Index:{ByteStart:183 ByteEnd:248} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
+
+[post 2]
+📊 117 Ja | 62 Nein | 8 Enth. | 12 Abw.
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
+
+---- Instagram ----
+[images] 2
+[caption]
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (14:51)
+
+Motion
+Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
+
+✅ Angenommen
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
+
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+
+---- Facebook ----
+[images] 2
+[message]
+🗳️ Nationalrat | Abstimmung vom 07.03.2024 (14:51)
+
+Motion
+Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten
+
+✅ Angenommen
+📊 117 Ja | 62 Nein | 8 Enthaltung | 12 Abwesend
+
+🏛️ Fraktionen (Ja/Nein/Enth/Abw):
+SVP 58/1/4/4
+SP 0/38/0/2
+Mitte-EVP 27/2/1/1
+FDP 22/0/3/3
+Grüne 0/21/0/2
+GLP 10/0/0/0
+
+➡️ Nächster Schritt: In Kommission des Ständerats (SGK-S)
+
+🔗 Geschäft: https://www.parlament.ch/de/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protokoll: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Daten: Parlamentsdienste der Bundesversammlung, Bern
+

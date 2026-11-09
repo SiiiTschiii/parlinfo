@@ -1,0 +1,24 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1750032000000)/",
+    "ResolutionId": 51,
+    "ResolutionText": "Non è dato seguito",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1777334400000)/",
+    "ResolutionId": 51,
+    "ResolutionText": "Non è dato seguito",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

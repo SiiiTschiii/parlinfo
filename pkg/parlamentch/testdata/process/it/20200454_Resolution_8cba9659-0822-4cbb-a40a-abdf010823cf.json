@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1625097600000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "Dare seguito (Camera prioritaria)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione della scienza, dell'educazione e della cultura Consiglio nazionale",
+    "CommitteeAbbreviation1": "CSEC-N"
+   },
+   {
+    "ResolutionDate": "/Date(1637020800000)/",
+    "ResolutionId": 49,
+    "ResolutionText": "Nessuna adesione",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione della scienza, dell'educazione e della cultura Consiglio degli Stati",
+    "CommitteeAbbreviation1": "CSEC-S"
+   },
+   {
+    "ResolutionDate": "/Date(1677456000000)/",
+    "ResolutionId": 51,
+    "ResolutionText": "Non è dato seguito",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

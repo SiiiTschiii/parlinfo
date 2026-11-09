@@ -1,0 +1,22 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Commission de la science, de l'éducation et de la culture Conseil national",
+    "Abbreviation1": "CSEC-N"
+   },
+   {
+    "CommitteeName": "Commission de la science, de l'éducation et de la culture Conseil des États",
+    "Abbreviation1": "CSEC-E"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   }
+  ]
+ }
+}

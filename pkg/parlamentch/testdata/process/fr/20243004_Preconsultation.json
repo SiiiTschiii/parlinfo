@@ -1,0 +1,22 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Commission de la sécurité sociale et de la santé publique Conseil national",
+    "Abbreviation1": "CSSS-N"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": "Commission de la sécurité sociale et de la santé publique Conseil des États",
+    "Abbreviation1": "CSSS-E"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   }
+  ]
+ }
+}

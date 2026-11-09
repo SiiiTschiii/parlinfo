@@ -307,3 +307,137 @@ PVL 10/0/0/1
 
 📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
 
+################ FIXTURE nationalrat-motion-process ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 07.03.2024 (14:51)
+
+Mozione
+✅ Accettato: Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mante…
+
+👇 Dettagli nel thread
+
+[post 1]
+➡️ Prossima tappa: Nella Commissione del Consiglio degli Stati (CSSS-S)
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Dati: Servizi del Parlamento
+
+📊 117 Sì | 62 No | 8 Astensioni | 12 Assenti
+
+[post 2]
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centro-PEV 27/2/1/1
+PLR 22/0/3/3
+Verdi 0/21/0/2
+PVL 10/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Consiglio nazionale | Votazione del 07.03.2024 (14:51)
+
+Mozione
+✅ Accettato: Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mantenimento
+
+👇 Dettagli nel thread
+
+[post 1]
+➡️ Prossima tappa: Nella Commissione del Consiglio degli Stati (CSSS-S)
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Dati: Servizi del Parlamento
+
+📊 117 Sì | 62 No | 8 Astensioni | 12 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centro-PEV 27/2/1/1
+PLR 22/0/3/3
+Verdi 0/21/0/2
+PVL 10/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Consiglio nazionale | Votazione del 07.03.2024 (14:51)
+
+Mozione
+✅ Accettato: Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mantenimento
+
+👇 Dettagli nel thread
+
+[post 1]
+➡️ Prossima tappa: Nella Commissione del Consiglio degli Stati (CSSS-S)
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Dati: Servizi del Parlamento
+[facet] {Index:{ByteStart:91 ByteEnd:176} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
+[facet] {Index:{ByteStart:194 ByteEnd:259} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
+
+[post 2]
+📊 117 Sì | 62 No | 8 Ast. | 12 Ass.
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centro-PEV 27/2/1/1
+PLR 22/0/3/3
+Verdi 0/21/0/2
+PVL 10/0/0/0
+
+---- Instagram ----
+[images] 2
+[caption]
+🗳️ Consiglio nazionale | Votazione del 07.03.2024 (14:51)
+
+Mozione
+Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mantenimento
+
+✅ Accettato
+📊 117 Sì | 62 No | 8 Astensioni | 12 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centro-PEV 27/2/1/1
+PLR 22/0/3/3
+Verdi 0/21/0/2
+PVL 10/0/0/0
+
+➡️ Prossima tappa: Nella Commissione del Consiglio degli Stati (CSSS-S)
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Dati: Servizi del Parlamento
+
+---- Facebook ----
+[images] 2
+[message]
+🗳️ Consiglio nazionale | Votazione del 07.03.2024 (14:51)
+
+Mozione
+Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mantenimento
+
+✅ Accettato
+📊 117 Sì | 62 No | 8 Astensioni | 12 Assenti
+
+🏛️ Gruppi (Sì/No/Ast/Ass):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centro-PEV 27/2/1/1
+PLR 22/0/3/3
+Verdi 0/21/0/2
+PVL 10/0/0/0
+
+➡️ Prossima tappa: Nella Commissione del Consiglio degli Stati (CSSS-S)
+
+🔗 Oggetto: https://www.parlament.ch/it/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Protocollo: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Dati: Servizi del Parlamento
+

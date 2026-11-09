@@ -1,0 +1,51 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1780876800000)/",
+    "ResolutionId": 37,
+    "ResolutionText": "Deroga",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781136000000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adesione",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1757980800000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Decisione in deroga al disegno (progetto)",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}
