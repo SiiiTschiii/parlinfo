@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1625097600000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "Donner suite (conseil prioritaire)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commission de la science, de l'éducation et de la culture Conseil national",
+    "CommitteeAbbreviation1": "CSEC-N"
+   },
+   {
+    "ResolutionDate": "/Date(1637020800000)/",
+    "ResolutionId": 49,
+    "ResolutionText": "Ne pas donner suite",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commission de la science, de l'éducation et de la culture Conseil des États",
+    "CommitteeAbbreviation1": "CSEC-E"
+   },
+   {
+    "ResolutionDate": "/Date(1677456000000)/",
+    "ResolutionId": 51,
+    "ResolutionText": "Refusé de donner suite",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

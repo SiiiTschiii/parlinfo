@@ -31,6 +31,12 @@ import (
 // went back to the Ständerat), an initiative given leave and a Gesamtabstimmung
 // (each continues under more than one status), a group whose outcome the
 // meanings do not settle, and any business type not named here.
+//
+// The rules read the service's codes — the business type, the council, the
+// decision — which are the same in every language's feed, and the history is
+// read from the feed of the post's language. So a French or Italian post gets
+// the process the German one does, in the words parlament.ch uses in that
+// language; the few the adapter states itself are in processWords.
 
 var _ votes.ProcessSource = (*Client)(nil)
 
@@ -38,8 +44,23 @@ var _ votes.ProcessSource = (*Client)(nil)
 // before parliament.
 const typeFederalCouncil = "Geschäft des Bundesrates"
 
-// processDone is the status the service gives a business nothing follows.
-const processDone = "Erledigt"
+// businessKinds are the types the rules below know, by the service's
+// BusinessType code, under their German names: the code is the same in every
+// language's feed, where the name is not ("Objet du Conseil fédéral",
+// "Mozione").
+var businessKinds = map[int]string{1: typeFederalCouncil, 3: typeStandesIv, 4: typeParlIv, 5: typeMotion, 6: typePostulat}
+
+// The service's codes the rules read, the same in every language's feed: the
+// councils (Council) and the decisions they record (ResolutionId).
+const (
+	councilNational = 1
+	councilStates   = 2
+
+	resolutionAdopted  = 20
+	resolutionRejected = 22
+	resolutionLeave    = 16
+	resolutionNoLeave  = 51
+)
 
 // amended matches a meaning that adopts a motion as amended, which sends it
 // back to the other chamber rather than on to the Bundesrat.
@@ -59,6 +80,8 @@ type billDTO struct {
 
 type resolutionDTO struct {
 	ResolutionDate         string `json:"ResolutionDate"`
+	ResolutionID           int    `json:"ResolutionId"`
+	Council                int    `json:"Council"`
 	ResolutionText         string `json:"ResolutionText"`
 	CouncilName            string `json:"CouncilName"`
 	CommitteeName          string `json:"CommitteeName"`
@@ -77,12 +100,6 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 	if len(group) == 0 || group[0].DateString() == "" {
 		return nil, none("Abstimmung ohne Datum")
 	}
-	// The rules below match the German feed's type names and statuses, and
-	// the card states them in German, so the other languages get no process
-	// until each has its own wording.
-	if c.language() != votes.German {
-		return nil, none("Stand der Beratungen nur auf Deutsch")
-	}
 	id, err := strconv.ParseInt(group[0].Affair.ID, 10, 64)
 	if err != nil {
 		return nil, none("Geschäftsnummer nicht lesbar")
@@ -94,9 +111,9 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 		return nil, none("mehrere Entwürfe, und die Abstimmung nennt keinen")
 	}
 	if p != nil {
-		p.About = typeAbout[group[0].Affair.Type]
+		p.About = typeAbout[c.language()][c.businessKind(group[0])]
 		if n, bill := c.billCounts[id], c.labels[group[0].SourceID].billNumber; n > 1 && bill > 0 {
-			p.Bill = fmt.Sprintf("Entwurf %d von %d", bill, n)
+			p.Bill = fmt.Sprintf(c.processWords().bill, bill, n)
 		}
 	}
 	return p, err
@@ -105,16 +122,45 @@ func (c *Client) Process(group []votes.Vote) (*votes.Process, error) {
 // typeAbout is parlament.ch's own sentence on what each business type asks
 // for, the first of its page on the type ("Parlamentsporträt",
 // "Beratungsgegenstände und parlamentarische Verfahren"), read 09.11.2026.
-var typeAbout = map[string]string{
-	typeMotion:    "Mit einer Motion wird der Bundesrat beauftragt, einen Entwurf zu einem Erlass der Bundesversammlung vorzulegen oder eine Massnahme zu treffen.",
-	typePostulat:  "Ein Postulat beauftragt den Bundesrat zu prüfen und zu berichten, ob ein Entwurf zu einem Erlass der Bundesversammlung vorgelegt oder eine Massnahme getroffen werden muss.",
-	typeParlIv:    "Mit einer parlamentarischen Initiative kann ein Ratsmitglied, eine Fraktion oder eine Kommission den Entwurf zu einem Erlass oder die Grundzüge eines solchen Erlasses vorschlagen.",
-	typeStandesIv: "Jeder Kanton kann mit einer Standesinitiative vorschlagen, dass eine Kommission einen Entwurf für einen Erlass der Bundesversammlung ausarbeitet.",
+// The French and Italian are the first sentence of each type's section on
+// the page's French and Italian versions ("Initiatives parlementaires,
+// initiatives déposées par des cantons et interventions"; "Iniziative
+// parlamentari, iniziative cantonali e interventi parlamentari"), read
+// 09.11.2026.
+var typeAbout = map[votes.Language]map[string]string{
+	votes.German: {
+		typeMotion:    "Mit einer Motion wird der Bundesrat beauftragt, einen Entwurf zu einem Erlass der Bundesversammlung vorzulegen oder eine Massnahme zu treffen.",
+		typePostulat:  "Ein Postulat beauftragt den Bundesrat zu prüfen und zu berichten, ob ein Entwurf zu einem Erlass der Bundesversammlung vorgelegt oder eine Massnahme getroffen werden muss.",
+		typeParlIv:    "Mit einer parlamentarischen Initiative kann ein Ratsmitglied, eine Fraktion oder eine Kommission den Entwurf zu einem Erlass oder die Grundzüge eines solchen Erlasses vorschlagen.",
+		typeStandesIv: "Jeder Kanton kann mit einer Standesinitiative vorschlagen, dass eine Kommission einen Entwurf für einen Erlass der Bundesversammlung ausarbeitet.",
+	},
+	votes.French: {
+		typeMotion:    "La motion charge le Conseil fédéral de déposer un projet d’acte de l’Assemblée fédérale ou de prendre une mesure.",
+		typePostulat:  "Le postulat charge le Conseil fédéral d’examiner l’opportunité, soit de déposer un projet d’acte de l’Assemblée fédérale, soit de prendre une mesure et de présenter un rapport à ce sujet.",
+		typeParlIv:    "Par la voie d’une initiative, un député, un groupe parlementaire ou une commission peut proposer qu’une commission élabore un projet d’acte de l’Assemblée fédérale.",
+		typeStandesIv: "Tout canton peut proposer, au moyen d’une initiative, qu’une commission élabore un projet d’acte de l’Assemblée fédérale.",
+	},
+	votes.Italian: {
+		typeMotion:    "La mozione incarica il Consiglio federale di presentare un disegno di atto legislativo dell’Assemblea federale o di prendere un provvedimento.",                                                  //nolint:misspell // Italian, as parlament.ch words it
+		typePostulat:  "Il postulato incarica il Consiglio federale di esaminare l’opportunità di proporre un disegno di atto legislativo dell’Assemblea federale o di prendere un provvedimento.",                       //nolint:misspell // Italian, as parlament.ch words it
+		typeParlIv:    "Mediante un’iniziativa parlamentare un parlamentare, un gruppo o una commissione parlamentare può proporre che una commissione elabori un progetto di atto legislativo dell’Assemblea federale.", //nolint:misspell // Italian, as parlament.ch words it
+		typeStandesIv: "Ogni Cantone può proporre mediante un’iniziativa che una commissione elabori un progetto di atto legislativo dell'Assemblea federale.",                                                           //nolint:misspell // Italian, as parlament.ch words it
+	},
 }
 
-// statusHeading is the heading parlament.ch's business page sets before a
-// business's status: "Stand der Beratungen: Erledigt".
-const statusHeading = "Stand der Beratungen:"
+// businessKind is the German name of a vote's business type, read from its
+// type code where that was fetched and otherwise from the name the vote
+// carries, which is the German one in the German feed.
+func (c *Client) businessKind(v votes.Vote) string {
+	if id, err := strconv.ParseInt(v.Affair.ID, 10, 64); err == nil {
+		if code, ok := c.businessCodes[id]; ok {
+			if kind, ok := businessKinds[code]; ok {
+				return kind
+			}
+		}
+	}
+	return v.Affair.Type
+}
 
 func none(reason string) error { return votes.NoProcess{Reason: reason} }
 
@@ -134,7 +180,8 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 		}
 		group = []votes.Vote{v}
 	}
-	switch t := group[0].Affair.Type; t {
+	w := c.processWords()
+	switch t := c.businessKind(group[0]); t {
 	case typeMotion, typePostulat:
 		v, why := c.decisiveFiledVote(group)
 		if why != "" {
@@ -147,7 +194,7 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 			switch v.Outcome {
 			case outcomeNoLeave:
 				return c.closingProcess(id, v, votes.ProcessStep{
-					Label: "Nationalrat", Detail: "Keine Folge gegeben", State: votes.StepEnded})
+					Label: w.council, Detail: w.noLeave, State: votes.StepEnded})
 			case outcomeLeave:
 				return nil, none("Folge gegeben: nächster Status nicht eindeutig (\"Vorprüfung - in Kommission des Ständerates\" oder \"In Kommission des Ständerats\")")
 			}
@@ -195,8 +242,9 @@ func (c *Client) decisiveFiledVote(group []votes.Vote) (votes.Vote, string) {
 // filedProcess is the process of a motion or postulate after the Nationalrat
 // decided it.
 func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*votes.Process, error) {
+	w := c.processWords()
 	if v.Outcome == outcomeFailed {
-		return c.closingProcess(id, v, votes.ProcessStep{Label: "Nationalrat", Detail: "Ablehnung", State: votes.StepEnded})
+		return c.closingProcess(id, v, votes.ProcessStep{Label: w.council, Detail: w.rejected, State: votes.StepEnded})
 	}
 	if v.Outcome != outcomeAdopted {
 		return nil, none("Ausgang " + v.Outcome + ": keine Regel")
@@ -206,19 +254,19 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 		return nil, err
 	}
 	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
-	steps = append(steps, votes.ProcessStep{Label: "Nationalrat", Detail: dated(v.DateString(), "Annahme"), State: votes.StepCurrent})
+	steps = append(steps, votes.ProcessStep{Label: w.council, Detail: dated(v.DateString(), w.adopted), State: votes.StepCurrent})
 
 	if businessType == typePostulat || otherChamber {
-		steps = append(steps, votes.ProcessStep{Label: "Überwiesen an den Bundesrat", State: votes.StepNext})
-		return &votes.Process{Steps: steps, Next: "Überwiesen an den Bundesrat"}, nil
+		steps = append(steps, votes.ProcessStep{Label: w.transmitted, State: votes.StepNext})
+		return &votes.Process{Steps: steps, Next: w.transmitted}, nil
 	}
 	// A motion the Nationalrat adopts first goes to the Ständerat. One filed
 	// in the Ständerat that reaches the Nationalrat first fits neither rule.
 	if b.SubmissionCouncil != 1 {
 		return nil, none("im Ständerat eingereichte Motion, über die der Ständerat noch nicht entschieden hat")
 	}
-	next := votes.ProcessStep{Label: "In Kommission des Ständerats", State: votes.StepNext}
-	text := "In Kommission des Ständerats"
+	next := votes.ProcessStep{Label: w.inCommittee, State: votes.StepNext}
+	text := w.inCommittee
 	if name, abbr, err := c.standeratCommittee(id); err != nil {
 		return nil, err
 	} else if name != "" {
@@ -247,22 +295,24 @@ func (c *Client) finalVoteProcess(id int64, group []votes.Vote) (*votes.Process,
 	if !plainMeanings[strings.ToLower(c.labels[v.SourceID].meaningYes)] {
 		return nil, none("Ja bedeutet nicht \"Annahme des Entwurfs\" (" + c.labels[v.SourceID].meaningYes + ")")
 	}
+	w := c.processWords()
 	switch v.Decision {
 	case outcomeAdopted:
 		return c.closingProcess(id, v, votes.ProcessStep{
-			Label: "Nationalrat", Detail: "Annahme in der Schlussabstimmung", State: votes.StepCompleted})
+			Label: w.council, Detail: w.finalAdopted, State: votes.StepCompleted})
 	case outcomeFailed:
 		return c.closingProcess(id, v, votes.ProcessStep{
-			Label: "Nationalrat", Detail: "Ablehnung in der Schlussabstimmung", State: votes.StepEnded})
+			Label: w.council, Detail: w.finalRejected, State: votes.StepEnded})
 	}
 	return nil, none("kein Ausgang (Stimmengleichheit)")
 }
 
 // isFinalVote reports whether a vote's subtitle names a Schlussabstimmung, in
-// either language the service has used.
+// either language the service has used, or as the Italian post labels it (see
+// subjectLabels).
 func isFinalVote(subtitle string) bool {
 	s := strings.ToLower(strings.TrimSpace(subtitle))
-	return strings.HasPrefix(s, "vote final") || strings.HasPrefix(s, "schlussabstimmung")
+	return strings.HasPrefix(s, "vote final") || strings.HasPrefix(s, "schlussabstimmung") || strings.HasPrefix(s, "votazione finale")
 }
 
 // closingProcess is a process this vote ends: the history, the vote's own
@@ -274,7 +324,8 @@ func (c *Client) closingProcess(id int64, v votes.Vote, step votes.ProcessStep) 
 	}
 	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
 	step.Detail = dated(v.DateString(), step.Detail)
-	return &votes.Process{Steps: append(steps, step), Next: processDone, StatusLabel: statusHeading}, nil
+	w := c.processWords()
+	return &votes.Process{Steps: append(steps, step), Next: w.done, StatusLabel: w.statusHeading}, nil
 }
 
 // history is the business's steps before the vote, as parlament.ch dates and
@@ -291,7 +342,7 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 
 	var bs []processBusinessDTO
 	if err = c.get("/Business", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and ID eq %d", id),
+		"$filter": fmt.Sprintf("Language eq '%s' and ID eq %d", c.odataLanguage(), id),
 		"$select": "SubmissionCouncil,FederalCouncilProposalText,FederalCouncilProposalDate,SubmissionDate",
 	}, &bs); err != nil {
 		return
@@ -303,14 +354,14 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 	b = bs[0]
 
 	if d := odataDay(b.SubmissionDate); d != "" {
-		steps = append(steps, votes.ProcessStep{Label: "Eingereicht", Detail: dayDE(d), State: votes.StepDone})
+		steps = append(steps, votes.ProcessStep{Label: c.processWords().submitted, Detail: dayDE(d), State: votes.StepDone})
 	}
 	// The Bundesrat's proposal on a Vorstoss, dated, as the business page
 	// prints it under "Antrag des Bundesrates". It is read off the business
 	// itself: the status "Stellungnahme zum Vorstoss liegt vor", which this
 	// used to date it by, is missing from businesses filed before 2022.
 	if p, d := strings.TrimSpace(b.FederalCouncilProposalText), odataDay(b.FederalCouncilProposalDate); p != "" && d != "" && d < day {
-		steps = append(steps, votes.ProcessStep{Label: "Antrag des Bundesrates", Detail: dated(d, p), State: votes.StepDone})
+		steps = append(steps, votes.ProcessStep{Label: c.processWords().proposal, Detail: dated(d, p), State: votes.StepDone})
 	}
 
 	bill, err := c.billOf(id, c.labels[v.SourceID].billNumber)
@@ -326,7 +377,7 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 		d := odataDay(r.ResolutionDate)
 		// The Nationalrat's own decisions of the day are this vote's, which
 		// the adapter states itself.
-		if d > day || (d == day && council == "Nationalrat") {
+		if d > day || (d == day && r.Council == councilNational) {
 			continue
 		}
 		// A committee's decision carries no council but the committee: on an
@@ -344,10 +395,10 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 			if abbr == "" || strings.TrimSpace(r.CommitteeName) == "" {
 				continue
 			}
-			label = "Kommission " + abbr
+			label = c.processWords().committee + " " + abbr
 		}
 		steps = append(steps, votes.ProcessStep{Label: label, Detail: dated(d, strings.TrimSpace(r.ResolutionText)), State: votes.StepDone})
-		if council == "Ständerat" {
+		if r.Council == councilStates {
 			otherChamber = true
 		}
 	}
@@ -371,7 +422,7 @@ func dated(day, text string) string {
 func (c *Client) billOf(id, billNumber int64) (billDTO, error) {
 	var bills []billDTO
 	if err := c.get("/Bill", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d", id),
+		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d", c.odataLanguage(), id),
 		"$select": "ID,BillNumber",
 	}, &bills); err != nil {
 		return billDTO{}, err
@@ -401,7 +452,7 @@ func (c *Client) billOf(id, billNumber int64) (billDTO, error) {
 func (c *Client) resolutions(bl billDTO) ([]resolutionDTO, error) {
 	var rs []resolutionDTO
 	if err := c.get("/Resolution", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and IdBill eq guid'%s'", bl.ID),
+		"$filter": fmt.Sprintf("Language eq '%s' and IdBill eq guid'%s'", c.odataLanguage(), bl.ID),
 	}, &rs); err != nil {
 		return nil, err
 	}
@@ -409,13 +460,14 @@ func (c *Client) resolutions(bl billDTO) ([]resolutionDTO, error) {
 	return rs, nil
 }
 
-// recordedOutcomes are the Nationalrat's decisions on filed business as the
-// service records them, and the outcome each stands for.
-var recordedOutcomes = map[string]string{
-	"Annahme":             outcomeAdopted,
-	"Ablehnung":           outcomeFailed,
-	"Folge gegeben":       outcomeLeave,
-	"Keine Folge gegeben": outcomeNoLeave,
+// recordedOutcomes are the Nationalrat's decisions on filed business by the
+// service's ResolutionId, and the outcome each stands for: "Annahme",
+// "Ablehnung", "Folge gegeben" and "Keine Folge gegeben" in the German feed.
+var recordedOutcomes = map[int]string{
+	resolutionAdopted:  outcomeAdopted,
+	resolutionRejected: outcomeFailed,
+	resolutionLeave:    outcomeLeave,
+	resolutionNoLeave:  outcomeNoLeave,
 }
 
 // recordedOutcome is v with the outcome the service records for the
@@ -436,10 +488,10 @@ func (c *Client) recordedOutcome(id int64, v votes.Vote) (votes.Vote, error) {
 	if err != nil {
 		return v, err
 	}
-	var found []string
+	var found []int
 	for _, r := range rs {
-		if strings.TrimSpace(r.CouncilName) == "Nationalrat" && odataDay(r.ResolutionDate) == v.DateString() {
-			found = append(found, strings.TrimSpace(r.ResolutionText))
+		if r.Council == councilNational && odataDay(r.ResolutionDate) == v.DateString() {
+			found = append(found, r.ResolutionID)
 		}
 	}
 	if len(found) == 1 {
@@ -453,12 +505,12 @@ func (c *Client) recordedOutcome(id int64, v votes.Vote) (votes.Vote, error) {
 func (c *Client) standeratCommittee(id int64) (name, abbreviation string, err error) {
 	var pcs []preconsultationDTO
 	if err := c.get("/Preconsultation", query{
-		"$filter": fmt.Sprintf("Language eq 'DE' and BusinessNumber eq %d", id),
+		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d", c.odataLanguage(), id),
 	}, &pcs); err != nil {
 		return "", "", err
 	}
 	for _, p := range pcs {
-		if strings.HasSuffix(strings.TrimSpace(p.CommitteeName), "Ständerat") {
+		if strings.HasSuffix(strings.TrimSpace(p.CommitteeName), c.processWords().standerat) {
 			return strings.TrimSpace(p.CommitteeName), strings.TrimSpace(p.Abbreviation1), nil
 		}
 	}

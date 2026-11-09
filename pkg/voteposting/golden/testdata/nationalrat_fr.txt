@@ -308,3 +308,137 @@ PVL 10/0/0/1
 
 📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_33216.pdf
 
+################ FIXTURE nationalrat-motion-process ################
+
+---- X (limit 280) ----
+[post 0]
+🗳️  Conseil national | Vote du 07.03.2024 (14:51)
+
+Motion
+✅ Accepté: Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien
+
+👇 Détails dans le fil
+
+[post 1]
+➡️ Prochaine étape : En commission du Conseil des Etats (CSSS-E)
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Données : Les Services du Parlement
+
+📊 117 Oui | 62 Non | 8 Abstentions | 12 Absents
+
+[post 2]
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centre-PEV 27/2/1/1
+PLR 22/0/3/3
+Vert-e-s 0/21/0/2
+PVL 10/0/0/0
+
+---- X (limit 2000) ----
+[post 0]
+🗳️  Conseil national | Vote du 07.03.2024 (14:51)
+
+Motion
+✅ Accepté: Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien
+
+👇 Détails dans le fil
+
+[post 1]
+➡️ Prochaine étape : En commission du Conseil des Etats (CSSS-E)
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Données : Les Services du Parlement
+
+📊 117 Oui | 62 Non | 8 Abstentions | 12 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centre-PEV 27/2/1/1
+PLR 22/0/3/3
+Vert-e-s 0/21/0/2
+PVL 10/0/0/0
+
+---- Bluesky ----
+[post 0]
+🗳️ Conseil national | Vote du 07.03.2024 (14:51)
+
+Motion
+✅ Accepté: Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien
+
+👇 Détails dans le fil
+
+[post 1]
+➡️ Prochaine étape : En commission du Conseil des Etats (CSSS-E)
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Données : Les Services du Parlement
+[facet] {Index:{ByteStart:83 ByteEnd:168} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004 DID: Tag:}]}
+[facet] {Index:{ByteStart:190 ByteEnd:255} Features:[{Type:app.bsky.richtext.facet#link URI:https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf DID: Tag:}]}
+
+[post 2]
+📊 117 Oui | 62 Non | 8 Abst. | 12 Abs.
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centre-PEV 27/2/1/1
+PLR 22/0/3/3
+Vert-e-s 0/21/0/2
+PVL 10/0/0/0
+
+---- Instagram ----
+[images] 2
+[caption]
+🗳️ Conseil national | Vote du 07.03.2024 (14:51)
+
+Motion
+Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien
+
+✅ Accepté
+📊 117 Oui | 62 Non | 8 Abstentions | 12 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centre-PEV 27/2/1/1
+PLR 22/0/3/3
+Vert-e-s 0/21/0/2
+PVL 10/0/0/0
+
+➡️ Prochaine étape : En commission du Conseil des Etats (CSSS-E)
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Données : Les Services du Parlement
+
+---- Facebook ----
+[images] 2
+[message]
+🗳️ Conseil national | Vote du 07.03.2024 (14:51)
+
+Motion
+Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien
+
+✅ Accepté
+📊 117 Oui | 62 Non | 8 Abstentions | 12 Absents
+
+🏛️ Groupes (Oui/Non/Abst/Abs):
+UDC 58/1/4/4
+PS 0/38/0/2
+Centre-PEV 27/2/1/1
+PLR 22/0/3/3
+Vert-e-s 0/21/0/2
+PVL 10/0/0/0
+
+➡️ Prochaine étape : En commission du Conseil des Etats (CSSS-E)
+
+🔗 Objet: https://www.parlament.ch/fr/ratsbetrieb/suche-curia-vista/geschaeft?AffairId=20243004
+📋 Procès-verbal: https://www.parlament.ch/poly/Abstimmung/52/out/vote_52_28344.pdf
+Données : Les Services du Parlement
+

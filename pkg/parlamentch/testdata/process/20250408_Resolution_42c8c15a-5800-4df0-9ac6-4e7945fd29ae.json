@@ -3,8 +3,12 @@
   "results": [
    {
     "ResolutionDate": "/Date(1790121600000)/",
+    "ResolutionId": 51,
     "ResolutionText": "Keine Folge gegeben",
-    "CouncilName": "Nationalrat"
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
    }
   ]
  }

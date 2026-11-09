@@ -1,0 +1,38 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Commissione degli affari giuridici Consiglio nazionale",
+    "Abbreviation1": "CAG-N"
+   },
+   {
+    "CommitteeName": "Commissione degli affari giuridici Consiglio degli Stati",
+    "Abbreviation1": "CAG-S"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": "Commissione degli affari giuridici Consiglio nazionale",
+    "Abbreviation1": "CAG-N"
+   },
+   {
+    "CommitteeName": "Commissione degli affari giuridici Consiglio degli Stati",
+    "Abbreviation1": "CAG-S"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   }
+  ]
+ }
+}

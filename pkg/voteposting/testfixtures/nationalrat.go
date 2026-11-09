@@ -20,14 +20,16 @@ import (
 var NationalratFixtureNames = []string{
 	"nationalrat-single-vote",
 	"nationalrat-two-bills",
+	"nationalrat-motion-process",
 }
 
 // NationalratFixtures returns the Nationalrat fixtures as posted in l, keyed
 // by name.
 func NationalratFixtures(l votes.Language) map[string][]votes.Vote {
 	return map[string][]votes.Vote{
-		"nationalrat-single-vote": nationalratSingleVote(l),
-		"nationalrat-two-bills":   nationalratTwoBills(l),
+		"nationalrat-single-vote":    nationalratSingleVote(l),
+		"nationalrat-two-bills":      nationalratTwoBills(l),
+		"nationalrat-motion-process": nationalratMotionProcess(l),
 	}
 }
 
@@ -232,4 +234,63 @@ func nationalratTwoBills(l votes.Language) []votes.Vote {
 				{"GL", 10, 0, 0, 1},
 			}),
 	}
+}
+
+// nationalratMotionProcess is motion 24.3004, adopted on 07.03.2024 (Ref.
+// 28344), with the process the adapter gives it in each language: the steps
+// and next step pkg/parlamentch's TestProcess_FrenchAndItalian pins, read
+// from that language's feed. See ProcessNationalratMotion for the German
+// account's own fixture of the same vote.
+func nationalratMotionProcess(l votes.Language) []votes.Vote {
+	title := nationalratText{
+		votes.German:  "Abschaffung der Alterskinderrenten und gleichzeitige Erhöhung der Ergänzungsleistungen für Eltern mit Unterhaltspflichten",
+		votes.French:  "Suppression des rentes pour enfants et augmentation simultanée des prestations complémentaires pour les parents avec obligation d’entretien",
+		votes.Italian: "Abolizione della rendita per figli dei beneficiari di una rendita di vecchiaia e contemporaneo aumento delle prestazioni complementari per i genitori con obbligo di mantenimento",
+	}
+	motion := nationalratText{votes.German: "Motion", votes.French: "Motion", votes.Italian: "Mozione"}
+	v := nationalratVote(l, 32084, 28344, 20243004, "24.3004",
+		zurichTime("2024-03-07 14:51:42"), title.in(l), "", motion.in(l),
+		[]groupTally{
+			{"V", 58, 1, 4, 4},
+			{"S", 0, 38, 0, 2},
+			{"M-E", 27, 2, 1, 1},
+			{"RL", 22, 0, 3, 3},
+			{"G", 0, 21, 0, 2},
+			{"GL", 10, 0, 0, 0},
+		})
+	v.Outcome = "angenommen"
+
+	processes := map[votes.Language]votes.Process{
+		votes.German: {
+			Steps: []votes.ProcessStep{
+				{Label: "Eingereicht", Detail: "18.01.2024", State: votes.StepDone},
+				{Label: "Antrag des Bundesrates", Detail: "21.02.2024 · Ablehnung", State: votes.StepDone},
+				{Label: "Nationalrat", Detail: "07.03.2024 · Annahme", State: votes.StepCurrent},
+				{Label: "In Kommission des Ständerats", Detail: "Kommission für soziale Sicherheit und Gesundheit Ständerat (SGK-S)", State: votes.StepNext},
+			},
+			Next:  "In Kommission des Ständerats (SGK-S)",
+			About: "Mit einer Motion wird der Bundesrat beauftragt, einen Entwurf zu einem Erlass der Bundesversammlung vorzulegen oder eine Massnahme zu treffen.",
+		},
+		votes.French: {
+			Steps: []votes.ProcessStep{
+				{Label: "Déposé", Detail: "18.01.2024", State: votes.StepDone},
+				{Label: "Proposition du Conseil fédéral", Detail: "21.02.2024 · Rejet", State: votes.StepDone},
+				{Label: "Conseil national", Detail: "07.03.2024 · Adoption", State: votes.StepCurrent},
+				{Label: "En commission du Conseil des Etats", Detail: "Commission de la sécurité sociale et de la santé publique Conseil des États (CSSS-E)", State: votes.StepNext},
+			},
+			Next:  "En commission du Conseil des Etats (CSSS-E)",
+			About: "La motion charge le Conseil fédéral de déposer un projet d’acte de l’Assemblée fédérale ou de prendre une mesure.",
+		},
+		votes.Italian: {
+			Steps: []votes.ProcessStep{
+				{Label: "Depositato", Detail: "18.01.2024", State: votes.StepDone},
+				{Label: "Proposta del Consiglio federale", Detail: "21.02.2024 · Respingere", State: votes.StepDone},
+				{Label: "Consiglio nazionale", Detail: "07.03.2024 · Adozione", State: votes.StepCurrent},
+				{Label: "Nella Commissione del Consiglio degli Stati", Detail: "Commissione della sicurezza sociale e della sanità Consiglio degli Stati (CSSS-S)", State: votes.StepNext},
+			},
+			Next:  "Nella Commissione del Consiglio degli Stati (CSSS-S)",
+			About: "La mozione incarica il Consiglio federale di presentare un disegno di atto legislativo dell’Assemblea federale o di prendere un provvedimento.", //nolint:misspell // Italian, as parlament.ch words it
+		},
+	}
+	return withProcess([]votes.Vote{v}, processes[l.OrGerman()])
 }

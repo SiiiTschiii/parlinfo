@@ -70,11 +70,11 @@ func TestStatusCard_FitsTheCrowdedCase(t *testing.T) {
 		}
 	}
 
-	steps := statusSteps(&p, fonts, 1)
+	steps := statusSteps(&p, votes.German, fonts, 1)
 	if got := stepsHeight(steps, fonts); got <= 0 {
 		t.Fatalf("steps measure %dpx", got)
 	}
-	if titleBudget(cards[1].inset(fonts), statusReserve(group[0], &p, nil, statusSteps(&p, fonts, 2), fonts)) >= statusMinTitle {
+	if titleBudget(cards[1].inset(fonts), statusReserve(group[0], &p, nil, statusSteps(&p, votes.German, fonts, 2), fonts)) >= statusMinTitle {
 		t.Error("the crowded case no longer needs the one-line fallback; make it more crowded so the fallback stays tested")
 	}
 }
@@ -160,7 +160,7 @@ func TestStatusCard_ShowsSkippedSteps(t *testing.T) {
 	if !strings.Contains(status.alt, "… 3 weitere Schritte") {
 		t.Errorf("alt text does not say steps were left out:\n%s", status.alt)
 	}
-	if got := statusSteps(&p, fonts, 2)[1].label; got != "3 weitere Schritte" {
+	if got := statusSteps(&p, votes.German, fonts, 2)[1].label; got != "3 weitere Schritte" {
 		t.Errorf("skip label = %q", got)
 	}
 	if _, err := renderCard(status, bg, fonts); err != nil {

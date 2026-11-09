@@ -45,6 +45,12 @@ type Words struct {
 	CaptionCut     string // Instagram, when the caption had to drop votes
 	CardOverview   string // fmt verb: how many votes the card lists
 	OverviewMore   string // fmt verb: how many rows the card dropped
+	NextStep       string // opens the line on what happens to a business next
+	StepSkipped    string // the process card's placeholder for one step left out
+	StepsSkipped   string // fmt verb: the same for several
+	StepDone       string // alt text: a step taken before this vote
+	StepThisVote   string // alt text: the step this vote took
+	StepOpen       string // alt text: the step still to come
 }
 
 // german is the reference: it is what every post said before there were other
@@ -91,6 +97,12 @@ var (
 		CaptionCut:     "Gekürzt – weitere Teilabstimmungen im Link.",
 		CardOverview:   "%d Abstimmungen",
 		OverviewMore:   "… und %d weitere Abstimmungen",
+		NextStep:       "Nächster Schritt:",
+		StepSkipped:    "1 weiterer Schritt",
+		StepsSkipped:   "%d weitere Schritte",
+		StepDone:       "Erledigt",
+		StepThisVote:   "Diese Abstimmung",
+		StepOpen:       "Noch offen",
 	}
 	french = Words{
 		Accepted:       "Accepté",
@@ -128,6 +140,12 @@ var (
 		CaptionCut:     "Abrégé – autres votes dans le lien.",
 		CardOverview:   "%d votes",
 		OverviewMore:   "… et %d autres votes",
+		NextStep:       "Prochaine étape :",
+		StepSkipped:    "1 autre étape",
+		StepsSkipped:   "%d autres étapes",
+		StepDone:       "Fait",
+		StepThisVote:   "Ce vote",
+		StepOpen:       "À venir",
 	}
 	italian = Words{
 		Accepted:       "Accettato",
@@ -165,6 +183,12 @@ var (
 		CaptionCut:     "Abbreviato – altre votazioni nel link.", //nolint:misspell // Italian
 		CardOverview:   "%d votazioni",
 		OverviewMore:   "… e altre %d votazioni",
+		NextStep:       "Prossima tappa:",
+		StepSkipped:    "1 altra tappa",
+		StepsSkipped:   "altre %d tappe",
+		StepDone:       "Svolto",
+		StepThisVote:   "Questa votazione",
+		StepOpen:       "Da svolgere",
 	}
 )
 

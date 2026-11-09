@@ -2,10 +2,10 @@
  "d": {
   "results": [
    {
-    "FederalCouncilProposalText": "Ablehnung",
-    "SubmissionDate": "/Date(1758758400000)/",
     "SubmissionCouncil": 2,
-    "FederalCouncilProposalDate": "/Date(1763510400000)/"
+    "FederalCouncilProposalText": "Ablehnung",
+    "FederalCouncilProposalDate": "/Date(1763510400000)/",
+    "SubmissionDate": "/Date(1758758400000)/"
    }
   ]
  }

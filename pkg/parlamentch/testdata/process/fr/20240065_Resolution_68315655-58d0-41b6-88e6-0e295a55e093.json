@@ -1,0 +1,51 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1780876800000)/",
+    "ResolutionId": 37,
+    "ResolutionText": "Divergences",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781136000000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adhésion",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1757980800000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Décision modifiant le projet",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781827200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

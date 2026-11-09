@@ -128,3 +128,94 @@ var urlLanguages = map[votes.Language]string{
 	votes.French:  "fr",
 	votes.Italian: "it",
 }
+
+// processWords are the words a process card states that the vote itself does
+// not yet carry, in each language: the step this vote took and the one after
+// it are not in the service at posting time (see votes.Process), so they are
+// taken from its vocabulary rather than read off the business.
+//
+// Each is the service's own name for a code, the same in every language's
+// feed — a BusinessStatusId, a ResolutionId, a council — or, where the
+// service has no entity for it, the business page's own label, from
+// parlament.ch's resource file (ScriptResx.ashx, name itsystemsPdInternet,
+// cultures de-DE, fr-FR and it-IT), read 09.11.2026.
+type processWords struct {
+	council       string // Council 1, the Nationalrat, as CouncilName
+	submitted     string // BusinessStatusId 202
+	proposal      string // "Antrag" + "des Bundesrates": affairPageLabelProposal, affairPageLabelFederalCouncil
+	adopted       string // ResolutionId 20
+	rejected      string // ResolutionId 22
+	noLeave       string // ResolutionId 51
+	finalAdopted  string // ResolutionId 36
+	finalRejected string // ResolutionId 56
+	transmitted   string // BusinessStatusId 209
+	inCommittee   string // BusinessStatusId 206
+	done          string // BusinessStatusId 229
+	statusHeading string // businessPageStateOfConsulting
+	committee     string // before a committee's abbreviation: the start of its CommitteeName
+	bill          string // fmt verbs: businessPageDraft, the bill's number, how many there are; the "of" between is ours
+	// standerat ends the CommitteeName of every Ständerat committee.
+	standerat string
+}
+
+var processWordsByLanguage = map[votes.Language]processWords{
+	votes.German: {
+		council:       "Nationalrat",
+		submitted:     "Eingereicht",
+		proposal:      "Antrag des Bundesrates",
+		adopted:       "Annahme",
+		rejected:      "Ablehnung",
+		noLeave:       "Keine Folge gegeben",
+		finalAdopted:  "Annahme in der Schlussabstimmung",
+		finalRejected: "Ablehnung in der Schlussabstimmung",
+		transmitted:   "Überwiesen an den Bundesrat",
+		inCommittee:   "In Kommission des Ständerats",
+		done:          "Erledigt",
+		statusHeading: "Stand der Beratungen:",
+		committee:     "Kommission",
+		bill:          "Entwurf %d von %d",
+		standerat:     "Ständerat",
+	},
+	votes.French: {
+		council:       "Conseil national",
+		submitted:     "Déposé",
+		proposal:      "Proposition du Conseil fédéral",
+		adopted:       "Adoption",
+		rejected:      "Rejet",
+		noLeave:       "Refusé de donner suite",
+		finalAdopted:  "Adoption (vote final)",
+		finalRejected: "Rejet (vote final)",
+		transmitted:   "Transmis au Conseil fédéral",
+		inCommittee:   "En commission du Conseil des Etats",
+		done:          "Liquidé",
+		statusHeading: "Etat des délibérations:",
+		committee:     "Commission",
+		bill:          "Projet %d sur %d",
+		standerat:     "Conseil des États",
+	},
+	votes.Italian: {
+		council:       "Consiglio nazionale",
+		submitted:     "Depositato",
+		proposal:      "Proposta del Consiglio federale",
+		adopted:       "Adozione",
+		rejected:      "Reiezione",
+		noLeave:       "Non è dato seguito",
+		finalAdopted:  "Adozione nella votazione finale",
+		finalRejected: "Reiezione nella votazione finale",
+		transmitted:   "Trasmesso al Consiglio federale",
+		inCommittee:   "Nella Commissione del Consiglio degli Stati",
+		done:          "Liquidato",
+		statusHeading: "Stato delle deliberazioni:",
+		committee:     "Commissione",
+		bill:          "Disegno %d di %d",
+		standerat:     "Consiglio degli Stati",
+	},
+}
+
+// processWords is the process vocabulary of the jurisdiction's language.
+func (c *Client) processWords() processWords {
+	if w, ok := processWordsByLanguage[c.language()]; ok {
+		return w
+	}
+	return processWordsByLanguage[votes.German]
+}

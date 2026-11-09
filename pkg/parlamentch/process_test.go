@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -14,13 +15,15 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
-// The process fixtures are the service's responses for four businesses,
-// recorded on 08.11.2026 with __metadata stripped. They hold the businesses'
-// whole histories, including what came after the vote each test posts, which
-// the adapter has to leave out.
+// The process fixtures are the service's responses for six businesses,
+// recorded on 09.11.2026 with only the fields the adapter reads: the German
+// feed's in testdata/process, the French and Italian feeds' in its fr and it
+// folders. They hold the businesses' whole histories, including what came
+// after the vote each test posts, which the adapter has to leave out.
 var (
 	processBusiness = regexp.MustCompile(`(?:ID|BusinessNumber) eq (\d+)`)
 	processBill     = regexp.MustCompile(`IdBill eq guid'([0-9a-f-]+)'`)
+	processLanguage = regexp.MustCompile(`Language eq '([A-Z]{2})'`)
 )
 
 func newProcessClient(t *testing.T) *Client {
@@ -33,6 +36,10 @@ func newProcessClient(t *testing.T) *Client {
 			_, _ = w.Write([]byte("0"))
 			return
 		}
+		dir := filepath.Join("testdata", "process")
+		if m := processLanguage.FindStringSubmatch(filter); m != nil && m[1] != "DE" {
+			dir = filepath.Join(dir, strings.ToLower(m[1]))
+		}
 		var name string
 		if entity == "Resolution" {
 			m := processBill.FindStringSubmatch(filter)
@@ -40,7 +47,7 @@ func newProcessClient(t *testing.T) *Client {
 				http.NotFound(w, r)
 				return
 			}
-			matches, _ := filepath.Glob(filepath.Join("testdata", "process", "*_Resolution_"+m[1]+".json"))
+			matches, _ := filepath.Glob(filepath.Join(dir, "*_Resolution_"+m[1]+".json"))
 			if len(matches) != 1 {
 				http.NotFound(w, r)
 				return
@@ -52,7 +59,7 @@ func newProcessClient(t *testing.T) *Client {
 				http.NotFound(w, r)
 				return
 			}
-			name = filepath.Join("testdata", "process", m[1]+"_"+entity+".json")
+			name = filepath.Join(dir, m[1]+"_"+entity+".json")
 		}
 		data, err := os.ReadFile(name)
 		if err != nil {
@@ -120,7 +127,7 @@ func TestProcess_RealBusinesses(t *testing.T) {
 			vote: processVote(c, "38790", "20250408", typeParlIv, "", "angenommen", outcomeNoLeave,
 				"Proposition de la majorité (ne pas donner suite)", "Proposition de la minorité (donner suite)",
 				swiss(2026, 9, 24, 17, 15)),
-			next: processDone,
+			next: "Erledigt",
 		},
 		{
 			// 24.065 has two bills; the vote names its own, and the history
@@ -138,7 +145,7 @@ func TestProcess_RealBusinesses(t *testing.T) {
 				{Label: "Ständerat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepDone},
 				{Label: "Nationalrat", Detail: "19.06.2026 · Annahme in der Schlussabstimmung", State: votes.StepCompleted},
 			},
-			next: processDone,
+			next: "Erledigt",
 		},
 	}
 	for _, tt := range tests {
@@ -221,21 +228,130 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 	}
 }
 
-// The rules and the card are German, so a French or Italian post gets no
-// process rather than a German card: the same motion the German test above
-// gives a process.
-func TestProcess_OnlyInGerman(t *testing.T) {
-	for _, l := range []votes.Language{votes.French, votes.Italian} {
-		c := newProcessClient(t)
-		c.jurisdiction.Language = l
-		group := []votes.Vote{processVote(c, "32084", "20243004", typeMotion, "", "angenommen", outcomeAdopted,
-			"Antrag der Mehrheit (Annahme der Motion)", "Antrag der Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)",
-			swiss(2024, 3, 7, 12, 51))}
-		p, err := c.Process(group)
-		var none votes.NoProcess
-		if p != nil || !errors.As(err, &none) {
-			t.Errorf("%s: Process = %+v, %v; want no process", l, p, err)
+// germanWords are words of the German process that a French or Italian one
+// must not carry.
+var germanWords = regexp.MustCompile(`Nationalrat|Ständerat|Kommission|Eingereicht|Erledigt|Antrag|Annahme|Ablehnung|Folge|Überwiesen|Bundesrat|Entwurf|Beratungen`)
+
+// A French or Italian post gets the process the German one does, in the words
+// of that language's feed and of parlament.ch's pages in it. The rules read
+// the service's codes, so the businesses are the German tests' own, served
+// by the French and Italian feeds, with the type codes enrich caches.
+func TestProcess_FrenchAndItalian(t *testing.T) {
+	type want struct {
+		steps  []string // "state label | detail"
+		next   string
+		status string
+		about  string
+	}
+	vote := func(c *Client, id string) votes.Vote {
+		switch id {
+		case "20243004":
+			return processVote(c, "32084", id, "", "", "angenommen", outcomeAdopted,
+				"Antrag der Mehrheit (Annahme der Motion)", "Antrag der Minderheit Weichelt und des Bundesrates (Ablehnung der Motion)", swiss(2024, 3, 7, 12, 51))
+		case "20254179":
+			return processVote(c, "36159", id, "", "", "angenommen", outcomeAdopted,
+				"Proposition de la majorité (adopter la motion)", "Proposition de la minorité Ryser et du Conseil fédéral (rejeter la motion)", swiss(2026, 6, 1, 18, 38))
+		case "20200454":
+			return processVote(c, "x", id, "", "", "angenommen", outcomeNoLeave,
+				"Antrag der Minderheit (keine Folge geben)", "Antrag der Mehrheit (Folge geben)", swiss(2023, 2, 27, 18, 44))
+		case "20250301":
+			return processVote(c, "35999", id, "", "", "", "", "", "", swiss(2026, 4, 28, 9, 21))
 		}
+		t.Fatalf("no vote for %s", id)
+		return votes.Vote{}
+	}
+	codes := map[int64]int{20243004: 5, 20254179: 5, 20200454: 4, 20250301: 3, 20240065: 1}
+
+	tests := []struct {
+		lang     votes.Language
+		business string
+		subtitle string // a final vote's, as the post labels it
+		want     want
+	}{
+		{votes.French, "20243004", "", want{
+			steps: []string{
+				"0 Déposé | 18.01.2024",
+				"0 Proposition du Conseil fédéral | 21.02.2024 · Rejet",
+				"1 Conseil national | 07.03.2024 · Adoption",
+				"3 En commission du Conseil des Etats | Commission de la sécurité sociale et de la santé publique Conseil des États (CSSS-E)",
+			},
+			next:  "En commission du Conseil des Etats (CSSS-E)",
+			about: "La motion charge le Conseil fédéral de déposer un projet d’acte de l’Assemblée fédérale ou de prendre une mesure.",
+		}},
+		{votes.Italian, "20243004", "", want{
+			steps: []string{
+				"0 Depositato | 18.01.2024",
+				"0 Proposta del Consiglio federale | 21.02.2024 · Respingere",
+				"1 Consiglio nazionale | 07.03.2024 · Adozione",
+				"3 Nella Commissione del Consiglio degli Stati | Commissione della sicurezza sociale e della sanità Consiglio degli Stati (CSSS-S)",
+			},
+			next:  "Nella Commissione del Consiglio degli Stati (CSSS-S)",
+			about: "La mozione incarica il Consiglio federale di presentare un disegno di atto legislativo dell’Assemblea federale o di prendere un provvedimento.", //nolint:misspell // Italian, as parlament.ch words it
+		}},
+		{votes.French, "20254179", "", want{next: "Transmis au Conseil fédéral"}},
+		{votes.Italian, "20254179", "", want{next: "Trasmesso al Consiglio federale"}},
+		{votes.French, "20200454", "", want{
+			steps: []string{
+				"0 Déposé | 19.06.2020",
+				"0 Commission CSEC-N | 01.07.2021 · Donner suite (conseil prioritaire)",
+				"0 Commission CSEC-E | 16.11.2021 · Ne pas donner suite",
+				"2 Conseil national | 27.02.2023 · Refusé de donner suite",
+			},
+			next: "Liquidé", status: "Etat des délibérations:",
+		}},
+		{votes.Italian, "20250301", "", want{
+			steps: []string{
+				"0 Depositato | 28.01.2025",
+				"0 Consiglio degli Stati | 16.06.2025 · Non è dato seguito",
+				"2 Consiglio nazionale | 28.04.2026 · Non è dato seguito",
+			},
+			next: "Liquidato", status: "Stato delle deliberazioni:",
+			about: "Ogni Cantone può proporre mediante un’iniziativa che una commissione elabori un progetto di atto legislativo dell'Assemblea federale.", //nolint:misspell // Italian, as parlament.ch words it
+		}},
+		{votes.French, "20240065", "Vote final", want{next: "Liquidé", status: "Etat des délibérations:"}},
+		{votes.Italian, "20240065", "Votazione finale", want{next: "Liquidato", status: "Stato delle deliberazioni:"}},
+	}
+	for _, tt := range tests {
+		t.Run(string(tt.lang)+" "+tt.business, func(t *testing.T) {
+			c := newProcessClient(t)
+			c.jurisdiction.Language = tt.lang
+			for id, code := range codes {
+				c.businessCodes[id] = code
+			}
+			var v votes.Vote
+			if tt.subtitle != "" {
+				v = onBill(c, processVote(c, "36539", tt.business, "", tt.subtitle, "angenommen", "",
+					"Adopter le projet", "Rejeter le projet", swiss(2026, 6, 19, 10, 8)), 1)
+			} else {
+				v = vote(c, tt.business)
+			}
+			p, err := c.Process([]votes.Vote{v})
+			if err != nil || p == nil {
+				t.Fatalf("Process = %+v, %v", p, err)
+			}
+			if err := p.Validate(); err != nil {
+				t.Fatalf("invalid process %+v: %v", p, err)
+			}
+			var got []string
+			for _, s := range p.Steps {
+				got = append(got, strconv.Itoa(int(s.State))+" "+s.Label+" | "+s.Detail)
+				if germanWords.MatchString(s.Label + " " + s.Detail) {
+					t.Errorf("German in step %+v", s)
+				}
+			}
+			if tt.want.steps != nil && strings.Join(got, "\n") != strings.Join(tt.want.steps, "\n") {
+				t.Errorf("steps =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(tt.want.steps, "\n"))
+			}
+			if p.Next != tt.want.next || p.StatusLabel != tt.want.status {
+				t.Errorf("status %q next %q, want %q %q", p.StatusLabel, p.Next, tt.want.status, tt.want.next)
+			}
+			if tt.want.about != "" && p.About != tt.want.about {
+				t.Errorf("About = %q, want %q", p.About, tt.want.about)
+			}
+			if germanWords.MatchString(p.Next + " " + p.StatusLabel + " " + p.Bill + " " + p.About) {
+				t.Errorf("German in %+v", p)
+			}
+		})
 	}
 }
 
@@ -275,10 +391,10 @@ func TestProcess_RecordedOutcome(t *testing.T) {
 	if last != want {
 		t.Errorf("this vote's step = %+v, want %+v", last, want)
 	}
-	if p.Next != processDone || p.StatusLabel != "Stand der Beratungen:" {
+	if p.Next != "Erledigt" || p.StatusLabel != "Stand der Beratungen:" {
 		t.Errorf("status = %q %q", p.StatusLabel, p.Next)
 	}
-	if p.About != typeAbout[typeStandesIv] {
+	if p.About != typeAbout[votes.German][typeStandesIv] {
 		t.Errorf("About = %q", p.About)
 	}
 }
