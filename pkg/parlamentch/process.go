@@ -58,9 +58,11 @@ type billDTO struct {
 }
 
 type resolutionDTO struct {
-	ResolutionDate string `json:"ResolutionDate"`
-	ResolutionText string `json:"ResolutionText"`
-	CouncilName    string `json:"CouncilName"`
+	ResolutionDate         string `json:"ResolutionDate"`
+	ResolutionText         string `json:"ResolutionText"`
+	CouncilName            string `json:"CouncilName"`
+	CommitteeName          string `json:"CommitteeName"`
+	CommitteeAbbreviation1 string `json:"CommitteeAbbreviation1"`
 }
 
 type preconsultationDTO struct {
@@ -317,12 +319,28 @@ func (c *Client) history(id int64, v votes.Vote) (steps []votes.ProcessStep, b p
 		council := strings.TrimSpace(r.CouncilName)
 		d := odataDay(r.ResolutionDate)
 		// The Nationalrat's own decisions of the day are this vote's, which
-		// the adapter states itself. Committees' decisions carry no council
-		// and are not the chambers' chronology.
-		if council == "" || d > day || (d == day && council == "Nationalrat") {
+		// the adapter states itself.
+		if d > day || (d == day && council == "Nationalrat") {
 			continue
 		}
-		steps = append(steps, votes.ProcessStep{Label: council, Detail: dated(d, strings.TrimSpace(r.ResolutionText)), State: votes.StepDone})
+		// A committee's decision carries no council but the committee: on an
+		// initiative, "Folge geben (Erstrat)" and the other committee's
+		// "Zustimmung" are the steps before the chamber votes, as the
+		// business page's chronology lists them (20.454). It is labelled by
+		// the committee's abbreviation, since its full name ("Kommission für
+		// Wissenschaft, Bildung und Kultur Nationalrat") does not fit a
+		// step's line. A decision with neither — "Abgeschrieben, weil nicht
+		// innert zwei Jahren …", "Zurückgezogen", "Diskussion" — is the
+		// service's bookkeeping, not a step.
+		label := council
+		if label == "" {
+			abbr := strings.TrimSpace(r.CommitteeAbbreviation1)
+			if abbr == "" || strings.TrimSpace(r.CommitteeName) == "" {
+				continue
+			}
+			label = "Kommission " + abbr
+		}
+		steps = append(steps, votes.ProcessStep{Label: label, Detail: dated(d, strings.TrimSpace(r.ResolutionText)), State: votes.StepDone})
 		if council == "Ständerat" {
 			otherChamber = true
 		}

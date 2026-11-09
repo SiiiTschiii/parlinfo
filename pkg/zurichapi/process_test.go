@@ -91,17 +91,21 @@ func motion(steps ...string) processGeschaeft {
 	return g
 }
 
-// A Motion's Ja is its Überweisung only where the Stadtrat would take it as a
+// A Motion's Ja is its Überweisung where the Stadtrat would take it as a
 // Motion; where it would take it as a Postulat, the same Ja was as often its
-// Umwandlung, so no process is said. Nein is always the Ablehnung.
+// Umwandlung, so the step names no decision; where the Stadtrat would not take
+// it, no process is said. Nein is always the Ablehnung.
 func TestProcessFor_Motion(t *testing.T) {
 	v := func(decision string) votes.Vote { return schlussabstimmung("2026/1", decision, day(2026, 3, 1)) }
 
 	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme", "Ablehnung, beantragt")); p == nil || p.Next != "Stadtrat, Weisung, Frist 24 Monate" {
 		t.Errorf("contested motion the Stadtrat takes: %+v", p)
 	}
-	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p != nil {
-		t.Errorf("motion the Stadtrat takes only as a Postulat got %+v", p)
+	// Ja may have been the Überweisung or the Umwandlung in a Postulat; the
+	// next step is the same, and this vote's step names no decision.
+	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Entgegennahme als Postulat")); p == nil || p.Next != "Stadtrat, Weisung, Frist 24 Monate" ||
+		p.Steps[len(p.Steps)-2] != (votes.ProcessStep{Label: "Gemeinderat", Detail: "01.03.2026", State: votes.StepCurrent}) {
+		t.Errorf("motion the Stadtrat takes only as a Postulat: %+v", p)
 	}
 	if p, _ := processFor(v("Ja"), motion("Eingang, Frist 6 Monate", "Stadtrat, Ablehnung")); p != nil {
 		t.Errorf("motion the Stadtrat rejects got %+v", p)

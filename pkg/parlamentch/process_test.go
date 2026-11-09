@@ -264,3 +264,28 @@ func TestProcess_RecordedOutcome(t *testing.T) {
 		t.Errorf("About = %q", p.About)
 	}
 }
+
+// The committees' decisions on an initiative are steps of its history, as the
+// business page lists them, labelled by the committee: 20.454.
+func TestProcess_CommitteeDecisions(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "x", "20200454", typeParlIv, "", "angenommen", outcomeNoLeave,
+		"Antrag der Minderheit (keine Folge geben)", "Antrag der Mehrheit (Folge geben)", swiss(2023, 2, 27, 18, 44))
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil {
+		t.Fatalf("Process = %+v, %v", p, err)
+	}
+	var got []string
+	for _, s := range p.Steps {
+		got = append(got, s.Label+" | "+s.Detail)
+	}
+	want := []string{
+		"Eingereicht | 19.06.2020",
+		"Kommission WBK-N | 01.07.2021 · Folge geben (Erstrat)",
+		"Kommission WBK-S | 16.11.2021 · Keine Zustimmung",
+		"Nationalrat | 27.02.2023 · Keine Folge gegeben",
+	}
+	if strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("steps =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+}

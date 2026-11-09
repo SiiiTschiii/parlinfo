@@ -20,7 +20,7 @@ func TestNextStepLine(t *testing.T) {
 		Next: " In Kommission des Ständerats ",
 	}
 	ended := &votes.Process{
-		Steps: []votes.ProcessStep{{Label: "Nationalrat", State: votes.StepEnded}},
+		Steps:       []votes.ProcessStep{{Label: "Nationalrat", State: votes.StepEnded}},
 		Next:        "Erledigt",
 		StatusLabel: "Stand der Beratungen:",
 	}

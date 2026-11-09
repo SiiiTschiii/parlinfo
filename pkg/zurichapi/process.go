@@ -170,12 +170,21 @@ func processFor(v votes.Vote, g processGeschaeft) (*votes.Process, string) {
 		steps = append(steps, votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepAblehnung, State: votes.StepEnded})
 		return &votes.Process{Steps: steps, Next: processClosed, StatusLabel: statusHeading, Kind: g.Art, About: typeAbout[g.Art]}, ""
 	case "Ja":
+		detail := v.Date.Format("02.01.2006") + " · " + stepUeberweisung
 		if g.Art == "Motion" && !motionGoesToStadtrat(steps) {
-			return nil, "Motion, die der Stadtrat nur als Postulat oder gar nicht entgegennehmen will: ein Ja ist ebenso oft eine \"Umwandlung in Postulat\" wie eine Überweisung"
+			// A Motion the Stadtrat would take only as a Postulat: its Ja is
+			// as often an "Umwandlung in Postulat" as an Überweisung, and the
+			// vote does not say which. Either way the Stadtrat answers with a
+			// Weisung within 24 months, so the process stands, and this
+			// vote's step gives its date without naming the decision.
+			if !hasStep(steps, "Stadtrat, Entgegennahme als Postulat") {
+				return nil, "Motion, die der Stadtrat nicht oder nicht unbestritten entgegennehmen will: was ein Ja bewirkt, ist nicht eindeutig"
+			}
+			detail = v.Date.Format("02.01.2006")
 		}
 		steps = votes.TrimHistory(steps, votes.MaxProcessSteps-2)
 		steps = append(steps,
-			votes.ProcessStep{Label: "Gemeinderat", Detail: v.Date.Format("02.01.2006") + " · " + stepUeberweisung, State: votes.StepCurrent},
+			votes.ProcessStep{Label: "Gemeinderat", Detail: detail, State: votes.StepCurrent},
 			votes.ProcessStep{Label: "Stadtrat, Weisung", Detail: "Frist 24 Monate", State: votes.StepNext})
 		return &votes.Process{Steps: steps, Next: "Stadtrat, Weisung, Frist 24 Monate", Kind: g.Art, About: typeAbout[g.Art]}, ""
 	}
@@ -195,6 +204,16 @@ var typeAbout = map[string]string{
 // that led up to it.
 func isResultStep(name string) bool {
 	return strings.HasPrefix(name, "Überweisung") || name == stepAblehnung || strings.HasPrefix(name, "Umwandlung")
+}
+
+// hasStep reports whether a step of the history carries the given label.
+func hasStep(steps []votes.ProcessStep, label string) bool {
+	for _, s := range steps {
+		if s.Label == label {
+			return true
+		}
+	}
+	return false
 }
 
 // motionGoesToStadtrat reports whether a Motion's history is the one where a
