@@ -20,3 +20,4 @@ Typeface: Inter (800 for the wordmark, 500 for the country code). All SVG text i
 - `svg/parlinfo-wordmark*.svg`: wordmark (white, for light backgrounds, with dark background built in)
 - `parlinfo-readme-header.png`: README header (2560×640)
 - `social/`: platform uploads: GitHub social preview, plus profile picture and X / Bluesky / Facebook banners for each of `parlinfo-zh-*` and `parlinfo-ch-*`
+  - The banners, Facebook covers and GitHub preview carry a tagline, so they also exist in French (`-fr`) and Italian (`-it`), e.g. `parlinfo-ch-fr-x-header-1500x500.png`. The files without a language code are German. Profile pictures carry no text and are shared.
