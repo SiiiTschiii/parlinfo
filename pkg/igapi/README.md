@@ -110,7 +110,18 @@ so treat that as a last resort.
 - Add permissions: `instagram_basic`, `instagram_content_publish`, `pages_read_engagement`, `pages_show_list`, `business_management`, `pages_manage_posts`
   — the Explorer lists `pages_manage_posts` only once the app allows it; see
   [Facebook setup, 1a](../fbapi/README.md#1a-allow-the-permission-in-the-app)
-- Click **Generate Access Token** and authorize
+- Click **Generate Access Token** and authorize. In the dialog that asks which
+  Pages and Instagram accounts the app may use, choose **Edit previous
+  settings** if offered and tick **every** Page and account the bot posts
+  for — ZueriRatsinfo, CH Parl Info and its French and Italian Pages — not only
+  the one you are setting up.
+
+Every channel's Page token is derived from this one Facebook login. Authorizing
+the app again, even to add one new Page, can end the session the others came
+from: their runs then fail with code 190, subcode 460, though no password
+changed. So after this step, refresh every channel's token, not only the one
+you came for — [step 5](#5-update-the-github-actions-secret) has a command for
+all of them.
 
 Copy the token it prints and export it:
 
@@ -181,6 +192,23 @@ fi
 
 Or paste it by hand under **GitHub → Settings → Secrets and variables → Actions**.
 For local runs, set the same value in `.env`.
+
+**Every channel at once.** After a new login (step 2), refresh all of them from
+the same `FB_LONG_TOKEN`. The channels are read from the repository's
+`<CHANNEL>_FB_PAGE_ID` variables, so a new channel is covered once its Page ID
+is set. Each token is stored only if Meta confirms it is a valid Page token
+that does not expire; any other channel is named and its secret left alone:
+
+```bash
+for c in $(gh variable list --json name -q '.[].name | select(endswith("_FB_PAGE_ID")) | rtrimstr("_FB_PAGE_ID")'); do
+  page=$(gh variable get "${c}_FB_PAGE_ID")
+  t=$(curl -s "https://graph.facebook.com/v25.0/me/accounts?access_token=$FB_LONG_TOKEN" | jq -r --arg page "$page" '.data[] | select(.id == $page) | .access_token')
+  ok=$(curl -s "https://graph.facebook.com/v25.0/debug_token?input_token=$t&access_token=$t" | jq -r '.data | .is_valid == true and .type == "PAGE" and .expires_at == 0')
+  if [ "$ok" = true ]; then gh secret set "${c}_IG_ACCESS_TOKEN" --body "$t"; else echo "$c: no valid Page token for Page $page; secret left alone" >&2; fi
+done
+```
+
+A channel named there was not ticked in step 2: go back and tick it.
 
 **Ref**: https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived
 
@@ -321,7 +349,11 @@ invalidates sessions on its own initiative.
 
 The fix is to regenerate, starting from
 [step 2](#2-generate-a-short-lived-user-token) — the App ID and Secret from
-step 1 are unaffected — and to update `ZURICH_IG_ACCESS_TOKEN`.
+step 1 are unaffected — and to refresh **every** channel's token with the
+command at the end of [step 5](#5-update-the-github-actions-secret), not only
+the failing one: they share the login, and the others are invalid too even if
+their runs are still green because they had nothing to post. Authorizing the
+app again for a new Page is a common cause, as well as a password change.
 
 Neighbouring subcodes under code 190 point elsewhere: `463` is an expired
 token and `467` an invalid one, both of which suggest a *user* token was stored
