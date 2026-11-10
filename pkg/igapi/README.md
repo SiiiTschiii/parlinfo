@@ -194,21 +194,24 @@ Or paste it by hand under **GitHub → Settings → Secrets and variables → Ac
 For local runs, set the same value in `.env`.
 
 **Every channel at once.** After a new login (step 2), refresh all of them from
-the same `FB_LONG_TOKEN`. The channels are read from the repository's
-`<CHANNEL>_FB_PAGE_ID` variables, so a new channel is covered once its Page ID
-is set. Each token is stored only if Meta confirms it is a valid Page token
-that does not expire; any other channel is named and its secret left alone:
+the same `FB_LONG_TOKEN`. The channels are the repository's
+`<CHANNEL>_IG_ACCESS_TOKEN` secrets, so a new channel is covered once it has
+one. Each Page's token is asked for by its ID, from `<CHANNEL>_FB_PAGE_ID`, and
+stored only if Meta confirms it is a valid Page token that does not expire. A
+channel without a Page ID (Instagram only) or without a valid token is named,
+and its secret left alone:
 
 ```bash
-for c in $(gh variable list --json name -q '.[].name | select(endswith("_FB_PAGE_ID")) | rtrimstr("_FB_PAGE_ID")'); do
-  page=$(gh variable get "${c}_FB_PAGE_ID")
-  t=$(curl -s "https://graph.facebook.com/v25.0/me/accounts?access_token=$FB_LONG_TOKEN" | jq -r --arg page "$page" '.data[] | select(.id == $page) | .access_token')
+for c in $(gh secret list --json name -q '.[].name | select(endswith("_IG_ACCESS_TOKEN")) | rtrimstr("_IG_ACCESS_TOKEN")'); do
+  page=$(gh variable get "${c}_FB_PAGE_ID" 2>/dev/null)
+  if [ -z "$page" ]; then echo "$c: no ${c}_FB_PAGE_ID; refresh it by hand (steps 4 and 5)" >&2; continue; fi
+  t=$(curl -s "https://graph.facebook.com/v25.0/$page?fields=access_token&access_token=$FB_LONG_TOKEN" | jq -r '.access_token // empty')
   ok=$(curl -s "https://graph.facebook.com/v25.0/debug_token?input_token=$t&access_token=$t" | jq -r '.data | .is_valid == true and .type == "PAGE" and .expires_at == 0')
   if [ "$ok" = true ]; then gh secret set "${c}_IG_ACCESS_TOKEN" --body "$t"; else echo "$c: no valid Page token for Page $page; secret left alone" >&2; fi
 done
 ```
 
-A channel named there was not ticked in step 2: go back and tick it.
+A channel named for its Page was not ticked in step 2: go back and tick it.
 
 **Ref**: https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived
 
