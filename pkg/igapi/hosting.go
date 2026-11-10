@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -17,7 +19,18 @@ const (
 
 	// ghPagesImageDir is the directory on the gh-pages branch where images are hosted.
 	ghPagesImageDir = "ig-images"
+
+	// conflictAttempts is how often one write to gh-pages is tried before a
+	// conflict is given up on, and conflictBackoff the pause after the first
+	// conflict; it doubles after each further one (0.5s, 1s, 2s, 4s).
+	conflictAttempts = 5
+	conflictBackoff  = 500 * time.Millisecond
 )
+
+// errConflict marks a write the Contents API refused with 409: the branch
+// moved between GitHub reading its head and committing onto it, because
+// another writer — another channel's bot — committed in between.
+var errConflict = errors.New("conflict")
 
 // ImageHoster uploads and cleans up images on GitHub Pages for Instagram to fetch.
 type ImageHoster struct {
@@ -25,7 +38,8 @@ type ImageHoster struct {
 	repoName    string
 	githubToken string
 	httpClient  *http.Client
-	apiBase     string // overridable for testing
+	apiBase     string              // overridable for testing
+	sleep       func(time.Duration) // overridable for testing
 }
 
 // ParseRepo splits an "owner/name" repository reference, the shape GitHub uses
@@ -48,6 +62,7 @@ func NewImageHoster(repoOwner, repoName, githubToken string) *ImageHoster {
 		githubToken: githubToken,
 		httpClient:  &http.Client{Timeout: 30 * time.Second},
 		apiBase:     defaultGitHubAPIBase,
+		sleep:       time.Sleep,
 	}
 }
 
@@ -93,9 +108,35 @@ func (h *ImageHoster) CleanupImages(names []string) error {
 	return nil
 }
 
-// putFileContent creates or updates a file on the gh-pages branch using the GitHub Contents API.
-// PUT /repos/{owner}/{repo}/contents/{path}
+// retryOnConflict runs one write to gh-pages, again after a pause for as long
+// as it reports errConflict. Every channel's bot commits to that one branch and
+// they run side by side, so a conflict is expected now and then; without the
+// retry it would fail the post, or leave an image behind after cleanup.
+func (h *ImageHoster) retryOnConflict(write func() error) error {
+	backoff := conflictBackoff
+	var err error
+	for attempt := 1; attempt <= conflictAttempts; attempt++ {
+		if err = write(); !errors.Is(err, errConflict) {
+			return err
+		}
+		if attempt < conflictAttempts {
+			log.Printf("⚠️  gh-pages conflict (attempt %d of %d), retrying in %v", attempt, conflictAttempts, backoff)
+			h.sleep(backoff)
+			backoff *= 2
+		}
+	}
+	return fmt.Errorf("still conflicting after %d attempts: %w", conflictAttempts, err)
+}
+
+// putFileContent creates or updates a file on the gh-pages branch, retrying
+// when another writer got in first.
 func (h *ImageHoster) putFileContent(path string, content []byte, message string) error {
+	return h.retryOnConflict(func() error { return h.putFileContentOnce(path, content, message) })
+}
+
+// putFileContentOnce makes a single attempt using the GitHub Contents API.
+// PUT /repos/{owner}/{repo}/contents/{path}
+func (h *ImageHoster) putFileContentOnce(path string, content []byte, message string) error {
 	endpoint := fmt.Sprintf("%s/repos/%s/%s/contents/%s", h.apiBase, h.repoOwner, h.repoName, path)
 
 	// Check if file already exists to get its SHA (needed for update)
@@ -128,6 +169,9 @@ func (h *ImageHoster) putFileContent(path string, content []byte, message string
 	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode == http.StatusConflict {
+		return fmt.Errorf("PUT %s returned status %d: %s: %w", path, resp.StatusCode, string(body), errConflict)
+	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("PUT %s returned status %d: %s", path, resp.StatusCode, string(body))
 	}
@@ -135,9 +179,15 @@ func (h *ImageHoster) putFileContent(path string, content []byte, message string
 	return nil
 }
 
-// deleteFileContent removes a file from the gh-pages branch using the GitHub Contents API.
-// DELETE /repos/{owner}/{repo}/contents/{path}
+// deleteFileContent removes a file from the gh-pages branch, retrying when
+// another writer got in first.
 func (h *ImageHoster) deleteFileContent(path, message string) error {
+	return h.retryOnConflict(func() error { return h.deleteFileContentOnce(path, message) })
+}
+
+// deleteFileContentOnce makes a single attempt using the GitHub Contents API.
+// DELETE /repos/{owner}/{repo}/contents/{path}
+func (h *ImageHoster) deleteFileContentOnce(path, message string) error {
 	sha, err := h.getFileSHA(path)
 	if err != nil {
 		return fmt.Errorf("getting SHA for %s: %w", path, err)
@@ -168,6 +218,9 @@ func (h *ImageHoster) deleteFileContent(path, message string) error {
 	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode == http.StatusConflict {
+		return fmt.Errorf("DELETE %s returned status %d: %s: %w", path, resp.StatusCode, string(body), errConflict)
+	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("DELETE %s returned status %d: %s", path, resp.StatusCode, string(body))
 	}

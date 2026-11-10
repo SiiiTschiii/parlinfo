@@ -18,10 +18,11 @@ on:
 # again on the next run. Queue rather than cancel: a run that has already posted
 # must still be allowed to write down that it did.
 #
-# bot-chparl.yml joins this group too: both workflows commit carousel images to
-# gh-pages, and serialising them is what keeps those commits from colliding.
+# The group is this workflow's alone. bot-chparl.yml's bots commit carousel
+# images to the same gh-pages branch, but do not queue behind this one: the
+# upload retries a conflict (pkg/igapi/hosting.go).
 concurrency:
-  group: bot
+  group: bot-zhparl
   cancel-in-progress: false
 
 jobs:

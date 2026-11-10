@@ -384,10 +384,10 @@ gh variable set JURISDICTION_NATIONALRAT_ENABLED --body false
 
 ## The French and Italian accounts
 
-The Nationalrat's votes in French and Italian post from
-[bot-chparl-languages.yml](.github/workflows/bot-chparl-languages.yml), one job
-per language. The channels are `chparl-fr` and `chparl-it`: every setting is the
-`chparl` one with a `CHPARL_FR_` or `CHPARL_IT_` prefix, the jurisdictions are
+The Nationalrat's votes in French and Italian post from the same workflow as
+the German ones, [bot-chparl.yml](.github/workflows/bot-chparl.yml), one job per
+language, all three side by side. The channels are `chparl-fr` and `chparl-it`:
+every setting is the `chparl` one with a `CHPARL_FR_` or `CHPARL_IT_` prefix, the jurisdictions are
 `nationalrat-fr` and `nationalrat-it`, and each has its own state branch. A job
 does not even start until its `JURISDICTION_NATIONALRAT_<FR|IT>_ENABLED` is
 `true`.
@@ -448,8 +448,11 @@ gh variable get CHPARL_${L}_TAGGING
 
 ```bash
 gh variable set JURISDICTION_NATIONALRAT_${L}_ENABLED --body true
-gh workflow run bot-chparl-languages.yml
+gh workflow run bot-chparl.yml
 ```
+
+The run covers every language that is switched on, the German account included;
+a language with nothing new posts nothing.
 
 To stop again:
 

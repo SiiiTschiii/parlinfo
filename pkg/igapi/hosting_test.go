@@ -3,11 +3,14 @@ package igapi
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestParseRepo(t *testing.T) {
@@ -268,4 +271,128 @@ type requestCapture struct {
 	method string
 	path   string
 	body   string
+}
+
+// conflictServer answers the first `conflicts` writes with 409, as the Contents
+// API does when another writer moved gh-pages first, and every later one with
+// success. Reads report an existing file whose SHA changes with each write
+// attempt, so a test can tell whether a retry re-read it.
+func conflictServer(t *testing.T, conflicts int, writes *[]requestCapture) *httptest.Server {
+	t.Helper()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			_, _ = fmt.Fprintf(w, `{"sha":"sha-%d"}`, len(*writes))
+			return
+		}
+		body, _ := io.ReadAll(r.Body)
+		*writes = append(*writes, requestCapture{method: r.Method, path: r.URL.Path, body: string(body)})
+		if len(*writes) <= conflicts {
+			w.WriteHeader(http.StatusConflict)
+			_, _ = w.Write([]byte(`{"message":"is at 1a2b but expected 3c4d"}`))
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	t.Cleanup(server.Close)
+	return server
+}
+
+// conflictHoster is a hoster against server that records its pauses instead of
+// taking them.
+func conflictHoster(server *httptest.Server, pauses *[]time.Duration) *ImageHoster {
+	h := NewImageHoster("testorg", "testrepo", "ghp_test")
+	h.SetAPIBase(server.URL)
+	h.sleep = func(d time.Duration) { *pauses = append(*pauses, d) }
+	return h
+}
+
+// Two channels' bots commit to gh-pages side by side, so a write can lose the
+// race for the branch head. It must be tried again, with the file's SHA read
+// afresh, rather than fail the post.
+func TestImageHoster_UploadRetriesConflict(t *testing.T) {
+	var writes []requestCapture
+	var pauses []time.Duration
+	h := conflictHoster(conflictServer(t, 2, &writes), &pauses)
+
+	urls, err := h.UploadImages([][]byte{{0xFF, 0xD8}}, []string{"img_0.jpg"})
+	if err != nil {
+		t.Fatalf("UploadImages: %v", err)
+	}
+	if len(urls) != 1 {
+		t.Fatalf("expected 1 URL, got %d", len(urls))
+	}
+	if len(writes) != 3 {
+		t.Fatalf("expected 3 PUT attempts, got %d", len(writes))
+	}
+	for i, want := range []string{"sha-0", "sha-1", "sha-2"} {
+		if !strings.Contains(writes[i].body, `"sha":"`+want+`"`) {
+			t.Errorf("attempt %d sent %s, want sha %s", i+1, writes[i].body, want)
+		}
+	}
+	if len(pauses) != 2 || pauses[0] != conflictBackoff || pauses[1] != 2*conflictBackoff {
+		t.Errorf("pauses = %v, want [%v %v]", pauses, conflictBackoff, 2*conflictBackoff)
+	}
+}
+
+func TestImageHoster_CleanupRetriesConflict(t *testing.T) {
+	var writes []requestCapture
+	var pauses []time.Duration
+	h := conflictHoster(conflictServer(t, 1, &writes), &pauses)
+
+	if err := h.CleanupImages([]string{"img_0.jpg"}); err != nil {
+		t.Fatalf("CleanupImages: %v", err)
+	}
+	if len(writes) != 2 || writes[1].method != http.MethodDelete {
+		t.Fatalf("expected 2 DELETE attempts, got %+v", writes)
+	}
+	if !strings.Contains(writes[1].body, `"sha":"sha-1"`) {
+		t.Errorf("retry sent %s, want the re-read sha-1", writes[1].body)
+	}
+}
+
+// A branch that never stops conflicting ends the attempts with an error that
+// still names the conflict, and without a pause after the last one.
+func TestImageHoster_UploadGivesUpOnLastingConflict(t *testing.T) {
+	var writes []requestCapture
+	var pauses []time.Duration
+	h := conflictHoster(conflictServer(t, 1000, &writes), &pauses)
+
+	_, err := h.UploadImages([][]byte{{0xFF, 0xD8}}, []string{"img_0.jpg"})
+	if err == nil {
+		t.Fatal("expected an error")
+	}
+	if !errors.Is(err, errConflict) || !strings.Contains(err.Error(), "409") {
+		t.Errorf("error = %v, want one naming the 409 conflict", err)
+	}
+	if len(writes) != conflictAttempts {
+		t.Errorf("expected %d PUT attempts, got %d", conflictAttempts, len(writes))
+	}
+	if len(pauses) != conflictAttempts-1 {
+		t.Errorf("expected %d pauses, got %d", conflictAttempts-1, len(pauses))
+	}
+}
+
+// Only a conflict is worth another attempt: any other refusal would be refused
+// again.
+func TestImageHoster_UploadDoesNotRetryOtherErrors(t *testing.T) {
+	puts := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		puts++
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}))
+	defer server.Close()
+	var pauses []time.Duration
+	h := conflictHoster(server, &pauses)
+
+	if _, err := h.UploadImages([][]byte{{0xFF, 0xD8}}, []string{"img_0.jpg"}); err == nil {
+		t.Fatal("expected an error")
+	}
+	if puts != 1 || len(pauses) != 0 {
+		t.Errorf("expected 1 PUT and no pause, got %d PUTs and %d pauses", puts, len(pauses))
+	}
 }
