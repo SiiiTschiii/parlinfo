@@ -21,13 +21,14 @@ type recordCall struct {
 	facets  []bskyapi.Facet
 	replyTo *bskyapi.ReplyRef
 	images  []bskyapi.Image
+	langs   []string
 }
 
 // mockCreateRecord returns a CreateRecordFunc that records calls and returns sequential fake PostRefs.
 func mockCreateRecord(calls *[]recordCall) CreateRecordFunc {
 	counter := 0
-	return func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error) {
-		*calls = append(*calls, recordCall{text: text, facets: facets, replyTo: replyTo, images: images})
+	return func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image, langs []string) (*bskyapi.PostRef, error) {
+		*calls = append(*calls, recordCall{text: text, facets: facets, replyTo: replyTo, images: images, langs: langs})
 		counter++
 		return &bskyapi.PostRef{
 			URI: fmt.Sprintf("at://did:fake/app.bsky.feed.post/%d", counter),
@@ -96,6 +97,32 @@ func TestPost_SinglePost(t *testing.T) {
 	// Root should have no replyTo
 	if recordCalls[0].replyTo != nil {
 		t.Errorf("root post should have nil replyTo, got %+v", recordCalls[0].replyTo)
+	}
+}
+
+// Every post of a thread is tagged, replies included: a language filter judges
+// each post on its own, so an untagged reply would be shown to every reader.
+func TestPost_TagsEveryPostWithTheLanguage(t *testing.T) {
+	var recordCalls []recordCall
+	var sessionCalls int
+	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
+	p.SetLanguages("fr")
+
+	content, err := p.Format(testfixtures.MultiVoteGroup())
+	if err != nil {
+		t.Fatalf("Format error: %v", err)
+	}
+	if _, _, err := p.Post(content); err != nil {
+		t.Fatalf("Post error: %v", err)
+	}
+
+	if len(recordCalls) < 2 {
+		t.Fatalf("expected a root and at least one reply, got %d calls", len(recordCalls))
+	}
+	for i, c := range recordCalls {
+		if len(c.langs) != 1 || c.langs[0] != "fr" {
+			t.Errorf("post %d langs = %v, want [fr]", i, c.langs)
+		}
 	}
 }
 
@@ -439,11 +466,11 @@ func TestPost_FailedReplyStillReturnsTheLiveRoot(t *testing.T) {
 	var sessionCalls int
 	p := newTestBlueskyPlatform(&recordCalls, &sessionCalls, 10)
 	ok := mockCreateRecord(&recordCalls)
-	p.createRecordFunc = func(s *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error) {
+	p.createRecordFunc = func(s *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image, langs []string) (*bskyapi.PostRef, error) {
 		if replyTo != nil {
 			return nil, fmt.Errorf("rate limited")
 		}
-		return ok(s, text, facets, replyTo, images)
+		return ok(s, text, facets, replyTo, images, langs)
 	}
 
 	content, err := p.Format(testfixtures.MultiVoteGroup())
