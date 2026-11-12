@@ -147,6 +147,29 @@ func GroupPrefixLine(group []votes.Vote) string {
 	return prefix
 }
 
+// FitLabelSubject cuts the Abstimmungsgegenstand at the end of a label line
+// until the line fits room, as measured. Nothing before it is touched: the
+// type and the authors lead the line, and a cut among them would drop a name
+// that was never deferred to the thread — or, once a platform has tagged them,
+// split a handle in half. When even the bare line is too long, it is returned
+// whole and the caller's other truncation takes the overrun.
+//
+// truncate cuts a string to n and appends "…", which is measured here.
+func FitLabelSubject(line string, group []votes.Vote, room int, measure func(string) int, truncate func(string, int) string) string {
+	if measure(line) <= room || len(group) != 1 {
+		return line
+	}
+	sub := singleVoteSubtitle(group[0].Subtitle)
+	if sub == "" || !strings.HasSuffix(line, sub) {
+		return line
+	}
+	head := strings.TrimSuffix(line, sub)
+	if left := room - measure(head) - measure("…"); left > 0 {
+		return head + truncate(sub, left)
+	}
+	return strings.TrimSuffix(head, " · ")
+}
+
 // AuthorList renders who filed a business as prose in the post's language:
 // "Nadia Koch (GLP)", or "Marc Bourgeois (FDP) und Tobias Weidmann (SVP)" for
 // several.

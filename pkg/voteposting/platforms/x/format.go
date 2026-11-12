@@ -186,7 +186,7 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 			keep := min(weightedLen(title), minTitleChars)
 			// "\n" after the label line, and the title's "…".
 			room := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(resultPrefix) - keep - 1 - weightedLen("…")
-			subtitlePrefix = fitLine(subtitlePrefix, room)
+			subtitlePrefix = voteformat.FitLabelSubject(subtitlePrefix, group, room, weightedLen, truncateText)
 		}
 		overhead := weightedLen(header) + weightedLen(threadHint) + weightedLen("…")
 		if subtitlePrefix != "" {
@@ -231,18 +231,6 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 // minTitleChars is how much of the title a root keeps before the label line is
 // cut to make room for it.
 const minTitleChars = 100
-
-// fitLine returns line cut to room weighted characters including its "…", or
-// nothing if there is no room for it at all.
-func fitLine(line string, room int) string {
-	if weightedLen(line) <= room {
-		return line
-	}
-	if room <= weightedLen("…") {
-		return ""
-	}
-	return truncateText(line, room-weightedLen("…"))
-}
 
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs entries into replies (≤charLimit).

@@ -183,7 +183,7 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 			keep := min(graphemeLen(title), minTitleGraphemes)
 			// "\n" after the label line, and the title's "…".
 			room := maxGraphemes - graphemeLen(header) - graphemeLen(threadHint) - graphemeLen(resultPrefix) - keep - 2
-			subtitlePrefix = fitLine(subtitlePrefix, room)
+			subtitlePrefix = voteformat.FitLabelSubject(subtitlePrefix, group, room, graphemeLen, truncateText)
 		}
 		overhead := graphemeLen(header) + graphemeLen(threadHint) + 1 // 1 for "…"
 		if subtitlePrefix != "" {
@@ -229,18 +229,6 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 // minTitleGraphemes is how much of the title a root keeps before the label line
 // is cut to make room for it.
 const minTitleGraphemes = 100
-
-// fitLine returns line cut to room graphemes including its "…", or nothing if
-// there is no room for it at all.
-func fitLine(line string, room int) string {
-	if graphemeLen(line) <= room {
-		return line
-	}
-	if room <= 1 {
-		return ""
-	}
-	return truncateText(line, room-1)
-}
 
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs entries into replies (≤300 graphemes).
