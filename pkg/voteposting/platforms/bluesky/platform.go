@@ -41,7 +41,7 @@ func (c *BlueskyContent) String() string {
 }
 
 // CreateRecordFunc is the signature for creating a Bluesky post. Defaults to bskyapi.CreateRecord.
-type CreateRecordFunc func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image) (*bskyapi.PostRef, error)
+type CreateRecordFunc func(session *bskyapi.Session, text string, facets []bskyapi.Facet, replyTo *bskyapi.ReplyRef, images []bskyapi.Image, langs []string) (*bskyapi.PostRef, error)
 
 // UploadBlobFunc is the signature for uploading an image. Defaults to bskyapi.UploadBlob.
 type UploadBlobFunc func(session *bskyapi.Session, data []byte, mimeType string) (json.RawMessage, error)
@@ -63,6 +63,7 @@ type BlueskyPlatform struct {
 	contactMapper     *contacts.Mapper
 	postsThisRun      int
 	maxPostsPerRun    int
+	langs             []string          // BCP-47 codes put on every post; empty leaves posts untagged
 	didCache          map[string]string // cache handle -> DID resolutions
 	createRecordFunc  CreateRecordFunc  // injectable for testing
 	createSessionFunc CreateSessionFunc // injectable for testing
@@ -86,6 +87,12 @@ func NewBlueskyPlatform(handle, password string, maxPostsPerRun int, contactMapp
 		uploadBlobFunc:    bskyapi.UploadBlob,
 		generateCardsFunc: imagegen.GenerateCards,
 	}
+}
+
+// SetLanguages sets the language codes every post carries, so Bluesky's
+// language filters and language-based feeds can place the account's posts.
+func (p *BlueskyPlatform) SetLanguages(langs ...string) {
+	p.langs = langs
 }
 
 // ensureSession creates or reuses a Bluesky session
@@ -166,7 +173,7 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 	// Post the root
 	root := bskyContent.thread[0]
 	p.resolveMentionFacets(root)
-	rootRef, err := p.createRecordFunc(p.session, root.Text, root.Facets, nil, p.uploadImages(root.Images))
+	rootRef, err := p.createRecordFunc(p.session, root.Text, root.Facets, nil, p.uploadImages(root.Images), p.langs)
 	if err != nil {
 		return votelog.PostRef{}, false, fmt.Errorf("failed to post root: %w", err)
 	}
@@ -183,7 +190,7 @@ func (p *BlueskyPlatform) Post(content platforms.Content) (votelog.PostRef, bool
 			Parent: *parentRef,
 		}
 
-		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, p.uploadImages(reply.Images))
+		ref, err := p.createRecordFunc(p.session, reply.Text, reply.Facets, replyRef, p.uploadImages(reply.Images), p.langs)
 		if err != nil {
 			// The root is live, so the vote is published and must be logged:
 			// returning the ref alongside the error is what stops the next run

@@ -127,6 +127,10 @@ type ReplyRef struct {
 // MaxImagesPerPost is how many images one app.bsky.embed.images embed holds.
 const MaxImagesPerPost = 4
 
+// MaxLangsPerPost is how many language codes the app.bsky.feed.post lexicon
+// allows in one post's langs.
+const MaxLangsPerPost = 3
+
 // Image is an uploaded image to embed in a post. Blob is the blob object
 // UploadBlob returned, passed back untouched; Width and Height give the
 // aspect ratio, without which clients crop the image to a default box.
@@ -200,9 +204,15 @@ func imagesEmbed(images []Image) map[string]interface{} {
 // text is the post content, facets are optional rich text annotations (links, mentions).
 // replyTo is optional — if non-nil, the post is created as a reply in a thread.
 // images are optional, at most MaxImagesPerPost, each uploaded with UploadBlob first.
-func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyRef, images []Image) (*PostRef, error) {
+// langs are optional BCP-47 codes for the language the text is written in, at
+// most MaxLangsPerPost: language filters and language-based feeds read them,
+// and a post without any is shown to everyone.
+func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyRef, images []Image, langs []string) (*PostRef, error) {
 	if len(images) > MaxImagesPerPost {
 		return nil, fmt.Errorf("a post holds at most %d images, got %d", MaxImagesPerPost, len(images))
+	}
+	if len(langs) > MaxLangsPerPost {
+		return nil, fmt.Errorf("a post carries at most %d languages, got %d", MaxLangsPerPost, len(langs))
 	}
 
 	url := session.ServiceEndpoint + "/xrpc/com.atproto.repo.createRecord"
@@ -216,6 +226,10 @@ func CreateRecord(session *Session, text string, facets []Facet, replyTo *ReplyR
 
 	if len(facets) > 0 {
 		record["facets"] = facets
+	}
+
+	if len(langs) > 0 {
+		record["langs"] = langs
 	}
 
 	if len(images) > 0 {
