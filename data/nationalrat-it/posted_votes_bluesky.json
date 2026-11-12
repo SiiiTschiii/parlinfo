@@ -1,5 +1,12 @@
 {
   "jurisdiction": "nationalrat-it",
   "platform": "bluesky",
-  "votes": []
+  "votes": [
+    {
+      "id": "38832",
+      "posted_at": "2026-11-12T13:28:26.969749746Z",
+      "post_id": "at://did:plc:l6m7ezt7sx5mks4fn2dmuh7g/app.bsky.feed.post/3n24l6pedkr2c",
+      "post_url": "https://bsky.app/profile/did:plc:l6m7ezt7sx5mks4fn2dmuh7g/post/3n24l6pedkr2c"
+    }
+  ]
 }
