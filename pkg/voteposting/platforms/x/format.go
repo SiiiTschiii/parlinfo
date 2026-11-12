@@ -174,6 +174,20 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 
 	// Truncate title if root exceeds limit (rare, only for very long titles)
 	if weightedLen(fullText) > charLimit {
+		// The label line gives way before the title does: its tail, the
+		// Abstimmungsgegenstand, can outrun a whole post on its own. See the
+		// same step in the Bluesky formatter.
+		if subtitlePrefix != "" {
+			resultPrefix := ""
+			if len(group) == 1 && voteformat.HasVerdict(group[0]) {
+				resultPrefix = fmt.Sprintf("%s %s: ", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
+					voteformat.GetVoteResultText(group[0].Language, voteformat.Verdict(group[0])))
+			}
+			keep := min(weightedLen(title), minTitleChars)
+			// "\n" after the label line, and the title's "…".
+			room := charLimit - weightedLen(header) - weightedLen(threadHint) - weightedLen(resultPrefix) - keep - 1 - weightedLen("…")
+			subtitlePrefix = fitLine(subtitlePrefix, room)
+		}
 		overhead := weightedLen(header) + weightedLen(threadHint) + weightedLen("…")
 		if subtitlePrefix != "" {
 			overhead += weightedLen(subtitlePrefix) + 1 // +1 for "\n"
@@ -205,7 +219,29 @@ func buildRootPost(group []votes.Vote, title string, contactMapper *contacts.Map
 		fullText = header + body + threadHint
 	}
 
+	// Last resort, for a question line or headline nothing above budgets for:
+	// a clipped root still posts, and one over the limit fails the whole run.
+	if weightedLen(fullText) > charLimit {
+		fullText = truncateText(fullText, charLimit-weightedLen("…"))
+	}
+
 	return &XPost{Text: fullText}, deferred
+}
+
+// minTitleChars is how much of the title a root keeps before the label line is
+// cut to make room for it.
+const minTitleChars = 100
+
+// fitLine returns line cut to room weighted characters including its "…", or
+// nothing if there is no room for it at all.
+func fitLine(line string, room int) string {
+	if weightedLen(line) <= room {
+		return line
+	}
+	if room <= weightedLen("…") {
+		return ""
+	}
+	return truncateText(line, room-weightedLen("…"))
 }
 
 // buildReplyPosts creates reply posts with vote details and link.

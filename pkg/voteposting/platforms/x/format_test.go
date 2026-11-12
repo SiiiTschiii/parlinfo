@@ -746,3 +746,18 @@ func TestFormatVoteThread_TagsFraktionInSubtitle(t *testing.T) {
 		t.Errorf("subtitle Fraktion not tagged:\n%s", got)
 	}
 }
+
+// TestFormatVoteThread_LongLabelLineGivesWay is the Bluesky test of the same
+// name at X's free-tier limit: the label line is cut, not the post sent over.
+func TestFormatVoteThread_LongLabelLineGivesWay(t *testing.T) {
+	root := FormatVoteThread(testfixtures.LongAbstimmungsgegenstand(), nil, DefaultMaxChars)[0].Text
+
+	if n := weightedLen(root); n > DefaultMaxChars {
+		t.Fatalf("root is %d characters, over the %d limit:\n%s", n, DefaultMaxChars, root)
+	}
+	for _, want := range []string{"Objet du Conseil fédéral · Vote sur l'ensemble", "✅ Accepté: Introduction de l'échange", "👇 Détails dans le fil"} {
+		if !strings.Contains(root, want) {
+			t.Errorf("root lost %q:\n%s", want, root)
+		}
+	}
+}
