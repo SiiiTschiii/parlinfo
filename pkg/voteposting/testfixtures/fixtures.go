@@ -1137,3 +1137,24 @@ func AllFixtures() map[string][]votes.Vote {
 		"process-multi-vote":                  ProcessMultiVote(),
 	}
 }
+
+// LongAbstimmungsgegenstand is 25.052 as the Nationalrat's French feed served
+// it on 28.09.2026: a Gesamtabstimmung whose Abstimmungsgegenstand, on the
+// label line, is some 290 characters by itself — on top of a 180-character
+// title. Every root that kept the label line whole went out at nearly twice
+// Bluesky's limit.
+func LongAbstimmungsgegenstand() []votes.Vote {
+	const title = "Introduction de l'échange automatique de renseignements relatifs aux " +
+		"crypto-actifs avec les États partenaires pertinents à partir de 2026. " +
+		"Approbation des arrêtés fédéraux"
+	const subtitle = "Vote sur l'ensemble: Arrêté fédéral concernant le mécanisme de contrôle " +
+		"permettant de garantir la mise en œuvre conforme aux normes de l’échange automatique " +
+		"de renseignements relatifs aux comptes financiers et de l’échange automatique de " +
+		"renseignements relatifs aux crypto-actifs par les États partenaires"
+
+	v := vote("25052-fr-1", title, "25.052", "angenommen", 126, 61, 0, 12)
+	v.Language = votes.French
+	v.Subtitle = subtitle
+	v.Affair.Type = "Objet du Conseil fédéral"
+	return []votes.Vote{v}
+}

@@ -776,3 +776,20 @@ func TestFormatVoteThread_LinksLeadTheThread(t *testing.T) {
 		t.Errorf("the last reply still carries a link:\n%s", thread[len(thread)-1].Text)
 	}
 }
+
+// TestFormatVoteThread_LongLabelLineGivesWay pins 25.052: an
+// Abstimmungsgegenstand long enough to fill the root by itself is cut, rather
+// than the root going to the API over the limit — and the title it would have
+// crowded out keeps room to say what the vote was about.
+func TestFormatVoteThread_LongLabelLineGivesWay(t *testing.T) {
+	root := FormatVoteThread(testfixtures.LongAbstimmungsgegenstand(), nil)[0].Text
+
+	if n := graphemeLen(root); n > maxGraphemes {
+		t.Fatalf("root is %d graphemes, over the %d limit:\n%s", n, maxGraphemes, root)
+	}
+	for _, want := range []string{"Objet du Conseil fédéral · Vote sur l'ensemble", "✅ Accepté: Introduction de l'échange", "👇 Détails dans le fil"} {
+		if !strings.Contains(root, want) {
+			t.Errorf("root lost %q:\n%s", want, root)
+		}
+	}
+}

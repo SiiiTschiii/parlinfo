@@ -1458,3 +1458,35 @@ func TestLongFormHeadingPrintsTheQuestionBelowTheTitle(t *testing.T) {
 		t.Error("a group printed a question line")
 	}
 }
+
+// TestFitLabelSubject pins where a label line may be cut: inside the
+// Abstimmungsgegenstand at its end, never among the authors before it — a line
+// a platform has already tagged included, whose handles a cut would split.
+func TestFitLabelSubject(t *testing.T) {
+	group := []votes.Vote{{
+		Subtitle: "Vote sur l'ensemble: Arrêté fédéral concernant le mécanisme de contrôle",
+		Affair:   votes.Affair{Type: "Motion", Authors: []votes.Author{{Name: "Andrea Gisler", Party: "GLP"}}},
+	}}
+	measure := func(s string) int { return len([]rune(s)) }
+	truncate := func(s string, n int) string { return string([]rune(s)[:n]) + "…" }
+	// As X leaves it after tagging: longer than the line that was fitted.
+	tagged := "Motion von @andreagisler (GLP) · " + group[0].Subtitle
+	head := "Motion von @andreagisler (GLP) · "
+
+	t.Run("a line that fits is unchanged", func(t *testing.T) {
+		if got := FitLabelSubject(tagged, group, 500, measure, truncate); got != tagged {
+			t.Errorf("got %q, want the line whole", got)
+		}
+	})
+	t.Run("the subject is cut to the room", func(t *testing.T) {
+		got := FitLabelSubject(tagged, group, measure(head)+20, measure, truncate)
+		if !strings.HasPrefix(got, head+"Vote sur") || !strings.HasSuffix(got, "…") || measure(got) > measure(head)+20 {
+			t.Errorf("got %q (%d), want the authors whole and the subject cut to fit %d", got, measure(got), measure(head)+20)
+		}
+	})
+	t.Run("no room for the subject keeps every author", func(t *testing.T) {
+		if got := FitLabelSubject(tagged, group, 20, measure, truncate); got != "Motion von @andreagisler (GLP)" {
+			t.Errorf("got %q, want the authors whole and the subject gone", got)
+		}
+	})
+}

@@ -169,6 +169,22 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 
 	// Truncate title if root exceeds limit (rare, only for very long titles)
 	if graphemeLen(fullText) > maxGraphemes {
+		// The label line gives way before the title does. Its tail is the
+		// Abstimmungsgegenstand, which on a federal Gesamtabstimmung can run to
+		// 300 graphemes on its own ("Vote sur l'ensemble: Arrêté fédéral
+		// concernant …", 25.052) — left whole, it left the title no room at all
+		// and the root went to the API at nearly twice the limit.
+		if subtitlePrefix != "" {
+			resultPrefix := ""
+			if len(group) == 1 && voteformat.HasVerdict(group[0]) {
+				resultPrefix = fmt.Sprintf("%s %s: ", voteformat.GetVoteResultEmoji(voteformat.Verdict(group[0])),
+					voteformat.GetVoteResultText(group[0].Language, voteformat.Verdict(group[0])))
+			}
+			keep := min(graphemeLen(title), minTitleGraphemes)
+			// "\n" after the label line, and the title's "…".
+			room := maxGraphemes - graphemeLen(header) - graphemeLen(threadHint) - graphemeLen(resultPrefix) - keep - 2
+			subtitlePrefix = voteformat.FitLabelSubject(subtitlePrefix, group, room, graphemeLen, truncateText)
+		}
 		overhead := graphemeLen(header) + graphemeLen(threadHint) + 1 // 1 for "…"
 		if subtitlePrefix != "" {
 			overhead += graphemeLen(subtitlePrefix) + 1 // +1 for "\n"
@@ -201,8 +217,18 @@ func buildRootPost(group []votes.Vote, title string) (*BlueskyPost, []votes.Auth
 		fullText = header + body + threadHint
 	}
 
+	// Last resort, for a question line or headline nothing above budgets for:
+	// a clipped root still posts, and one over the limit fails the whole run.
+	if graphemeLen(fullText) > maxGraphemes {
+		fullText = truncateText(fullText, maxGraphemes-1)
+	}
+
 	return &BlueskyPost{Text: fullText}, deferred
 }
+
+// minTitleGraphemes is how much of the title a root keeps before the label line
+// is cut to make room for it.
+const minTitleGraphemes = 100
 
 // buildReplyPosts creates reply posts with vote details and link.
 // Packs entries into replies (≤300 graphemes).
