@@ -8,9 +8,9 @@ name: CH Parl Info Bot
 
 on:
   schedule:
-    # Every four hours. The minute only keeps clear of the top of the hour,
+    # Every hour. The minute only keeps clear of the top of the hour,
     # when GitHub starts scheduled runs latest.
-    - cron: "6 */4 * * *"
+    - cron: "6 * * * *"
 
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
