@@ -120,6 +120,22 @@ func selectedChannels(key string) ([]config.Channel, error) {
 	return []config.Channel{c}, nil
 }
 
+// postLanguages lists the languages the jurisdictions post in, each once, in
+// order: the codes Bluesky tags a channel's posts with. A channel with no
+// language set posts German, as a jurisdiction's zero value does.
+func postLanguages(jurisdictions []config.Jurisdiction) []string {
+	var langs []string
+	seen := make(map[string]bool)
+	for _, j := range jurisdictions {
+		l := string(j.Language.OrGerman())
+		if !seen[l] {
+			seen[l] = true
+			langs = append(langs, l)
+		}
+	}
+	return langs
+}
+
 // buildPlatforms constructs one instance per platform for a channel, using that
 // channel's credentials. Platforms without complete credentials are skipped.
 func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction) []channelPlatform {
@@ -153,15 +169,13 @@ func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction)
 	bskyHandle := channel.Env("BLUESKY_HANDLE")
 	bskyPassword := channel.Env("BLUESKY_PASSWORD")
 	if bskyHandle != "" && bskyPassword != "" {
-		plats = append(plats, channelPlatform{
-			displayName: "Bluesky",
-			logPlatform: votelog.PlatformBluesky,
-			poster: bluesky.NewBlueskyPlatform(
-				bskyHandle, bskyPassword,
-				channel.EnvInt("BLUESKY_MAX_POSTS_PER_RUN", 10),
-				contactMapper,
-			),
-		})
+		bskyPlatform := bluesky.NewBlueskyPlatform(
+			bskyHandle, bskyPassword,
+			channel.EnvInt("BLUESKY_MAX_POSTS_PER_RUN", 10),
+			contactMapper,
+		)
+		bskyPlatform.SetLanguages(postLanguages(jurisdictions)...)
+		plats = append(plats, channelPlatform{displayName: "Bluesky", logPlatform: votelog.PlatformBluesky, poster: bskyPlatform})
 	} else {
 		log.Printf("⚠️  Channel %q: Bluesky not configured (missing BLUESKY_HANDLE/BLUESKY_PASSWORD)", channel.Key)
 	}

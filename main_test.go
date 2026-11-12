@@ -1,11 +1,13 @@
 package main
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/config"
+	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
 func TestFacebookPostFrom(t *testing.T) {
@@ -50,4 +52,16 @@ func TestFacebookPostFrom(t *testing.T) {
 			t.Error("Facebook was allowed with no start date at all")
 		}
 	})
+}
+
+func TestPostLanguages(t *testing.T) {
+	german := config.Jurisdiction{}
+	french := config.Jurisdiction{Jurisdiction: votes.Jurisdiction{Language: votes.French}}
+
+	if got := postLanguages([]config.Jurisdiction{german, german}); !reflect.DeepEqual(got, []string{"de"}) {
+		t.Errorf("two German bodies = %v, want [de]", got)
+	}
+	if got := postLanguages([]config.Jurisdiction{french}); !reflect.DeepEqual(got, []string{"fr"}) {
+		t.Errorf("French body = %v, want [fr]", got)
+	}
 }

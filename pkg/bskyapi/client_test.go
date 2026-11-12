@@ -66,7 +66,7 @@ func TestCreateRecord_EmbedsImages(t *testing.T) {
 
 	blob := json.RawMessage(`{"$type":"blob","ref":{"$link":"bafkrei123"},"mimeType":"image/jpeg","size":3}`)
 	_, err := CreateRecord(&Session{DID: "did:plc:x", ServiceEndpoint: srv.URL}, "", nil, nil,
-		[]Image{{Blob: blob, Alt: "165 Ja, 0 Nein", Width: 1080, Height: 1350}})
+		[]Image{{Blob: blob, Alt: "165 Ja, 0 Nein", Width: 1080, Height: 1350}}, nil)
 	if err != nil {
 		t.Fatalf("CreateRecord: %v", err)
 	}
@@ -103,7 +103,7 @@ func TestCreateRecord_NoEmbedWithoutImages(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	if _, err := CreateRecord(&Session{ServiceEndpoint: srv.URL}, "text", nil, nil, nil); err != nil {
+	if _, err := CreateRecord(&Session{ServiceEndpoint: srv.URL}, "text", nil, nil, nil, nil); err != nil {
 		t.Fatalf("CreateRecord: %v", err)
 	}
 	if _, ok := record["embed"]; ok {
@@ -113,7 +113,41 @@ func TestCreateRecord_NoEmbedWithoutImages(t *testing.T) {
 
 func TestCreateRecord_RejectsMoreThanFourImages(t *testing.T) {
 	images := make([]Image, MaxImagesPerPost+1)
-	if _, err := CreateRecord(&Session{}, "", nil, nil, images); err == nil {
+	if _, err := CreateRecord(&Session{}, "", nil, nil, images, nil); err == nil {
 		t.Fatal("expected an error for five images")
+	}
+}
+
+func TestCreateRecord_CarriesLangs(t *testing.T) {
+	var record map[string]interface{}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var payload struct {
+			Record map[string]interface{} `json:"record"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&payload)
+		record = payload.Record
+		_, _ = w.Write([]byte(`{"uri":"at://did:plc:x/app.bsky.feed.post/1","cid":"c"}`))
+	}))
+	defer srv.Close()
+
+	if _, err := CreateRecord(&Session{ServiceEndpoint: srv.URL}, "text", nil, nil, nil, []string{"fr"}); err != nil {
+		t.Fatalf("CreateRecord: %v", err)
+	}
+	langs, ok := record["langs"].([]interface{})
+	if !ok || len(langs) != 1 || langs[0] != "fr" {
+		t.Errorf("langs = %v, want [fr]", record["langs"])
+	}
+
+	if _, err := CreateRecord(&Session{ServiceEndpoint: srv.URL}, "text", nil, nil, nil, nil); err != nil {
+		t.Fatalf("CreateRecord: %v", err)
+	}
+	if _, ok := record["langs"]; ok {
+		t.Errorf("a post without a language carries langs: %v", record["langs"])
+	}
+}
+
+func TestCreateRecord_RejectsMoreThanThreeLangs(t *testing.T) {
+	if _, err := CreateRecord(&Session{}, "", nil, nil, nil, []string{"de", "fr", "it", "en"}); err == nil {
+		t.Fatal("expected an error for four languages")
 	}
 }
