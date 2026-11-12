@@ -1,5 +1,12 @@
 {
   "jurisdiction": "nationalrat-fr",
   "platform": "bluesky",
-  "votes": []
+  "votes": [
+    {
+      "id": "38832",
+      "posted_at": "2026-11-12T13:27:33.820553282Z",
+      "post_id": "at://did:plc:oew3q4j6hrjbo67ir2unfpi5/app.bsky.feed.post/3n24l54pchv2o",
+      "post_url": "https://bsky.app/profile/did:plc:oew3q4j6hrjbo67ir2unfpi5/post/3n24l54pchv2o"
+    }
+  ]
 }
