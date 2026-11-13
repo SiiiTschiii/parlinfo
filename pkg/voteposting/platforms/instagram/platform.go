@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
@@ -22,6 +23,10 @@ const (
 	pagesDeploymentPollInterval = 10 * time.Second
 	// pagesDeploymentTimeout is the maximum time to wait for GitHub Pages deployment.
 	pagesDeploymentTimeout = 6 * time.Minute
+	// recentMediaChecked is how many of the account's latest posts are searched
+	// for a caption before publishing it. The bot posts at most a few votes per
+	// run, so a post that went out despite an error is among the newest.
+	recentMediaChecked = 10
 )
 
 // CreateMediaContainerFunc is the signature for creating an IG media container.
@@ -38,6 +43,9 @@ type PollContainerStatusFunc func(containerID string) (string, error)
 
 // GetPermalinkFunc is the signature for looking up a published media's URL.
 type GetPermalinkFunc func(mediaID string) (string, error)
+
+// RecentMediaFunc is the signature for listing the account's latest media.
+type RecentMediaFunc func(limit int) ([]igapi.Media, error)
 
 // UploadImagesFunc is the signature for uploading images to hosting.
 type UploadImagesFunc func(images [][]byte, names []string) ([]string, error)
@@ -66,6 +74,7 @@ type InstagramPlatform struct {
 	publishContainerFunc           PublishContainerFunc
 	pollContainerStatusFunc        PollContainerStatusFunc
 	getPermalinkFunc               GetPermalinkFunc
+	recentMediaFunc                RecentMediaFunc
 	uploadImagesFunc               UploadImagesFunc
 	cleanupImagesFunc              CleanupImagesFunc
 	waitForImagesFunc              func(urls []string) error
@@ -102,6 +111,7 @@ func NewInstagramPlatformWithCredentials(igUserID, accessToken, githubToken, rep
 	p.publishContainerFunc = igClient.PublishContainer
 	p.pollContainerStatusFunc = igClient.PollContainerStatus
 	p.getPermalinkFunc = igClient.GetPermalink
+	p.recentMediaFunc = igClient.RecentMedia
 	p.uploadImagesFunc = hoster.UploadImages
 	p.cleanupImagesFunc = hoster.CleanupImages
 	p.waitForImagesFunc = waitForImageURLs
@@ -160,6 +170,7 @@ func (p *InstagramPlatform) postStub(igContent *InstagramContent) (votelog.PostR
 }
 
 // postReal publishes a carousel to Instagram:
+// 0. Skip it when the account already carries a post with this caption
 // 1. Upload images to GitHub Pages
 // 2. Create carousel item containers (one per image)
 // 3. Create carousel container with all children + caption
@@ -169,6 +180,16 @@ func (p *InstagramPlatform) postStub(igContent *InstagramContent) (votelog.PostR
 // 7. Clean up hosted images
 func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostRef, bool, error) {
 	imageCount := len(igContent.Images)
+
+	// A publish that returned an error can still have gone out, and the vote
+	// log only records what succeeded, so the account itself is the record to
+	// check. Without that, every run posts the vote again.
+	if post, found, err := p.findPublished(igContent.Caption); err != nil {
+		return votelog.PostRef{}, false, fmt.Errorf("checking for an earlier post: %w", err)
+	} else if found {
+		fmt.Printf("♻️  Already on Instagram, logging it without posting again: %s\n", post.URL)
+		return post, p.postsThisRun < p.maxPostsPerRun, nil
+	}
 
 	// Generate unique filenames for this carousel. The prefix keeps two
 	// channels posting in the same millisecond from sharing a file.
@@ -240,8 +261,20 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 	fmt.Print("🚀 Publishing...\n")
 	mediaID, err := p.publishContainerFunc(publishID)
 	if err != nil {
-		logHostedImagesWarning(names)
-		return votelog.PostRef{}, false, fmt.Errorf("publishing: %w", err)
+		// Instagram has answered a publish with a 403 ("action is blocked")
+		// and published the post anyway. Count it if it is there.
+		post, found, lookupErr := p.findPublished(igContent.Caption)
+		if lookupErr != nil || !found {
+			if lookupErr != nil {
+				log.Printf("⚠️  Could not check whether the post went out anyway: %v", lookupErr)
+			}
+			logHostedImagesWarning(names)
+			return votelog.PostRef{}, false, fmt.Errorf("publishing: %w", err)
+		}
+		log.Printf("⚠️  Publishing returned an error, but the post is live (%s): %v", post.URL, err)
+		p.cleanupHostedImages(names)
+		p.postsThisRun++
+		return post, p.postsThisRun < p.maxPostsPerRun, nil
 	}
 	fmt.Printf("   ✅ Published! Media ID: %s\n", mediaID)
 
@@ -261,17 +294,48 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 		fmt.Printf("   🔗 %s\n", permalink)
 	}
 
-	// Clean up hosted images
-	fmt.Print("🧹 Cleaning up hosted images...\n")
-	if err := p.cleanupImagesFunc(names); err != nil {
-		// Log but don't fail — the post was successful
-		log.Printf("⚠️  Cleanup error (images may remain hosted): %v", err)
-	} else {
-		fmt.Printf("   ✅ Cleaned up %d image(s)\n", imageCount)
-	}
+	p.cleanupHostedImages(names)
 
 	p.postsThisRun++
 	return post, p.postsThisRun < p.maxPostsPerRun, nil
+}
+
+// cleanupHostedImages removes a published post's images from GitHub Pages.
+// A failure is only logged: the post itself went out.
+func (p *InstagramPlatform) cleanupHostedImages(names []string) {
+	fmt.Print("🧹 Cleaning up hosted images...\n")
+	if err := p.cleanupImagesFunc(names); err != nil {
+		log.Printf("⚠️  Cleanup error (images may remain hosted): %v", err)
+	} else {
+		fmt.Printf("   ✅ Cleaned up %d image(s)\n", len(names))
+	}
+}
+
+// findPublished looks among the account's latest posts for one carrying this
+// caption. A caption names the vote, its date and time and its result, so two
+// different votes do not share one. Without a lister wired in, as in tests
+// that do not need it, nothing is found.
+func (p *InstagramPlatform) findPublished(caption string) (votelog.PostRef, bool, error) {
+	if p.recentMediaFunc == nil {
+		return votelog.PostRef{}, false, nil
+	}
+	media, err := p.recentMediaFunc(recentMediaChecked)
+	if err != nil {
+		return votelog.PostRef{}, false, err
+	}
+	want := normalizeCaption(caption)
+	for _, m := range media {
+		if normalizeCaption(m.Caption) == want {
+			return votelog.PostRef{ID: m.ID, URL: m.Permalink}, true, nil
+		}
+	}
+	return votelog.PostRef{}, false, nil
+}
+
+// normalizeCaption evens out what Instagram may change in a caption it
+// stores: line endings and surrounding whitespace.
+func normalizeCaption(caption string) string {
+	return strings.TrimSpace(strings.ReplaceAll(caption, "\r\n", "\n"))
 }
 
 // pollUntilPublished polls the container status until it reaches PUBLISHED, ERROR, or EXPIRED,

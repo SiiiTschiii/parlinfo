@@ -373,3 +373,109 @@ func TestPlatform_NewWithCredentials(t *testing.T) {
 }
 
 var errTest = fmt.Errorf("test error")
+
+// newDuplicateTestPlatform wires a real-mode platform whose every step
+// succeeds, with recent media and the publish outcome left to the test.
+func newDuplicateTestPlatform(t *testing.T, recent func() ([]igapi.Media, error), publish func() (string, error)) (*InstagramPlatform, *int) {
+	t.Helper()
+	p := NewInstagramPlatform(5)
+	p.stubMode = false
+	p.sleepFunc = func(_ time.Duration) {}
+	p.waitForImagesFunc = func(_ []string) error { return nil }
+	uploads := 0
+	p.uploadImagesFunc = func(images [][]byte, _ []string) ([]string, error) {
+		uploads++
+		return make([]string, len(images)), nil
+	}
+	p.createSingleImageContainerFunc = func(_, _ string) (string, error) { return "c", nil }
+	p.pollContainerStatusFunc = func(_ string) (string, error) { return igapi.StatusFinished, nil }
+	p.publishContainerFunc = func(_ string) (string, error) { return publish() }
+	p.getPermalinkFunc = func(_ string) (string, error) { return "https://www.instagram.com/p/New/", nil }
+	p.recentMediaFunc = func(limit int) ([]igapi.Media, error) {
+		if limit != recentMediaChecked {
+			t.Errorf("listed %d media, want %d", limit, recentMediaChecked)
+		}
+		return recent()
+	}
+	p.cleanupImagesFunc = func(_ []string) error { return nil }
+	return p, &uploads
+}
+
+var errBlocked = errors.New(`publish container returned status 403: {"error":{"code":4,"error_subcode":2207051}}`)
+
+// A vote whose caption is already on the account was published by an earlier
+// run that logged it as failed. It is logged now, and not posted again.
+func TestPlatform_SkipsCaptionAlreadyOnAccount(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "🗳️ Vote\n\nMotion X"}
+	p, uploads := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) {
+			return []igapi.Media{
+				{ID: "other", Caption: "🗳️ Vote\n\nMotion Y"},
+				{ID: "m1", Caption: "🗳️ Vote\r\n\r\nMotion X\n", Permalink: "https://www.instagram.com/p/Old/"},
+			}, nil
+		},
+		func() (string, error) { t.Error("published a caption already on the account"); return "", nil })
+
+	post, shouldContinue, err := p.Post(content)
+	if err != nil {
+		t.Fatalf("Post: %v", err)
+	}
+	if want := (votelog.PostRef{ID: "m1", URL: "https://www.instagram.com/p/Old/"}); post != want {
+		t.Errorf("ref %+v, want %+v", post, want)
+	}
+	if *uploads != 0 {
+		t.Errorf("uploaded images %d time(s), want none", *uploads)
+	}
+	if !shouldContinue {
+		t.Error("a post found on the account must not use up the run's limit")
+	}
+}
+
+// Instagram answered the publish with a 403 and published anyway: the post
+// counts, so the vote is logged and the next run does not post it again.
+func TestPlatform_PublishErrorButPostIsLive(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	published := false
+	p, _ := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) {
+			if !published {
+				return nil, nil
+			}
+			return []igapi.Media{{ID: "m2", Caption: "caption", Permalink: "https://www.instagram.com/p/Live/"}}, nil
+		},
+		func() (string, error) { published = true; return "", errBlocked })
+
+	post, _, err := p.Post(content)
+	if err != nil {
+		t.Fatalf("a publish that went out must not fail: %v", err)
+	}
+	if want := (votelog.PostRef{ID: "m2", URL: "https://www.instagram.com/p/Live/"}); post != want {
+		t.Errorf("ref %+v, want %+v", post, want)
+	}
+}
+
+// A publish error with nothing on the account is a real failure.
+func TestPlatform_PublishErrorAndNoPost(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	p, _ := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return nil, nil },
+		func() (string, error) { return "", errBlocked })
+	if _, _, err := p.Post(content); !errors.Is(err, errBlocked) {
+		t.Fatalf("Post error = %v, want the publish error", err)
+	}
+}
+
+// When the account cannot be checked, posting could duplicate, so it fails.
+func TestPlatform_RecentMediaErrorFailsBeforePosting(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	p, uploads := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return nil, errors.New("graph api down") },
+		func() (string, error) { t.Error("published without checking the account"); return "", nil })
+
+	if _, _, err := p.Post(content); err == nil {
+		t.Fatal("expected an error")
+	}
+	if *uploads != 0 {
+		t.Errorf("uploaded images %d time(s), want none", *uploads)
+	}
+}

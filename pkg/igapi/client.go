@@ -58,6 +58,18 @@ type statusResponse struct {
 	StatusCode string `json:"status_code"`
 }
 
+// Media is one of the account's published media objects.
+type Media struct {
+	ID        string `json:"id"`
+	Caption   string `json:"caption"`
+	Permalink string `json:"permalink"`
+}
+
+// mediaListResponse is the response from listing the account's media.
+type mediaListResponse struct {
+	Data []Media `json:"data"`
+}
+
 // permalinkResponse is the response from querying a media object's permalink.
 type permalinkResponse struct {
 	Permalink string `json:"permalink"`
@@ -264,4 +276,40 @@ func (c *Client) GetPermalink(mediaID string) (string, error) {
 	}
 
 	return result.Permalink, nil
+}
+
+// RecentMedia returns the account's latest published media, newest first, at
+// most limit of them. instagram_basic covers it, as it does GetPermalink, and
+// the token travels in the header for the same reason.
+func (c *Client) RecentMedia(limit int) ([]Media, error) {
+	endpoint := fmt.Sprintf("%s/%s/media", c.apiBase, c.igUserID)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating media list request: %w", err)
+	}
+
+	q := req.URL.Query()
+	q.Set("fields", "id,caption,permalink")
+	q.Set("limit", fmt.Sprint(limit))
+	req.URL.RawQuery = q.Encode()
+	req.Header.Set("Authorization", "Bearer "+c.accessToken)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("listing media: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("list media returned %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result mediaListResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("parsing media list response: %w", err)
+	}
+
+	return result.Data, nil
 }
