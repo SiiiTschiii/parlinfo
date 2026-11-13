@@ -184,7 +184,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 	// A publish that returned an error can still have gone out, and the vote
 	// log only records what succeeded, so the account itself is the record to
 	// check. Without that, every run posts the vote again.
-	if post, found, err := p.findPublished(igContent.Caption); err != nil {
+	if post, found, err := p.findPublished(igContent); err != nil {
 		return votelog.PostRef{}, false, fmt.Errorf("checking for an earlier post: %w", err)
 	} else if found {
 		fmt.Printf("♻️  Already on Instagram, logging it without posting again: %s\n", post.URL)
@@ -263,7 +263,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 	if err != nil {
 		// Instagram has answered a publish with a 403 ("action is blocked")
 		// and published the post anyway. Count it if it is there.
-		post, found, lookupErr := p.findPublished(igContent.Caption)
+		post, found, lookupErr := p.findPublished(igContent)
 		if lookupErr != nil || !found {
 			if lookupErr != nil {
 				log.Printf("⚠️  Could not check whether the post went out anyway: %v", lookupErr)
@@ -311,11 +311,14 @@ func (p *InstagramPlatform) cleanupHostedImages(names []string) {
 	}
 }
 
-// findPublished looks among the account's latest posts for one carrying this
-// caption. A caption names the vote, its date and time and its result, so two
-// different votes do not share one. Without a lister wired in, as in tests
+// findPublished looks among the account's latest posts for one about the same
+// vote group: the same captionKey and the same number of images. The key leaves
+// out the rest of the caption, which can change between runs, as the next-step
+// line follows the business and tags follow the contact mapping. The image
+// count tells a group from the votes of it that arrived after it was posted,
+// which share its headline and links. Without a lister wired in, as in tests
 // that do not need it, nothing is found.
-func (p *InstagramPlatform) findPublished(caption string) (votelog.PostRef, bool, error) {
+func (p *InstagramPlatform) findPublished(content *InstagramContent) (votelog.PostRef, bool, error) {
 	if p.recentMediaFunc == nil {
 		return votelog.PostRef{}, false, nil
 	}
@@ -323,19 +326,41 @@ func (p *InstagramPlatform) findPublished(caption string) (votelog.PostRef, bool
 	if err != nil {
 		return votelog.PostRef{}, false, err
 	}
-	want := normalizeCaption(caption)
+	want := captionKey(content.Caption)
 	for _, m := range media {
-		if normalizeCaption(m.Caption) == want {
+		if captionKey(m.Caption) == want && m.ImageCount() == len(content.Images) {
 			return votelog.PostRef{ID: m.ID, URL: m.Permalink}, true, nil
 		}
 	}
 	return votelog.PostRef{}, false, nil
 }
 
-// normalizeCaption evens out what Instagram may change in a caption it
-// stores: line endings and surrounding whitespace.
-func normalizeCaption(caption string) string {
-	return strings.TrimSpace(strings.ReplaceAll(caption, "\r\n", "\n"))
+// captionKey reduces a caption to what identifies its vote group and stays put
+// between runs: the headline, which names the body, the date and, for a single
+// vote, the time, and the link lines, which name the business. A cut for length
+// keeps both, as it shortens the body in between. A caption without links falls
+// back to all of its text. Line endings and surrounding whitespace are evened
+// out, in case Instagram stores them differently.
+func captionKey(caption string) string {
+	lines := strings.Split(strings.ReplaceAll(caption, "\r\n", "\n"), "\n")
+	var headline string
+	var links []string
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		if headline == "" {
+			headline = line
+		}
+		if strings.Contains(line, "://") {
+			links = append(links, line)
+		}
+	}
+	if len(links) == 0 {
+		return strings.Join(strings.Fields(caption), " ")
+	}
+	return headline + "\n" + strings.Join(links, "\n")
 }
 
 // pollUntilPublished polls the container status until it reaches PUBLISHED, ERROR, or EXPIRED,

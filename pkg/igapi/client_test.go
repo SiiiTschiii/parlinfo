@@ -319,7 +319,7 @@ func TestRecentMedia(t *testing.T) {
 		if r.URL.Path != "/ig_user_1/media" {
 			t.Errorf("expected path /ig_user_1/media, got %s", r.URL.Path)
 		}
-		if got := r.URL.Query().Get("fields"); got != "id,caption,permalink" {
+		if got := r.URL.Query().Get("fields"); got != "id,caption,permalink,children{id}" {
 			t.Errorf("unexpected fields %q", got)
 		}
 		if got := r.URL.Query().Get("limit"); got != "10" {
@@ -331,7 +331,7 @@ func TestRecentMedia(t *testing.T) {
 		if got := r.Header.Get("Authorization"); got != "Bearer tok123" {
 			t.Errorf("expected Authorization: Bearer tok123, got %q", got)
 		}
-		_, _ = w.Write([]byte(`{"data":[{"id":"m1","caption":"hello","permalink":"https://www.instagram.com/p/A/"}],"paging":{}}`))
+		_, _ = w.Write([]byte(`{"data":[{"id":"m1","caption":"hello","permalink":"https://www.instagram.com/p/A/","children":{"data":[{"id":"c1"},{"id":"c2"}]}},{"id":"m2","caption":"single"}],"paging":{}}`))
 	}))
 	defer server.Close()
 
@@ -342,9 +342,14 @@ func TestRecentMedia(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	want := []Media{{ID: "m1", Caption: "hello", Permalink: "https://www.instagram.com/p/A/"}}
-	if len(media) != 1 || media[0] != want[0] {
-		t.Errorf("got %+v, want %+v", media, want)
+	if len(media) != 2 {
+		t.Fatalf("got %d media, want 2", len(media))
+	}
+	if m := media[0]; m.ID != "m1" || m.Caption != "hello" || m.Permalink != "https://www.instagram.com/p/A/" || m.ImageCount() != 2 {
+		t.Errorf("carousel parsed as %+v (%d images)", m, m.ImageCount())
+	}
+	if n := media[1].ImageCount(); n != 1 {
+		t.Errorf("single image counted as %d", n)
 	}
 }
 

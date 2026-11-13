@@ -63,6 +63,20 @@ type Media struct {
 	ID        string `json:"id"`
 	Caption   string `json:"caption"`
 	Permalink string `json:"permalink"`
+	// Children lists a carousel's items; it is empty for a single image.
+	Children struct {
+		Data []struct {
+			ID string `json:"id"`
+		} `json:"data"`
+	} `json:"children"`
+}
+
+// ImageCount is how many images the post shows: a carousel's items, or one.
+func (m Media) ImageCount() int {
+	if n := len(m.Children.Data); n > 0 {
+		return n
+	}
+	return 1
 }
 
 // mediaListResponse is the response from listing the account's media.
@@ -290,7 +304,7 @@ func (c *Client) RecentMedia(limit int) ([]Media, error) {
 	}
 
 	q := req.URL.Query()
-	q.Set("fields", "id,caption,permalink")
+	q.Set("fields", "id,caption,permalink,children{id}")
 	q.Set("limit", fmt.Sprint(limit))
 	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Authorization", "Bearer "+c.accessToken)

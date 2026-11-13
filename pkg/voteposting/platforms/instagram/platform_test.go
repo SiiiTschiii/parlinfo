@@ -388,6 +388,8 @@ func newDuplicateTestPlatform(t *testing.T, recent func() ([]igapi.Media, error)
 		return make([]string, len(images)), nil
 	}
 	p.createSingleImageContainerFunc = func(_, _ string) (string, error) { return "c", nil }
+	p.createMediaContainerFunc = func(_ string) (string, error) { return "child", nil }
+	p.createCarouselContainerFunc = func(_ []string, _ string) (string, error) { return "c", nil }
 	p.pollContainerStatusFunc = func(_ string) (string, error) { return igapi.StatusFinished, nil }
 	p.publishContainerFunc = func(_ string) (string, error) { return publish() }
 	p.getPermalinkFunc = func(_ string) (string, error) { return "https://www.instagram.com/p/New/", nil }
@@ -454,6 +456,30 @@ func TestPlatform_PublishErrorButPostIsLive(t *testing.T) {
 	}
 }
 
+// The votes of a group that arrive after it was posted share its headline and
+// links; the image count keeps them from passing for the earlier post.
+func TestPlatform_LaterVotesOfPostedGroupStillPost(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}, {0xFF}}, Caption: "🗳️ Vote du 01.10.2026\n\nhttps://example.com/a"}
+	var earlier igapi.Media
+	earlier.ID, earlier.Caption = "m1", content.Caption
+	for range 3 {
+		earlier.Children.Data = append(earlier.Children.Data, struct {
+			ID string `json:"id"`
+		}{"c"})
+	}
+	p, uploads := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return []igapi.Media{earlier}, nil },
+		func() (string, error) { return "m2", nil })
+
+	post, _, err := p.Post(content)
+	if err != nil {
+		t.Fatalf("Post: %v", err)
+	}
+	if post.ID != "m2" || *uploads != 1 {
+		t.Errorf("posted %+v after %d upload(s), want a new post", post, *uploads)
+	}
+}
+
 // A publish error with nothing on the account is a real failure.
 func TestPlatform_PublishErrorAndNoPost(t *testing.T) {
 	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
@@ -477,5 +503,28 @@ func TestPlatform_RecentMediaErrorFailsBeforePosting(t *testing.T) {
 	}
 	if *uploads != 0 {
 		t.Errorf("uploaded images %d time(s), want none", *uploads)
+	}
+}
+
+// The key ignores what changes between runs and keeps what tells groups apart.
+func TestCaptionKey(t *testing.T) {
+	const link = "🔗 https://www.parlament.ch/fr/geschaeft?AffairId=20253314"
+	posted := "🗳️ Conseil national | Vote du 01.10.2026 (12:53)\n\nMotion X @someone\n63 Oui\n\n➡️ Next: Conseil des Etats\n\n" + link
+	for name, tc := range map[string]struct {
+		caption string
+		same    bool
+	}{
+		"same caption":               {posted, true},
+		"CRLF and trailing space":    {strings.ReplaceAll(posted, "\n", "\r\n") + "  ", true},
+		"tags and next step changed": {"🗳️ Conseil national | Vote du 01.10.2026 (12:53)\n\nMotion X\n63 Oui\n\n" + link, true},
+		"body cut for length":        {"🗳️ Conseil national | Vote du 01.10.2026 (12:53)\n\nMot…\nℹ️ cut\n" + link, true},
+		"other vote, same business":  {"🗳️ Conseil national | Vote du 01.10.2026 (12:54)\n\nMotion X\n\n" + link, false},
+		"same time, other business":  {"🗳️ Conseil national | Vote du 01.10.2026 (12:53)\n\nMotion Y\n\n🔗 https://www.parlament.ch/fr/geschaeft?AffairId=20253408", false},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if got := captionKey(tc.caption) == captionKey(posted); got != tc.same {
+				t.Errorf("same key = %v, want %v", got, tc.same)
+			}
+		})
 	}
 }
