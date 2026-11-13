@@ -3578,7 +3578,7 @@ Daten: OpenParlData.ch
 [post 0]
 🗳️  Kantonsrat ZH | Wahlgeschäft vom 14.09.2026
 
-Wahl Mitglied Baurekursgericht (BRG)…
+Wahl Mitglied Baurekursgericht (BRG…
 
 Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 
@@ -3653,7 +3653,7 @@ Daten: OpenParlData.ch
 [post 0]
 🗳️  Kantonsrat ZH | Wahlgeschäft vom 14.09.2026
 
-Wahl Mitglied Baurekursgericht (BRG)…
+Wahl Mitglied Baurekursgericht (BRG…
 
 Zu dieser Wahl liegen uns keine Ergebnisdaten vor.
 
@@ -4325,10 +4325,11 @@ Sehr langes Traktandum Sehr langes Traktandum Sehr langes Traktandum Sehr langes
 Daten: Open Data Zürich
 
 [post 2]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 3]
+📊 80 Ja | 30 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 25/0/2/2
 FDP 18/2/0/2
@@ -4339,10 +4340,11 @@ SVP 0/15/0/1
 AL 0/3/0/1
 
 [post 4]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 5]
+📊 81 Ja | 29 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 26/0/2/2
 FDP 18/2/0/2
@@ -4353,10 +4355,11 @@ SVP 0/14/0/1
 AL 0/3/0/1
 
 [post 6]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 7]
+📊 82 Ja | 28 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 27/0/2/2
 FDP 18/2/0/2
@@ -4367,10 +4370,11 @@ SVP 0/13/0/1
 AL 0/3/0/1
 
 [post 8]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 9]
+📊 83 Ja | 27 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 28/0/2/2
 FDP 18/2/0/2
@@ -4381,10 +4385,11 @@ SVP 0/12/0/1
 AL 0/3/0/1
 
 [post 10]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 11]
+📊 84 Ja | 26 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 29/0/2/2
 FDP 18/2/0/2
@@ -4395,10 +4400,11 @@ SVP 0/11/0/1
 AL 0/3/0/1
 
 [post 12]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 13]
+📊 85 Ja | 25 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 30/0/2/2
 FDP 18/2/0/2
@@ -4409,10 +4415,11 @@ SVP 0/10/0/1
 AL 0/3/0/1
 
 [post 14]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 15]
+📊 86 Ja | 24 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 31/0/2/2
 FDP 18/2/0/2
@@ -4423,10 +4430,11 @@ SVP 0/9/0/1
 AL 0/3/0/1
 
 [post 16]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 17]
+📊 87 Ja | 23 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 32/0/2/2
 FDP 18/2/0/2
@@ -4437,10 +4445,11 @@ SVP 0/8/0/1
 AL 0/3/0/1
 
 [post 18]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 19]
+📊 88 Ja | 22 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 33/0/2/2
 FDP 18/2/0/2
@@ -4451,10 +4460,11 @@ SVP 0/7/0/1
 AL 0/3/0/1
 
 [post 20]
-✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel
-📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
+✅ Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Abstimmungstitel Sehr langer Ab…
 
 [post 21]
+📊 89 Ja | 21 Nein | 5 Enthaltung | 10 Abwesend
+
 🏛️ Fraktionen (Ja/Nein/Enth/Abw):
 SP 34/0/2/2
 GLP 21/0/0/2

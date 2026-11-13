@@ -42,3 +42,44 @@ func TestW_FallsBackToGerman(t *testing.T) {
 		}
 	}
 }
+
+func TestFrenchElidesDeBeforeAVowel(t *testing.T) {
+	andrea := []votes.Author{{Name: "Andrea Caroni", Party: "PLR"}}
+	hans := []votes.Author{{Name: "Hans Stöckli", Party: "PS"}}
+	for _, c := range []struct {
+		lang    votes.Language
+		authors []votes.Author
+		want    string
+	}{
+		{votes.French, andrea, "Initiative parlementaire d’Andrea Caroni (PLR)"},
+		{votes.French, hans, "Initiative parlementaire de Hans Stöckli (PS)"},
+		{votes.Italian, andrea, "Initiative parlementaire di Andrea Caroni (PLR)"},
+		{votes.German, andrea, "Initiative parlementaire von Andrea Caroni (PLR)"},
+	} {
+		group := []votes.Vote{{Language: c.lang, Affair: votes.Affair{Type: "Initiative parlementaire", Authors: c.authors}}}
+		if got := GroupPrefixLine(group); got != c.want {
+			t.Errorf("%s: GroupPrefixLine = %q, want %q", c.lang, got, c.want)
+		}
+		// The thread's block, when the label line had no room for anyone.
+		got := blockTexts(SignatoryBlocks(group, c.authors))
+		if want := "✍️ " + c.want; len(got) != 1 || got[0] != want {
+			t.Errorf("%s: SignatoryBlocks = %q, want %q", c.lang, got, want)
+		}
+	}
+}
+
+// An elided first name that does not fit beside the label still moves to the
+// next entry, as an unelided one does, rather than overrunning the limit.
+func TestPackNames_ElidedNameStillSplitsFromTheLabel(t *testing.T) {
+	b := NameBlock{"✍️ Initiative parlementaire de", []votes.Author{{Name: "Andrea Caroni", Party: "PLR"}}, votes.French}
+	measure := func(s string) int { return len([]rune(s)) }
+	got := PackNames(b, nil, 45, measure)
+	for _, e := range got {
+		if n := measure(e); n > 45 {
+			t.Errorf("entry %q is %d runes, over the limit of 45", e, n)
+		}
+	}
+	if len(got) != 2 {
+		t.Errorf("PackNames = %q, want the label and the name apart", got)
+	}
+}
