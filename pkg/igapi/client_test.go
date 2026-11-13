@@ -313,3 +313,57 @@ func TestGET_TransportErrorOmitsToken(t *testing.T) {
 		})
 	}
 }
+
+func TestRecentMedia(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/ig_user_1/media" {
+			t.Errorf("expected path /ig_user_1/media, got %s", r.URL.Path)
+		}
+		if got := r.URL.Query().Get("fields"); got != "id,caption,permalink,children{id}" {
+			t.Errorf("unexpected fields %q", got)
+		}
+		if got := r.URL.Query().Get("limit"); got != "10" {
+			t.Errorf("expected limit=10, got %q", got)
+		}
+		if r.URL.Query().Has("access_token") {
+			t.Error("access token sent in the query string")
+		}
+		if got := r.Header.Get("Authorization"); got != "Bearer tok123" {
+			t.Errorf("expected Authorization: Bearer tok123, got %q", got)
+		}
+		_, _ = w.Write([]byte(`{"data":[{"id":"m1","caption":"hello","permalink":"https://www.instagram.com/p/A/","children":{"data":[{"id":"c1"},{"id":"c2"}]}},{"id":"m2","caption":"single"}],"paging":{}}`))
+	}))
+	defer server.Close()
+
+	client := NewClient("ig_user_1", "tok123")
+	client.SetAPIBase(server.URL)
+
+	media, err := client.RecentMedia(10)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(media) != 2 {
+		t.Fatalf("got %d media, want 2", len(media))
+	}
+	if m := media[0]; m.ID != "m1" || m.Caption != "hello" || m.Permalink != "https://www.instagram.com/p/A/" || m.ImageCount() != 2 {
+		t.Errorf("carousel parsed as %+v (%d images)", m, m.ImageCount())
+	}
+	if n := media[1].ImageCount(); n != 1 {
+		t.Errorf("single image counted as %d", n)
+	}
+}
+
+func TestRecentMedia_Error(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = w.Write([]byte(`{"error":{}}`))
+	}))
+	defer server.Close()
+
+	client := NewClient("ig_user_1", "tok123")
+	client.SetAPIBase(server.URL)
+
+	if _, err := client.RecentMedia(10); err == nil {
+		t.Fatal("expected error")
+	}
+}
