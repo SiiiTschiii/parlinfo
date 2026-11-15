@@ -147,6 +147,27 @@ existed have neither. To find where one vote was posted, on every platform:
 jq -r --arg id "<vote id>" '.platform as $p | .votes[] | select(.id == $id) | "\($p)\t\(.post_url // .post_id // "-")"' data/zurich-city/posted_votes_*.json
 ```
 
+### The weekly LinkedIn digest
+
+LinkedIn gets a digest by hand, not a post per vote. `linkedin_digest` drafts
+it from the votes the bot posted in the last days and posts nothing:
+
+```bash
+git fetch origin state-log state-log-chparl
+go run ./cmd/linkedin_digest -state-ref origin/state-log
+go run ./cmd/linkedin_digest -channel chparl -days 14 -state-ref origin/state-log-chparl
+```
+
+It prints three blocks. **Post** is the text, one numbered entry per business,
+without links. **First comment** holds the link to the official record of each
+entry, by the same number, and the data credit. **Tag by hand** lists the people
+an entry names who have a verified LinkedIn profile: type `@` and the name in
+the post, and check the suggestion against the profile URL before picking it.
+
+Without `-state-ref` it reads the logs on disk. A vote the logs record that is
+not among the latest `-fetch` votes from the source (200 by default) is left
+out, with a warning naming it.
+
 ### Curating who gets tagged
 
 Tagging works by matching names in a post against `data/<jurisdiction>/contacts.yaml`.

@@ -3,6 +3,7 @@ package contacts
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -367,4 +368,69 @@ func (m *Mapper) FindBlueskyMentions(text string) []BlueskyMention {
 	}
 
 	return mentions
+}
+
+// Mention is a contact named in a text, with their verified accounts on one
+// platform.
+type Mention struct {
+	Name string
+	URLs []string
+}
+
+// Mentions lists the contacts a text names who have a verified account on a
+// platform, in the order the text names them, each once.
+//
+// It is for a platform where a tag cannot be written into the text: LinkedIn
+// mentions are picked from a dropdown by whoever posts, so what a draft needs
+// is the list of people to pick and the profile to check each against. Names
+// match as they do for the tagging platforms, in either order and longest
+// first, so "David Garcia Nuñez" is not also found as "David Garcia".
+func (m *Mapper) Mentions(text, platform string) []Mention {
+	type match struct {
+		start, end int
+		mention    Mention
+	}
+	var matches []match
+	for _, contact := range m.allContacts {
+		urls := contact.Verified(platform)
+		if len(urls) == 0 {
+			continue
+		}
+		for _, variant := range generateNameVariants(contact.Name) {
+			re := regexp.MustCompile(`\b` + regexp.QuoteMeta(variant) + `\b`)
+			for _, idx := range re.FindAllStringIndex(text, -1) {
+				matches = append(matches, match{idx[0], idx[1], Mention{Name: contact.Name, URLs: urls}})
+			}
+		}
+	}
+
+	// Longest first, so a longer name claims its span before a shorter one
+	// contained in it; then back into reading order.
+	sort.SliceStable(matches, func(i, j int) bool {
+		return matches[i].end-matches[i].start > matches[j].end-matches[j].start
+	})
+	var kept []match
+	for _, c := range matches {
+		overlaps := false
+		for _, k := range kept {
+			if c.start < k.end && k.start < c.end {
+				overlaps = true
+				break
+			}
+		}
+		if !overlaps {
+			kept = append(kept, c)
+		}
+	}
+	sort.SliceStable(kept, func(i, j int) bool { return kept[i].start < kept[j].start })
+
+	seen := map[string]bool{}
+	var out []Mention
+	for _, k := range kept {
+		if !seen[k.mention.Name] {
+			seen[k.mention.Name] = true
+			out = append(out, k.mention)
+		}
+	}
+	return out
 }
