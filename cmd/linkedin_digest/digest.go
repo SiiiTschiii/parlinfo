@@ -162,7 +162,13 @@ func groupEntry(n int, subject string, group []votes.Vote) string {
 		return fmt.Sprintf("%d. Wahlgeschäft: %s\n", n, subject)
 	}
 	if len(group) == 1 {
-		return fmt.Sprintf("%d. %s · %s\n", n, result(group[0]), subject)
+		lead := result(group[0])
+		// A threshold vote's tally reads as near-unanimous agreement unless it
+		// is named; in a larger group the vote's own label carries the name.
+		if label := voteformat.TypeLabel(group[0].Type); label != "" {
+			lead = label + " · " + lead
+		}
+		return fmt.Sprintf("%d. %s · %s\n", n, lead, subject)
 	}
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "%d. %s\n", n, subject)

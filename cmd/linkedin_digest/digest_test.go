@@ -129,3 +129,13 @@ func TestRenderElection(t *testing.T) {
 		t.Errorf("tagging list names the member being replaced:\n%s", tags)
 	}
 }
+
+func TestGroupEntryNamesALoneThresholdVote(t *testing.T) {
+	group := testfixtures.KantonsratLoneQuorumVote()
+
+	got := groupEntry(1, "Vorlage", group)
+
+	if !strings.HasPrefix(got, "1. Ausgabenbremse · ") {
+		t.Errorf("groupEntry() = %q, want the counts named as an Ausgabenbremse vote", got)
+	}
+}
