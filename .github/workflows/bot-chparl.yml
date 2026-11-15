@@ -67,12 +67,15 @@ jobs:
           open=false
           ahead=false
           label=""
-          date_re='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          # A real calendar day written as YYYY-MM-DD: GNU date rejects
+          # 2027-12-99 and 2027-02-30, and reading it back rejects any other
+          # spelling date would accept.
+          is_day() { [ "$(date -d "$1" +%F 2>/dev/null)" = "$1" ]; }
 
           while read -r from to rest; do
             [[ -z "$from" || "$from" == \#* ]] && continue
             # A typo here would silently switch the bot off for a session.
-            if [[ ! "$from" =~ $date_re || ! "$to" =~ $date_re || "$from" > "$to" ]]; then
+            if ! is_day "$from" || ! is_day "$to" || [[ "$from" > "$to" ]]; then
               echo "::error file=$SESSIONS_FILE::Malformed session line: $from $to $rest"
               exit 1
             fi
