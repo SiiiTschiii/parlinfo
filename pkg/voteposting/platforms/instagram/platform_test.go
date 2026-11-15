@@ -528,3 +528,76 @@ func TestCaptionKey(t *testing.T) {
 		})
 	}
 }
+
+// errNotReady is Instagram's answer of 15.11.2026 to a publish of a container
+// that had reported FINISHED.
+var errNotReady error = &igapi.APIError{Op: "publish container", StatusCode: 400, Code: 9007, Subcode: 2207027}
+
+// A publish refused as not ready goes through on a later attempt, with a wait
+// between attempts.
+func TestPlatform_RetriesPublishWhileMediaNotReady(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	attempts := 0
+	p, _ := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return nil, nil },
+		func() (string, error) {
+			attempts++
+			if attempts < 3 {
+				return "", errNotReady
+			}
+			return "media_ok", nil
+		})
+	sleeps := 0
+	p.sleepFunc = func(_ time.Duration) { sleeps++ }
+
+	post, _, err := p.Post(content)
+	if err != nil {
+		t.Fatalf("Post: %v", err)
+	}
+	if post.ID != "media_ok" {
+		t.Errorf("media ID %q, want media_ok", post.ID)
+	}
+	if attempts != 3 {
+		t.Errorf("published %d time(s), want 3", attempts)
+	}
+	if sleeps < 2 {
+		t.Errorf("waited %d time(s) between attempts, want at least 2", sleeps)
+	}
+}
+
+// A container that never becomes ready stops after publishAttempts and the
+// error stands, so the vote stays unlogged for the next run.
+func TestPlatform_GivesUpWhenMediaNeverReady(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	attempts := 0
+	p, _ := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return nil, nil },
+		func() (string, error) { attempts++; return "", errNotReady })
+
+	post, _, err := p.Post(content)
+	if !igapi.IsMediaNotReady(err) {
+		t.Fatalf("error %v, want the not-ready error", err)
+	}
+	if post != (votelog.PostRef{}) {
+		t.Errorf("ref %+v, want none", post)
+	}
+	if attempts != publishAttempts {
+		t.Errorf("published %d time(s), want %d", attempts, publishAttempts)
+	}
+}
+
+// Any other publish error is not retried.
+func TestPlatform_DoesNotRetryOtherPublishErrors(t *testing.T) {
+	content := &InstagramContent{Images: [][]byte{{0xFF}}, Caption: "caption"}
+	attempts := 0
+	p, _ := newDuplicateTestPlatform(t,
+		func() ([]igapi.Media, error) { return nil, nil },
+		func() (string, error) { attempts++; return "", errBlocked })
+
+	if _, _, err := p.Post(content); err == nil {
+		t.Fatal("expected an error")
+	}
+	if attempts != 1 {
+		t.Errorf("published %d time(s), want 1", attempts)
+	}
+}

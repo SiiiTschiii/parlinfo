@@ -2,6 +2,7 @@ package igapi
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -365,5 +366,45 @@ func TestRecentMedia_Error(t *testing.T) {
 
 	if _, err := client.RecentMedia(10); err == nil {
 		t.Fatal("expected error")
+	}
+}
+
+// A refused publish keeps its old message and carries the codes from the body,
+// so the not-ready answer can be told apart.
+func TestPublishContainer_ErrorCarriesSubcode(t *testing.T) {
+	const body = `{"error":{"message":"Media ID is not available","code":9007,"type":"OAuthException","error_subcode":2207027,"is_transient":false}}`
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(body))
+	}))
+	defer server.Close()
+
+	client := NewClient("ig_user_1", "tok123")
+	client.SetAPIBase(server.URL)
+
+	_, err := client.PublishContainer("carousel_1")
+	if !IsMediaNotReady(err) {
+		t.Fatalf("IsMediaNotReady(%v) = false, want true", err)
+	}
+	if want := "publish container returned status 400: " + body; err.Error() != want {
+		t.Errorf("message %q, want %q", err.Error(), want)
+	}
+}
+
+func TestIsMediaNotReady(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{"nil", nil, false},
+		{"plain error", errors.New("2207027"), false},
+		{"blocked", newAPIError("publish container", 403, []byte(`{"error":{"code":4,"error_subcode":2207051}}`)), false},
+		{"unreadable body", newAPIError("publish container", 500, []byte(`oops`)), false},
+		{"wrapped not ready", fmt.Errorf("publishing: %w", newAPIError("publish container", 400, []byte(`{"error":{"code":9007,"error_subcode":2207027}}`))), true},
+	} {
+		if got := IsMediaNotReady(tc.err); got != tc.want {
+			t.Errorf("%s: got %v, want %v", tc.name, got, tc.want)
+		}
 	}
 }
