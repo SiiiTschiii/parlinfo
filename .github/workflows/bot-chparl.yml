@@ -8,14 +8,16 @@ name: CH Parl Info Bot
 
 on:
   schedule:
-    # Every hour. The minute only keeps clear of the top of the hour,
-    # when GitHub starts scheduled runs latest.
-    - cron: "6 * * * *"
+    # Every 15 minutes on weekdays, the only days the Nationalrat sits. The
+    # minutes only keep clear of the top of the hour, when GitHub starts
+    # scheduled runs latest. Cron has no year, so the session dates live in
+    # .github/chparl-sessions.txt and the session job below checks them.
+    - cron: "6,21,36,51 * * * 1-5"
 
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
 
-# Every job below has a concurrency group of its own, named for its channel,
+# Every channel job below has a concurrency group of its own, named for its channel,
 # and none is shared with another job or with bot-zhparl.yml.
 #
 # One run of a channel at a time: every run pushes the vote log to the channel's
@@ -32,7 +34,66 @@ on:
 # names carry its key.
 
 jobs:
+  # Lets a scheduled run through only on a day inside one of the sessions in
+  # .github/chparl-sessions.txt, by the Swiss date, since cron runs in UTC. A
+  # manual run always goes ahead. Every channel job needs it.
+  session:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      open: ${{ steps.check.outputs.open }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/chparl-sessions.txt
+          sparse-checkout-cone-mode: false
+
+      - name: Check session dates
+        id: check
+        env:
+          SESSIONS_FILE: .github/chparl-sessions.txt
+        run: |
+          today="$(TZ=Europe/Zurich date +%F)"
+          open=false
+          ahead=false
+          label=""
+          date_re='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+
+          while read -r from to rest; do
+            [[ -z "$from" || "$from" == \#* ]] && continue
+            # A typo here would silently switch the bot off for a session.
+            if [[ ! "$from" =~ $date_re || ! "$to" =~ $date_re || "$from" > "$to" ]]; then
+              echo "::error file=$SESSIONS_FILE::Malformed session line: $from $to $rest"
+              exit 1
+            fi
+            # ISO dates compare correctly as strings.
+            [[ ! "$to" < "$today" ]] && ahead=true
+            if [[ ! "$today" < "$from" && ! "$today" > "$to" ]]; then
+              open=true
+              label="$rest"
+            fi
+          done < "$SESSIONS_FILE"
+
+          if [ "$ahead" != true ]; then
+            echo "::error file=$SESSIONS_FILE::No session ends on or after $today. Add the next sessions, or the bot never runs on schedule again."
+            exit 1
+          fi
+
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            echo "Manual run; going ahead whatever the date."
+            open=true
+          elif [ "$open" = true ]; then
+            echo "$today is in the session: $label"
+          else
+            echo "$today is outside every session; skipping this run."
+          fi
+          echo "open=$open" >> "$GITHUB_OUTPUT"
+
   de:
+    needs: session
+    if: needs.session.outputs.open == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -163,7 +224,8 @@ jobs:
   # A language job runs only once its jurisdiction is switched on, so it can
   # ship before the state branch it restores from exists.
   fr:
-    if: vars.JURISDICTION_NATIONALRAT_FR_ENABLED == 'true'
+    needs: session
+    if: needs.session.outputs.open == 'true' && vars.JURISDICTION_NATIONALRAT_FR_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -201,7 +263,8 @@ jobs:
     steps: *steps
 
   it:
-    if: vars.JURISDICTION_NATIONALRAT_IT_ENABLED == 'true'
+    needs: session
+    if: needs.session.outputs.open == 'true' && vars.JURISDICTION_NATIONALRAT_IT_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
