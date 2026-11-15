@@ -194,8 +194,13 @@ func result(v votes.Vote) string {
 
 // recordLink is the one link a group gets in the first comment: the official
 // record of the vote where the parliament publishes one, otherwise the page of
-// the business.
+// the business. An election gets the Bulletin.
 func recordLink(group []votes.Vote) string {
+	// The roll call on an election records attendance, so the only place the
+	// outcome can be read is the sitting's Bulletin.
+	if votes.IsWahlgeschaeftGroup(group) && group[0].BulletinURL != "" {
+		return group[0].BulletinURL
+	}
 	if len(group) == 1 && group[0].ArchiveURL != "" {
 		return group[0].ArchiveURL
 	}

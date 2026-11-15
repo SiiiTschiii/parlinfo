@@ -110,7 +110,7 @@ func lineStarting(text, prefix string) string {
 	return ""
 }
 
-func TestRenderTagsNobodyOnAnElection(t *testing.T) {
+func TestRenderElection(t *testing.T) {
 	// The title names Adrian Bergmann, the member being replaced.
 	mapper, err := contacts.LoadContactFiles("testdata/contacts.yaml")
 	if err != nil {
@@ -120,7 +120,11 @@ func TestRenderTagsNobodyOnAnElection(t *testing.T) {
 
 	got := render(sections, time.Now(), time.Now(), mapper)
 
-	_, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
+	rest, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
+	_, comment, _ := strings.Cut(rest, "━━━ First comment ━━━")
+	if want := "1. " + sections[0].Groups[0][0].BulletinURL + "\n"; !strings.Contains(comment, want) {
+		t.Errorf("first comment = %q, want the Bulletin, the only place the outcome is", comment)
+	}
 	if strings.Contains(tags, "Adrian Bergmann") {
 		t.Errorf("tagging list names the member being replaced:\n%s", tags)
 	}
