@@ -55,6 +55,14 @@ jobs:
         env:
           SESSIONS_FILE: .github/chparl-sessions.txt
         run: |
+          # Before the file is read, so a manual run still works when the
+          # dates have run out or a line is broken.
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            echo "Manual run; going ahead whatever the date."
+            echo "open=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           today="$(TZ=Europe/Zurich date +%F)"
           open=false
           ahead=false
@@ -81,10 +89,7 @@ jobs:
             exit 1
           fi
 
-          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
-            echo "Manual run; going ahead whatever the date."
-            open=true
-          elif [ "$open" = true ]; then
+          if [ "$open" = true ]; then
             echo "$today is in the session: $label"
           else
             echo "$today is outside every session; skipping this run."
