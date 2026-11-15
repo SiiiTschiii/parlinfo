@@ -77,8 +77,10 @@ jobs:
       CHPARL_TAGGING: ${{ vars.CHPARL_TAGGING }}
       CHPARL_FB_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FB_MAX_POSTS_PER_RUN }}
 
-      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK }}
-      MAX_VOTE_AGE_DAYS_NATIONALRAT: ${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
+      # Its own override, so a catch-up can look further back than the Zürich
+      # bots without changing what they fetch.
+      MAX_VOTES_TO_CHECK: ${{ vars.MAX_VOTES_TO_CHECK_NATIONALRAT || vars.MAX_VOTES_TO_CHECK }}
+      MAX_VOTE_AGE_DAYS_NATIONALRAT:${{ vars.MAX_VOTE_AGE_DAYS_NATIONALRAT }}
       # Nothing posts until this is "true". See bot-zhparl.yml.
       JURISDICTION_NATIONALRAT_ENABLED: ${{ vars.JURISDICTION_NATIONALRAT_ENABLED }}
       # The first sitting date posted, on every platform (YYYY-MM-DD). The
