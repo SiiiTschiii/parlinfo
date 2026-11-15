@@ -8,3 +8,7 @@ contacts:
     linkedin:
       - url: https://www.linkedin.com/in/liv-mahrer
         verified: false
+  - name: Adrian Bergmann
+    linkedin:
+      - url: https://www.linkedin.com/in/adrian-bergmann
+        verified: true

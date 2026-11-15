@@ -114,7 +114,10 @@ func render(sections []section, since, until time.Time, mapper *contacts.Mapper)
 				seenAttribution[a] = true
 				attributions = append(attributions, a)
 			}
-			if mapper != nil {
+			// An election's title names the member being replaced, not the one
+			// elected, so nobody in it is tagged; the other platforms keep the
+			// contact mapping away from these posts for the same reason.
+			if mapper != nil && !votes.IsWahlgeschaeftGroup(g) {
 				for _, m := range mapper.Mentions(subject, "linkedin") {
 					fmt.Fprintf(&tags, "%d. %s: %s\n", n, m.Name, strings.Join(m.URLs, ", "))
 				}

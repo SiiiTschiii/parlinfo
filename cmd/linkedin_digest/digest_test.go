@@ -109,3 +109,19 @@ func lineStarting(text, prefix string) string {
 	}
 	return ""
 }
+
+func TestRenderTagsNobodyOnAnElection(t *testing.T) {
+	// The title names Adrian Bergmann, the member being replaced.
+	mapper, err := contacts.LoadContactFiles("testdata/contacts.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sections := []section{{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{testfixtures.KantonsratWahlgeschaeft()}}}
+
+	got := render(sections, time.Now(), time.Now(), mapper)
+
+	_, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
+	if strings.Contains(tags, "Adrian Bergmann") {
+		t.Errorf("tagging list names the member being replaced:\n%s", tags)
+	}
+}
