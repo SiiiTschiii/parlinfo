@@ -168,6 +168,12 @@ func groupEntry(n int, subject string, group []votes.Vote) string {
 		if label := voteformat.TypeLabel(group[0].Type); label != "" {
 			lead = label + " · " + lead
 		}
+		// What a Ja supported, where the verdict alone would contradict the
+		// counts: a business rejected on a large Ja majority, because Ja was
+		// the proposal to reject it.
+		if q := voteformat.QuestionLine(group); q != "" {
+			lead += " · " + q
+		}
 		return fmt.Sprintf("%d. %s · %s\n", n, lead, subject)
 	}
 	var sb strings.Builder

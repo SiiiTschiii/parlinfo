@@ -139,3 +139,14 @@ func TestGroupEntryNamesALoneThresholdVote(t *testing.T) {
 		t.Errorf("groupEntry() = %q, want the counts named as an Ausgabenbremse vote", got)
 	}
 }
+
+func TestGroupEntrySaysWhatJaSupported(t *testing.T) {
+	group := testfixtures.SingleVoteAbgelehnt()
+	group[0].Question = "Ja: keine Folge geben"
+
+	got := groupEntry(1, "Parlamentarische Initiative", group)
+
+	if want := "(20 Ja, 95 Nein) · Ja: keine Folge geben · Parlamentarische Initiative"; !strings.Contains(got, want) {
+		t.Errorf("groupEntry() = %q, want it to contain %q", got, want)
+	}
+}
