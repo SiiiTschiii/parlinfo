@@ -118,11 +118,11 @@ var Texts = map[string]Text{
 	"de": {
 		LangName:    "Deutsch",
 		Title:       "parlinfo – Parlamentsentscheide auf Social Media",
-		Description: "parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media: für mehr Partizipation und Rechenschaft, dort wo die Menschen sind.",
+		Description: "parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media: für mehr Partizipation und Rechenschaft, dort wo die Menschen sind.", //nolint:misspell // German: "Partizipation"
 		Tagline:     "Parlamentsentscheide, dort wo die Menschen sind.",
 		Intro:       "parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media, weil eine gesunde Demokratie auf zwei Dingen beruht, die leicht aus dem Blick geraten:",
 		Pillars: [2]Pillar{
-			{"Partizipation", "Bürgerinnen und Bürger, die die Entscheide, die sie betreffen, mitverfolgen und mitgestalten können."},
+			{"Partizipation", "Bürgerinnen und Bürger, die die Entscheide, die sie betreffen, mitverfolgen und mitgestalten können."}, //nolint:misspell // German: "Partizipation"
 			{"Rechenschaft", "Was Politikerinnen und Politiker wirklich tun, vom Abstimmungsverhalten bis zu den Vorstössen, die sie mittragen, sichtbar gemacht."},
 		},
 		Choose: "Parlamente",
