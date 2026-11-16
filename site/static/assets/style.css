@@ -22,6 +22,10 @@ body {
   background: var(--petrol);
   color: var(--text);
   font: 500 1rem/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* German compounds are wider than a narrow screen at large text sizes:
+     hyphenate them, and break a word anywhere only as a last resort. */
+  hyphens: auto;
+  overflow-wrap: anywhere;
 }
 
 /* The brand ring, unrolled: Ja, Nein, Enthaltung in the mark's proportions. */
@@ -66,7 +70,7 @@ h1 img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
 
 .intro { margin: 1rem 0 0; text-align: center; text-wrap: pretty; }
 
-.pillars { margin: 1.25rem 0 0; display: grid; gap: .625rem; }
+.pillars { margin: 1.25rem 0 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: .625rem; }
 .pillars li { margin: 0; padding: .875rem 1rem; border-left: 3px solid var(--ja); border-radius: 0 .75rem .75rem 0; background: var(--petrol-raised); }
 .pillars li:nth-child(2) { border-left-color: var(--nein); }
 .pillars strong { display: block; font-weight: 800; }
@@ -107,9 +111,11 @@ li + li { margin-top: .625rem; }
 
 /* A platform with one account per language: the row is not a link, its
    language chips are. */
+.card.multi { flex-wrap: wrap; }
+.card.multi > span:first-child { flex: 1 1 8rem; }
 .card.multi::after { content: none; }
 .card.multi:hover { border-color: var(--petrol-line); }
-.chips { flex: none !important; display: flex; gap: .375rem; }
+.chips { flex: 0 1 auto !important; display: flex; flex-wrap: wrap; gap: .375rem; max-width: 100%; }
 .chips a {
   min-width: 2.75rem;
   padding: .5rem .625rem;
