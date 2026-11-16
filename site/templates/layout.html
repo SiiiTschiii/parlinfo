@@ -40,6 +40,10 @@
 {{- if .Brand}}
 <a class="back" href="../">← {{.T.Overview}}</a>
 {{- end}}
+{{- if .Email}}
+<p class="contact">{{.T.Contact}}: <a href="mailto:{{.Email}}">{{.Email}}</a><br>
+<small>{{.T.ContactOr}} <a href="{{.IssueURL}}">{{.T.NewIssue}}</a></small></p>
+{{- end}}
 <p>{{if .Canonical}}{{.T.Source}} {{end}}<a href="{{.RepoURL}}">GitHub</a></p>
 </footer>
 </div>

@@ -158,6 +158,8 @@ func TestBuild(t *testing.T) {
 				target = strings.TrimPrefix(target, "https://"+Domain+"/")
 			case strings.Contains(target, "://"):
 				continue // another site
+			case strings.HasPrefix(target, "mailto:"):
+				continue
 			case strings.HasPrefix(target, "/"):
 				target = strings.TrimPrefix(target, "/")
 			default:
