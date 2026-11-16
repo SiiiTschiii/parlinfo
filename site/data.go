@@ -15,7 +15,7 @@ var Langs = []string{"de", "fr", "it"}
 const repoURL = "https://github.com/SiiiTschiii/parlinfo"
 
 // supportURL is where readers can support the project.
-const supportURL = "https://buymeacoffee.com/zuerichratsinfo"
+const supportURL = "https://buymeacoffee.com/parlinfo"
 
 // The contact address, in two parts: the pages never carry it whole, so
 // address harvesters scanning the HTML find nothing. A script in layout.html

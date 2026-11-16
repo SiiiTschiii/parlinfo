@@ -95,9 +95,9 @@ zuerichratsinfo is featured on the [City of Zurich's Open Government Data portal
 
 ## Support This Project
 
-Help keep @zuerichratsinfo running! Your support covers the costs for X Premium account and API access.
+Help keep parlinfo running! Your support covers the costs for X Premium account and API access.
 
-<a href="https://buymeacoffee.com/zuerichratsinfo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://buymeacoffee.com/parlinfo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 This is a non-profit civic tech project. Every contribution helps make local politics more accessible! 🙏
 
