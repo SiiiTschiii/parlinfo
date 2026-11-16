@@ -45,7 +45,25 @@ body {
 a { color: inherit; }
 a:focus-visible { outline: 3px solid var(--ja); outline-offset: 3px; border-radius: 6px; }
 
-.langs { display: flex; justify-content: flex-end; gap: .25rem; }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.langs { display: flex; justify-content: flex-end; gap: .25rem; margin-left: auto; }
+
+/* Back to the landing page, on brand pages: the wordmark, as on most sites. */
+.home {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  min-height: 2.75rem;
+  padding: .5rem .875rem .5rem .5rem;
+  border: 1px solid var(--petrol-line);
+  border-radius: 999px;
+  background: var(--petrol-raised);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: border-color .15s, color .15s;
+}
+.home:hover { border-color: var(--ja); color: var(--ja); }
+.home img { display: block; height: 1.125rem; width: auto; }
 .langs a {
   min-width: 2.75rem;
   padding: .625rem .5rem;
@@ -157,7 +175,6 @@ li + li { margin-top: .625rem; }
 footer { margin-top: 2.5rem; color: var(--text-2); font-size: .9375rem; text-align: center; }
 footer p { margin: 1rem 0 0; }
 footer .mail { color: var(--text); }
-footer .back { display: inline-block; padding: .5rem; }
 
 @media (min-width: 40rem) {
   .page { padding-top: 1.5rem; }
@@ -166,5 +183,5 @@ footer .back { display: inline-block; padding: .5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card, .chips a, .button { transition: none; }
+  .card, .chips a, .button, .home { transition: none; }
 }
