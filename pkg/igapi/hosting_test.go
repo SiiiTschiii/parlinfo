@@ -51,7 +51,7 @@ func TestImageHoster_SetBaseURL(t *testing.T) {
 		t.Errorf("PagesBaseURL() = %q, want %q", got, want)
 	}
 
-	for _, bad := range []string{"", "parlinfo.ch", "http://parlinfo.ch", "https://", "https://parlinfo.ch?x=1", "https://parlinfo.ch#top", "://"} {
+	for _, bad := range []string{"", "parlinfo.ch", "http://parlinfo.ch", "https://", "https://parlinfo.ch?x=1", "https://parlinfo.ch#top", "https://parlinfo.ch?", "https://parlinfo.ch/#", "://"} {
 		h := NewImageHoster("myorg", "myrepo", "token")
 		if err := h.SetBaseURL(bad); err == nil {
 			t.Errorf("SetBaseURL(%q) = nil error, want error", bad)

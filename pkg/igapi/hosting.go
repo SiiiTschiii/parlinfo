@@ -87,7 +87,9 @@ func (h *ImageHoster) SetBaseURL(base string) error {
 	if err != nil {
 		return fmt.Errorf("malformed base URL %q: %w", base, err)
 	}
-	if u.Scheme != "https" || u.Host == "" || u.RawQuery != "" || u.Fragment != "" {
+	// ContainsAny rather than the parsed fields: a bare "?" or "#" parses to
+	// an empty query or fragment, and the image path would end up inside it.
+	if u.Scheme != "https" || u.Host == "" || strings.ContainsAny(base, "?#") {
 		return fmt.Errorf("malformed base URL %q: want \"https://host\" with an optional path", base)
 	}
 	h.baseURL = strings.TrimRight(base, "/")
