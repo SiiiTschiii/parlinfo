@@ -19,6 +19,10 @@
   </a>
 </p>
 
+<p align="center">
+  <strong>🌐 <a href="https://parlinfo.ch">parlinfo.ch</a></strong>: every account in one place, in German, French and Italian
+</p>
+
 A civic tech bot that brings parliamentary decisions to social media and tags the politicians involved, using a curated mapping of their accounts. It is built to grow: more parliaments, more platforms.
 
 We built it because a healthy democracy rests on two things that are easy to lose sight of:
