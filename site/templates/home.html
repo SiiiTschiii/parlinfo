@@ -1,9 +1,13 @@
 {{define "main"}}<header class="hero">
-<img class="mark" src="{{.Root}}assets/parlinfo-mark.svg" alt="" width="96" height="96">
-<h1><img src="{{.Root}}assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
+<h1 class="wordmark"><img src="{{.Root}}assets/parlinfo-wordmark.svg" alt="parlinfo" width="240" height="69"></h1>
 <p class="tagline">{{.T.Tagline}}</p>
 </header>
 <p class="intro">{{.T.Intro}}</p>
+<ul class="pillars">
+{{- range .T.Pillars}}
+<li><strong>{{.Title}}</strong><span>{{.Text}}</span></li>
+{{- end}}
+</ul>
 <section>
 <h2>{{.T.Choose}}</h2>
 <ul class="cards">
@@ -14,4 +18,5 @@
 </a></li>
 {{- end}}
 </ul>
-</section>{{end}}
+</section>
+{{template "support" .}}{{end}}

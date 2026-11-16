@@ -12,12 +12,10 @@ import (
 )
 
 // notInReadme are the links the README's platform table does not carry: the
-// LinkedIn Pages exist but the bot does not post there yet, and the table has
-// no row for the repository itself.
+// LinkedIn Pages exist but the bot does not post there yet.
 var notInReadme = map[string]bool{
 	"https://www.linkedin.com/company/zueriratsinfo": true,
 	"https://www.linkedin.com/company/chparlinfo":    true,
-	repoURL: true,
 }
 
 // The site and the README list the same accounts. A new account added to one
@@ -46,12 +44,10 @@ func TestBrandsMatchReadmePlatformTable(t *testing.T) {
 
 	onSite := map[string]bool{}
 	for _, b := range Brands {
-		for _, g := range b.Groups {
-			for _, l := range g.Links {
-				onSite[l.URL] = true
-				if !inReadme[l.URL] && !notInReadme[l.URL] {
-					t.Errorf("%s %s: %s is not in the README's platform table", b.Name, l.Platform, l.URL)
-				}
+		for _, a := range b.Accounts {
+			onSite[a.URL] = true
+			if !inReadme[a.URL] && !notInReadme[a.URL] {
+				t.Errorf("%s %s: %s is not in the README's platform table", b.Name, a.Platform, a.URL)
 			}
 		}
 	}
@@ -76,12 +72,23 @@ func TestTextsComplete(t *testing.T) {
 				t.Errorf("%s: %s is empty", lang, v.Type().Field(i).Name)
 			}
 		}
+		for i, p := range text.Pillars {
+			if p.Title == "" || p.Text == "" {
+				t.Errorf("%s: pillar %d is incomplete", lang, i)
+			}
+		}
 		for _, b := range Brands {
 			if text.BrandBodies[b.Key] == "" {
 				t.Errorf("%s: no BrandBodies for %q", lang, b.Key)
 			}
-			if text.BrandNote[b.Key] == "" {
-				t.Errorf("%s: no BrandNote for %q", lang, b.Key)
+			// The note says which languages a brand posts in; for a brand
+			// with one, the page says nothing about language at all.
+			multi := len(b.Langs()) > 1
+			if multi && text.BrandNote[b.Key] == "" {
+				t.Errorf("%s: no BrandNote for %q, which posts in several languages", lang, b.Key)
+			}
+			if !multi && text.BrandNote[b.Key] != "" {
+				t.Errorf("%s: BrandNote for %q, which posts in one language", lang, b.Key)
 			}
 		}
 	}
@@ -131,6 +138,15 @@ func TestBuild(t *testing.T) {
 	// host name on one line unsets the custom domain.
 	if cname, _ := os.ReadFile(filepath.Join(dir, "CNAME")); string(cname) != Domain+"\n" {
 		t.Errorf("CNAME = %q, want %q", cname, Domain+"\n")
+	}
+
+	// The contact address is assembled in the browser; no page may carry it
+	// whole, or harvesters scanning the HTML would find it.
+	email := contactUser + "@" + contactDomain
+	for _, f := range files {
+		if html, _ := os.ReadFile(filepath.Join(dir, filepath.FromSlash(f))); strings.Contains(string(html), email) {
+			t.Errorf("%s contains the contact address %s in plain text", f, email)
+		}
 	}
 
 	// Every link within the site leads to a file that was built. Pages are
@@ -183,19 +199,63 @@ func TestLanguageSwitcherKeepsThePage(t *testing.T) {
 	}
 }
 
-// A reader's own language comes first, and the links without a language last.
-func TestGroupViewsOrder(t *testing.T) {
-	var ch *Brand
+func brand(t *testing.T, key string) *Brand {
+	t.Helper()
 	for i := range Brands {
-		if Brands[i].Key == "ch" {
-			ch = &Brands[i]
+		if Brands[i].Key == key {
+			return &Brands[i]
 		}
 	}
-	var langs []string
-	for _, g := range groupViews(ch, "it") {
-		langs = append(langs, g.Lang)
+	t.Fatalf("no brand %q", key)
+	return nil
+}
+
+// A multilingual brand gets one row per platform with a chip per language,
+// the handle shown being the reader's; a platform without one is a plain link.
+func TestPlatformViewsMultilingual(t *testing.T) {
+	rows := platformViews(brand(t, "ch"), "fr")
+	var platforms []string
+	for _, r := range rows {
+		platforms = append(platforms, r.Platform)
 	}
-	if want := []string{"it", "de", "fr", ""}; !reflect.DeepEqual(langs, want) {
-		t.Errorf("group order for it = %q, want %q", langs, want)
+	if want := []string{"Instagram", "Facebook", "X", "Bluesky", "LinkedIn"}; !reflect.DeepEqual(platforms, want) {
+		t.Fatalf("platforms = %q, want %q", platforms, want)
+	}
+
+	ig := rows[0]
+	if ig.URL != "" || ig.Handle != "@chparlinfo_fr" {
+		t.Errorf("Instagram row: URL %q, handle %q; want no URL and the French handle", ig.URL, ig.Handle)
+	}
+	var langs []string
+	for _, c := range ig.Chips {
+		langs = append(langs, c.Lang)
+		if c.Current != (c.Lang == "fr") {
+			t.Errorf("Instagram %s chip: Current = %v", c.Lang, c.Current)
+		}
+	}
+	if want := []string{"de", "fr", "it"}; !reflect.DeepEqual(langs, want) {
+		t.Errorf("Instagram chips = %q, want %q", langs, want)
+	}
+
+	// X has a German account only: the chip says so, and the handle is it.
+	if x := rows[2]; len(x.Chips) != 1 || x.Chips[0].Lang != "de" || x.Handle != "@chparlinfo" {
+		t.Errorf("X row = %+v, want one German chip", x)
+	}
+	if li := rows[4]; li.URL == "" || len(li.Chips) != 0 {
+		t.Errorf("LinkedIn row = %+v, want a plain link", li)
+	}
+}
+
+// A brand posting in one language gets plain links, one per account.
+func TestPlatformViewsSingleLanguage(t *testing.T) {
+	b := brand(t, "zh")
+	rows := platformViews(b, "it")
+	if len(rows) != len(b.Accounts) {
+		t.Fatalf("%d rows for %d accounts", len(rows), len(b.Accounts))
+	}
+	for _, r := range rows {
+		if r.URL == "" || len(r.Chips) != 0 {
+			t.Errorf("%s row = %+v, want a plain link", r.Platform, r)
+		}
 	}
 }
