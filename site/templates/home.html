@@ -1,0 +1,17 @@
+{{define "main"}}<header class="hero">
+<img class="mark" src="{{.Root}}assets/parlinfo-mark.svg" alt="" width="96" height="96">
+<h1><img src="{{.Root}}assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
+<p class="tagline">{{.T.Tagline}}</p>
+</header>
+<p class="intro">{{.T.Intro}}</p>
+<section>
+<h2>{{.T.Choose}}</h2>
+<ul class="cards">
+{{- range .Cards}}
+<li><a class="card" href="{{.Href}}">
+<img src="{{$.Root}}assets/{{.Mark}}" alt="" width="64" height="64">
+<span><strong>{{.Name}}</strong><small>{{.Bodies}}</small></span>
+</a></li>
+{{- end}}
+</ul>
+</section>{{end}}

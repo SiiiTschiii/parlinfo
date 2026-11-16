@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -39,6 +40,7 @@ type ImageHoster struct {
 	githubToken string
 	httpClient  *http.Client
 	apiBase     string              // overridable for testing
+	baseURL     string              // see SetBaseURL; empty means the github.io address
 	sleep       func(time.Duration) // overridable for testing
 }
 
@@ -71,9 +73,36 @@ func (h *ImageHoster) SetAPIBase(base string) {
 	h.apiBase = base
 }
 
-// PagesBaseURL returns the GitHub Pages base URL for this repository.
-// GitHub Pages domains are always lowercase.
+// SetBaseURL sets the address the gh-pages branch is served at, for a Pages
+// site with a custom domain: "https://parlinfo.ch". Without it the URLs handed
+// to Instagram are on github.io, which GitHub answers with a redirect once a
+// custom domain is set, and whether Instagram follows a redirect when it
+// fetches an image is not something to depend on.
+//
+// It has to be an absolute https URL without query or fragment; Instagram
+// fetches nothing else, and a typo here would otherwise only show up as a
+// failed post.
+func (h *ImageHoster) SetBaseURL(base string) error {
+	u, err := url.Parse(base)
+	if err != nil {
+		return fmt.Errorf("malformed base URL %q: %w", base, err)
+	}
+	// ContainsAny rather than the parsed fields: a bare "?" or "#" parses to
+	// an empty query or fragment, and the image path would end up inside it.
+	if u.Scheme != "https" || u.Host == "" || strings.ContainsAny(base, "?#") {
+		return fmt.Errorf("malformed base URL %q: want \"https://host\" with an optional path", base)
+	}
+	h.baseURL = strings.TrimRight(base, "/")
+	return nil
+}
+
+// PagesBaseURL returns the address the gh-pages branch is served at, without
+// a trailing slash: the one given to SetBaseURL, else the repository's
+// github.io address. GitHub Pages domains are always lowercase.
 func (h *ImageHoster) PagesBaseURL() string {
+	if h.baseURL != "" {
+		return h.baseURL
+	}
 	return fmt.Sprintf("https://%s.github.io/%s", strings.ToLower(h.repoOwner), h.repoName)
 }
 

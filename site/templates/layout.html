@@ -1,0 +1,48 @@
+{{define "layout"}}<!doctype html>
+<html lang="{{.Lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}}</title>
+<meta name="theme-color" content="#0B2E34">
+<link rel="icon" href="{{.Root}}assets/parlinfo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{{.Root}}assets/style.css">
+{{- if .Canonical}}
+<meta name="description" content="{{.T.Intro}}">
+<link rel="canonical" href="{{.Canonical}}">
+{{- range .Alternates}}
+<link rel="alternate" hreflang="{{.Lang}}" href="{{.URL}}">
+{{- end}}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="parlinfo">
+<meta property="og:title" content="{{.Title}}">
+<meta property="og:description" content="{{.T.Tagline}}">
+<meta property="og:url" content="{{.Canonical}}">
+<meta property="og:image" content="https://parlinfo.ch/assets/parlinfo-social.png">
+<meta name="twitter:card" content="summary_large_image">
+{{- end}}
+{{block "head" .}}{{end}}
+</head>
+<body>
+<div class="ring" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="page">
+{{- if .Switcher}}
+<nav class="langs" aria-label="{{.T.SwitchLabel}}">
+{{- range .Switcher}}
+<a href="{{.Href}}" lang="{{.Code}}" hreflang="{{.Code}}" title="{{.Name}}"{{if .Current}} aria-current="page"{{end}}>{{.Code}}</a>
+{{- end}}
+</nav>
+{{- end}}
+<main>
+{{template "main" .}}
+</main>
+<footer>
+{{- if .Brand}}
+<a class="back" href="../">← {{.T.Overview}}</a>
+{{- end}}
+<p>{{if .Canonical}}{{.T.Source}} {{end}}<a href="{{.RepoURL}}">GitHub</a></p>
+</footer>
+</div>
+</body>
+</html>
+{{end}}

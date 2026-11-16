@@ -225,10 +225,13 @@ Names are channel-scoped — the `zurich` channel reads `ZURICH_IG_USER_ID`.
 | `<CHANNEL>_IG_ACCESS_TOKEN`  | Long-lived Page access token                                   |
 | `<CHANNEL>_IMAGE_HOST_REPO`  | `owner/name` of the repo serving the images (see below)        |
 | `<CHANNEL>_IMAGE_HOST_TOKEN` | Token with Contents read/write on that repo                    |
+| `<CHANNEL>_IMAGE_HOST_BASE_URL` | Optional. Where that repo's `gh-pages` branch is served, e.g. `https://parlinfo.ch` |
 
 ### Image Hosting
 
 The last two are a **GitHub** repo and a **GitHub** token, despite serving Instagram: the Graph API fetches carousel images by URL rather than accepting an upload, so each image is committed to the `gh-pages` branch of `IMAGE_HOST_REPO`, published by GitHub Pages, and deleted once the post is live.
+
+`IMAGE_HOST_BASE_URL` is the address Instagram is told to fetch from. Unset, it is `https://<owner>.github.io/<name>`. Once the Pages site has a custom domain GitHub answers that address with a redirect, so the workflows set the domain here instead (the `IMAGE_HOST_BASE_URL` repository variable, `https://parlinfo.ch` by default). The same branch also carries the parlinfo.ch site, published by [`site.yml`](../../.github/workflows/site.yml), which leaves `ig-images/` alone.
 
 `IMAGE_HOST_TOKEN` needs **Contents read/write** on that repo.
 

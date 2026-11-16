@@ -1,0 +1,113 @@
+/* parlinfo.ch. Colours and marks: assets/brand/README.md.
+   Inter is named first but not shipped: no font is fetched from anywhere, and
+   the wordmark is an outlined SVG that needs none. */
+:root {
+  --petrol: #0B2E34;
+  --petrol-raised: #12404A;
+  --petrol-line: #1F5560;
+  --ja: #2FE39B;
+  --nein: #FF5C57;
+  --enthaltung: #6E8A90;
+  --text: #FFFFFF;
+  --text-2: #A9C1C5;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--petrol);
+  color: var(--text);
+  font: 500 1rem/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* The brand ring, unrolled: Ja, Nein, Enthaltung in the mark's proportions. */
+.ring { display: flex; height: 6px; }
+.ring i:nth-child(1) { flex: 254; background: var(--ja); }
+.ring i:nth-child(2) { flex: 130; background: var(--nein); }
+.ring i:nth-child(3) { flex: 30; background: var(--enthaltung); }
+
+.page {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2.5rem;
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 3px solid var(--ja); outline-offset: 3px; border-radius: 6px; }
+
+.langs { display: flex; justify-content: flex-end; gap: .25rem; }
+.langs a {
+  min-width: 2.75rem;
+  padding: .625rem .5rem;
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: .875rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.langs a:hover { color: var(--text); }
+.langs a[aria-current] { background: var(--petrol-raised); color: var(--text); }
+
+.hero { padding: 1.5rem 0 1rem; text-align: center; }
+.hero .mark { display: block; margin: 0 auto .75rem; }
+h1 { margin: 0; font-size: 2rem; font-weight: 800; line-height: 1.15; letter-spacing: -.02em; }
+h1 img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.tagline { margin: .5rem 0 0; color: var(--text-2); font-size: 1.0625rem; text-wrap: balance; }
+
+.intro { margin: 1rem 0 0; text-align: center; text-wrap: pretty; }
+
+section { margin-top: 2rem; }
+h2 {
+  margin: 0 0 .75rem;
+  color: var(--text-2);
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+ul { margin: 0; padding: 0; list-style: none; }
+li + li { margin-top: .625rem; }
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--petrol-line);
+  border-radius: 1rem;
+  background: var(--petrol-raised);
+  text-decoration: none;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--ja); }
+.card img { flex: none; }
+.card span { flex: 1; min-width: 0; }
+.card strong { display: block; font-size: 1.0625rem; font-weight: 800; }
+.card small { display: block; color: var(--text-2); font-size: .9375rem; overflow-wrap: anywhere; }
+.card::after { content: "→"; color: var(--text-2); font-size: 1.25rem; }
+.card:hover::after { color: var(--ja); }
+
+footer { margin-top: 2.5rem; color: var(--text-2); font-size: .9375rem; text-align: center; }
+footer p { margin: 1rem 0 0; }
+footer .back { display: inline-block; padding: .5rem; }
+
+@media (min-width: 40rem) {
+  .page { padding-top: 1.5rem; }
+  .hero { padding-top: 2.5rem; }
+  h1 { font-size: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+}

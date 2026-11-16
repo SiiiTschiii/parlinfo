@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+<rect x="4" y="4" width="192" height="192" rx="48" fill="#0B2E34"></rect>
+<g fill="none" stroke-width="30" transform="rotate(-90 100 100)">
+  <circle cx="100" cy="100" r="58" stroke="#2FE39B" stroke-dasharray="190 174.42"></circle>
+  <circle cx="100" cy="100" r="58" stroke="#FF5C57" stroke-dasharray="132 232.42" stroke-dashoffset="-195"></circle>
+  <circle cx="100" cy="100" r="58" stroke="#6E8A90" stroke-dasharray="27 337.42" stroke-dashoffset="-332"></circle>
+</g>
+</svg>

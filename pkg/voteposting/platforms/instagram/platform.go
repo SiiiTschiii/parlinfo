@@ -91,6 +91,16 @@ func NewInstagramPlatform(maxPostsPerRun int) *InstagramPlatform {
 	}
 }
 
+// SetImageBaseURL sets the address the image host's gh-pages branch is served
+// at, when that is a custom domain rather than github.io; see
+// igapi.ImageHoster.SetBaseURL. A no-op in stub mode, which hosts nothing.
+func (p *InstagramPlatform) SetImageBaseURL(base string) error {
+	if p.imageHoster == nil {
+		return nil
+	}
+	return p.imageHoster.SetBaseURL(base)
+}
+
 // NewInstagramPlatformWithCredentials creates a new Instagram platform poster with real API credentials.
 func NewInstagramPlatformWithCredentials(igUserID, accessToken, githubToken, repoOwner, repoName string, maxPostsPerRun int) *InstagramPlatform {
 	igClient := igapi.NewClient(igUserID, accessToken)

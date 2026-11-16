@@ -199,6 +199,13 @@ func buildPlatforms(channel config.Channel, jurisdictions []config.Jurisdiction)
 			igUserID, igAccessToken, imageHostToken, hostOwner, hostName,
 			channel.EnvInt("IG_MAX_POSTS_PER_RUN", 5),
 		)
+		// Unset on a Pages site without a custom domain: the images are then
+		// served from the repo's github.io address.
+		if base := channel.Env("IMAGE_HOST_BASE_URL"); base != "" {
+			if err := igPlatform.SetImageBaseURL(base); err != nil {
+				log.Fatalf("Channel %q: %sIMAGE_HOST_BASE_URL: %v", channel.Key, channel.EnvPrefix(), err)
+			}
+		}
 		igPlatform.SetContactMapper(contactMapper)
 		igPlatform.SetImageNamePrefix(channel.Key)
 		plats = append(plats, channelPlatform{displayName: "Instagram", logPlatform: votelog.PlatformInstagram, poster: igPlatform})

@@ -64,6 +64,11 @@ jobs:
       # github.token can write nowhere else.
       CHPARL_IMAGE_HOST_REPO: ${{ github.repository }}
       CHPARL_IMAGE_HOST_TOKEN: ${{ github.token }}
+      # Where that branch is served: the Pages site has a custom domain, and
+      # GitHub answers the github.io address with a redirect Instagram is not
+      # known to follow. A fork without a domain sets the variable to its own
+      # https://<owner>.github.io/<repo>.
+      CHPARL_IMAGE_HOST_BASE_URL: ${{ vars.IMAGE_HOST_BASE_URL || 'https://parlinfo.ch' }}
       # Same Page token as Instagram, as on the Zürich bot. The Page ID is
       # the switch. Facebook takes its start date from the jurisdiction's
       # JURISDICTION_NATIONALRAT_POST_FROM below, like every platform here.
@@ -186,6 +191,7 @@ jobs:
       CHPARL_FR_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
       CHPARL_FR_IMAGE_HOST_REPO: ${{ github.repository }}
       CHPARL_FR_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_FR_IMAGE_HOST_BASE_URL: ${{ vars.IMAGE_HOST_BASE_URL || 'https://parlinfo.ch' }}
       CHPARL_FR_FB_PAGE_ID: ${{ vars.CHPARL_FR_FB_PAGE_ID }}
       CHPARL_FR_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_FR_IG_ACCESS_TOKEN }}
       CHPARL_FR_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_FR_X_MAX_POSTS_PER_RUN }}
@@ -224,6 +230,7 @@ jobs:
       CHPARL_IT_IG_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
       CHPARL_IT_IMAGE_HOST_REPO: ${{ github.repository }}
       CHPARL_IT_IMAGE_HOST_TOKEN: ${{ github.token }}
+      CHPARL_IT_IMAGE_HOST_BASE_URL: ${{ vars.IMAGE_HOST_BASE_URL || 'https://parlinfo.ch' }}
       CHPARL_IT_FB_PAGE_ID: ${{ vars.CHPARL_IT_FB_PAGE_ID }}
       CHPARL_IT_FB_ACCESS_TOKEN: ${{ secrets.CHPARL_IT_IG_ACCESS_TOKEN }}
       CHPARL_IT_X_MAX_POSTS_PER_RUN: ${{ vars.CHPARL_IT_X_MAX_POSTS_PER_RUN }}

@@ -1,0 +1,13 @@
+{{define "head"}}<meta name="robots" content="noindex">{{end}}
+{{define "main"}}<header class="hero">
+<img class="mark" src="{{.Root}}assets/parlinfo-mark.svg" alt="" width="96" height="96">
+<h1>404</h1>
+<p class="tagline" lang="de">Diese Seite gibt es nicht.</p>
+<p class="tagline" lang="fr">Cette page n’existe pas.</p>
+<p class="tagline" lang="it">Questa pagina non esiste.</p>
+</header>
+<ul class="links">
+{{- range .Langs}}
+<li><a class="card" href="{{.Href}}" lang="{{.Code}}" hreflang="{{.Code}}"><span><strong>{{.Name}}</strong></span></a></li>
+{{- end}}
+</ul>{{end}}

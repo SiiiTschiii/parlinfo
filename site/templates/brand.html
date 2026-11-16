@@ -1,0 +1,18 @@
+{{define "main"}}<header class="hero">
+<img class="mark" src="{{.Root}}assets/{{.Brand.Mark}}" alt="" width="96" height="96">
+<h1>{{.Brand.Name}}</h1>
+<p class="tagline">{{.Bodies}}</p>
+</header>
+<p class="intro">{{.Note}}</p>
+{{- range .Groups}}
+<section>
+<h2>{{.Heading}}</h2>
+<ul class="links">
+{{- range .Links}}
+<li><a class="card" href="{{.URL}}" rel="me">
+<span><strong>{{.Platform}}</strong><small>{{.Handle}}</small></span>
+</a></li>
+{{- end}}
+</ul>
+</section>
+{{- end}}{{end}}
