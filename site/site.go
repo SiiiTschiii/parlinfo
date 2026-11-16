@@ -50,11 +50,21 @@ type BrandCard struct {
 	Href   string
 }
 
-// GroupView is a Group with its heading resolved for the page's language.
-type GroupView struct {
-	Heading string
-	Lang    string // posting language of the linked accounts, "" when not tied to one
-	Links   []Link
+// PlatformView is one row of a brand page: a platform and its accounts.
+type PlatformView struct {
+	Platform string
+	Handle   string        // the account shown under the name: the reader's language if there is one
+	URL      string        // set when the row is a single link
+	Chips    []AccountChip // set when the row links to one account per language
+}
+
+// AccountChip is one language's account within a platform row.
+type AccountChip struct {
+	Lang     string
+	LangName string
+	Handle   string
+	URL      string
+	Current  bool // posts in the page's language
 }
 
 // Page is what a template is given.
@@ -67,15 +77,16 @@ type Page struct {
 	Alternates []AltLink
 	Switcher   []LangLink
 	RepoURL    string
+	SupportURL string
 
 	// Landing page
 	Cards []BrandCard
 
 	// Brand page
-	Brand  *Brand
-	Bodies string
-	Note   string
-	Groups []GroupView
+	Brand     *Brand
+	Bodies    string
+	Note      string
+	Platforms []PlatformView
 
 	// Root and 404 page
 	Langs       []LangLink
@@ -117,7 +128,7 @@ func Build(dir string) error {
 			p.Brand = b
 			p.Bodies = t.BrandBodies[b.Key]
 			p.Note = t.BrandNote[b.Key]
-			p.Groups = groupViews(b, lang)
+			p.Platforms = platformViews(b, lang)
 			if err := render(dir, lang+"/"+b.Key+"/index.html", "brand.html", p); err != nil {
 				return err
 			}
@@ -131,11 +142,12 @@ func Build(dir string) error {
 func newPage(lang, path string) Page {
 	root := "../" + strings.Repeat("../", strings.Count(path, "/"))
 	p := Page{
-		Lang:      lang,
-		T:         Texts[lang],
-		Root:      root,
-		Canonical: absURL(lang, path),
-		RepoURL:   repoURL,
+		Lang:       lang,
+		T:          Texts[lang],
+		Root:       root,
+		Canonical:  absURL(lang, path),
+		RepoURL:    repoURL,
+		SupportURL: supportURL,
 	}
 	for _, l := range Langs {
 		p.Switcher = append(p.Switcher, LangLink{Code: l, Name: Texts[l].LangName, Href: root + l + "/" + path, Current: l == lang})
@@ -155,23 +167,37 @@ func entryPage(root string) Page {
 	return p
 }
 
-// groupViews orders a brand's groups for a page in lang: the accounts posting
-// in the reader's language first, the rest in their listed order, and the
-// links without a language last.
-func groupViews(b *Brand, lang string) []GroupView {
-	t := Texts[lang]
-	var own, others, rest []GroupView
-	for _, g := range b.Groups {
-		switch g.Lang {
-		case "":
-			rest = append(rest, GroupView{Heading: t.OtherLinks, Links: g.Links})
-		case lang:
-			own = append(own, GroupView{Heading: t.Accounts + " · " + Texts[g.Lang].LangName, Lang: g.Lang, Links: g.Links})
-		default:
-			others = append(others, GroupView{Heading: t.Accounts + " · " + Texts[g.Lang].LangName, Lang: g.Lang, Links: g.Links})
+// platformViews gives a brand page one row per platform, in the order the
+// platforms first appear in b.Accounts. A brand that posts in one language
+// gets plain links; one that posts in several gets, per platform, a chip for
+// each language it has an account in, so the reader sees at a glance which
+// languages exist where instead of reading the same list three times.
+func platformViews(b *Brand, lang string) []PlatformView {
+	multi := len(b.Langs()) > 1
+	var out []PlatformView
+	index := map[string]int{}
+	for _, a := range b.Accounts {
+		key := a.Platform
+		if !multi || a.Lang == "" {
+			key = a.URL // every account its own row
 		}
+		i, seen := index[key]
+		if !seen {
+			i = len(out)
+			index[key] = i
+			out = append(out, PlatformView{Platform: a.Platform, Handle: a.Handle, URL: a.URL})
+		}
+		v := &out[i]
+		if !multi || a.Lang == "" {
+			continue
+		}
+		if a.Lang == lang {
+			v.Handle = a.Handle
+		}
+		v.URL = ""
+		v.Chips = append(v.Chips, AccountChip{Lang: a.Lang, LangName: Texts[a.Lang].LangName, Handle: a.Handle, URL: a.URL, Current: a.Lang == lang})
 	}
-	return append(append(own, others...), rest...)
+	return out
 }
 
 func absURL(lang, path string) string {

@@ -3,16 +3,28 @@
 <h1>{{.Brand.Name}}</h1>
 <p class="tagline">{{.Bodies}}</p>
 </header>
+{{- if .Note}}
 <p class="intro">{{.Note}}</p>
-{{- range .Groups}}
+{{- end}}
 <section>
-<h2>{{.Heading}}</h2>
+<h2>{{.T.Accounts}}</h2>
 <ul class="links">
-{{- range .Links}}
+{{- range .Platforms}}
+{{- if .Chips}}
+<li><div class="card multi">
+<span><strong>{{.Platform}}</strong><small>{{.Handle}}</small></span>
+<span class="chips">
+{{- range .Chips}}
+<a href="{{.URL}}" rel="me" lang="{{.Lang}}" hreflang="{{.Lang}}" title="{{.LangName}}: {{.Handle}}" aria-label="{{.LangName}}: {{.Handle}}"{{if .Current}} class="current"{{end}}>{{.Lang}}</a>
+{{- end}}
+</span>
+</div></li>
+{{- else}}
 <li><a class="card" href="{{.URL}}" rel="me">
 <span><strong>{{.Platform}}</strong><small>{{.Handle}}</small></span>
 </a></li>
 {{- end}}
+{{- end}}
 </ul>
 </section>
-{{- end}}{{end}}
+{{template "support" .}}{{end}}

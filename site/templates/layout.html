@@ -8,7 +8,7 @@
 <link rel="icon" href="{{.Root}}assets/parlinfo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{{.Root}}assets/style.css">
 {{- if .Canonical}}
-<meta name="description" content="{{.T.Intro}}">
+<meta name="description" content="{{.T.Description}}">
 <link rel="canonical" href="{{.Canonical}}">
 {{- range .Alternates}}
 <link rel="alternate" hreflang="{{.Lang}}" href="{{.URL}}">
@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="parlinfo">
 <meta property="og:title" content="{{.Title}}">
-<meta property="og:description" content="{{.T.Tagline}}">
+<meta property="og:description" content="{{.T.Description}}">
 <meta property="og:url" content="{{.Canonical}}">
 <meta property="og:image" content="https://parlinfo.ch/assets/parlinfo-social.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -46,3 +46,8 @@
 </body>
 </html>
 {{end}}
+{{define "support"}}<section class="support">
+<h2>{{.T.Support}}</h2>
+<p>{{.T.SupportText}}</p>
+<a class="button" href="{{.SupportURL}}">☕ {{.T.SupportCTA}}</a>
+</section>{{end}}

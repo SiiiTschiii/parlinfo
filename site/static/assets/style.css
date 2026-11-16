@@ -61,9 +61,16 @@ a:focus-visible { outline: 3px solid var(--ja); outline-offset: 3px; border-radi
 .hero .mark { display: block; margin: 0 auto .75rem; }
 h1 { margin: 0; font-size: 2rem; font-weight: 800; line-height: 1.15; letter-spacing: -.02em; }
 h1 img { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.wordmark { padding-top: 1rem; }
 .tagline { margin: .5rem 0 0; color: var(--text-2); font-size: 1.0625rem; text-wrap: balance; }
 
 .intro { margin: 1rem 0 0; text-align: center; text-wrap: pretty; }
+
+.pillars { margin: 1.25rem 0 0; display: grid; gap: .625rem; }
+.pillars li { margin: 0; padding: .875rem 1rem; border-left: 3px solid var(--ja); border-radius: 0 .75rem .75rem 0; background: var(--petrol-raised); }
+.pillars li:nth-child(2) { border-left-color: var(--nein); }
+.pillars strong { display: block; font-weight: 800; }
+.pillars span { display: block; color: var(--text-2); font-size: .9375rem; }
 
 section { margin-top: 2rem; }
 h2 {
@@ -98,6 +105,49 @@ li + li { margin-top: .625rem; }
 .card::after { content: "→"; color: var(--text-2); font-size: 1.25rem; }
 .card:hover::after { color: var(--ja); }
 
+/* A platform with one account per language: the row is not a link, its
+   language chips are. */
+.card.multi::after { content: none; }
+.card.multi:hover { border-color: var(--petrol-line); }
+.chips { flex: none !important; display: flex; gap: .375rem; }
+.chips a {
+  min-width: 2.75rem;
+  padding: .5rem .625rem;
+  border: 1px solid var(--petrol-line);
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color .15s, color .15s;
+}
+.chips a:hover { border-color: var(--ja); color: var(--text); }
+.chips a.current { border-color: var(--ja); color: var(--text); }
+
+.support {
+  padding: 1.25rem;
+  border: 1px solid var(--ja);
+  border-radius: 1rem;
+  background: var(--petrol-raised);
+  text-align: center;
+}
+.support h2 { color: var(--text); font-size: 1.0625rem; letter-spacing: 0; text-transform: none; font-weight: 800; margin-bottom: .375rem; }
+.support p { margin: 0 0 1rem; color: var(--text-2); font-size: .9375rem; text-wrap: pretty; }
+.button {
+  display: inline-block;
+  padding: .75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--ja);
+  color: var(--petrol);
+  font-weight: 800;
+  text-decoration: none;
+  transition: filter .15s;
+}
+.button:hover { filter: brightness(1.08); }
+
 footer { margin-top: 2.5rem; color: var(--text-2); font-size: .9375rem; text-align: center; }
 footer p { margin: 1rem 0 0; }
 footer .back { display: inline-block; padding: .5rem; }
@@ -109,5 +159,5 @@ footer .back { display: inline-block; padding: .5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card { transition: none; }
+  .card, .chips a, .button { transition: none; }
 }
