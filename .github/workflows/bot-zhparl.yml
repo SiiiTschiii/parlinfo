@@ -106,6 +106,11 @@ jobs:
           # get wrong.
           ZURICH_IMAGE_HOST_REPO: ${{ github.repository }}
           ZURICH_IMAGE_HOST_TOKEN: ${{ github.token }}
+          # Where that branch is served: the Pages site has a custom domain, and
+          # GitHub answers the github.io address with a redirect Instagram is not
+          # known to follow. A fork without a domain sets the variable to its own
+          # https://<owner>.github.io/<repo>.
+          ZURICH_IMAGE_HOST_BASE_URL: ${{ vars.IMAGE_HOST_BASE_URL || 'https://parlinfo.ch' }}
           # Facebook posts with the same never-expiring Page token as
           # Instagram, so one secret and one rotation cover both. The Page ID
           # is the switch: Facebook stays off until the variable is set.

@@ -41,6 +41,60 @@ func TestImageHoster_PagesBaseURL(t *testing.T) {
 	}
 }
 
+func TestImageHoster_SetBaseURL(t *testing.T) {
+	h := NewImageHoster("myorg", "myrepo", "token")
+	if err := h.SetBaseURL("https://parlinfo.ch/"); err != nil {
+		t.Fatalf("SetBaseURL() = %v, want nil", err)
+	}
+	// The trailing slash goes, or every image URL would carry two.
+	if got, want := h.PagesBaseURL(), "https://parlinfo.ch"; got != want {
+		t.Errorf("PagesBaseURL() = %q, want %q", got, want)
+	}
+
+	for _, bad := range []string{"", "parlinfo.ch", "http://parlinfo.ch", "https://", "https://parlinfo.ch?x=1", "https://parlinfo.ch#top", "://"} {
+		h := NewImageHoster("myorg", "myrepo", "token")
+		if err := h.SetBaseURL(bad); err == nil {
+			t.Errorf("SetBaseURL(%q) = nil error, want error", bad)
+		}
+		if got, want := h.PagesBaseURL(), "https://myorg.github.io/myrepo"; got != want {
+			t.Errorf("after rejected SetBaseURL(%q): PagesBaseURL() = %q, want %q", bad, got, want)
+		}
+	}
+}
+
+// The URLs handed to Instagram are on the custom domain, while the commits
+// still go to the repository through the API.
+func TestImageHoster_UploadImages_CustomBaseURL(t *testing.T) {
+	var paths []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		paths = append(paths, r.URL.Path)
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	defer server.Close()
+
+	h := NewImageHoster("testorg", "testrepo", "ghp_test")
+	h.SetAPIBase(server.URL)
+	if err := h.SetBaseURL("https://parlinfo.ch"); err != nil {
+		t.Fatal(err)
+	}
+
+	urls, err := h.UploadImages([][]byte{[]byte("x")}, []string{"img_0.jpg"})
+	if err != nil {
+		t.Fatalf("UploadImages() = %v", err)
+	}
+	if want := "https://parlinfo.ch/ig-images/img_0.jpg"; len(urls) != 1 || urls[0] != want {
+		t.Errorf("urls = %v, want [%s]", urls, want)
+	}
+	if want := "/repos/testorg/testrepo/contents/ig-images/img_0.jpg"; len(paths) != 1 || paths[0] != want {
+		t.Errorf("committed to %v, want [%s]", paths, want)
+	}
+}
+
 func TestImageHoster_UploadImages(t *testing.T) {
 	var requests []requestCapture
 

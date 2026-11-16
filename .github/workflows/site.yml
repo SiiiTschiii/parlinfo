@@ -1,0 +1,56 @@
+name: Site
+
+# Builds parlinfo.ch from site/ and publishes it to the gh-pages branch, which
+# GitHub Pages serves. That branch also holds ig-images/, where the bots host
+# carousel images for Instagram; site/publish.sh explains how the two share it.
+
+on:
+  push:
+    branches:
+      - main
+    paths: &paths
+      - "site/**"
+      - "cmd/build_site/**"
+      - "README.md"
+      - ".github/workflows/site.yml"
+  pull_request:
+    branches:
+      - main
+    paths: *paths
+  workflow_dispatch:
+
+# One publish at a time, and none dropped half way: a cancelled run could
+# leave nothing wrong on the branch, but it would leave main unpublished.
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25.5"
+
+      # Go CI only runs when a .go file changes; a template, a stylesheet or
+      # the README's account table can break the site without one.
+      - name: Test
+        run: go test ./site/...
+
+      - name: Build
+        run: go run ./cmd/build_site -out "$RUNNER_TEMP/site"
+
+      # A pull request only builds. Publishing is for what is on main.
+      - name: Publish to gh-pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          site/publish.sh "$RUNNER_TEMP/site"

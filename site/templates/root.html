@@ -1,0 +1,25 @@
+{{define "head"}}<script>
+// The bare domain has no content of its own: go to the first of the visitor's
+// languages the site speaks, else to the default.
+(function () {
+  var have = [{{range $i, $l := .Langs}}{{if $i}}, {{end}}{{$l.Code}}{{end}}];
+  var want = navigator.languages || [navigator.language || ""];
+  var lang = {{.DefaultLang}};
+  for (var i = 0; i < want.length; i++) {
+    var code = String(want[i]).slice(0, 2).toLowerCase();
+    if (have.indexOf(code) !== -1) { lang = code; break; }
+  }
+  location.replace(lang + "/" + location.search + location.hash);
+})();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url={{.DefaultLang}}/"></noscript>{{end}}
+{{define "main"}}{{template "entry" .}}{{end}}
+{{define "entry"}}<header class="hero">
+<img class="mark" src="{{.Root}}assets/parlinfo-mark.svg" alt="" width="96" height="96">
+<h1><img src="{{.Root}}assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
+</header>
+<ul class="links">
+{{- range .Langs}}
+<li><a class="card" href="{{.Href}}" lang="{{.Code}}" hreflang="{{.Code}}"><span><strong>{{.Name}}</strong></span></a></li>
+{{- end}}
+</ul>{{end}}
