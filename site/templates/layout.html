@@ -40,9 +40,14 @@
 {{- if .Brand}}
 <a class="back" href="../">← {{.T.Overview}}</a>
 {{- end}}
-{{- if .Email}}
-<p class="contact">{{.T.Contact}}: <a href="mailto:{{.Email}}">{{.Email}}</a><br>
-<small>{{.T.ContactOr}} <a href="{{.IssueURL}}">{{.T.NewIssue}}</a></small></p>
+{{- if .MailUser}}
+<p><a class="mail" data-u="{{.MailUser}}" data-d="{{.MailDomain}}">{{.T.Contact}}</a></p>
+<script>
+// The address is not in the page as one string; join it here.
+document.querySelectorAll("a.mail").forEach(function (a) {
+  a.href = "mailto:" + a.dataset.u + "\u0040" + a.dataset.d;
+});
+</script>
 {{- end}}
 <p>{{if .Canonical}}{{.T.Source}} {{end}}<a href="{{.RepoURL}}">GitHub</a></p>
 </footer>

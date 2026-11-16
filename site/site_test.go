@@ -140,6 +140,15 @@ func TestBuild(t *testing.T) {
 		t.Errorf("CNAME = %q, want %q", cname, Domain+"\n")
 	}
 
+	// The contact address is assembled in the browser; no page may carry it
+	// whole, or harvesters scanning the HTML would find it.
+	email := contactUser + "@" + contactDomain
+	for _, f := range files {
+		if html, _ := os.ReadFile(filepath.Join(dir, filepath.FromSlash(f))); strings.Contains(string(html), email) {
+			t.Errorf("%s contains the contact address %s in plain text", f, email)
+		}
+	}
+
 	// Every link within the site leads to a file that was built. Pages are
 	// linked relatively, so this is what catches a wrong "../" depth.
 	ref := regexp.MustCompile(`(?:href|src)="([^"]+)"`)
@@ -158,8 +167,6 @@ func TestBuild(t *testing.T) {
 				target = strings.TrimPrefix(target, "https://"+Domain+"/")
 			case strings.Contains(target, "://"):
 				continue // another site
-			case strings.HasPrefix(target, "mailto:"):
-				continue
 			case strings.HasPrefix(target, "/"):
 				target = strings.TrimPrefix(target, "/")
 			default:

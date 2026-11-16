@@ -78,8 +78,8 @@ type Page struct {
 	Switcher   []LangLink
 	RepoURL    string
 	SupportURL string
-	Email      string
-	IssueURL   string
+	MailUser   string
+	MailDomain string
 
 	// Landing page
 	Cards []BrandCard
@@ -150,8 +150,8 @@ func newPage(lang, path string) Page {
 		Canonical:  absURL(lang, path),
 		RepoURL:    repoURL,
 		SupportURL: supportURL,
-		Email:      contactEmail,
-		IssueURL:   issueURL,
+		MailUser:   contactUser,
+		MailDomain: contactDomain,
 	}
 	for _, l := range Langs {
 		p.Switcher = append(p.Switcher, LangLink{Code: l, Name: Texts[l].LangName, Href: root + l + "/" + path, Current: l == lang})

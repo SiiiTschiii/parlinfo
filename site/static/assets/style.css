@@ -156,8 +156,7 @@ li + li { margin-top: .625rem; }
 
 footer { margin-top: 2.5rem; color: var(--text-2); font-size: .9375rem; text-align: center; }
 footer p { margin: 1rem 0 0; }
-footer .contact { color: var(--text); }
-footer .contact small { color: var(--text-2); font-size: .875rem; }
+footer .mail { color: var(--text); }
 footer .back { display: inline-block; padding: .5rem; }
 
 @media (min-width: 40rem) {

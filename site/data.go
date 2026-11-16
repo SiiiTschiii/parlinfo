@@ -17,11 +17,12 @@ const repoURL = "https://github.com/SiiiTschiii/parlinfo"
 // supportURL is where readers can support the project.
 const supportURL = "https://buymeacoffee.com/zuerichratsinfo"
 
-// contactEmail is the address readers can write to; issueURL is the other
-// way in, for those who use GitHub.
+// The contact address, in two parts: the pages never carry it whole, so
+// address harvesters scanning the HTML find nothing. A script in layout.html
+// joins the parts into a mailto: link in the browser.
 const (
-	contactEmail = "chparlinfo@proton.me"
-	issueURL     = repoURL + "/issues/new"
+	contactUser   = "chparlinfo"
+	contactDomain = "proton.me"
 )
 
 // Account is one account on one platform.
@@ -115,9 +116,7 @@ type Text struct {
 	Support     string            // heading of the support box
 	SupportText string
 	SupportCTA  string // the button
-	Contact     string // footer, before the email address
-	ContactOr   string // joins the address and the GitHub issue link
-	NewIssue    string // the GitHub issue link
+	Contact     string // footer link that opens the visitor's mail app
 	Overview    string // link back to the landing page
 	Source      string // footer, before the repository link
 	SwitchLabel string // aria-label of the language switcher
@@ -148,8 +147,6 @@ var Texts = map[string]Text{
 		SupportText: "parlinfo ist unabhängig und nicht gewinnorientiert.",
 		SupportCTA:  "Unterstützen",
 		Contact:     "Kontakt",
-		ContactOr:   "oder",
-		NewIssue:    "ein Issue auf GitHub eröffnen",
 		Overview:    "Übersicht",
 		Source:      "Open Source auf",
 		SwitchLabel: "Sprache",
@@ -177,8 +174,6 @@ var Texts = map[string]Text{
 		SupportText: "parlinfo est indépendant et à but non lucratif.",
 		SupportCTA:  "Soutenir",
 		Contact:     "Contact",
-		ContactOr:   "ou",
-		NewIssue:    "ouvrir une issue sur GitHub",
 		Overview:    "Aperçu",
 		Source:      "Open source sur",
 		SwitchLabel: "Langue",
@@ -206,8 +201,6 @@ var Texts = map[string]Text{
 		SupportText: "parlinfo è indipendente e senza scopo di lucro.",
 		SupportCTA:  "Sostenere",
 		Contact:     "Contatto",
-		ContactOr:   "oppure",
-		NewIssue:    "aprire una issue su GitHub",
 		Overview:    "Panoramica",
 		Source:      "Open source su",
 		SwitchLabel: "Lingua",
