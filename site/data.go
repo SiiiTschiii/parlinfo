@@ -14,7 +14,7 @@ var Langs = []string{"de", "fr", "it"}
 // repoURL is the one link every page carries, in the footer.
 const repoURL = "https://github.com/SiiiTschiii/parlinfo"
 
-// supportURL is where readers can chip in for the running costs.
+// supportURL is where readers can support the project.
 const supportURL = "https://buymeacoffee.com/zuerichratsinfo"
 
 // Account is one account on one platform.
@@ -135,8 +135,8 @@ var Texts = map[string]Text{
 		},
 		Accounts:    "Accounts",
 		Support:     "Projekt unterstützen",
-		SupportText: "parlinfo ist ein unabhängiges, nicht gewinnorientiertes Civic-Tech-Projekt. Deine Unterstützung deckt die Kosten für API-Zugänge und Plattform-Abos.",
-		SupportCTA:  "Spendier einen Kaffee",
+		SupportText: "parlinfo ist unabhängig und nicht gewinnorientiert.",
+		SupportCTA:  "Unterstützen",
 		Overview:    "Übersicht",
 		Source:      "Open Source auf",
 		SwitchLabel: "Sprache",
@@ -161,8 +161,8 @@ var Texts = map[string]Text{
 		},
 		Accounts:    "Comptes",
 		Support:     "Soutenir le projet",
-		SupportText: "parlinfo est un projet civic tech indépendant et à but non lucratif. Votre soutien couvre les frais d’accès aux API et d’abonnements aux plateformes.",
-		SupportCTA:  "Offrir un café",
+		SupportText: "parlinfo est indépendant et à but non lucratif.",
+		SupportCTA:  "Soutenir",
 		Overview:    "Aperçu",
 		Source:      "Open source sur",
 		SwitchLabel: "Langue",
@@ -187,8 +187,8 @@ var Texts = map[string]Text{
 		},
 		Accounts:    "Account",
 		Support:     "Sostieni il progetto",
-		SupportText: "parlinfo è un progetto civic tech indipendente e senza scopo di lucro. Il tuo sostegno copre i costi di accesso alle API e degli abbonamenti alle piattaforme.",
-		SupportCTA:  "Offri un caffè",
+		SupportText: "parlinfo è indipendente e senza scopo di lucro.",
+		SupportCTA:  "Sostenere",
 		Overview:    "Panoramica",
 		Source:      "Open source su",
 		SwitchLabel: "Lingua",
