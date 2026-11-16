@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>parlinfo</title>
+<meta name="theme-color" content="#0B2E34">
+<link rel="icon" href="assets/parlinfo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script>
+
+
+(function () {
+  var have = ["de", "fr", "it"];
+  var want = navigator.languages || [navigator.language || ""];
+  var lang = "de";
+  for (var i = 0; i < want.length; i++) {
+    var code = String(want[i]).slice(0, 2).toLowerCase();
+    if (have.indexOf(code) !== -1) { lang = code; break; }
+  }
+  location.replace(lang + "/" + location.search + location.hash);
+})();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=de/"></noscript>
+</head>
+<body>
+<div class="ring" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="page">
+<main>
+<header class="hero">
+<img class="mark" src="assets/parlinfo-mark.svg" alt="" width="96" height="96">
+<h1><img src="assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
+</header>
+<ul class="links">
+<li><a class="card" href="de/" lang="de" hreflang="de"><span><strong>Deutsch</strong></span></a></li>
+<li><a class="card" href="fr/" lang="fr" hreflang="fr"><span><strong>Français</strong></span></a></li>
+<li><a class="card" href="it/" lang="it" hreflang="it"><span><strong>Italiano</strong></span></a></li>
+</ul>
+</main>
+<footer>
+<p><a href="https://github.com/SiiiTschiii/parlinfo">GitHub</a></p>
+</footer>
+</div>
+</body>
+</html>
