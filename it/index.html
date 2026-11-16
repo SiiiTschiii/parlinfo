@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>parlinfo – Le votazioni dei parlamenti sui social media</title>
+<title>parlinfo – Le decisioni dei parlamenti sui social media</title>
 <meta name="theme-color" content="#0B2E34">
 <link rel="icon" href="../assets/parlinfo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
-<meta name="description" content="parlinfo porta le votazioni dei parlamenti svizzeri sui social media: con il risultato, il voto di ogni gruppo e il link all’oggetto ufficiale.">
+<meta name="description" content="parlinfo porta le decisioni dei parlamenti svizzeri sui social media: per più partecipazione e responsabilità, là dove si trovano le persone.">
 <link rel="canonical" href="https://parlinfo.ch/it/">
 <link rel="alternate" hreflang="de" href="https://parlinfo.ch/de/">
 <link rel="alternate" hreflang="fr" href="https://parlinfo.ch/fr/">
@@ -15,8 +15,8 @@
 <link rel="alternate" hreflang="x-default" href="https://parlinfo.ch/de/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="parlinfo">
-<meta property="og:title" content="parlinfo – Le votazioni dei parlamenti sui social media">
-<meta property="og:description" content="Le votazioni dei parlamenti, là dove si trovano le persone.">
+<meta property="og:title" content="parlinfo – Le decisioni dei parlamenti sui social media">
+<meta property="og:description" content="parlinfo porta le decisioni dei parlamenti svizzeri sui social media: per più partecipazione e responsabilità, là dove si trovano le persone.">
 <meta property="og:url" content="https://parlinfo.ch/it/">
 <meta property="og:image" content="https://parlinfo.ch/assets/parlinfo-social.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,18 +25,23 @@
 <body>
 <div class="ring" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="page">
+<div class="topbar">
 <nav class="langs" aria-label="Lingua">
 <a href="../de/" lang="de" hreflang="de" title="Deutsch">de</a>
 <a href="../fr/" lang="fr" hreflang="fr" title="Français">fr</a>
 <a href="../it/" lang="it" hreflang="it" title="Italiano" aria-current="page">it</a>
 </nav>
+</div>
 <main>
 <header class="hero">
-<img class="mark" src="../assets/parlinfo-mark.svg" alt="" width="96" height="96">
-<h1><img src="../assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
-<p class="tagline">Le votazioni dei parlamenti, là dove si trovano le persone.</p>
+<h1 class="wordmark"><img src="../assets/parlinfo-wordmark.svg" alt="parlinfo" width="240" height="69"></h1>
+<p class="tagline">Le decisioni dei parlamenti, là dove si trovano le persone.</p>
 </header>
-<p class="intro">parlinfo porta le votazioni dei parlamenti svizzeri sui social media: con il risultato, il voto di ogni gruppo e il link all’oggetto ufficiale.</p>
+<p class="intro">parlinfo porta le decisioni dei parlamenti svizzeri sui social media, perché una democrazia sana poggia su due cose che si perdono facilmente di vista:</p>
+<ul class="pillars">
+<li><strong>Partecipazione</strong><span>Cittadine e cittadini che possono seguire le decisioni che li riguardano e prendervi parte.</span></li>
+<li><strong>Responsabilità</strong><span>Ciò che fanno davvero le e i politici, da come votano agli atti parlamentari che sostengono, reso visibile.</span></li>
+</ul>
 <section>
 <h2>Parlamenti</h2>
 <ul class="cards">
@@ -50,8 +55,20 @@
 </a></li>
 </ul>
 </section>
+<section class="support">
+<h2>Sostieni il progetto</h2>
+<p>parlinfo è indipendente e senza scopo di lucro.</p>
+<a class="button" href="https://buymeacoffee.com/zuerichratsinfo">Sostenere</a>
+</section>
 </main>
 <footer>
+<p><a class="mail" data-u="chparlinfo" data-d="proton.me">Contatto</a></p>
+<script>
+
+document.querySelectorAll("a.mail").forEach(function (a) {
+  a.href = "mailto:" + a.dataset.u + "\u0040" + a.dataset.d;
+});
+</script>
 <p>Open source su <a href="https://github.com/SiiiTschiii/parlinfo">GitHub</a></p>
 </footer>
 </div>

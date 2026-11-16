@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>parlinfo – Les votes des parlements sur les réseaux sociaux</title>
+<title>parlinfo – Les décisions des parlements sur les réseaux sociaux</title>
 <meta name="theme-color" content="#0B2E34">
 <link rel="icon" href="../assets/parlinfo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
-<meta name="description" content="parlinfo publie les votes de parlements suisses sur les réseaux sociaux : avec le résultat, le vote de chaque groupe et le lien vers l’objet officiel.">
+<meta name="description" content="parlinfo publie les décisions des parlements suisses sur les réseaux sociaux : pour plus de participation et de responsabilité, là où les gens se trouvent.">
 <link rel="canonical" href="https://parlinfo.ch/fr/">
 <link rel="alternate" hreflang="de" href="https://parlinfo.ch/de/">
 <link rel="alternate" hreflang="fr" href="https://parlinfo.ch/fr/">
@@ -15,8 +15,8 @@
 <link rel="alternate" hreflang="x-default" href="https://parlinfo.ch/de/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="parlinfo">
-<meta property="og:title" content="parlinfo – Les votes des parlements sur les réseaux sociaux">
-<meta property="og:description" content="Les votes des parlements, là où les gens se trouvent.">
+<meta property="og:title" content="parlinfo – Les décisions des parlements sur les réseaux sociaux">
+<meta property="og:description" content="parlinfo publie les décisions des parlements suisses sur les réseaux sociaux : pour plus de participation et de responsabilité, là où les gens se trouvent.">
 <meta property="og:url" content="https://parlinfo.ch/fr/">
 <meta property="og:image" content="https://parlinfo.ch/assets/parlinfo-social.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,18 +25,23 @@
 <body>
 <div class="ring" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="page">
+<div class="topbar">
 <nav class="langs" aria-label="Langue">
 <a href="../de/" lang="de" hreflang="de" title="Deutsch">de</a>
 <a href="../fr/" lang="fr" hreflang="fr" title="Français" aria-current="page">fr</a>
 <a href="../it/" lang="it" hreflang="it" title="Italiano">it</a>
 </nav>
+</div>
 <main>
 <header class="hero">
-<img class="mark" src="../assets/parlinfo-mark.svg" alt="" width="96" height="96">
-<h1><img src="../assets/parlinfo-wordmark.svg" alt="parlinfo" width="178" height="51"></h1>
-<p class="tagline">Les votes des parlements, là où les gens se trouvent.</p>
+<h1 class="wordmark"><img src="../assets/parlinfo-wordmark.svg" alt="parlinfo" width="240" height="69"></h1>
+<p class="tagline">Les décisions des parlements, là où les gens se trouvent.</p>
 </header>
-<p class="intro">parlinfo publie les votes de parlements suisses sur les réseaux sociaux : avec le résultat, le vote de chaque groupe et le lien vers l’objet officiel.</p>
+<p class="intro">parlinfo publie les décisions des parlements suisses sur les réseaux sociaux, parce qu’une démocratie saine repose sur deux choses que l’on perd facilement de vue :</p>
+<ul class="pillars">
+<li><strong>Participation</strong><span>Des citoyennes et citoyens qui peuvent suivre les décisions qui les concernent, et y prendre part.</span></li>
+<li><strong>Responsabilité</strong><span>Ce que font réellement les élu·e·s, de leurs votes aux interventions qu’ils et elles soutiennent, rendu visible.</span></li>
+</ul>
 <section>
 <h2>Parlements</h2>
 <ul class="cards">
@@ -50,8 +55,20 @@
 </a></li>
 </ul>
 </section>
+<section class="support">
+<h2>Soutenir le projet</h2>
+<p>parlinfo est indépendant et à but non lucratif.</p>
+<a class="button" href="https://buymeacoffee.com/zuerichratsinfo">Soutenir</a>
+</section>
 </main>
 <footer>
+<p><a class="mail" data-u="chparlinfo" data-d="proton.me">Contact</a></p>
+<script>
+
+document.querySelectorAll("a.mail").forEach(function (a) {
+  a.href = "mailto:" + a.dataset.u + "\u0040" + a.dataset.d;
+});
+</script>
 <p>Open source sur <a href="https://github.com/SiiiTschiii/parlinfo">GitHub</a></p>
 </footer>
 </div>

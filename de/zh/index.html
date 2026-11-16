@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0B2E34">
 <link rel="icon" href="../../assets/parlinfo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../assets/style.css">
-<meta name="description" content="parlinfo bringt die Abstimmungen von Schweizer Parlamenten auf Social Media: mit dem Resultat, dem Stimmverhalten jeder Fraktion und dem Link zum offiziellen Geschäft.">
+<meta name="description" content="parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media: für mehr Partizipation und Rechenschaft, dort wo die Menschen sind.">
 <link rel="canonical" href="https://parlinfo.ch/de/zh/">
 <link rel="alternate" hreflang="de" href="https://parlinfo.ch/de/zh/">
 <link rel="alternate" hreflang="fr" href="https://parlinfo.ch/fr/zh/">
@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="parlinfo">
 <meta property="og:title" content="Züri Ratsinfo – parlinfo">
-<meta property="og:description" content="Parlamentsabstimmungen, dort wo die Menschen sind.">
+<meta property="og:description" content="parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media: für mehr Partizipation und Rechenschaft, dort wo die Menschen sind.">
 <meta property="og:url" content="https://parlinfo.ch/de/zh/">
 <meta property="og:image" content="https://parlinfo.ch/assets/parlinfo-social.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,20 +25,25 @@
 <body>
 <div class="ring" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="page">
+<div class="topbar">
+<a class="home" href="../" aria-label="Übersicht" title="Übersicht">
+<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<img src="../../assets/parlinfo-wordmark.svg" alt="" width="70" height="20">
+</a>
 <nav class="langs" aria-label="Sprache">
 <a href="../../de/zh/" lang="de" hreflang="de" title="Deutsch" aria-current="page">de</a>
 <a href="../../fr/zh/" lang="fr" hreflang="fr" title="Français">fr</a>
 <a href="../../it/zh/" lang="it" hreflang="it" title="Italiano">it</a>
 </nav>
+</div>
 <main>
 <header class="hero">
 <img class="mark" src="../../assets/parlinfo-zh-mark.svg" alt="" width="96" height="96">
 <h1>Züri Ratsinfo</h1>
 <p class="tagline">Gemeinderat Stadt Zürich und Kantonsrat Zürich</p>
 </header>
-<p class="intro">Die Beiträge erscheinen auf Deutsch.</p>
 <section>
-<h2>Accounts · Deutsch</h2>
+<h2>Accounts</h2>
 <ul class="links">
 <li><a class="card" href="https://www.instagram.com/zueriratsinfo" rel="me">
 <span><strong>Instagram</strong><small>@zueriratsinfo</small></span>
@@ -57,17 +62,20 @@
 </a></li>
 </ul>
 </section>
-<section>
-<h2>Weitere Links</h2>
-<ul class="links">
-<li><a class="card" href="https://github.com/SiiiTschiii/parlinfo" rel="me">
-<span><strong>GitHub</strong><small>SiiiTschiii/parlinfo</small></span>
-</a></li>
-</ul>
+<section class="support">
+<h2>Projekt unterstützen</h2>
+<p>parlinfo ist unabhängig und nicht gewinnorientiert.</p>
+<a class="button" href="https://buymeacoffee.com/zuerichratsinfo">Unterstützen</a>
 </section>
 </main>
 <footer>
-<a class="back" href="../">← Übersicht</a>
+<p><a class="mail" data-u="chparlinfo" data-d="proton.me">Kontakt</a></p>
+<script>
+
+document.querySelectorAll("a.mail").forEach(function (a) {
+  a.href = "mailto:" + a.dataset.u + "\u0040" + a.dataset.d;
+});
+</script>
 <p>Open Source auf <a href="https://github.com/SiiiTschiii/parlinfo">GitHub</a></p>
 </footer>
 </div>
