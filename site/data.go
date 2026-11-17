@@ -159,7 +159,7 @@ var Texts = map[string]Text{
 		Intro:       "parlinfo publie les décisions des parlements suisses sur les réseaux sociaux, parce qu’une démocratie saine repose sur deux choses que l’on perd facilement de vue :",
 		Pillars: [2]Pillar{
 			{"Participation", "Prendre part sans s’asseoir à la tribune ni fouiller le site du parlement : les décisions viennent aux citoyennes et citoyens, et non l’inverse."},
-			{"Responsabilité", "Ce à quoi le parlement consacre son temps : quelles interventions sont déposées et ce qu’il en advient. Car davantage d’interventions ne veut pas dire meilleur travail."},
+			{"Responsabilité", "Ce à quoi le parlement consacre son temps : quelles interventions sont déposées et ce qu’il en advient. Car plus d’interventions ne veut pas dire meilleur travail."},
 		},
 		Choose: "Parlements",
 		BrandBodies: map[string]string{
