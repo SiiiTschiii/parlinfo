@@ -1,8 +1,13 @@
 package contacts
 
 import (
+	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
 
 func partyMapper() *Mapper {
@@ -115,29 +120,84 @@ func TestFindBlueskyFraktionMentions(t *testing.T) {
 	}
 }
 
-func TestPathsForLoadsCantonFallbackForCityOnly(t *testing.T) {
-	got := PathsFor("zurich-city")
-	want := []string{PathFor("zurich-city"), PathFor("zurich-canton")}
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("city only: got %v, want %v", got, want)
+// Every body loads every roster, its own first and its party fallback next:
+// a Gemeinderat Weisung can name an author who has since moved to the
+// Nationalrat, and a Nationalrat vote one who sits in the Ständerat.
+func TestPathsForLoadsEveryRoster(t *testing.T) {
+	tests := []struct {
+		keys []string
+		want []string
+	}{
+		{[]string{"zurich-city"}, []string{"zurich-city", "zurich-canton", "nationalrat", "staenderat"}},
+		{[]string{"zurich-canton"}, []string{"zurich-canton", "zurich-city", "nationalrat", "staenderat"}},
+		{[]string{"nationalrat"}, []string{"nationalrat", "zurich-city", "zurich-canton", "staenderat"}},
+		{[]string{"staenderat"}, []string{"staenderat", "zurich-city", "zurich-canton", "nationalrat"}},
+		{[]string{"zurich-city", "zurich-canton"}, []string{"zurich-city", "zurich-canton", "nationalrat", "staenderat"}},
 	}
-	if got := PathsFor("zurich-city", "zurich-canton"); len(got) != 2 {
-		t.Errorf("both: got %v, want each file once", got)
-	}
-	if got := PathsFor("zurich-canton"); !reflect.DeepEqual(got, []string{PathFor("zurich-canton")}) {
-		t.Errorf("canton only: got %v", got)
+	for _, tt := range tests {
+		var want []string
+		for _, k := range tt.want {
+			want = append(want, PathFor(k))
+		}
+		if got := PathsFor(tt.keys...); !reflect.DeepEqual(got, want) {
+			t.Errorf("PathsFor(%v) = %v, want %v", tt.keys, got, want)
+		}
 	}
 }
 
-// A Nationalrat post names Ständerat members who filed the business, so their
-// file is loaded too; a Ständerat preview needs nothing from the Nationalrat.
-func TestPathsForLoadsStaenderatForNationalrat(t *testing.T) {
-	if got, want := PathsFor("nationalrat"), []string{PathFor("nationalrat"), PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
-		t.Errorf("nationalrat: got %v, want %v", got, want)
+// Loading every roster into one tagger is only safe while a name means one
+// person. Two files listing the same name with different verified accounts on
+// one platform is most likely two people, and the merged contact would tag one
+// of them in the other's post. A dual mandate shows the same accounts, or
+// accounts on different platforms, and passes.
+func TestRostersShareNoHomonyms(t *testing.T) {
+	type entry struct {
+		roster string
+		c      Contact
 	}
-	if got, want := PathsFor("staenderat"), []string{PathFor("staenderat")}; !reflect.DeepEqual(got, want) {
-		t.Errorf("staenderat: got %v, want %v", got, want)
+	byName := map[string][]entry{}
+	for _, key := range Rosters {
+		path := filepath.Join("..", "..", PathFor(key))
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read %s: %v", path, err)
+		}
+		var m ContactMapping
+		if err := yaml.Unmarshal(data, &m); err != nil {
+			t.Fatalf("parse %s: %v", path, err)
+		}
+		for _, c := range m.Contacts {
+			byName[NameKey(c.Name)] = append(byName[NameKey(c.Name)], entry{key, c})
+		}
 	}
+	for _, es := range byName {
+		for i := range es {
+			for j := i + 1; j < len(es); j++ {
+				if es[i].roster == es[j].roster {
+					continue
+				}
+				for _, p := range []string{"x", "facebook", "instagram", "linkedin", "bluesky", "tiktok"} {
+					a, b := es[i].c.Verified(p), es[j].c.Verified(p)
+					if len(a) > 0 && len(b) > 0 && !overlaps(a, b) {
+						t.Errorf("%q is in %s and %s with different verified %s accounts (%v, %v): two people, or one account to add to both",
+							es[i].c.Name, es[i].roster, es[j].roster, p, a, b)
+					}
+				}
+			}
+		}
+	}
+}
+
+func overlaps(a, b []string) bool {
+	norm := func(u string) string { return strings.ToLower(strings.TrimRight(strings.TrimSpace(u), "/")) }
+	for _, x := range a {
+		for _, y := range b {
+			if norm(x) == norm(y) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Titles as the Gemeinderat has actually written them, so the patterns are

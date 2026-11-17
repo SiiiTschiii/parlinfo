@@ -74,19 +74,26 @@ var partyFallbacks = map[string][]string{
 	"zurich-city": {"zurich-canton"},
 }
 
-// authorFallbacks are the jurisdictions whose members can file business that
-// another jurisdiction votes on. A parliamentary initiative filed in the
-// Ständerat goes to the Nationalrat too, and its post names the Ständerat
-// member who filed it: 23.439, Andrea Caroni's, came to the Nationalrat's
-// overall vote in September 2026. Without the Ständerat's file that name goes
-// untagged however well it is curated.
-var authorFallbacks = map[string][]string{
-	"nationalrat": {"staenderat"},
-}
+// Rosters are the bodies with a contacts file, from the city up. PathsFor
+// loads all of them for every body, because the people named in a post are
+// not always members of the body that votes on it.
+//
+// A Vorstoss can take years to come back as a Weisung, and by then its authors
+// may sit somewhere else: the Gemeinderat's 2026 vote on the Weisung to Islam
+// Alijaj's motion named him after he had moved to the Nationalrat, and went out
+// untagged although his accounts were curated. Business also crosses chambers
+// directly: 23.439, a parliamentary initiative Andrea Caroni filed in the
+// Ständerat, came to the Nationalrat's overall vote in September 2026.
+//
+// Tagging matches full names, so this is only safe while no two different
+// people share a name across the files. TestRostersShareNoHomonyms holds that
+// for the curated data.
+var Rosters = []string{"zurich-city", "zurich-canton", "nationalrat", "staenderat"}
 
 // PathsFor returns the contacts files needed to tag the given jurisdictions:
-// their own, then the files their party accounts and their business's authors
-// fall back to, each once.
+// their own, then the files their party accounts fall back to, then every
+// other roster, each once. The order only decides which spelling of a name a
+// merged contact keeps; its accounts come from every file.
 func PathsFor(jurisdictions ...string) []string {
 	var paths []string
 	seen := map[string]bool{}
@@ -103,9 +110,9 @@ func PathsFor(jurisdictions ...string) []string {
 		for _, fb := range partyFallbacks[key] {
 			add(fb)
 		}
-		for _, fb := range authorFallbacks[key] {
-			add(fb)
-		}
+	}
+	for _, key := range Rosters {
+		add(key)
 	}
 	return paths
 }
