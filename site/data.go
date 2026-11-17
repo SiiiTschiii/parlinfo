@@ -111,6 +111,7 @@ type Text struct {
 	Pillars     [2]Pillar         // participation and accountability, as in README.md
 	Choose      string            // heading above the brand cards
 	BrandBodies map[string]string // by Brand.Key: the parliaments a brand covers
+	BrandLead   map[string]string // by Brand.Key: what the accounts post, under a brand page's title
 	BrandNote   map[string]string // by Brand.Key: only for brands posting in several languages
 	Accounts    string            // heading of a brand page's list
 	Support     string            // heading of the support box
@@ -139,6 +140,10 @@ var Texts = map[string]Text{
 			"zh": "Gemeinderat Stadt Zürich und Kantonsrat Zürich",
 			"ch": "Nationalrat",
 		},
+		BrandLead: map[string]string{
+			"zh": "Jede Abstimmung im Gemeinderat der Stadt Zürich und im Kantonsrat Zürich – als Post auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
+			"ch": "Jede Abstimmung im Nationalrat – als Post auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
+		},
 		BrandNote: map[string]string{
 			"ch": "Die Beiträge erscheinen auf Deutsch, Französisch und Italienisch, je auf eigenen Accounts.",
 		},
@@ -166,6 +171,10 @@ var Texts = map[string]Text{
 			"zh": "Gemeinderat Stadt Zürich (parlement de la ville) et Kantonsrat Zürich (parlement cantonal)",
 			"ch": "Conseil national",
 		},
+		BrandLead: map[string]string{
+			"zh": "Chaque vote du Gemeinderat de la ville de Zurich et du Kantonsrat zurichois – publié sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
+			"ch": "Chaque vote du Conseil national – publié sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
+		},
 		BrandNote: map[string]string{
 			"ch": "Les publications paraissent en allemand, en français et en italien, chaque langue sur ses propres comptes.",
 		},
@@ -192,6 +201,10 @@ var Texts = map[string]Text{
 		BrandBodies: map[string]string{
 			"zh": "Gemeinderat Stadt Zürich (parlamento cittadino) e Kantonsrat Zürich (parlamento cantonale)",
 			"ch": "Consiglio nazionale",
+		},
+		BrandLead: map[string]string{
+			"zh": "Ogni votazione del Gemeinderat della città di Zurigo e del Kantonsrat zurighese – pubblicata sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
+			"ch": "Ogni votazione del Consiglio nazionale – pubblicata sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
 		},
 		BrandNote: map[string]string{
 			"ch": "I post sono pubblicati in tedesco, francese e italiano, ogni lingua sui propri account.",

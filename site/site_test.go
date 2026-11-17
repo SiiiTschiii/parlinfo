@@ -81,6 +81,9 @@ func TestTextsComplete(t *testing.T) {
 			if text.BrandBodies[b.Key] == "" {
 				t.Errorf("%s: no BrandBodies for %q", lang, b.Key)
 			}
+			if text.BrandLead[b.Key] == "" {
+				t.Errorf("%s: no BrandLead for %q", lang, b.Key)
+			}
 			// The note says which languages a brand posts in; for a brand
 			// with one, the page says nothing about language at all.
 			multi := len(b.Langs()) > 1
