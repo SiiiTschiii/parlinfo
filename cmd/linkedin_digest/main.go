@@ -23,6 +23,13 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
+// sites are the parlinfo.ch pages listing each channel's accounts, which a
+// digest's first comment points to for every vote.
+var sites = map[string]string{
+	"zurich": "https://parlinfo.ch/de/zh/",
+	"chparl": "https://parlinfo.ch/de/ch/",
+}
+
 // logPlatforms are the platforms whose logs are read. A jurisdiction with no
 // log for one of them contributes nothing for it.
 var logPlatforms = []votelog.Platform{
@@ -42,6 +49,7 @@ func main() {
 	// The logs live on a state branch, not in main, so a checkout has none
 	// unless they were copied in. Reading them from the ref saves the copying
 	// and cannot be stale.
+	all := flag.Bool("all", false, "list every business of a sitting, not only its rejections and closest votes")
 	stateRef := flag.String("state-ref", "", "git ref to read the vote logs from, e.g. origin/state-log (default: the logs on disk)")
 	flag.Parse()
 
@@ -94,7 +102,7 @@ func main() {
 		mapper = nil
 	}
 
-	draft, shortened := render(sections, mapper)
+	draft, shortened := render(sections, mapper, options{Site: sites[channel.Key], All: *all})
 	if shortened > 0 {
 		log.Printf("%d title(s) cut to fit LinkedIn's %d characters; the links in the first comment have them in full", shortened, maxPostChars)
 	}

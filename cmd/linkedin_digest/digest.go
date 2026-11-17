@@ -125,6 +125,19 @@ func sittings(sections []section) []sitting {
 	return out
 }
 
+// maxListed is the most businesses a post lists. A sitting with more gets its
+// highlights instead: its rejections, then its closest votes.
+const maxListed = 5
+
+// options shape a draft.
+type options struct {
+	// Site is the parlinfo.ch page listing the accounts that post every vote,
+	// which the first comment points to. Empty leaves the pointer out.
+	Site string
+	// All lists every business of a sitting, however many there are.
+	All bool
+}
+
 // render writes the draft: one post per sitting, each with its first comment
 // and its tagging list. It also returns how many entries it shortened to make
 // a post fit.
@@ -134,12 +147,12 @@ func sittings(sections []section) []sitting {
 // against LinkedIn's 3,000.
 //
 // mapper may be nil, which leaves the tagging lists empty.
-func render(sections []section, mapper *contacts.Mapper) (string, int) {
+func render(sections []section, mapper *contacts.Mapper, o options) (string, int) {
 	all := sittings(sections)
 	var out strings.Builder
 	shortened := 0
 	for i, s := range all {
-		draft, cut := renderSitting(s, mapper, maxPostChars)
+		draft, cut := renderSitting(s, mapper, o, maxPostChars)
 		shortened += cut
 		if len(all) > 1 {
 			if i > 0 {
@@ -162,21 +175,21 @@ func render(sections []section, mapper *contacts.Mapper) (string, int) {
 // at all: a LinkedIn mention is picked from a dropdown while typing, and the
 // profile URL is there to check that the person picked is the one who sits in
 // the chamber.
-func renderSitting(s sitting, mapper *contacts.Mapper, limit int) (string, int) {
-	post, comment, tags, _ := sittingBlocks(s, mapper, 0)
+func renderSitting(s sitting, mapper *contacts.Mapper, o options, limit int) (string, int) {
+	post, comment, tags, _ := sittingBlocks(s, mapper, o, 0)
 	cut := 0
 	if chars(post) > limit {
 		// The longest subject length at which the post fits.
 		lo, hi := shortestSubject, longestSubject(s)
 		for lo < hi {
 			mid := (lo + hi + 1) / 2
-			if p, _, _, _ := sittingBlocks(s, mapper, mid); chars(p) <= limit {
+			if p, _, _, _ := sittingBlocks(s, mapper, o, mid); chars(p) <= limit {
 				lo = mid
 			} else {
 				hi = mid - 1
 			}
 		}
-		post, comment, tags, cut = sittingBlocks(s, mapper, lo)
+		post, comment, tags, cut = sittingBlocks(s, mapper, o, lo)
 		if n := chars(post); n > limit {
 			log.Printf("%s: the post is %d characters even with every title cut to %d, over LinkedIn's %d; shorten it by hand",
 				sittingHeading(s.Body, s.Date), n, shortestSubject, limit)
@@ -187,49 +200,274 @@ func renderSitting(s sitting, mapper *contacts.Mapper, limit int) (string, int) 
 		"\n━━━ Tag by hand ━━━\n" + tags, cut
 }
 
-// sittingBlocks renders the three blocks, with every subject cut to at most
-// maxSubject characters (0 for no limit), and says how many it cut.
-func sittingBlocks(s sitting, mapper *contacts.Mapper, maxSubject int) (post, comment, tags string, cut int) {
-	var p, c, t strings.Builder
-	fmt.Fprintf(&p, "🗳️ %s\n\n", sittingHeading(s.Body, s.Date))
-	var attributions []string
-	seen := map[string]bool{}
-	for i, g := range s.Groups {
-		n := i + 1
-		subject := groupSubject(g)
-		if short := shorten(subject, maxSubject); short != subject {
-			subject = short
-			cut++
-		}
-		p.WriteString(groupEntry(n, subject, g))
+// entry is one numbered item of a post: a whole business, or the one vote of
+// it a highlight is about.
+type entry struct {
+	group []votes.Vote
+	vote  int // index into group, or -1 for the whole business
+}
 
-		if link := recordLink(g); link != "" {
-			fmt.Fprintf(&c, "%d. %s\n", n, link)
+// part is a run of entries under an optional heading.
+type part struct {
+	heading string
+	entries []entry
+}
+
+// parts chooses what a sitting's post lists.
+//
+// A post listing a long sitting entry by entry reads as a data feed, and the
+// Gemeinderat's sitting of 28 October still needed ten titles cut to fit. So a
+// sitting of more than maxListed businesses gets the votes worth reading: the
+// rejections, which are the exception in a chamber that adopts most of what
+// comes before it, then the closest results. The rest is one click away.
+func parts(s sitting, all bool) []part {
+	if all || len(s.Groups) <= maxListed {
+		return []part{{entries: whole(s.Groups)}}
+	}
+	rejected, closest := highlights(s.Groups, maxListed)
+	if len(rejected)+len(closest) == 0 {
+		return []part{{entries: whole(s.Groups)}}
+	}
+	var out []part
+	if len(rejected) > 0 {
+		out = append(out, part{"Abgelehnt:", rejected})
+	}
+	if len(closest) > 0 {
+		out = append(out, part{"Am knappsten:", closest})
+	}
+	return out
+}
+
+// whole lists every business as it stands.
+func whole(groups [][]votes.Vote) []entry {
+	out := make([]entry, len(groups))
+	for i, g := range groups {
+		out[i] = entry{group: g, vote: -1}
+	}
+	return out
+}
+
+// highlights picks at most max votes, one per business: the rejections first,
+// then the closest of the rest, each run closest first.
+//
+// A business stands in by its closest vote, so six close Änderungsanträge on
+// one ordinance do not crowd out everything else. Only a Ja/Nein vote can be
+// close: a threshold or Auswahl vote's counts do not measure a margin. An
+// election records no result, so it is never one.
+func highlights(groups [][]votes.Vote, max int) (rejected, closest []entry) {
+	type candidate struct {
+		e       entry
+		yes, no int
+	}
+	var rej, rest []candidate
+	for _, g := range groups {
+		if votes.IsWahlgeschaeftGroup(g) {
+			continue
 		}
-		if a := g[0].Attribution; a != "" && !seen[a] {
-			seen[a] = true
-			attributions = append(attributions, a)
-		}
-		// An election's title names the member being replaced, not the one
-		// elected, so nobody in it is tagged; the other platforms keep the
-		// contact mapping away from these posts for the same reason. The
-		// people are read from the subject as posted, so a name cut from it
-		// is not listed.
-		if mapper != nil && !votes.IsWahlgeschaeftGroup(g) {
-			for _, m := range mapper.Mentions(subject, "linkedin") {
-				fmt.Fprintf(&t, "%d. %s: %s\n", n, m.Name, strings.Join(m.URLs, ", "))
+		var bestRej, bestRest *candidate
+		for i, v := range g {
+			yes, no, ok := yesNo(v)
+			if !ok {
+				// No margin to measure ranks as the widest: a rejected
+				// threshold vote is still a rejection, but never "close".
+				yes, no = 1, 0
+			}
+			c := candidate{entry{g, i}, yes, no}
+			switch {
+			case isRejected(v):
+				if bestRej == nil || closer(c.yes, c.no, bestRej.yes, bestRej.no) {
+					bestRej = &c
+				}
+			case ok:
+				if bestRest == nil || closer(c.yes, c.no, bestRest.yes, bestRest.no) {
+					bestRest = &c
+				}
 			}
 		}
+		if bestRej != nil {
+			rej = append(rej, *bestRej)
+		} else if bestRest != nil {
+			rest = append(rest, *bestRest)
+		}
+	}
+	byMargin := func(cs []candidate) {
+		sort.SliceStable(cs, func(i, j int) bool { return closer(cs[i].yes, cs[i].no, cs[j].yes, cs[j].no) })
+	}
+	byMargin(rej)
+	byMargin(rest)
+	for _, c := range rej {
+		if len(rejected) < max {
+			rejected = append(rejected, c.e)
+		}
+	}
+	for _, c := range rest {
+		if len(rejected)+len(closest) < max {
+			closest = append(closest, c.e)
+		}
+	}
+	return rejected, closest
+}
+
+// yesNo is a Ja/Nein vote's two counts, and false for any other kind.
+func yesNo(v votes.Vote) (yes, no int, ok bool) {
+	c := voteformat.CountsOf(v)
+	if voteformat.IsAuswahlVote(c) || voteformat.IsQuorumVote(c) || c.Ja == nil || c.Nein == nil || *c.Ja+*c.Nein == 0 {
+		return 0, 0, false
+	}
+	return *c.Ja, *c.Nein, true
+}
+
+// closer reports whether a's margin is narrower than b's, as a share of the
+// votes cast: 60 to 62 is closer than 600 to 610 would be in a larger chamber.
+func closer(aYes, aNo, bYes, bNo int) bool {
+	return abs(aYes-aNo)*(bYes+bNo) < abs(bYes-bNo)*(aYes+aNo)
+}
+
+func abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+// isRejected reports whether the post states the vote failed.
+func isRejected(v votes.Vote) bool {
+	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "❌"
+}
+
+// statsLine counts a sitting: "15 Geschäfte, 16 Abstimmungen: 14 angenommen,
+// 2 abgelehnt."
+//
+// Votes the source reports no verdict for are counted as such rather than
+// guessed at, which is most of the Kantonsrat's: the outcome is never inferred
+// from the counts, see voteformat.HasVerdict. An election's roll call is not a
+// vote on anything, so it counts as a business and nothing else.
+func statsLine(groups [][]votes.Vote) string {
+	n, accepted, rejected, open := 0, 0, 0, 0
+	for _, g := range groups {
+		if votes.IsWahlgeschaeftGroup(g) {
+			continue
+		}
+		for _, v := range g {
+			n++
+			switch {
+			case isRejected(v):
+				rejected++
+			case voteformat.HasVerdict(v):
+				accepted++
+			default:
+				open++
+			}
+		}
+	}
+	line := plural(len(groups), "Geschäft", "Geschäfte")
+	if n != len(groups) {
+		line += ", " + plural(n, "Abstimmung", "Abstimmungen")
+	}
+	if accepted+rejected > 0 {
+		line += fmt.Sprintf(": %d angenommen, %d abgelehnt", accepted, rejected)
+		if open > 0 {
+			line += fmt.Sprintf(", %d ohne ausgewiesenes Resultat", open)
+		}
+	}
+	return line + "."
+}
+
+func plural(n int, one, many string) string {
+	if n == 1 {
+		return "1 " + one
+	}
+	return fmt.Sprintf("%d %s", n, many)
+}
+
+// sittingBlocks renders the three blocks, with every subject cut to at most
+// maxSubject characters (0 for no limit), and says how many it cut.
+func sittingBlocks(s sitting, mapper *contacts.Mapper, o options, maxSubject int) (post, comment, tags string, cut int) {
+	var p, c, t strings.Builder
+	fmt.Fprintf(&p, "🗳️ %s\n\n%s\n", sittingHeading(s.Body, s.Date), statsLine(s.Groups))
+	var attributions []string
+	seen := map[string]bool{}
+	n := 0
+	ps := parts(s, o.All)
+	for _, pt := range ps {
+		p.WriteString("\n")
+		if pt.heading != "" {
+			p.WriteString(pt.heading + "\n")
+		}
+		for _, e := range pt.entries {
+			n++
+			g := e.group
+			subject := groupSubject(g)
+			if short := shorten(subject, maxSubject); short != subject {
+				subject = short
+				cut++
+			}
+			if e.vote < 0 {
+				p.WriteString(groupEntry(n, subject, g))
+			} else {
+				p.WriteString(highlightEntry(n, subject, g, e.vote))
+			}
+
+			if link := recordLink(g); link != "" {
+				fmt.Fprintf(&c, "%d. %s\n", n, link)
+			}
+			if a := g[0].Attribution; a != "" && !seen[a] {
+				seen[a] = true
+				attributions = append(attributions, a)
+			}
+			// An election's title names the member being replaced, not the
+			// one elected, so nobody in it is tagged; the other platforms keep
+			// the contact mapping away from these posts for the same reason.
+			// The people are read from the subject as posted, so a name cut
+			// from it is not listed.
+			if mapper != nil && !votes.IsWahlgeschaeftGroup(g) {
+				for _, m := range mapper.Mentions(subject, "linkedin") {
+					fmt.Fprintf(&t, "%d. %s: %s\n", n, m.Name, strings.Join(m.URLs, ", "))
+				}
+			}
+		}
+	}
+	if o.Site != "" {
+		every := "Jede Abstimmung"
+		if ps[0].heading != "" {
+			every = "Alle " + plural(len(s.Groups), "Geschäft", "Geschäfte")
+		}
+		fmt.Fprintf(&p, "\n%s einzeln, mit Resultat nach Fraktion: Link im ersten Kommentar.\n", every)
+		fmt.Fprintf(&c, "\nAlle Abstimmungen einzeln: %s\n", o.Site)
 	}
 	// The credit travels with the links: two sources' terms require it, and
 	// the comment is where this post names where its data came from.
 	if len(attributions) > 0 {
-		c.WriteString("\n" + strings.Join(attributions, "\n") + "\n")
+		if o.Site == "" {
+			c.WriteString("\n")
+		}
+		c.WriteString(strings.Join(attributions, "\n") + "\n")
 	}
 	if t.Len() == 0 {
 		t.WriteString("Nobody named in these votes has a verified LinkedIn profile on file.\n")
 	}
 	return p.String(), c.String(), t.String(), cut
+}
+
+// highlightEntry is one highlighted vote: its result, the business, and which
+// of the business's votes it was where there were several.
+func highlightEntry(n int, subject string, group []votes.Vote, i int) string {
+	v := group[i]
+	lead := tally(v)
+	if voteformat.HasVerdict(v) {
+		lead = voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) + " " + lead
+	}
+	which := ""
+	if len(group) > 1 {
+		// The vote's own label names its type where that matters.
+		which = " (" + voteformat.SubVoteLabel(v, i, len(group)) + ")"
+	} else if label := voteformat.TypeLabel(v.Type); label != "" {
+		lead = label + " · " + lead
+	}
+	if q := strings.TrimSpace(v.Question); q != "" {
+		lead += " · " + q
+	}
+	return fmt.Sprintf("%d. %s · %s%s\n", n, lead, subject, which)
 }
 
 // chars counts a post the way LinkedIn's limit does. It is measured in UTF-16
@@ -334,19 +572,24 @@ func groupEntry(n int, subject string, group []votes.Vote) string {
 // A vote with no verdict to state, an Auswahl or a threshold vote, gets its
 // counts alone, as on every other platform; see voteformat.HasVerdict.
 func result(v votes.Vote) string {
-	c := voteformat.CountsOf(v)
-	tally := strings.TrimPrefix(voteformat.FormatVoteCounts(c), "📊 ")
-	if !voteformat.IsAuswahlVote(c) && !voteformat.IsQuorumVote(c) {
-		w := voteformat.W(v.Language)
-		tally = fmt.Sprintf("%s %s, %s %s",
-			voteformat.FormatVoteCount(c.Ja), w.Yes, voteformat.FormatVoteCount(c.Nein), w.No)
-	}
 	if !voteformat.HasVerdict(v) {
-		return tally
+		return tally(v)
 	}
 	verdict := voteformat.Verdict(v)
 	return fmt.Sprintf("%s %s (%s)",
-		voteformat.GetVoteResultEmoji(verdict), voteformat.GetVoteResultText(v.Language, verdict), tally)
+		voteformat.GetVoteResultEmoji(verdict), voteformat.GetVoteResultText(v.Language, verdict), tally(v))
+}
+
+// tally is a vote's counts: "72 Ja, 45 Nein", or the threshold or Auswahl
+// counts the other platforms print for those.
+func tally(v votes.Vote) string {
+	c := voteformat.CountsOf(v)
+	if voteformat.IsAuswahlVote(c) || voteformat.IsQuorumVote(c) {
+		return strings.TrimPrefix(voteformat.FormatVoteCounts(c), "📊 ")
+	}
+	w := voteformat.W(v.Language)
+	return fmt.Sprintf("%s %s, %s %s",
+		voteformat.FormatVoteCount(c.Ja), w.Yes, voteformat.FormatVoteCount(c.Nein), w.No)
 }
 
 // recordLink is the one link a group gets in the first comment: the official

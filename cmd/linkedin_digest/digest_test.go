@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"testing"
@@ -91,7 +92,7 @@ func TestRender(t *testing.T) {
 		}},
 		{Name: "Kantonsrat Zürich"},
 	}
-	got, _ := render(sections, mapper)
+	got, _ := render(sections, mapper, options{})
 
 	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
 	comment, tags, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
@@ -129,7 +130,7 @@ func TestRender(t *testing.T) {
 }
 
 func TestRenderWithoutVotesIsEmpty(t *testing.T) {
-	if got, _ := render([]section{{Name: "Nationalrat"}}, nil); got != "" {
+	if got, _ := render([]section{{Name: "Nationalrat"}}, nil, options{}); got != "" {
 		t.Errorf("render() = %q, want nothing", got)
 	}
 }
@@ -151,7 +152,7 @@ func TestRenderElection(t *testing.T) {
 	}
 	sections := []section{{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{testfixtures.KantonsratWahlgeschaeft()}}}
 
-	got, _ := render(sections, mapper)
+	got, _ := render(sections, mapper, options{})
 
 	rest, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
 	_, comment, _ := strings.Cut(rest, "━━━ First comment ━━━")
@@ -191,7 +192,7 @@ func TestRenderPostsEachSittingOnItsOwn(t *testing.T) {
 	// The later sitting first, as a source might return them.
 	sections := []section{{Name: "Gemeinderat Stadt Zürich", Groups: [][]votes.Vote{second, first}}}
 
-	got, _ := render(sections, nil)
+	got, _ := render(sections, nil, options{})
 
 	// Each post numbers from 1 and has its own first comment.
 	want := "══════ Beitrag 1 von 2 ══════\n\n━━━ Post ━━━\n🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n\n1. ✅ Angenommen" +
@@ -236,10 +237,10 @@ func TestRenderSittingFitsTheLimit(t *testing.T) {
 		groups = append(groups, testfixtures.SingleVoteAngenommen())
 	}
 	s := sitting{Body: "Gemeinderat Stadt Zürich", Date: groups[0][0].Date, Groups: groups}
-	full, _, _, _ := sittingBlocks(s, nil, 0)
+	full, _, _, _ := sittingBlocks(s, nil, options{All: true}, 0)
 	limit := chars(full) - 200
 
-	got, cut := renderSitting(s, nil, limit)
+	got, cut := renderSitting(s, nil, options{All: true}, limit)
 
 	post, _, _ := strings.Cut(strings.TrimPrefix(got, "━━━ Post ━━━\n"), "\n━━━ First comment")
 	if n := chars(post); n > limit {
@@ -249,7 +250,99 @@ func TestRenderSittingFitsTheLimit(t *testing.T) {
 		t.Errorf("cut %d subjects, want all 6 shortened with an ellipsis:\n%s", cut, post)
 	}
 	// Cut no further than it had to: one character more would not fit.
-	if p, _, _, _ := sittingBlocks(s, nil, len([]rune(groupSubject(groups[0])))); chars(p) <= limit {
+	if p, _, _, _ := sittingBlocks(s, nil, options{All: true}, len([]rune(groupSubject(groups[0])))); chars(p) <= limit {
 		t.Fatal("test is wrong: the full post fits")
+	}
+}
+
+// lone is a single-vote business with the given result.
+func lone(id, decision string, yes, no int) []votes.Vote {
+	g := testfixtures.SingleVoteAngenommen()
+	g[0].SourceID = id
+	g[0].Title = "Postulat " + id
+	g[0].Decision = decision
+	g[0].Yes, g[0].No = &yes, &no
+	return g
+}
+
+func TestStatsLine(t *testing.T) {
+	groups := [][]votes.Vote{
+		lone("a", "angenommen", 90, 30),
+		lone("b", "abgelehnt", 20, 95),
+		testfixtures.MultiVoteGroup(), // one adopted, one rejected
+		lone("c", "", 70, 50),         // no verdict reported
+	}
+
+	got := statsLine(groups)
+
+	if want := "4 Geschäfte, 5 Abstimmungen: 2 angenommen, 2 abgelehnt, 1 ohne ausgewiesenes Resultat."; got != want {
+		t.Errorf("statsLine() = %q, want %q", got, want)
+	}
+}
+
+func TestHighlightsTakeRejectionsThenTheClosest(t *testing.T) {
+	multi := testfixtures.MultiVoteGroup() // 90:20 adopted, 40:70 rejected
+	groups := [][]votes.Vote{
+		lone("wide", "angenommen", 90, 30),
+		lone("closest", "angenommen", 61, 59),
+		lone("rejected-wide", "abgelehnt", 20, 95),
+		lone("third", "angenommen", 70, 50),
+		lone("unanimous", "angenommen", 100, 0),
+		multi,
+		lone("second", "angenommen", 66, 60),
+		testfixtures.KantonsratWahlgeschaeft(), // 157:0, records no result
+	}
+
+	rejected, closest := highlights(groups, 5)
+
+	ids := func(es []entry) (out []string) {
+		for _, e := range es {
+			out = append(out, e.group[e.vote].SourceID)
+		}
+		return out
+	}
+	if got, want := ids(rejected), []string{multi[1].SourceID, "rejected-wide"}; strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("rejected = %v, want %v, closest first and the business by its rejected vote", got, want)
+	}
+	if got, want := ids(closest), []string{"closest", "second", "third"}; strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("closest = %v, want %v, filling up to five", got, want)
+	}
+}
+
+func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
+	var large [][]votes.Vote
+	for i, c := range []struct {
+		decision string
+		yes, no  int
+	}{{"angenommen", 90, 30}, {"angenommen", 61, 59}, {"abgelehnt", 20, 95}, {"angenommen", 70, 50},
+		{"angenommen", 100, 0}, {"angenommen", 66, 60}, {"angenommen", 80, 10}} {
+		large = append(large, lone(fmt.Sprintf("g%d", i+1), c.decision, c.yes, c.no))
+	}
+	o := options{Site: "https://parlinfo.ch/de/zh/"}
+
+	got, _ := render([]section{{Name: "Gemeinderat Stadt Zürich", Groups: large}}, nil, o)
+
+	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
+	comment, _, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
+	want := "7 Geschäfte: 6 angenommen, 1 abgelehnt.\n\n" +
+		"Abgelehnt:\n1. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
+		"Am knappsten:\n2. ✅ 61 Ja, 59 Nein · Postulat g2\n3. ✅ 66 Ja, 60 Nein · Postulat g6\n" +
+		"4. ✅ 70 Ja, 50 Nein · Postulat g4\n5. ✅ 90 Ja, 30 Nein · Postulat g1\n\n" +
+		"Alle 7 Geschäfte einzeln, mit Resultat nach Fraktion: Link im ersten Kommentar.\n"
+	if !strings.Contains(post, want) {
+		t.Errorf("post = %s\nwant it to contain:\n%s", post, want)
+	}
+	if !strings.Contains(comment, "5. http") || strings.Contains(comment, "6. http") {
+		t.Errorf("first comment should link the five entries and no more:\n%s", comment)
+	}
+	if !strings.Contains(comment, "\nAlle Abstimmungen einzeln: https://parlinfo.ch/de/zh/\n") {
+		t.Errorf("first comment lacks the parlinfo.ch pointer:\n%s", comment)
+	}
+
+	small, _ := render([]section{{Name: "Gemeinderat Stadt Zürich", Groups: large[:3]}}, nil, o)
+
+	if strings.Contains(small, "Am knappsten") || !strings.Contains(small, "3. ❌ Abgelehnt (20 Ja, 95 Nein) · Postulat g3") ||
+		!strings.Contains(small, "Jede Abstimmung einzeln") {
+		t.Errorf("a sitting of three should be listed whole:\n%s", small)
 	}
 }

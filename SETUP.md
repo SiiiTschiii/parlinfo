@@ -166,18 +166,22 @@ consecutive weeks never share a vote. For a week that has passed:
 go run ./cmd/linkedin_digest -state-ref origin/state-log -until 2026-11-10
 ```
 
-Each sitting is a post of its own, headed with its date: a week of the
-Gemeinderat does not fit in LinkedIn's 3,000 characters. Titles drop the date
-the business was filed, and where a post is still too long its longest titles
-are cut at a word, with a warning saying how many. A vote the bot has not
-posted yet is not in the draft: the Kantonsrat's votes reach the bot days after
-the sitting, so draft a week once its last sitting has gone out.
+Each sitting is a post of its own, headed with its date and a count of its
+businesses and results. A sitting of up to five businesses lists them all; a
+larger one lists only its rejections, then its closest votes, five in all, one
+per business, and points to parlinfo.ch for the rest. `-all` lists every
+business instead. Titles drop the date the business was filed, and where a post
+would pass LinkedIn's 3,000 characters its longest titles are cut at a word,
+with a warning saying how many. A vote the bot has not posted yet is not in the
+draft: the Kantonsrat's votes reach the bot days after the sitting, so draft a
+week once its last sitting has gone out.
 
-Each post comes as three blocks. **Post** is the text, one numbered entry per business,
-without links. **First comment** holds the link to the official record of each
-entry, by the same number, and the data credit. **Tag by hand** lists the people
-an entry names who have a verified LinkedIn profile: type `@` and the name in
-the post, and check the suggestion against the profile URL before picking it.
+Each post comes as three blocks. **Post** is the text, numbered entries without
+links. **First comment** holds the link to the official record of each entry,
+by the same number, the channel's parlinfo.ch page and the data credit. **Tag
+by hand** lists the people an entry names who have a verified LinkedIn profile:
+type `@` and pick the person in place of the name in the post, and check the
+suggestion against the profile URL before picking it.
 
 Without `-state-ref` it reads the logs on disk. It fetches the latest `-fetch`
 votes from each source (200 by default) and warns when they do not reach back
