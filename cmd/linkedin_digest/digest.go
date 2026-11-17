@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
+	"unicode/utf16"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
@@ -91,7 +94,66 @@ type section struct {
 	Groups [][]votes.Vote
 }
 
-// render writes the draft: the post, the first comment and the tagging list.
+// maxPostChars is the most characters LinkedIn takes in a post.
+const maxPostChars = 3000
+
+// shortestSubject is how far a subject may be cut to make a post fit. Below it
+// an entry no longer says what the vote was about, and a post that still does
+// not fit is printed as it is, with a warning.
+const shortestSubject = 60
+
+// sitting is one body's votes on one day: what one LinkedIn post covers.
+type sitting struct {
+	Body   string
+	Date   time.Time
+	Groups [][]votes.Vote
+}
+
+// sittings splits the sections into one sitting per body and day, in the
+// sections' order and by date within each.
+func sittings(sections []section) []sitting {
+	var out []sitting
+	for _, s := range sections {
+		for _, g := range bySitting(s.Groups) {
+			if n := len(out); n > 0 && out[n-1].Body == s.Name && out[n-1].Date.Format("2006-01-02") == g[0].Date.Format("2006-01-02") {
+				out[n-1].Groups = append(out[n-1].Groups, g)
+				continue
+			}
+			out = append(out, sitting{Body: s.Name, Date: g[0].Date, Groups: [][]votes.Vote{g}})
+		}
+	}
+	return out
+}
+
+// render writes the draft: one post per sitting, each with its first comment
+// and its tagging list. It also returns how many entries it shortened to make
+// a post fit.
+//
+// A post per sitting, because a week of one parliament does not fit in one:
+// the Gemeinderat's sitting of 28 October alone came to 3,595 characters
+// against LinkedIn's 3,000.
+//
+// mapper may be nil, which leaves the tagging lists empty.
+func render(sections []section, mapper *contacts.Mapper) (string, int) {
+	all := sittings(sections)
+	var out strings.Builder
+	shortened := 0
+	for i, s := range all {
+		draft, cut := renderSitting(s, mapper, maxPostChars)
+		shortened += cut
+		if len(all) > 1 {
+			if i > 0 {
+				out.WriteString("\n")
+			}
+			fmt.Fprintf(&out, "══════ Beitrag %d von %d ══════\n\n", i+1, len(all))
+		}
+		out.WriteString(draft)
+	}
+	return out.String(), shortened
+}
+
+// renderSitting writes one sitting's post, first comment and tagging list,
+// cutting the longest subjects until the post fits in limit characters.
 //
 // They are three blocks because they are pasted into three places. The post
 // carries no links, since LinkedIn is widely reported to show a post with an
@@ -100,67 +162,106 @@ type section struct {
 // at all: a LinkedIn mention is picked from a dropdown while typing, and the
 // profile URL is there to check that the person picked is the one who sits in
 // the chamber.
-//
-// mapper may be nil, which leaves the tagging list empty.
-func render(sections []section, mapper *contacts.Mapper) string {
-	var post, comment, tags strings.Builder
-	attributions := []string{}
-	seenAttribution := map[string]bool{}
-
-	n := 0
-	for _, s := range sections {
-		if len(s.Groups) == 0 {
-			continue
+func renderSitting(s sitting, mapper *contacts.Mapper, limit int) (string, int) {
+	post, comment, tags, _ := sittingBlocks(s, mapper, 0)
+	cut := 0
+	if chars(post) > limit {
+		// The longest subject length at which the post fits.
+		lo, hi := shortestSubject, longestSubject(s)
+		for lo < hi {
+			mid := (lo + hi + 1) / 2
+			if p, _, _, _ := sittingBlocks(s, mapper, mid); chars(p) <= limit {
+				lo = mid
+			} else {
+				hi = mid - 1
+			}
 		}
-		groups := bySitting(s.Groups)
-		sitting := ""
-		for _, g := range groups {
-			// A heading per sitting, naming the day the parliament voted. A
-			// date range would read as one long sitting, or as a week of them.
-			if d := g[0].DateString(); d != sitting || sitting == "" {
-				sitting = d
-				if post.Len() > 0 {
-					post.WriteString("\n")
-				}
-				fmt.Fprintf(&post, "🗳️ %s\n\n", sittingHeading(s.Name, g[0].Date))
-			}
-			n++
-			subject := groupSubject(g)
-			post.WriteString(groupEntry(n, subject, g))
+		post, comment, tags, cut = sittingBlocks(s, mapper, lo)
+		if n := chars(post); n > limit {
+			log.Printf("%s: the post is %d characters even with every title cut to %d, over LinkedIn's %d; shorten it by hand",
+				sittingHeading(s.Body, s.Date), n, shortestSubject, limit)
+		}
+	}
+	return "━━━ Post ━━━\n" + post +
+		"\n━━━ First comment ━━━\n" + comment +
+		"\n━━━ Tag by hand ━━━\n" + tags, cut
+}
 
-			if link := recordLink(g); link != "" {
-				fmt.Fprintf(&comment, "%d. %s\n", n, link)
-			}
-			if a := g[0].Attribution; a != "" && !seenAttribution[a] {
-				seenAttribution[a] = true
-				attributions = append(attributions, a)
-			}
-			// An election's title names the member being replaced, not the one
-			// elected, so nobody in it is tagged; the other platforms keep the
-			// contact mapping away from these posts for the same reason.
-			if mapper != nil && !votes.IsWahlgeschaeftGroup(g) {
-				for _, m := range mapper.Mentions(subject, "linkedin") {
-					fmt.Fprintf(&tags, "%d. %s: %s\n", n, m.Name, strings.Join(m.URLs, ", "))
-				}
+// sittingBlocks renders the three blocks, with every subject cut to at most
+// maxSubject characters (0 for no limit), and says how many it cut.
+func sittingBlocks(s sitting, mapper *contacts.Mapper, maxSubject int) (post, comment, tags string, cut int) {
+	var p, c, t strings.Builder
+	fmt.Fprintf(&p, "🗳️ %s\n\n", sittingHeading(s.Body, s.Date))
+	var attributions []string
+	seen := map[string]bool{}
+	for i, g := range s.Groups {
+		n := i + 1
+		subject := groupSubject(g)
+		if short := shorten(subject, maxSubject); short != subject {
+			subject = short
+			cut++
+		}
+		p.WriteString(groupEntry(n, subject, g))
+
+		if link := recordLink(g); link != "" {
+			fmt.Fprintf(&c, "%d. %s\n", n, link)
+		}
+		if a := g[0].Attribution; a != "" && !seen[a] {
+			seen[a] = true
+			attributions = append(attributions, a)
+		}
+		// An election's title names the member being replaced, not the one
+		// elected, so nobody in it is tagged; the other platforms keep the
+		// contact mapping away from these posts for the same reason. The
+		// people are read from the subject as posted, so a name cut from it
+		// is not listed.
+		if mapper != nil && !votes.IsWahlgeschaeftGroup(g) {
+			for _, m := range mapper.Mentions(subject, "linkedin") {
+				fmt.Fprintf(&t, "%d. %s: %s\n", n, m.Name, strings.Join(m.URLs, ", "))
 			}
 		}
 	}
-
-	if n == 0 {
-		return ""
-	}
-	// The credit travels with the links: two sources' terms require it, and the
-	// comment is where this post names where its data came from.
+	// The credit travels with the links: two sources' terms require it, and
+	// the comment is where this post names where its data came from.
 	if len(attributions) > 0 {
-		comment.WriteString("\n" + strings.Join(attributions, "\n") + "\n")
+		c.WriteString("\n" + strings.Join(attributions, "\n") + "\n")
 	}
-	if tags.Len() == 0 {
-		tags.WriteString("Nobody named in these votes has a verified LinkedIn profile on file.\n")
+	if t.Len() == 0 {
+		t.WriteString("Nobody named in these votes has a verified LinkedIn profile on file.\n")
 	}
+	return p.String(), c.String(), t.String(), cut
+}
 
-	return "━━━ Post ━━━\n" + post.String() +
-		"\n━━━ First comment ━━━\n" + comment.String() +
-		"\n━━━ Tag by hand ━━━\n" + tags.String()
+// chars counts a post the way LinkedIn's limit does. It is measured in UTF-16
+// units, which is at least the count of characters, so a post this passes is
+// never over the limit.
+func chars(s string) int {
+	return len(utf16.Encode([]rune(strings.TrimRight(s, "\n"))))
+}
+
+// longestSubject is the length of the sitting's longest subject.
+func longestSubject(s sitting) int {
+	longest := 0
+	for _, g := range s.Groups {
+		if n := len([]rune(groupSubject(g))); n > longest {
+			longest = n
+		}
+	}
+	return longest
+}
+
+// shorten cuts s to at most max characters at a word boundary, ending in "…".
+// A max of 0 leaves s as it is.
+func shorten(s string, max int) string {
+	r := []rune(s)
+	if max <= 0 || len(r) <= max {
+		return s
+	}
+	cut := string(r[:max-1])
+	if i := strings.LastIndex(cut, " "); i > 0 {
+		cut = cut[:i]
+	}
+	return strings.TrimRight(cut, " ,;:·–-") + "…"
 }
 
 // bySitting orders groups by sitting date, keeping the source's order within
@@ -180,11 +281,17 @@ func sittingHeading(body string, date time.Time) string {
 	return body + " | Sitzung vom " + voteformat.FormatVoteDate(date)
 }
 
+// filingDate is the " vom 07.01.2026" Stadt Zürich's titles give after the
+// business and its authors.
+var filingDate = regexp.MustCompile(` vom \d{1,2}\.\d{1,2}\.\d{4}`)
+
 // groupSubject is what a group's votes were about: the kind of business and
 // who filed it, where the source says, then the title. It is also the text the
 // tagging list is read from, so the list names the people the entry names.
 func groupSubject(group []votes.Vote) string {
-	subject := voteformat.CleanVoteTitle(group[0].Title)
+	// The date a business was filed means nothing in a digest of when it was
+	// voted on, and on a Gemeinderat title it is a tenth of the length.
+	subject := filingDate.ReplaceAllString(voteformat.CleanVoteTitle(group[0].Title), "")
 	if prefix := voteformat.GroupPrefixLine(group); prefix != "" {
 		subject = prefix + ": " + subject
 	}

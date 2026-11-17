@@ -94,7 +94,10 @@ func main() {
 		mapper = nil
 	}
 
-	draft := render(sections, mapper)
+	draft, shortened := render(sections, mapper)
+	if shortened > 0 {
+		log.Printf("%d title(s) cut to fit LinkedIn's %d characters; the links in the first comment have them in full", shortened, maxPostChars)
+	}
 	if draft == "" {
 		log.Fatalf("No posted votes for channel %q from sittings %s to %s. Are the vote logs on disk? See -state-ref.", channel.Key, w.From, w.To)
 	}

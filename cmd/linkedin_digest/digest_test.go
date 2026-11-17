@@ -80,22 +80,25 @@ func TestRender(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// One sitting, so one post: the Auswahl fixture is dated another day.
+	auswahl := testfixtures.AuswahlVote()
+	auswahl[0].Date = testfixtures.VoteWithMentions()[0].Date
 	sections := []section{
 		{Name: "Gemeinderat Stadt Zürich", Groups: [][]votes.Vote{
 			testfixtures.VoteWithMentions(),
 			testfixtures.MultiVoteGroup(),
-			testfixtures.AuswahlVote(),
+			auswahl,
 		}},
 		{Name: "Kantonsrat Zürich"},
 	}
-	got := render(sections, mapper)
+	got, _ := render(sections, mapper)
 
 	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
 	comment, tags, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
 
 	for _, want := range []string{
 		"🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n",
-		"1. ✅ Angenommen (80 Ja, 30 Nein) · Postulat von Anna Graff (SP) vom 18.09.2024",
+		"1. ✅ Angenommen (80 Ja, 30 Nein) · Postulat von Anna Graff (SP) betreffend",
 		"2. Teilrevision der Gemeindeordnung",
 		"   ✅ Angenommen (90 Ja, 20 Nein) · Einleitungsartikel\n",
 		"   ❌ Abgelehnt (40 Ja, 70 Nein) · Schlussabstimmung\n",
@@ -126,7 +129,7 @@ func TestRender(t *testing.T) {
 }
 
 func TestRenderWithoutVotesIsEmpty(t *testing.T) {
-	if got := render([]section{{Name: "Nationalrat"}}, nil); got != "" {
+	if got, _ := render([]section{{Name: "Nationalrat"}}, nil); got != "" {
 		t.Errorf("render() = %q, want nothing", got)
 	}
 }
@@ -148,7 +151,7 @@ func TestRenderElection(t *testing.T) {
 	}
 	sections := []section{{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{testfixtures.KantonsratWahlgeschaeft()}}}
 
-	got := render(sections, mapper)
+	got, _ := render(sections, mapper)
 
 	rest, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
 	_, comment, _ := strings.Cut(rest, "━━━ First comment ━━━")
@@ -181,18 +184,72 @@ func TestGroupEntrySaysWhatJaSupported(t *testing.T) {
 	}
 }
 
-func TestRenderHeadsEachSitting(t *testing.T) {
+func TestRenderPostsEachSittingOnItsOwn(t *testing.T) {
 	first := testfixtures.SingleVoteAngenommen()
 	second := testfixtures.SingleVoteAbgelehnt()
 	second[0].Date = first[0].Date.AddDate(0, 0, 7)
 	// The later sitting first, as a source might return them.
 	sections := []section{{Name: "Gemeinderat Stadt Zürich", Groups: [][]votes.Vote{second, first}}}
 
-	got := render(sections, nil)
+	got, _ := render(sections, nil)
 
-	want := "🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n\n1. ✅ Angenommen" +
-		"(.|\n)*" + "\n🗳️ Gemeinderat Stadt Zürich | Sitzung vom 22.06.2025\n\n2. ❌ Abgelehnt"
+	// Each post numbers from 1 and has its own first comment.
+	want := "══════ Beitrag 1 von 2 ══════\n\n━━━ Post ━━━\n🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n\n1. ✅ Angenommen" +
+		"(.|\n)*━━━ First comment ━━━\n1. " +
+		"(.|\n)*══════ Beitrag 2 von 2 ══════\n\n━━━ Post ━━━\n🗳️ Gemeinderat Stadt Zürich | Sitzung vom 22.06.2025\n\n1. ❌ Abgelehnt" +
+		"(.|\n)*━━━ First comment ━━━\n1. "
 	if !regexp.MustCompile(want).MatchString(got) {
-		t.Errorf("render() did not head each sitting in date order:\n%s", got)
+		t.Errorf("render() did not give each sitting a post of its own, in date order:\n%s", got)
+	}
+}
+
+func TestGroupSubjectDropsTheFilingDate(t *testing.T) {
+	got := groupSubject(testfixtures.VoteWithMentions())
+
+	if want := "Postulat von Anna Graff (SP) betreffend"; !strings.HasPrefix(got, want) {
+		t.Errorf("groupSubject() = %q, want it to start %q", got, want)
+	}
+}
+
+func TestShortenCutsAtAWord(t *testing.T) {
+	for _, c := range []struct {
+		in   string
+		max  int
+		want string
+	}{
+		{"Verbesserung der Sicherheit, rund um den Hauptbahnhof", 30, "Verbesserung der Sicherheit…"},
+		{"kurz", 30, "kurz"},
+		{"Verbesserung der Sicherheit", 0, "Verbesserung der Sicherheit"},
+	} {
+		if got := shorten(c.in, c.max); got != c.want {
+			t.Errorf("shorten(%q, %d) = %q, want %q", c.in, c.max, got, c.want)
+		}
+		if n := len([]rune(shorten(c.in, c.max))); c.max > 0 && n > c.max {
+			t.Errorf("shorten(%q, %d) is %d characters", c.in, c.max, n)
+		}
+	}
+}
+
+func TestRenderSittingFitsTheLimit(t *testing.T) {
+	var groups [][]votes.Vote
+	for i := 0; i < 6; i++ {
+		groups = append(groups, testfixtures.SingleVoteAngenommen())
+	}
+	s := sitting{Body: "Gemeinderat Stadt Zürich", Date: groups[0][0].Date, Groups: groups}
+	full, _, _, _ := sittingBlocks(s, nil, 0)
+	limit := chars(full) - 200
+
+	got, cut := renderSitting(s, nil, limit)
+
+	post, _, _ := strings.Cut(strings.TrimPrefix(got, "━━━ Post ━━━\n"), "\n━━━ First comment")
+	if n := chars(post); n > limit {
+		t.Errorf("post is %d characters, over the limit of %d:\n%s", n, limit, post)
+	}
+	if cut != 6 || !strings.Contains(post, "…") {
+		t.Errorf("cut %d subjects, want all 6 shortened with an ellipsis:\n%s", cut, post)
+	}
+	// Cut no further than it had to: one character more would not fit.
+	if p, _, _, _ := sittingBlocks(s, nil, len([]rune(groupSubject(groups[0])))); chars(p) <= limit {
+		t.Fatal("test is wrong: the full post fits")
 	}
 }

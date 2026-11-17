@@ -166,11 +166,14 @@ consecutive weeks never share a vote. For a week that has passed:
 go run ./cmd/linkedin_digest -state-ref origin/state-log -until 2026-11-10
 ```
 
-Each sitting gets a heading of its own with its date. A vote the bot has not
+Each sitting is a post of its own, headed with its date: a week of the
+Gemeinderat does not fit in LinkedIn's 3,000 characters. Titles drop the date
+the business was filed, and where a post is still too long its longest titles
+are cut at a word, with a warning saying how many. A vote the bot has not
 posted yet is not in the draft: the Kantonsrat's votes reach the bot days after
 the sitting, so draft a week once its last sitting has gone out.
 
-It prints three blocks. **Post** is the text, one numbered entry per business,
+Each post comes as three blocks. **Post** is the text, one numbered entry per business,
 without links. **First comment** holds the link to the official record of each
 entry, by the same number, and the data credit. **Tag by hand** lists the people
 an entry names who have a verified LinkedIn profile: type `@` and the name in
