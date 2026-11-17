@@ -14,9 +14,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/url"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/config"
@@ -53,6 +53,7 @@ func main() {
 	// and cannot be stale.
 	all := flag.Bool("all", false, "list every business of a sitting, not only its rejections and closest votes")
 	cardsDir := flag.String("cards", "out/linkedin", "directory for each entry's first card, to attach to its post (empty: no cards)")
+	openCards := flag.Bool("open", runtime.GOOS == "darwin", "open the cards directory in Finder once written (macOS)")
 	stateRef := flag.String("state-ref", "", "git ref to read the vote logs from, e.g. origin/state-log (default: the logs on disk)")
 	flag.Parse()
 
@@ -120,12 +121,18 @@ func main() {
 			log.Fatalf("writing cards: %v", err)
 		}
 		log.Printf("Wrote %d card file(s): attach <date>-<body>-<n>.jpg in the order of n, with the alt text from <date>-<body>-alt.txt", len(written))
-		// A file URL, which a terminal opens on a click: in Finder on a Mac.
 		dir, err := filepath.Abs(*cardsDir)
 		if err != nil {
 			dir = *cardsDir
 		}
-		log.Printf("Cards: %s", (&url.URL{Scheme: "file", Path: dir + "/"}).String())
+		log.Printf("Cards: %s", dir)
+		// The cards are attached from a file picker, and not every terminal
+		// makes a path clickable, so the folder is opened for them.
+		if *openCards {
+			if err := exec.Command("open", dir).Run(); err != nil {
+				log.Printf("Could not open %s: %v", dir, err)
+			}
+		}
 	}
 }
 

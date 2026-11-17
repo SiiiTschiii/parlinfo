@@ -190,7 +190,8 @@ directory, `-cards ""` for none): the first card of each entry's business, the
 one the bot leads with elsewhere, as `<date>-<body>-<n>.jpg` by the entry's
 number, and each card's alt text in `<date>-<body>-alt.txt`. Add them to the
 post in order of the number and paste each alt text under the image's
-**Alternativtext**.
+**Alternativtext**. On a Mac the folder opens in Finder once written; `-open=false`
+leaves it closed.
 
 Without `-state-ref` it reads the logs on disk. It fetches the latest `-fetch`
 votes from each source (200 by default) and warns when they do not reach back
