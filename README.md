@@ -27,7 +27,7 @@ A civic tech bot that brings parliamentary decisions to social media and tags th
 
 We built it because a healthy democracy rests on two things that are easy to lose sight of:
 
-- **Participation**: taking part without sitting in the public gallery or digging through the parliament's website: the decisions come to the people, not the other way round.
+- **Participation**: following along without sitting in the public gallery or digging through the parliament's website: the decisions come to the people, not the other way round.
 - **Accountability**: what parliament spends its time on: which motions, postulates and petitions get filed and what becomes of them, visible right where people already are. More of them is not the same as better work.
 
 **🇨🇭 Auf Deutsch**
@@ -36,7 +36,7 @@ Ein Civic-Tech-Bot, der parlamentarische Entscheide auf Social Media bringt und 
 
 Wir haben das Projekt ins Leben gerufen, weil eine gesunde Demokratie auf zwei Dingen beruht, die leicht aus dem Blick geraten:
 
-- **Partizipation**: mitreden, ohne auf der Zuschauertribüne zu sitzen oder die Parlamentswebsite zu durchsuchen: Die Entscheide kommen zu den Bürgerinnen und Bürgern, nicht umgekehrt.
+- **Partizipation**: mitverfolgen, ohne auf der Zuschauertribüne zu sitzen oder die Parlamentswebsite zu durchsuchen: Die Entscheide kommen zu den Bürgerinnen und Bürgern, nicht umgekehrt.
 - **Rechenschaft**: worauf das Parlament seine Zeit verwendet: welche Motionen, Postulate und Petitionen eingereicht werden und was aus ihnen wird, sichtbar dort, wo die Menschen ohnehin schon sind. Denn mehr Vorstösse heisst noch nicht bessere Arbeit.
 
 ## Covered Bodies
