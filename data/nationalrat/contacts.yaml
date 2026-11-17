@@ -755,6 +755,9 @@ contacts:
   - name: Lorenzo Quadri
   - name: Loïc Dobler
   - name: Lukas Reimann
+    instagram:
+      - url: https://www.instagram.com/lukas_reimann/
+        verified: true
   - name: Léonore Porchet
     instagram:
       - url: https://www.instagram.com/leonoreporchet/
