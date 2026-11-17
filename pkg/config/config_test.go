@@ -5,8 +5,23 @@ import (
 	"testing"
 	"time"
 
+	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
+
+// Every chamber's contacts file is loaded for every other chamber's posts, which
+// only holds if a chamber added here is added to contacts.Rosters too.
+func TestEveryChamberIsARoster(t *testing.T) {
+	rosters := map[string]bool{}
+	for _, k := range contacts.Rosters() {
+		rosters[k] = true
+	}
+	for _, k := range ChamberKeys() {
+		if !rosters[k] {
+			t.Errorf("chamber %s is missing from contacts.Rosters, so its members go untagged in other bodies' posts", k)
+		}
+	}
+}
 
 func TestValidate(t *testing.T) {
 	if err := Validate(); err != nil {
