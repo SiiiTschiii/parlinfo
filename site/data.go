@@ -141,8 +141,8 @@ var Texts = map[string]Text{
 			"ch": "Nationalrat",
 		},
 		BrandLead: map[string]string{
-			"zh": "Jede Abstimmung im Gemeinderat der Stadt Zürich und im Kantonsrat Zürich – als Post auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
-			"ch": "Jede Abstimmung im Nationalrat – als Post auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
+			"zh": "Abstimmungen im Gemeinderat der Stadt Zürich und im Kantonsrat Zürich – als Posts auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
+			"ch": "Abstimmungen im Nationalrat – als Posts auf Social Media, mit den Politikerinnen und Politikern markiert, die den Vorstoss verantworten.",
 		},
 		BrandNote: map[string]string{
 			"ch": "Die Beiträge erscheinen auf Deutsch, Französisch und Italienisch, je auf eigenen Accounts.",
@@ -172,8 +172,8 @@ var Texts = map[string]Text{
 			"ch": "Conseil national",
 		},
 		BrandLead: map[string]string{
-			"zh": "Chaque vote du Gemeinderat de la ville de Zurich et du Kantonsrat zurichois – publié sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
-			"ch": "Chaque vote du Conseil national – publié sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
+			"zh": "Les votes du Gemeinderat de la ville de Zurich et du Kantonsrat zurichois – publiés sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
+			"ch": "Les votes du Conseil national – publiés sur les réseaux sociaux, en mentionnant les élu·e·s qui portent l’intervention.",
 		},
 		BrandNote: map[string]string{
 			"ch": "Les publications paraissent en allemand, en français et en italien, chaque langue sur ses propres comptes.",
@@ -203,8 +203,8 @@ var Texts = map[string]Text{
 			"ch": "Consiglio nazionale",
 		},
 		BrandLead: map[string]string{
-			"zh": "Ogni votazione del Gemeinderat della città di Zurigo e del Kantonsrat zurighese – pubblicata sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
-			"ch": "Ogni votazione del Consiglio nazionale – pubblicata sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
+			"zh": "Le votazioni del Gemeinderat della città di Zurigo e del Kantonsrat zurighese – pubblicate sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
+			"ch": "Le votazioni del Consiglio nazionale – pubblicate sui social media, menzionando le e i politici che firmano l’atto parlamentare.",
 		},
 		BrandNote: map[string]string{
 			"ch": "I post sono pubblicati in tedesco, francese e italiano, ogni lingua sui propri account.",
