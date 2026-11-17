@@ -27,6 +27,9 @@ const (
 	// for a caption before publishing it. The bot posts at most a few votes per
 	// run, so a post that went out despite an error is among the newest.
 	recentMediaChecked = 10
+	// publishAttempts bounds the publishes of one container while Instagram
+	// answers that its media is not ready, pollInterval apart.
+	publishAttempts = 4
 )
 
 // CreateMediaContainerFunc is the signature for creating an IG media container.
@@ -269,7 +272,7 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 
 	// Publish
 	fmt.Print("🚀 Publishing...\n")
-	mediaID, err := p.publishContainerFunc(publishID)
+	mediaID, err := p.publishWhenReady(publishID)
 	if err != nil {
 		// Instagram has answered a publish with a 403 ("action is blocked")
 		// and published the post anyway. Count it if it is there.
@@ -308,6 +311,28 @@ func (p *InstagramPlatform) postReal(igContent *InstagramContent) (votelog.PostR
 
 	p.postsThisRun++
 	return post, p.postsThisRun < p.maxPostsPerRun, nil
+}
+
+// publishWhenReady publishes a container, trying again while Instagram answers
+// that its media is not ready yet. That answer can follow a container status of
+// FINISHED, and an attempt a few seconds later goes through. Trying again is
+// safe from duplicates: a container publishes once at most, so a repeat of an
+// attempt that did go out is refused rather than posted twice. Any other error
+// is returned at once.
+func (p *InstagramPlatform) publishWhenReady(containerID string) (string, error) {
+	var err error
+	for attempt := 1; attempt <= publishAttempts; attempt++ {
+		var mediaID string
+		mediaID, err = p.publishContainerFunc(containerID)
+		if err == nil || !igapi.IsMediaNotReady(err) {
+			return mediaID, err
+		}
+		if attempt < publishAttempts {
+			fmt.Printf("   ⏳ Media not ready for publishing yet (attempt %d of %d), waiting...\n", attempt, publishAttempts)
+			p.sleepFunc(pollInterval)
+		}
+	}
+	return "", err
 }
 
 // cleanupHostedImages removes a published post's images from GitHub Pages.

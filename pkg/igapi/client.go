@@ -2,6 +2,7 @@ package igapi
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,6 +25,44 @@ const (
 	// StatusExpired indicates the container has expired.
 	StatusExpired = "EXPIRED"
 )
+
+// subcodeMediaNotReady is the error_subcode Instagram gives a publish of a
+// container whose media it has not finished preparing ("Media ID is not
+// available"). It can come after the container already reports FINISHED, and
+// the same publish a few seconds later goes through.
+const subcodeMediaNotReady = 2207027
+
+// APIError is a non-200 answer from the Graph API, with the error code and
+// subcode it carried, if its body could be read.
+type APIError struct {
+	Op         string // what was being done, as in "publish container"
+	StatusCode int
+	Code       int
+	Subcode    int
+	Body       string
+}
+
+func (e *APIError) Error() string {
+	return fmt.Sprintf("%s returned status %d: %s", e.Op, e.StatusCode, e.Body)
+}
+
+func newAPIError(op string, status int, body []byte) *APIError {
+	var parsed struct {
+		Error struct {
+			Code    int `json:"code"`
+			Subcode int `json:"error_subcode"`
+		} `json:"error"`
+	}
+	_ = json.Unmarshal(body, &parsed) // an unreadable body leaves the codes at zero
+	return &APIError{Op: op, StatusCode: status, Code: parsed.Error.Code, Subcode: parsed.Error.Subcode, Body: string(body)}
+}
+
+// IsMediaNotReady reports whether err is Instagram refusing a publish because
+// the container's media is not ready yet, which a later attempt can get past.
+func IsMediaNotReady(err error) bool {
+	var apiErr *APIError
+	return errors.As(err, &apiErr) && apiErr.Subcode == subcodeMediaNotReady
+}
 
 // Client is an Instagram Graph API client for carousel publishing.
 type Client struct {
@@ -202,7 +241,7 @@ func (c *Client) PublishContainer(containerID string) (string, error) {
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("publish container returned status %d: %s", resp.StatusCode, string(body))
+		return "", newAPIError("publish container", resp.StatusCode, body)
 	}
 
 	var result idResponse
