@@ -436,7 +436,7 @@ func sittingBlocks(s sitting, mapper *contacts.Mapper, o options, maxSubject int
 		if ps[0].heading != "" {
 			every = "Alle " + plural(len(s.Groups), "Geschäft", "Geschäfte")
 		}
-		fmt.Fprintf(&p, "\n%s einzeln, mit Resultat nach Fraktion: Link im ersten Kommentar.\n", every)
+		fmt.Fprintf(&p, "\n%s einzeln, auf dem Social-Media-Kanal nach Wahl: Link im ersten Kommentar.\n", every)
 		fmt.Fprintf(&c, "Alle Abstimmungen einzeln: %s\n", o.Site)
 	}
 	// The credit travels with the links: two sources' terms require it, and

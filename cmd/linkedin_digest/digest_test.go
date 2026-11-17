@@ -333,7 +333,7 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 		"Abgelehnt:\n1. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
 		"Am knappsten:\n2. ✅ 61 Ja, 59 Nein · Postulat g2\n3. ✅ 66 Ja, 60 Nein · Postulat g6\n" +
 		"4. ✅ 70 Ja, 50 Nein · Postulat g4\n5. ✅ 90 Ja, 30 Nein · Postulat g1\n\n" +
-		"Alle 7 Geschäfte einzeln, mit Resultat nach Fraktion: Link im ersten Kommentar.\n"
+		"Alle 7 Geschäfte einzeln, auf dem Social-Media-Kanal nach Wahl: Link im ersten Kommentar.\n"
 	if !strings.Contains(post, want) {
 		t.Errorf("post = %s\nwant it to contain:\n%s", post, want)
 	}
