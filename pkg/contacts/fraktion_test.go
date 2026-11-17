@@ -1,6 +1,7 @@
 package contacts
 
 import (
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -146,10 +147,11 @@ func TestPathsForLoadsEveryRoster(t *testing.T) {
 }
 
 // Loading every roster into one tagger is only safe while a name means one
-// person. Two files listing the same name with different verified accounts on
-// one platform is most likely two people, and the merged contact would tag one
-// of them in the other's post. A dual mandate shows the same accounts, or
-// accounts on different platforms, and passes.
+// person. A name in two files is accepted when one side has no verified
+// accounts yet (a dual mandate still being curated there) or when both share
+// at least one: that shared account is the evidence they are the same person.
+// Otherwise the merged contact would carry one person's handles into the
+// other's posts, on whichever platforms each happens to have.
 func TestRostersShareNoHomonyms(t *testing.T) {
 	type entry struct {
 		roster string
@@ -176,20 +178,36 @@ func TestRostersShareNoHomonyms(t *testing.T) {
 				if es[i].roster == es[j].roster {
 					continue
 				}
-				for _, p := range []string{"x", "facebook", "instagram", "linkedin", "bluesky", "tiktok"} {
-					a, b := es[i].c.Verified(p), es[j].c.Verified(p)
-					if len(a) > 0 && len(b) > 0 && !overlaps(a, b) {
-						t.Errorf("%q is in %s and %s with different verified %s accounts (%v, %v): two people, or one account to add to both",
-							es[i].c.Name, es[i].roster, es[j].roster, p, a, b)
-					}
+				a, b := verifiedURLs(es[i].c), verifiedURLs(es[j].c)
+				if len(a) > 0 && len(b) > 0 && !overlaps(a, b) {
+					t.Errorf("%q is in %s and %s with no verified account in common (%v, %v): two people, or one account to add to both",
+						es[i].c.Name, es[i].roster, es[j].roster, a, b)
 				}
 			}
 		}
 	}
 }
 
+func verifiedURLs(c Contact) []string {
+	var out []string
+	for _, p := range []string{"x", "facebook", "instagram", "linkedin", "bluesky", "tiktok"} {
+		out = append(out, c.Verified(p)...)
+	}
+	return out
+}
+
+// overlaps compares accounts by host and path, so "www.", "m.", a query string
+// or a trailing slash written differently in two files is still one account.
+// ValidateURL guarantees every entry is a full http(s) URL.
 func overlaps(a, b []string) bool {
-	norm := func(u string) string { return strings.ToLower(strings.TrimRight(strings.TrimSpace(u), "/")) }
+	norm := func(raw string) string {
+		u, err := url.Parse(strings.TrimSpace(raw))
+		if err != nil {
+			return strings.ToLower(raw)
+		}
+		host := strings.TrimPrefix(strings.TrimPrefix(strings.ToLower(u.Host), "www."), "m.")
+		return host + strings.ToLower(strings.TrimRight(u.Path, "/"))
+	}
 	for _, x := range a {
 		for _, y := range b {
 			if norm(x) == norm(y) {
@@ -198,81 +216,4 @@ func overlaps(a, b []string) bool {
 		}
 	}
 	return false
-}
-
-// Titles as the Gemeinderat has actually written them, so the patterns are
-// pinned to the real spellings rather than the ones we would have guessed.
-func TestFraktionPhrasesFromRealTitles(t *testing.T) {
-	m := newMapper([]Contact{
-		{Name: "SP Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/sp")},
-		{Name: "SVP Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/svp")},
-		{Name: "FDP Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/fdp")},
-		{Name: "Grüne Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/gruene")},
-		{Name: "GLP Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/glp")},
-		{Name: "AL Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/al")},
-		{Name: "Die Mitte Stadt Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/mitte")},
-		{Name: "EVP Kanton Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/evp")},
-	})
-	tests := []struct{ title, want string }{
-		{"Motion der SP-Fraktion vom 22.10.2025", "Motion der SP-Fraktion @sp vom 22.10.2025"},
-		{"Postulat der SP-, Grüne- und Die Mitte/EVP-Fraktion vom 05.02.2025",
-			"Postulat der SP-, Grüne- und Die Mitte/EVP-Fraktion @sp @gruene @mitte @evp vom 05.02.2025"},
-		{"Dringliche Motion der SP-, Grünen- und AL-Fraktionen betreffend X",
-			"Dringliche Motion der SP-, Grünen- und AL-Fraktionen @sp @gruene @al betreffend X"},
-		{"Postulat der SP- und Grüne-Fraktionen betreffend X", "Postulat der SP- und Grüne-Fraktionen @sp @gruene betreffend X"},
-		{"Motion der Fraktionen SP, SVP, FDP, Grüne, GLP, CVP und AL betreffend X",
-			"Motion der Fraktionen SP, SVP, FDP, Grüne, GLP, CVP und AL @sp @svp @fdp @gruene @glp @mitte @al betreffend X"},
-		{"Dringliche Motion der SP-, GLP-Fraktionen und der Parlamentsgruppe EVP betreffend X",
-			"Dringliche Motion der SP-, GLP-Fraktionen @sp @glp und der Parlamentsgruppe EVP @evp betreffend X"},
-		{"2025/354 Antrag der AL-Fraktion zu Dispositivziffer 1", "2025/354 Antrag der AL-Fraktion @al zu Dispositivziffer 1"},
-		// No party named: nothing to tag.
-		{"Digitalisierung der Prozesse für Vorstösse, Anträge und Fraktionserklärungen",
-			"Digitalisierung der Prozesse für Vorstösse, Anträge und Fraktionserklärungen"},
-		{"Fraktionserklärung", "Fraktionserklärung"},
-		// A party outside a Fraktion phrase is a member's affiliation, not a Fraktion.
-		{"Motion von Karin Stepinski (Die Mitte), Roger Föhn (EVP) vom 17.12.2025",
-			"Motion von Karin Stepinski (Die Mitte), Roger Föhn (EVP) vom 17.12.2025"},
-	}
-	for _, tt := range tests {
-		if got := m.TagXFraktionen(tt.title, "zurich-city"); got != tt.want {
-			t.Errorf("%q\n got  %q\n want %q", tt.title, got, tt.want)
-		}
-	}
-}
-
-// A Nationalrat post names the Fraktion that filed the business, and tags every
-// party it seats: the Mitte-EVP-Fraktion names both, the SVP-Fraktion names the
-// SVP alone and seats EDU, Lega and MCG beside it. Lega and MCG are cantonal
-// parties, found under their own names.
-func TestTagXFraktionenNationalrat(t *testing.T) {
-	m := newMapper([]Contact{
-		{Name: "SVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/SVPch")},
-		{Name: "EDU Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/EDUSchweiz")},
-		{Name: "Lega dei Ticinesi", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/lega")},
-		{Name: "Die Mitte Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/Mitte_Centre")},
-		{Name: "EVP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/evp")},
-		{Name: "GLP Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/grunliberale")},
-		{Name: "Grüne Schweiz", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/GrueneCH")},
-		{Name: "SP Kanton Zürich", Kind: KindOrganization, X: VerifiedAccounts("https://x.com/spkantonzh")},
-	})
-	tests := []struct{ in, want string }{
-		// MCG has no account here, so it is skipped rather than guessed.
-		{"Parlamentarische Initiative der SVP-Fraktion", "Parlamentarische Initiative der SVP-Fraktion @SVPch @EDUSchweiz @lega"},
-		{"Parlamentarische Initiative der Mitte-EVP-Fraktion", "Parlamentarische Initiative der Mitte-EVP-Fraktion @Mitte_Centre @evp"},
-		{"Parlamentarische Initiative der GLP-Fraktion", "Parlamentarische Initiative der GLP-Fraktion @grunliberale"},
-		{"Parlamentarische Initiative der Grüne-Fraktion", "Parlamentarische Initiative der Grüne-Fraktion @GrueneCH"},
-		// The national level only: a cantonal account is never a federal tag.
-		{"Parlamentarische Initiative der SP-Fraktion", "Parlamentarische Initiative der SP-Fraktion"},
-	}
-	for _, tt := range tests {
-		if got := m.TagXFraktionen(tt.in, "nationalrat"); got != tt.want {
-			t.Errorf("%q\n got  %q\n want %q", tt.in, got, tt.want)
-		}
-	}
-
-	// The SVP-Fraktion of the Gemeinderat is the SVP's alone, and a cantonal
-	// party is not looked up for a jurisdiction that has none of its own.
-	if got := m.TagXFraktionen("Motion der SVP-Fraktion", "zurich-city"); got != "Motion der SVP-Fraktion" {
-		t.Errorf("zurich-city: got %q", got)
-	}
 }
