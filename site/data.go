@@ -131,8 +131,8 @@ var Texts = map[string]Text{
 		Tagline:     "Parlamentsentscheide, dort wo die Menschen sind.",
 		Intro:       "parlinfo bringt die Entscheide Schweizer Parlamente auf Social Media, weil eine gesunde Demokratie auf zwei Dingen beruht, die leicht aus dem Blick geraten:",
 		Pillars: [2]Pillar{
-			{"Partizipation", "Bürgerinnen und Bürger, die die Entscheide, die sie betreffen, mitverfolgen und mitgestalten können."}, //nolint:misspell // German: "Partizipation"
-			{"Rechenschaft", "Was Politikerinnen und Politiker wirklich tun, vom Abstimmungsverhalten bis zu den Vorstössen, die sie mittragen, sichtbar gemacht."},
+			{"Partizipation", "Mitreden, ohne auf der Zuschauertribüne zu sitzen oder die Parlamentswebsite zu durchsuchen: Die Entscheide kommen zu den Bürgerinnen und Bürgern, nicht umgekehrt."}, //nolint:misspell // German: "Partizipation"
+			{"Rechenschaft", "Worauf das Parlament seine Zeit verwendet: welche Vorstösse eingereicht werden und was aus ihnen wird. Denn mehr Vorstösse heisst noch nicht bessere Arbeit."},
 		},
 		Choose: "Parlamente",
 		BrandBodies: map[string]string{
@@ -158,8 +158,8 @@ var Texts = map[string]Text{
 		Tagline:     "Les décisions des parlements, là où les gens se trouvent.",
 		Intro:       "parlinfo publie les décisions des parlements suisses sur les réseaux sociaux, parce qu’une démocratie saine repose sur deux choses que l’on perd facilement de vue :",
 		Pillars: [2]Pillar{
-			{"Participation", "Des citoyennes et citoyens qui peuvent suivre les décisions qui les concernent, et y prendre part."},
-			{"Responsabilité", "Ce que font réellement les élu·e·s, de leurs votes aux interventions qu’ils et elles soutiennent, rendu visible."},
+			{"Participation", "Prendre part sans s’asseoir à la tribune ni fouiller le site du parlement : les décisions viennent aux citoyennes et citoyens, et non l’inverse."},
+			{"Responsabilité", "Ce à quoi le parlement consacre son temps : quelles interventions sont déposées et ce qu’il en advient. Car davantage d’interventions ne veut pas dire meilleur travail."},
 		},
 		Choose: "Parlements",
 		BrandBodies: map[string]string{
@@ -185,8 +185,8 @@ var Texts = map[string]Text{
 		Tagline:     "Le decisioni dei parlamenti, là dove si trovano le persone.",
 		Intro:       "parlinfo porta le decisioni dei parlamenti svizzeri sui social media, perché una democrazia sana poggia su due cose che si perdono facilmente di vista:",
 		Pillars: [2]Pillar{
-			{"Partecipazione", "Cittadine e cittadini che possono seguire le decisioni che li riguardano e prendervi parte."},
-			{"Responsabilità", "Ciò che fanno davvero le e i politici, da come votano agli atti parlamentari che sostengono, reso visibile."},
+			{"Partecipazione", "Partecipare senza sedersi in tribuna né cercare sul sito del parlamento: sono le decisioni ad arrivare alle cittadine e ai cittadini, non il contrario."},
+			{"Responsabilità", "A cosa dedica il suo tempo il parlamento: quali atti parlamentari vengono presentati e che fine fanno. Perché più atti non significa lavoro migliore."},
 		},
 		Choose: "Parlamenti",
 		BrandBodies: map[string]string{
