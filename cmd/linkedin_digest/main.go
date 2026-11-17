@@ -14,7 +14,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/url"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/config"
@@ -117,7 +119,13 @@ func main() {
 		if err != nil {
 			log.Fatalf("writing cards: %v", err)
 		}
-		log.Printf("Wrote %d card file(s) to %s: attach <date>-<body>-<n>.jpg in the order of n, with the alt text from <date>-<body>-alt.txt", len(written), *cardsDir)
+		log.Printf("Wrote %d card file(s): attach <date>-<body>-<n>.jpg in the order of n, with the alt text from <date>-<body>-alt.txt", len(written))
+		// A file URL, which a terminal opens on a click: in Finder on a Mac.
+		dir, err := filepath.Abs(*cardsDir)
+		if err != nil {
+			dir = *cardsDir
+		}
+		log.Printf("Cards: %s", (&url.URL{Scheme: "file", Path: dir + "/"}).String())
 	}
 }
 
