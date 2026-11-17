@@ -132,7 +132,8 @@ const maxListed = 5
 // options shape a draft.
 type options struct {
 	// Site is the parlinfo.ch page listing the accounts that post every vote,
-	// which the first comment points to. Empty leaves the pointer out.
+	// which is the first comment's one link. Without one the comment links
+	// each entry's official record instead.
 	Site string
 	// All lists every business of a sitting, however many there are.
 	All bool
@@ -170,8 +171,11 @@ func render(sections []section, mapper *contacts.Mapper, o options) (string, int
 //
 // They are three blocks because they are pasted into three places. The post
 // carries no links, since LinkedIn is widely reported to show a post with an
-// outside link to fewer people; the links go in the first comment, numbered
-// like the post so a reader can match them. The tagging list is never pasted
+// outside link to fewer people; the link goes in the first comment. It is the
+// channel's parlinfo.ch page, which keeps readers with the project's own
+// accounts, where every vote has its card and its result by party; only a
+// channel without one gets each entry's official record, numbered like the
+// post so a reader can match them. The tagging list is never pasted
 // at all: a LinkedIn mention is picked from a dropdown while typing, and the
 // profile URL is there to check that the person picked is the one who sits in
 // the chamber.
@@ -408,7 +412,7 @@ func sittingBlocks(s sitting, mapper *contacts.Mapper, o options, maxSubject int
 				p.WriteString(highlightEntry(n, subject, g, e.vote))
 			}
 
-			if link := recordLink(g); link != "" {
+			if link := recordLink(g); link != "" && o.Site == "" {
 				fmt.Fprintf(&c, "%d. %s\n", n, link)
 			}
 			if a := g[0].Attribution; a != "" && !seen[a] {
@@ -433,7 +437,7 @@ func sittingBlocks(s sitting, mapper *contacts.Mapper, o options, maxSubject int
 			every = "Alle " + plural(len(s.Groups), "Geschäft", "Geschäfte")
 		}
 		fmt.Fprintf(&p, "\n%s einzeln, mit Resultat nach Fraktion: Link im ersten Kommentar.\n", every)
-		fmt.Fprintf(&c, "\nAlle Abstimmungen einzeln: %s\n", o.Site)
+		fmt.Fprintf(&c, "Alle Abstimmungen einzeln: %s\n", o.Site)
 	}
 	// The credit travels with the links: two sources' terms require it, and
 	// the comment is where this post names where its data came from.
@@ -592,7 +596,8 @@ func tally(v votes.Vote) string {
 		voteformat.FormatVoteCount(c.Ja), w.Yes, voteformat.FormatVoteCount(c.Nein), w.No)
 }
 
-// recordLink is the one link a group gets in the first comment: the official
+// recordLink is the one link a group gets in a first comment without a
+// parlinfo.ch page: the official
 // record of the vote where the parliament publishes one, otherwise the page of
 // the business. An election gets the Bulletin.
 func recordLink(group []votes.Vote) string {

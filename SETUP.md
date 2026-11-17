@@ -177,8 +177,10 @@ draft: the Kantonsrat's votes reach the bot days after the sitting, so draft a
 week once its last sitting has gone out.
 
 Each post comes as three blocks. **Post** is the text, numbered entries without
-links. **First comment** holds the link to the official record of each entry,
-by the same number, the channel's parlinfo.ch page and the data credit. **Tag
+links. **First comment** holds the channel's parlinfo.ch page, which leads to the
+accounts where every vote has its card, and the data credit; a channel without
+a parlinfo.ch page gets the official record of each entry instead, by the same
+number. **Tag
 by hand** lists the people an entry names who have a verified LinkedIn profile:
 type `@` and pick the person in place of the name in the post, and check the
 suggestion against the profile URL before picking it.

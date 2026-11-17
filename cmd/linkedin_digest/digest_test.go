@@ -332,11 +332,10 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	if !strings.Contains(post, want) {
 		t.Errorf("post = %s\nwant it to contain:\n%s", post, want)
 	}
-	if !strings.Contains(comment, "5. http") || strings.Contains(comment, "6. http") {
-		t.Errorf("first comment should link the five entries and no more:\n%s", comment)
-	}
-	if !strings.Contains(comment, "\nAlle Abstimmungen einzeln: https://parlinfo.ch/de/zh/\n") {
-		t.Errorf("first comment lacks the parlinfo.ch pointer:\n%s", comment)
+	// With a parlinfo.ch page, that page is the comment's only link, beside
+	// the credit the source's terms require.
+	if want := "Alle Abstimmungen einzeln: https://parlinfo.ch/de/zh/\nDaten: Open Data Zürich"; strings.TrimSpace(comment) != want {
+		t.Errorf("first comment = %q, want %q", comment, want)
 	}
 
 	small, _ := render([]section{{Name: "Gemeinderat Stadt Zürich", Groups: large[:3]}}, nil, o)
