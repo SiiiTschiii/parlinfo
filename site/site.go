@@ -86,7 +86,7 @@ type Page struct {
 
 	// Brand page
 	Brand     *Brand
-	Bodies    string
+	Lead      string
 	Note      string
 	Platforms []PlatformView
 
@@ -128,7 +128,7 @@ func Build(dir string) error {
 			p := newPage(lang, b.Key+"/")
 			p.Title = b.Name + " – parlinfo"
 			p.Brand = b
-			p.Bodies = t.BrandBodies[b.Key]
+			p.Lead = t.BrandLead[b.Key]
 			p.Note = t.BrandNote[b.Key]
 			p.Platforms = platformViews(b, lang)
 			if err := render(dir, lang+"/"+b.Key+"/index.html", "brand.html", p); err != nil {
