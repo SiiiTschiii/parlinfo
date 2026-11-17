@@ -156,7 +156,7 @@ func TestRostersShareNoHomonyms(t *testing.T) {
 		c      Contact
 	}
 	byName := map[string][]entry{}
-	for _, key := range Rosters {
+	for _, key := range Rosters() {
 		path := filepath.Join("..", "..", PathFor(key))
 		data, err := os.ReadFile(path)
 		if err != nil {

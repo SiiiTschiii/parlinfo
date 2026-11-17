@@ -88,7 +88,12 @@ var partyFallbacks = map[string][]string{
 // Tagging matches full names, so this is only safe while no two different
 // people share a name across the files. TestRostersShareNoHomonyms holds that
 // for the curated data.
-var Rosters = []string{"zurich-city", "zurich-canton", "nationalrat", "staenderat"}
+//
+// A function returning a fresh slice, like config.ChamberKeys, so no caller
+// can change which files every other caller loads.
+func Rosters() []string {
+	return []string{"zurich-city", "zurich-canton", "nationalrat", "staenderat"}
+}
 
 // PathsFor returns the contacts files needed to tag the given jurisdictions:
 // their own, then the files their party accounts fall back to, then every
@@ -111,7 +116,7 @@ func PathsFor(jurisdictions ...string) []string {
 			add(fb)
 		}
 	}
-	for _, key := range Rosters {
+	for _, key := range Rosters() {
 		add(key)
 	}
 	return paths

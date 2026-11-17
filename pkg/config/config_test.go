@@ -13,7 +13,7 @@ import (
 // only holds if a chamber added here is added to contacts.Rosters too.
 func TestEveryChamberIsARoster(t *testing.T) {
 	rosters := map[string]bool{}
-	for _, k := range contacts.Rosters {
+	for _, k := range contacts.Rosters() {
 		rosters[k] = true
 	}
 	for _, k := range ChamberKeys() {
