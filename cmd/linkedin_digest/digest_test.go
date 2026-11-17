@@ -1,13 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
+	"github.com/siiitschiii/parlinfo/pkg/imagegen"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/testfixtures"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
@@ -343,5 +348,63 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	if strings.Contains(small, "Am knappsten") || !strings.Contains(small, "3. ❌ Abgelehnt (20 Ja, 95 Nein) · Postulat g3") ||
 		!strings.Contains(small, "Jede Abstimmung einzeln") {
 		t.Errorf("a sitting of three should be listed whole:\n%s", small)
+	}
+}
+
+func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
+	var large [][]votes.Vote
+	for i, c := range []struct {
+		decision string
+		yes, no  int
+	}{{"angenommen", 90, 30}, {"angenommen", 61, 59}, {"abgelehnt", 20, 95}, {"angenommen", 70, 50},
+		{"angenommen", 100, 0}, {"angenommen", 66, 60}} {
+		large = append(large, lone(fmt.Sprintf("g%d", i+1), c.decision, c.yes, c.no))
+	}
+	multi := testfixtures.MultiVoteGroup()
+	sections := []section{
+		{Name: "Gemeinderat Stadt Zürich", Groups: large},
+		{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{multi}},
+	}
+
+	// The cards follow the post's numbering: the rejection first, then the
+	// closest.
+	entries := postEntries(sections, false)
+	var order []string
+	for _, g := range entries[0].Groups {
+		order = append(order, g[0].SourceID)
+	}
+	if got, want := strings.Join(order, " "), "g3 g2 g6 g4 g1"; got != want {
+		t.Errorf("first post's entries = %s, want %s", got, want)
+	}
+
+	dir := t.TempDir()
+	// A card from an earlier run of an entry the post no longer has.
+	stale := filepath.Join(dir, cardPrefix(entries[0].Sitting)+"-6.jpg")
+	if err := os.WriteFile(stale, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := writeCards(dir, sections, false); err != nil {
+		t.Fatal(err)
+	}
+
+	got, _ := filepath.Glob(filepath.Join(dir, "*"))
+	for i := range got {
+		got[i] = filepath.Base(got[i])
+	}
+	gr := cardPrefix(entries[0].Sitting)
+	kr := cardPrefix(entries[1].Sitting)
+	want := []string{gr + "-1.jpg", gr + "-2.jpg", gr + "-3.jpg", gr + "-4.jpg", gr + "-5.jpg", gr + "-alt.txt", kr + "-1.jpg", kr + "-alt.txt"}
+	sort.Strings(want)
+	if strings.Join(got, " ") != strings.Join(want, " ") {
+		t.Errorf("files = %v, want %v: one card per entry, only the first of a multi-vote business, none stale", got, want)
+	}
+
+	first, err := imagegen.GenerateCards(multi)
+	if err != nil {
+		t.Fatal(err)
+	}
+	written, _ := os.ReadFile(filepath.Join(dir, kr+"-1.jpg"))
+	if !bytes.Equal(written, first[0].JPEG) {
+		t.Error("the multi-vote business's card is not its first card")
 	}
 }

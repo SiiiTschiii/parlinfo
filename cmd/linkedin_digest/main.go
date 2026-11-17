@@ -1,6 +1,6 @@
 // linkedin_digest prints a draft of the weekly digest for a channel's LinkedIn
 // Page: the votes the bot posted in the last days, one line each, ready to
-// paste. It posts nothing.
+// paste, and writes the card to attach for each. It posts nothing.
 //
 //	go run ./cmd/linkedin_digest -state-ref origin/state-log
 //	go run ./cmd/linkedin_digest -channel chparl -days 14 -state-ref origin/state-log-chparl
@@ -50,6 +50,7 @@ func main() {
 	// unless they were copied in. Reading them from the ref saves the copying
 	// and cannot be stale.
 	all := flag.Bool("all", false, "list every business of a sitting, not only its rejections and closest votes")
+	cardsDir := flag.String("cards", "out/linkedin", "directory for each entry's first card, to attach to its post (empty: no cards)")
 	stateRef := flag.String("state-ref", "", "git ref to read the vote logs from, e.g. origin/state-log (default: the logs on disk)")
 	flag.Parse()
 
@@ -110,6 +111,14 @@ func main() {
 		log.Fatalf("No posted votes for channel %q from sittings %s to %s. Are the vote logs on disk? See -state-ref.", channel.Key, w.From, w.To)
 	}
 	fmt.Print(draft)
+
+	if *cardsDir != "" {
+		written, err := writeCards(*cardsDir, sections, *all)
+		if err != nil {
+			log.Fatalf("writing cards: %v", err)
+		}
+		log.Printf("Wrote %d card file(s) to %s: attach <date>-<body>-<n>.jpg in the order of n, with the alt text from <date>-<body>-alt.txt", len(written), *cardsDir)
+	}
 }
 
 // fetchPosted fetches a source's recent votes and groups the ones in ids that

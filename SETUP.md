@@ -185,6 +185,13 @@ by hand** lists the people an entry names who have a verified LinkedIn profile:
 type `@` and pick the person in place of the name in the post, and check the
 suggestion against the profile URL before picking it.
 
+It also writes the cards to attach, into `out/linkedin/` (`-cards` for another
+directory, `-cards ""` for none): the first card of each entry's business, the
+one the bot leads with elsewhere, as `<date>-<body>-<n>.jpg` by the entry's
+number, and each card's alt text in `<date>-<body>-alt.txt`. Add them to the
+post in order of the number and paste each alt text under the image's
+**Alternativtext**.
+
 Without `-state-ref` it reads the logs on disk. It fetches the latest `-fetch`
 votes from each source (200 by default) and warns when they do not reach back
 to the window's first day; raise `-fetch` for a window further back.
