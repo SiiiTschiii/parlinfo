@@ -150,7 +150,8 @@ jq -r --arg id "<vote id>" '.platform as $p | .votes[] | select(.id == $id) | "\
 ### The weekly LinkedIn digest
 
 LinkedIn gets a digest by hand, not a post per vote. `linkedin_digest` drafts
-it from the votes the bot posted in the last days and posts nothing:
+it from the votes the bot posted from the sittings of the last days, and posts
+nothing:
 
 ```bash
 git fetch origin state-log state-log-chparl
@@ -158,15 +159,26 @@ go run ./cmd/linkedin_digest -state-ref origin/state-log
 go run ./cmd/linkedin_digest -channel chparl -days 14 -state-ref origin/state-log-chparl
 ```
 
+The window is sitting dates, ending today unless `-until` names another day, so
+consecutive weeks never share a vote. For a week that has passed:
+
+```bash
+go run ./cmd/linkedin_digest -state-ref origin/state-log -until 2026-11-10
+```
+
+Each sitting gets a heading of its own with its date. A vote the bot has not
+posted yet is not in the draft: the Kantonsrat's votes reach the bot days after
+the sitting, so draft a week once its last sitting has gone out.
+
 It prints three blocks. **Post** is the text, one numbered entry per business,
 without links. **First comment** holds the link to the official record of each
 entry, by the same number, and the data credit. **Tag by hand** lists the people
 an entry names who have a verified LinkedIn profile: type `@` and the name in
 the post, and check the suggestion against the profile URL before picking it.
 
-Without `-state-ref` it reads the logs on disk. A vote the logs record that is
-not among the latest `-fetch` votes from the source (200 by default) is left
-out, with a warning naming it.
+Without `-state-ref` it reads the logs on disk. It fetches the latest `-fetch`
+votes from each source (200 by default) and warns when they do not reach back
+to the window's first day; raise `-fetch` for a window further back.
 
 ### Curating who gets tagged
 

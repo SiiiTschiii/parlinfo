@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -11,35 +12,66 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
-func TestPostedSinceTakesAnyPlatformInsideTheWindow(t *testing.T) {
-	since := time.Date(2026, 11, 8, 0, 0, 0, 0, time.UTC)
-	entry := func(id string, day int) votelog.VoteEntry {
-		return votelog.VoteEntry{ID: id, PostedAt: time.Date(2026, 11, day, 12, 0, 0, 0, time.UTC)}
-	}
+func TestPostedIDsTakesEveryPlatform(t *testing.T) {
 	logs := []*votelog.VoteLog{
-		{Platform: votelog.PlatformX, Votes: []votelog.VoteEntry{entry("old", 1), entry("both", 9)}},
-		{Platform: votelog.PlatformBluesky, Votes: []votelog.VoteEntry{entry("both", 9), entry("bluesky-only", 10)}},
+		{Platform: votelog.PlatformX, Votes: []votelog.VoteEntry{{ID: "both"}, {ID: "x-only"}}},
+		{Platform: votelog.PlatformBluesky, Votes: []votelog.VoteEntry{{ID: "both"}, {ID: "bluesky-only"}}},
 	}
 
-	got := postedSince(logs, since)
+	got := postedIDs(logs)
 
-	if len(got) != 2 || !got["both"] || !got["bluesky-only"] {
-		t.Errorf("postedSince() = %v, want both and bluesky-only", got)
+	if len(got) != 3 || !got["both"] || !got["x-only"] || !got["bluesky-only"] {
+		t.Errorf("postedIDs() = %v, want both, x-only and bluesky-only", got)
 	}
 }
 
-func TestKeepPostedDropsVotesGroupingPulledIn(t *testing.T) {
+func TestWindowCoversItsDaysInclusive(t *testing.T) {
+	w := newWindow(time.Date(2026, 11, 10, 15, 0, 0, 0, time.UTC), 7)
+	on := func(y int, m time.Month, d, h int) votes.Vote {
+		return votes.Vote{Date: time.Date(y, m, d, h, 0, 0, 0, time.UTC)}
+	}
+
+	if w != (window{From: "2026-11-04", To: "2026-11-10"}) {
+		t.Fatalf("newWindow() = %v, want 2026-11-04 to 2026-11-10", w)
+	}
+	for _, c := range []struct {
+		name string
+		v    votes.Vote
+		want bool
+	}{
+		{"day before", on(2026, 11, 3, 23), false},
+		{"first day", on(2026, 11, 4, 0), true},
+		{"last day, evening", on(2026, 11, 10, 23), true},
+		{"day after", on(2026, 11, 11, 0), false},
+		{"unknown date", votes.Vote{}, false},
+	} {
+		if got := w.holds(c.v); got != c.want {
+			t.Errorf("holds(%s) = %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
+func TestReachesBack(t *testing.T) {
+	w := window{From: "2026-11-04", To: "2026-11-10"}
+	inside := votes.Vote{Date: time.Date(2026, 11, 5, 0, 0, 0, 0, time.UTC)}
+	before := votes.Vote{Date: time.Date(2026, 11, 3, 0, 0, 0, 0, time.UTC)}
+
+	if reachesBack([]votes.Vote{inside, {}}, w) {
+		t.Error("reachesBack() = true for a fetch that stops inside the window")
+	}
+	if !reachesBack([]votes.Vote{inside, before}, w) {
+		t.Error("reachesBack() = false for a fetch that reaches the day before")
+	}
+}
+
+func TestKeepDropsVotesGroupingPulledIn(t *testing.T) {
 	multi := testfixtures.MultiVoteGroup()
 	groups := [][]votes.Vote{multi, testfixtures.SingleVoteAbgelehnt()}
-	ids := map[string]bool{multi[1].SourceID: true, "never-fetched": true}
 
-	got := keepPosted(groups, ids)
+	got := keep(groups, func(v votes.Vote) bool { return v.SourceID == multi[1].SourceID })
 
 	if len(got) != 1 || len(got[0]) != 1 || got[0][0].SourceID != multi[1].SourceID {
-		t.Fatalf("keepPosted() = %v, want only %s", got, multi[1].SourceID)
-	}
-	if lost := missing(ids, got); len(lost) != 1 || lost[0] != "never-fetched" {
-		t.Errorf("missing() = %v, want [never-fetched]", lost)
+		t.Fatalf("keep() = %v, want only %s", got, multi[1].SourceID)
 	}
 }
 
@@ -56,15 +88,13 @@ func TestRender(t *testing.T) {
 		}},
 		{Name: "Kantonsrat Zürich"},
 	}
-	since := time.Date(2026, 11, 8, 0, 0, 0, 0, time.UTC)
-
-	got := render(sections, since, since.AddDate(0, 0, 7), mapper)
+	got := render(sections, mapper)
 
 	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
 	comment, tags, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
 
 	for _, want := range []string{
-		"🗳️ Gemeinderat Stadt Zürich | 08.11.2026 – 15.11.2026\n",
+		"🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n",
 		"1. ✅ Angenommen (80 Ja, 30 Nein) · Postulat von Anna Graff (SP) vom 18.09.2024",
 		"2. Teilrevision der Gemeindeordnung",
 		"   ✅ Angenommen (90 Ja, 20 Nein) · Einleitungsartikel\n",
@@ -96,7 +126,7 @@ func TestRender(t *testing.T) {
 }
 
 func TestRenderWithoutVotesIsEmpty(t *testing.T) {
-	if got := render([]section{{Name: "Nationalrat"}}, time.Now(), time.Now(), nil); got != "" {
+	if got := render([]section{{Name: "Nationalrat"}}, nil); got != "" {
 		t.Errorf("render() = %q, want nothing", got)
 	}
 }
@@ -118,7 +148,7 @@ func TestRenderElection(t *testing.T) {
 	}
 	sections := []section{{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{testfixtures.KantonsratWahlgeschaeft()}}}
 
-	got := render(sections, time.Now(), time.Now(), mapper)
+	got := render(sections, mapper)
 
 	rest, tags, _ := strings.Cut(got, "━━━ Tag by hand ━━━")
 	_, comment, _ := strings.Cut(rest, "━━━ First comment ━━━")
@@ -148,5 +178,21 @@ func TestGroupEntrySaysWhatJaSupported(t *testing.T) {
 
 	if want := "(20 Ja, 95 Nein) · Ja: keine Folge geben · Parlamentarische Initiative"; !strings.Contains(got, want) {
 		t.Errorf("groupEntry() = %q, want it to contain %q", got, want)
+	}
+}
+
+func TestRenderHeadsEachSitting(t *testing.T) {
+	first := testfixtures.SingleVoteAngenommen()
+	second := testfixtures.SingleVoteAbgelehnt()
+	second[0].Date = first[0].Date.AddDate(0, 0, 7)
+	// The later sitting first, as a source might return them.
+	sections := []section{{Name: "Gemeinderat Stadt Zürich", Groups: [][]votes.Vote{second, first}}}
+
+	got := render(sections, nil)
+
+	want := "🗳️ Gemeinderat Stadt Zürich | Sitzung vom 15.06.2025\n\n1. ✅ Angenommen" +
+		"(.|\n)*" + "\n🗳️ Gemeinderat Stadt Zürich | Sitzung vom 22.06.2025\n\n2. ❌ Abgelehnt"
+	if !regexp.MustCompile(want).MatchString(got) {
+		t.Errorf("render() did not head each sitting in date order:\n%s", got)
 	}
 }

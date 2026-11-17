@@ -35,7 +35,9 @@ var logPlatforms = []votelog.Platform{
 
 func main() {
 	channelKey := flag.String("channel", config.DefaultChannelKey, "channel whose votes to digest")
-	days := flag.Int("days", 7, "how many days back to look for posted votes")
+	days := flag.Int("days", 7, "how many sitting days back to cover, counting -until")
+	// A digest for an earlier week, to catch up or to post several at once.
+	untilFlag := flag.String("until", "", "last sitting date covered, YYYY-MM-DD (default: today)")
 	fetchLimit := flag.Int("fetch", 200, "number of recent votes to fetch from each source")
 	// The logs live on a state branch, not in main, so a checkout has none
 	// unless they were copied in. Reading them from the ref saves the copying
@@ -56,8 +58,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	until := time.Now()
-	since := until.AddDate(0, 0, -*days)
+	last := time.Now()
+	if *untilFlag != "" {
+		if last, err = config.ParseDate(*untilFlag); err != nil {
+			log.Fatalf("-until: %v", err)
+		}
+	}
+	w := newWindow(last, *days)
 
 	var sections []section
 	for _, j := range jurisdictions {
@@ -65,7 +72,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("%s: %v", j.Key, err)
 		}
-		ids := postedSince(logs, since)
+		ids := postedIDs(logs)
 		if len(ids) == 0 {
 			continue
 		}
@@ -74,13 +81,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		groups, err := fetchPosted(source, ids, *fetchLimit)
+		groups, err := fetchPosted(source, j.Key, ids, w, *fetchLimit)
 		if err != nil {
 			log.Fatalf("%s: %v", j.Key, err)
-		}
-		if lost := missing(ids, groups); len(lost) > 0 {
-			log.Printf("%s: %d posted vote(s) not among the latest %d from the source, left out; raise -fetch to include them: %v",
-				j.Key, len(lost), *fetchLimit, lost)
 		}
 		sections = append(sections, section{Name: j.Name, Groups: groups})
 	}
@@ -91,22 +94,28 @@ func main() {
 		mapper = nil
 	}
 
-	draft := render(sections, since, until, mapper)
+	draft := render(sections, mapper)
 	if draft == "" {
-		log.Fatalf("No votes posted for channel %q in the last %d days. Are the vote logs on disk? See -state-ref.", channel.Key, *days)
+		log.Fatalf("No posted votes for channel %q from sittings %s to %s. Are the vote logs on disk? See -state-ref.", channel.Key, w.From, w.To)
 	}
 	fmt.Print(draft)
 }
 
-// fetchPosted fetches a source's recent votes and groups the ones in ids.
-func fetchPosted(source votes.Source, ids map[string]bool, limit int) ([][]votes.Vote, error) {
+// fetchPosted fetches a source's recent votes and groups the ones in ids that
+// were voted in the window.
+func fetchPosted(source votes.Source, key string, ids map[string]bool, w window, limit int) ([][]votes.Vote, error) {
 	fetched, err := source.FetchRecent(limit)
 	if err != nil {
 		return nil, err
 	}
+	if !reachesBack(fetched, w) {
+		log.Printf("%s: the latest %d votes from the source do not reach back to %s, so the window's first days may be missing; raise -fetch",
+			key, limit, w.From)
+	}
+	accept := func(v votes.Vote) bool { return ids[v.SourceID] && w.holds(v) }
 	var posted []votes.Vote
 	for _, v := range fetched {
-		if ids[v.SourceID] {
+		if accept(v) {
 			posted = append(posted, v)
 		}
 	}
@@ -117,7 +126,7 @@ func fetchPosted(source votes.Source, ids map[string]bool, limit int) ([][]votes
 	if err != nil {
 		return nil, err
 	}
-	return keepPosted(groups, ids), nil
+	return keep(groups, accept), nil
 }
 
 // loadLogs reads a jurisdiction's vote log for every platform, from ref when

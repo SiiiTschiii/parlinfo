@@ -12,34 +12,57 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
-// postedSince collects the IDs of the votes any of the logs records as posted
-// at or after since.
+// postedIDs collects every vote any of the logs records as posted.
 //
 // Any platform counts. The digest is about what the bot published, and a vote
-// that reached one account and failed on another was still published.
-func postedSince(logs []*votelog.VoteLog, since time.Time) map[string]bool {
+// that reached one account and failed on another was still published. When it
+// was posted does not matter: the window is the sitting date, see window.
+func postedIDs(logs []*votelog.VoteLog) map[string]bool {
 	ids := map[string]bool{}
 	for _, l := range logs {
 		for _, e := range l.Votes {
-			if !e.PostedAt.Before(since) {
-				ids[e.ID] = true
-			}
+			ids[e.ID] = true
 		}
 	}
 	return ids
 }
 
-// keepPosted narrows groups to the votes in ids, dropping a group left empty.
+// window is the sitting dates a digest covers, as YYYY-MM-DD: From up to and
+// including To.
+//
+// It is the date the parliament voted, not the date the bot posted. The bot
+// drains a sitting over several hourly runs and posts one vote to each platform
+// at a different time, so a window on posting dates split sittings and listed
+// a vote in two consecutive digests. A sitting date puts each vote in exactly
+// one, and the digest's heading then means what a reader takes it to mean.
+type window struct{ From, To string }
+
+// newWindow is the days days ending on last.
+func newWindow(last time.Time, days int) window {
+	return window{
+		From: last.AddDate(0, 0, -(days - 1)).Format("2006-01-02"),
+		To:   last.Format("2006-01-02"),
+	}
+}
+
+// holds reports whether v was voted in the window. A vote whose date the
+// source did not give is in no window.
+func (w window) holds(v votes.Vote) bool {
+	d := v.DateString()
+	return d != "" && d >= w.From && d <= w.To
+}
+
+// keep narrows groups to the votes keep accepts, dropping a group left empty.
 //
 // It runs after grouping because grouping can pull in votes that were never
 // fetched: PARIS completes a Geschäft with its earlier agenda items, and one of
 // those the bot skipped must not appear in a digest of what it posted.
-func keepPosted(groups [][]votes.Vote, ids map[string]bool) [][]votes.Vote {
+func keep(groups [][]votes.Vote, accept func(votes.Vote) bool) [][]votes.Vote {
 	var out [][]votes.Vote
 	for _, g := range groups {
 		var kept []votes.Vote
 		for _, v := range g {
-			if ids[v.SourceID] {
+			if accept(v) {
 				kept = append(kept, v)
 			}
 		}
@@ -50,23 +73,16 @@ func keepPosted(groups [][]votes.Vote, ids map[string]bool) [][]votes.Vote {
 	return out
 }
 
-// missing lists the IDs no group holds, sorted: votes the logs say were posted
-// that the source did not return, which a larger fetch usually finds.
-func missing(ids map[string]bool, groups [][]votes.Vote) []string {
-	found := map[string]bool{}
-	for _, g := range groups {
-		for _, v := range g {
-			found[v.SourceID] = true
+// reachesBack reports whether the fetched votes go back past the window's
+// start. If none does, the fetch may have stopped inside the window and left
+// its first days out.
+func reachesBack(fetched []votes.Vote, w window) bool {
+	for _, v := range fetched {
+		if d := v.DateString(); d != "" && d < w.From {
+			return true
 		}
 	}
-	var out []string
-	for id := range ids {
-		if !found[id] {
-			out = append(out, id)
-		}
-	}
-	sort.Strings(out)
-	return out
+	return false
 }
 
 // section is one body's part of the digest.
@@ -86,7 +102,7 @@ type section struct {
 // the chamber.
 //
 // mapper may be nil, which leaves the tagging list empty.
-func render(sections []section, since, until time.Time, mapper *contacts.Mapper) string {
+func render(sections []section, mapper *contacts.Mapper) string {
 	var post, comment, tags strings.Builder
 	attributions := []string{}
 	seenAttribution := map[string]bool{}
@@ -96,13 +112,18 @@ func render(sections []section, since, until time.Time, mapper *contacts.Mapper)
 		if len(s.Groups) == 0 {
 			continue
 		}
-		if post.Len() > 0 {
-			post.WriteString("\n")
-		}
-		fmt.Fprintf(&post, "🗳️ %s | %s – %s\n\n", s.Name,
-			voteformat.FormatVoteDate(since), voteformat.FormatVoteDate(until))
-
-		for _, g := range s.Groups {
+		groups := bySitting(s.Groups)
+		sitting := ""
+		for _, g := range groups {
+			// A heading per sitting, naming the day the parliament voted. A
+			// date range would read as one long sitting, or as a week of them.
+			if d := g[0].DateString(); d != sitting || sitting == "" {
+				sitting = d
+				if post.Len() > 0 {
+					post.WriteString("\n")
+				}
+				fmt.Fprintf(&post, "🗳️ %s\n\n", sittingHeading(s.Name, g[0].Date))
+			}
 			n++
 			subject := groupSubject(g)
 			post.WriteString(groupEntry(n, subject, g))
@@ -140,6 +161,23 @@ func render(sections []section, since, until time.Time, mapper *contacts.Mapper)
 	return "━━━ Post ━━━\n" + post.String() +
 		"\n━━━ First comment ━━━\n" + comment.String() +
 		"\n━━━ Tag by hand ━━━\n" + tags.String()
+}
+
+// bySitting orders groups by sitting date, keeping the source's order within
+// a day, so each sitting's entries come together under its heading.
+func bySitting(groups [][]votes.Vote) [][]votes.Vote {
+	out := append([][]votes.Vote(nil), groups...)
+	sort.SliceStable(out, func(i, j int) bool { return out[i][0].DateString() < out[j][0].DateString() })
+	return out
+}
+
+// sittingHeading names the body and the day it sat: "Kantonsrat Zürich |
+// Sitzung vom 09.11.2026", or the body alone where the source gave no date.
+func sittingHeading(body string, date time.Time) string {
+	if date.IsZero() {
+		return body
+	}
+	return body + " | Sitzung vom " + voteformat.FormatVoteDate(date)
 }
 
 // groupSubject is what a group's votes were about: the kind of business and
