@@ -255,14 +255,27 @@ func (c *Client) decisiveFiledVote(group []votes.Vote) (votes.Vote, string) {
 	}
 	v := decisive[0]
 	l := c.labels[v.SourceID]
-	if (amended.MatchString(l.meaningYes) || amended.MatchString(l.meaningNo)) && v.Outcome == outcomeAdopted {
+	if !amended.MatchString(l.meaningYes) && !amended.MatchString(l.meaningNo) {
+		return v, ""
+	}
+	// The card says "Annahme mit Änderung", so the meaning that won must say
+	// the motion was adopted as amended: Ja's where Ja carried the vote,
+	// Nein's where Nein did. A mention on the losing side, or "ohne
+	// Änderung", is not that.
+	won := l.meaningNo
+	if v.Decision == outcomeAdopted {
+		won = l.meaningYes
+	}
+	if v.Outcome == outcomeAdopted && (v.Decision == outcomeAdopted || v.Decision == outcomeFailed) &&
+		amended.MatchString(won) && !unamended.MatchString(won) {
 		return v, whyAmended
 	}
-	if amended.MatchString(l.meaningYes) || amended.MatchString(l.meaningNo) {
-		return votes.Vote{}, "Abstimmung über eine geänderte Fassung ohne Annahme: keine Regel"
-	}
-	return v, ""
+	return votes.Vote{}, "Abstimmung, deren Antrag eine Änderung nennt, ohne dass die gewonnene Bedeutung die Annahme mit Änderung ist: keine Regel"
 }
+
+// unamended matches a meaning that adopts a motion unchanged while naming a
+// change, which amended alone would read as an amendment.
+var unamended = regexp.MustCompile(`(?i)ohne\s+änderung|sans\s+modification|senza\s+modific|non\s+modifi`)
 
 // whyAmended is decisiveFiledVote's answer for a business adopted as amended,
 // which goes back to the other chamber or on to the Bundesrat. The vote comes
