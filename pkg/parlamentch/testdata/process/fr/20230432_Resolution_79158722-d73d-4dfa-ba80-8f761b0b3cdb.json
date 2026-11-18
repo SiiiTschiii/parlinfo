@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781740800000)/",
+    "ResolutionId": 62,
+    "ResolutionText": "Décision conforme au projet",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790812800000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adhésion",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,78 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1709164800000)/",
+    "ResolutionId": 63,
+    "ResolutionText": "Rejet au vote sur l’ensemble (= refus d’entrer en matière)",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1748995200000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adhésion",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1695254400000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Décision modifiant le projet",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1740960000000)/",
+    "ResolutionId": 91,
+    "ResolutionText": "Début des délibérations",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1741824000000)/",
+    "ResolutionId": 37,
+    "ResolutionText": "Divergences",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adoption (vote final)",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1726444800000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Décision modifiant le projet",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

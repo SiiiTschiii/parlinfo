@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790121600000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "È dato seguito",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1769126400000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Dare seguito (Camera prioritaria)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione della scienza, dell'educazione e della cultura Consiglio nazionale",
+    "CommitteeAbbreviation1": "CSEC-N"
+   },
+   {
+    "ResolutionDate": "/Date(1777852800000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Non approvazione della decisione della commissione della Camera prioritaria (seconda Camera)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione della scienza, dell'educazione e della cultura Consiglio degli Stati",
+    "CommitteeAbbreviation1": "CSEC-S"
+   }
+  ]
+ }
+}

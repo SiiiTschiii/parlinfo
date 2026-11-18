@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781740800000)/",
+    "ResolutionId": 62,
+    "ResolutionText": "Beschluss gemäss Entwurf",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790812800000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Zustimmung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

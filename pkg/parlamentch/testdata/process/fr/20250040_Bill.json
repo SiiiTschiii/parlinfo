@@ -1,0 +1,16 @@
+{
+ "d": {
+  "results": [
+   {
+    "ID": "e78e297d-ae3f-4c0e-8e8a-1ec16a9db31c",
+    "BillNumber": 1,
+    "BillType": 9
+   },
+   {
+    "ID": "55892a56-a798-483a-8e18-2daf041e6b0a",
+    "BillNumber": 0,
+    "BillType": null
+   }
+  ]
+ }
+}

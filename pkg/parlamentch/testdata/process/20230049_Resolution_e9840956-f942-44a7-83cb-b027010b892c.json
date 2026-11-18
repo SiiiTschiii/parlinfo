@@ -1,0 +1,78 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1709164800000)/",
+    "ResolutionId": 63,
+    "ResolutionText": "Ablehnung in der Gesamtabstimmung (= Nichteintreten)",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1748995200000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Zustimmung",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1695254400000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Beschluss abweichend vom Entwurf",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1740960000000)/",
+    "ResolutionId": 91,
+    "ResolutionText": "Beginn der Debatte",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1741824000000)/",
+    "ResolutionId": 37,
+    "ResolutionText": "Abweichung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Annahme in der Schlussabstimmung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1726444800000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Beschluss abweichend vom Entwurf",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1717632000000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "È dato seguito",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1731542400000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adesione",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione delle istituzioni politiche Consiglio nazionale",
+    "CommitteeAbbreviation1": "CIP-N"
+   },
+   {
+    "ResolutionDate": "/Date(1712620800000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Non dare seguito (Camera prioritaria)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commissione delle istituzioni politiche Consiglio degli Stati",
+    "CommitteeAbbreviation1": "CIP-S"
+   },
+   {
+    "ResolutionDate": "/Date(1701907200000)/",
+    "ResolutionId": 90,
+    "ResolutionText": "Sarà ripreso",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

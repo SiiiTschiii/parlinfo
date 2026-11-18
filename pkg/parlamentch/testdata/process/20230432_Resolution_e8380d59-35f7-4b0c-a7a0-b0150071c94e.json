@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1717632000000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "Folge gegeben",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1731542400000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Zustimmung",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Staatspolitische Kommission Nationalrat",
+    "CommitteeAbbreviation1": "SPK-N"
+   },
+   {
+    "ResolutionDate": "/Date(1712620800000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Keine Folge geben (Erstrat)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Staatspolitische Kommission Ständerat",
+    "CommitteeAbbreviation1": "SPK-S"
+   },
+   {
+    "ResolutionDate": "/Date(1701907200000)/",
+    "ResolutionId": 90,
+    "ResolutionText": "Wird übernommen",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

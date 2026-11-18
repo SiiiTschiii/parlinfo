@@ -25,8 +25,9 @@ type voteDTO struct {
 	IdLegislativePeriod int64   `json:"IdLegislativePeriod"`
 	IdSession           int64   `json:"IdSession"`
 	// Subject, MeaningYes and MeaningNo are served in French in every
-	// language's feed since the Wintersession 2025. The German posts publish
-	// them as served; see subjectLabels for the others. Subject is null on about a third of votes; none of those
+	// language's feed since the Wintersession 2025. The final and overall
+	// votes' Subjects are renamed into the post's language (subjectLabels);
+	// the German posts publish the meanings as served. Subject is null on about a third of votes; none of those
 	// is a final or overall vote.
 	Subject    *string `json:"Subject"`
 	MeaningYes *string `json:"MeaningYes"`
