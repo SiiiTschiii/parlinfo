@@ -306,17 +306,80 @@ type part struct {
 //
 // A post listing a long sitting entry by entry reads as a data feed, and the
 // Gemeinderat's sitting of 28 October still needed ten titles cut to fit. So a
-// sitting of more than maxListed businesses gets the votes worth reading, its
-// closest, and the rest is one click away.
+// sitting of more than maxListed businesses gets the votes worth reading, see
+// extremes, and the rest is one click away. A sitting whose source states no
+// verdicts gets its closest votes instead.
 func parts(s sitting, all bool) []part {
 	if all || len(s.Groups) <= maxListed {
 		return []part{{entries: whole(s.Groups)}}
 	}
-	closest := highlights(s.Groups, maxListed)
-	if len(closest) == 0 {
-		return []part{{entries: whole(s.Groups)}}
+	if ps := extremes(s.Groups); len(ps) > 0 {
+		return ps
 	}
-	return []part{{"Am knappsten:", closest}}
+	if closest := highlights(s.Groups, maxListed); len(closest) > 0 {
+		return []part{{"Am knappsten:", closest}}
+	}
+	return []part{{entries: whole(s.Groups)}}
+}
+
+// extremes picks a vote for each of four headings: the closest adoption and
+// rejection, then the clearest of each. Together they say where the chamber
+// was split and where it was of one mind, which five closest votes alone do
+// not: on a day the Nationalrat rejects most of what it votes on, those are
+// five rejections.
+//
+// Each business appears once, picked in that order, so a sitting with a
+// single rejection shows it as the closest and leaves "clearest" out. A
+// business stands in by whichever of its votes fits the heading. Only a
+// Ja/Nein vote with a stated verdict qualifies; see highlights.
+func extremes(groups [][]votes.Vote) []part {
+	type candidate struct {
+		e       entry
+		yes, no int
+	}
+	used := map[*votes.Vote]bool{}
+	pick := func(want func(votes.Vote) bool, better func(a, b candidate) bool) []entry {
+		var best *candidate
+		for _, g := range groups {
+			if votes.IsWahlgeschaeftGroup(g) || used[&g[0]] {
+				continue
+			}
+			for i, v := range g {
+				yes, no, ok := yesNo(v)
+				if !ok || !want(v) {
+					continue
+				}
+				c := candidate{entry{g, i}, yes, no}
+				if best == nil || better(c, *best) {
+					best = &c
+				}
+			}
+		}
+		if best == nil {
+			return nil
+		}
+		used[&best.e.group[0]] = true
+		return []entry{best.e}
+	}
+	closest := func(a, b candidate) bool { return closer(a.yes, a.no, b.yes, b.no) }
+	clearest := func(a, b candidate) bool { return closer(b.yes, b.no, a.yes, a.no) }
+
+	var out []part
+	for _, h := range []struct {
+		heading string
+		want    func(votes.Vote) bool
+		better  func(a, b candidate) bool
+	}{
+		{"Am knappsten angenommen:", isAdopted, closest},
+		{"Am knappsten abgelehnt:", isRejected, closest},
+		{"Am klarsten angenommen:", isAdopted, clearest},
+		{"Am klarsten abgelehnt:", isRejected, clearest},
+	} {
+		if picked := pick(h.want, h.better); picked != nil {
+			out = append(out, part{h.heading, picked})
+		}
+	}
+	return out
 }
 
 // whole lists every business as it stands.
@@ -329,9 +392,8 @@ func whole(groups [][]votes.Vote) []entry {
 }
 
 // highlights picks the max closest votes, one per business, closest first,
-// whatever their result. Holding places for rejections and adoptions was
-// tried and dropped: on a day the Nationalrat rejects most of what it votes
-// on, it put wider adoptions under a heading that says "closest".
+// whatever their result: the post of a sitting whose source states no
+// verdicts, such as the Kantonsrat's.
 //
 // A business stands in by its closest vote, so six close Änderungsanträge on
 // one ordinance do not crowd out everything else. Only a Ja/Nein vote can be
@@ -398,6 +460,11 @@ func abs(n int) int {
 // isRejected reports whether the post states the vote failed.
 func isRejected(v votes.Vote) bool {
 	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "❌"
+}
+
+// isAdopted reports whether a vote's stated verdict is an adoption.
+func isAdopted(v votes.Vote) bool {
+	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "✅"
 }
 
 // statsLine counts a sitting: "15 Geschäfte, 16 Abstimmungen: 14 angenommen,

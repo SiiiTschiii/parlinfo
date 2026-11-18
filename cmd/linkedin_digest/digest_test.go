@@ -310,6 +310,36 @@ func TestHighlightsTakeTheClosestWhateverTheResult(t *testing.T) {
 	}
 }
 
+func TestExtremesTakeTheClosestAndClearestOfEachSide(t *testing.T) {
+	multi := testfixtures.MultiVoteGroup() // 90:20 adopted, 40:70 rejected
+	groups := [][]votes.Vote{
+		lone("wide", "angenommen", 90, 30),
+		lone("closest", "angenommen", 61, 59),
+		lone("rejected-wide", "abgelehnt", 20, 95),
+		lone("unanimous", "angenommen", 100, 0),
+		multi,
+		testfixtures.KantonsratWahlgeschaeft(), // 157:0, records no result
+	}
+
+	var got []string
+	for _, p := range extremes(groups) {
+		for _, e := range p.entries {
+			got = append(got, p.heading+" "+e.group[e.vote].SourceID)
+		}
+	}
+	// The business with two votes is the closest rejection by its rejected
+	// one, and the election is never the clearest anything.
+	want := []string{
+		"Am knappsten angenommen: closest",
+		"Am knappsten abgelehnt: " + multi[1].SourceID,
+		"Am klarsten angenommen: unanimous",
+		"Am klarsten abgelehnt: rejected-wide",
+	}
+	if strings.Join(got, "\n") != strings.Join(want, "\n") {
+		t.Errorf("extremes =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+}
+
 func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	var large [][]votes.Vote
 	for i, c := range []struct {
@@ -326,8 +356,9 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
 	comment, _, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
 	want := "7 Geschäfte: 6 angenommen, 1 abgelehnt.\n\n" +
-		"Am knappsten:\n1. ✅ 61 Ja, 59 Nein · Postulat g2\n2. ✅ 66 Ja, 60 Nein · Postulat g6\n" +
-		"3. ✅ 70 Ja, 50 Nein · Postulat g4\n4. ✅ 90 Ja, 30 Nein · Postulat g1\n5. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
+		"Am knappsten angenommen:\n1. ✅ 61 Ja, 59 Nein · Postulat g2\n\n" +
+		"Am knappsten abgelehnt:\n2. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
+		"Am klarsten angenommen:\n3. ✅ 100 Ja, 0 Nein · Postulat g5\n\n" +
 		"Alle 7 Geschäfte einzeln, auf dem Social-Media-Kanal nach Wahl: Link im ersten Kommentar.\n"
 	if !strings.Contains(post, want) {
 		t.Errorf("post = %s\nwant it to contain:\n%s", post, want)
@@ -361,13 +392,13 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 		{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{multi}},
 	}
 
-	// The cards follow the post's numbering, closest first.
+	// The cards follow the post's numbering.
 	entries := postEntries(sections, options{})
 	var order []string
 	for _, g := range entries[0].Groups {
 		order = append(order, g[0].SourceID)
 	}
-	if got, want := strings.Join(order, " "), "g2 g6 g4 g1 g3"; got != want {
+	if got, want := strings.Join(order, " "), "g2 g3 g5"; got != want {
 		t.Errorf("first post's entries = %s, want %s", got, want)
 	}
 
@@ -387,7 +418,7 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 	}
 	gr := cardPrefix(entries[0].Sitting)
 	kr := cardPrefix(entries[1].Sitting)
-	want := []string{gr + "-1.jpg", gr + "-2.jpg", gr + "-3.jpg", gr + "-4.jpg", gr + "-5.jpg", gr + "-alt.txt", kr + "-1.jpg", kr + "-alt.txt"}
+	want := []string{gr + "-1.jpg", gr + "-2.jpg", gr + "-3.jpg", gr + "-alt.txt", kr + "-1.jpg", kr + "-alt.txt"}
 	sort.Strings(want)
 	if strings.Join(got, " ") != strings.Join(want, " ") {
 		t.Errorf("files = %v, want %v: one card per entry, only the first of a multi-vote business, none stale", got, want)

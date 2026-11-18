@@ -168,8 +168,10 @@ go run ./cmd/linkedin_digest -state-ref origin/state-log -until 2026-11-10
 
 Each sitting is a post of its own, headed with its date and a count of its
 businesses and results. A sitting of up to five businesses lists them all; a
-larger one lists only its five closest votes, whatever their result, one per
-business, and points to parlinfo.ch for the rest. `-all` lists every
+larger one lists one business each for the closest and the clearest adoption
+and rejection, under those headings, and points to parlinfo.ch for the rest; a
+sitting whose source states no verdicts, like the Kantonsrat's, gets its five
+closest votes instead. `-all` lists every
 business instead. `-merge` makes one post per body of every sitting in the
 window, for a parliament that sits in sessions:
 
