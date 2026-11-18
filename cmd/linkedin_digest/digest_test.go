@@ -285,7 +285,7 @@ func TestStatsLine(t *testing.T) {
 	}
 }
 
-func TestHighlightsMixTheClosestRejectionsAndAdoptions(t *testing.T) {
+func TestHighlightsTakeTheClosestWhateverTheResult(t *testing.T) {
 	multi := testfixtures.MultiVoteGroup() // 90:20 adopted, 40:70 rejected
 	groups := [][]votes.Vote{
 		lone("wide", "angenommen", 90, 30),
@@ -302,20 +302,11 @@ func TestHighlightsMixTheClosestRejectionsAndAdoptions(t *testing.T) {
 	for _, e := range highlights(groups, 5) {
 		got = append(got, e.group[e.vote].SourceID)
 	}
-	// "wide" is closer than "rejected-wide", which is in only because two
-	// places go to rejections; the business stands in by its closest vote.
-	want := []string{"closest", "second", "third", multi[1].SourceID, "rejected-wide"}
+	// The business with two votes stands in by its closer one, the
+	// rejection; "rejected-wide" is out, as wide as it is.
+	want := []string{"closest", "second", "third", multi[1].SourceID, "wide"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("highlights = %v, want %v", got, want)
-	}
-
-	// With no rejection to hold a place for, the closest fill all five.
-	got = got[:0]
-	for _, e := range highlights(groups[:2], 5) {
-		got = append(got, e.group[e.vote].SourceID)
-	}
-	if want := "closest,wide"; strings.Join(got, ",") != want {
-		t.Errorf("highlights of two adoptions = %v, want %s", got, want)
 	}
 }
 

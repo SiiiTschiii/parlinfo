@@ -328,15 +328,10 @@ func whole(groups [][]votes.Vote) []entry {
 	return out
 }
 
-// eachSide is how many places in the highlights go to rejections, and as many
-// to adoptions, where a sitting has that many. Ranked by margin alone, the
-// closest five of the Nationalrat's last Herbstsession week were all
-// rejections, and the five of a Gemeinderat sitting are often all adoptions;
-// either way the post would tell half the story.
-const eachSide = 2
-
-// highlights picks at most max votes, one per business, closest first: the
-// eachSide closest rejections and adoptions, then the closest of the rest.
+// highlights picks the max closest votes, one per business, closest first,
+// whatever their result. Holding places for rejections and adoptions was
+// tried and dropped: on a day the Nationalrat rejects most of what it votes
+// on, it put wider adoptions under a heading that says "closest".
 //
 // A business stands in by its closest vote, so six close Änderungsanträge on
 // one ordinance do not crowd out everything else. Only a Ja/Nein vote can be
@@ -368,29 +363,12 @@ func highlights(groups [][]votes.Vote, max int) []entry {
 	}
 	sort.SliceStable(all, func(i, j int) bool { return closer(all[i].yes, all[i].no, all[j].yes, all[j].no) })
 
-	chosen := make([]bool, len(all))
-	n := 0
-	take := func(want func(votes.Vote) bool, limit int) {
-		for i, c := range all {
-			if n >= max || limit == 0 {
-				return
-			}
-			if !chosen[i] && want(c.e.group[c.e.vote]) {
-				chosen[i] = true
-				n++
-				limit--
-			}
-		}
-	}
-	take(isRejected, eachSide)
-	take(isAdopted, eachSide)
-	take(func(votes.Vote) bool { return true }, max)
-
 	var out []entry
-	for i, c := range all {
-		if chosen[i] {
-			out = append(out, c.e)
+	for _, c := range all {
+		if len(out) == max {
+			break
 		}
+		out = append(out, c.e)
 	}
 	return out
 }
@@ -420,11 +398,6 @@ func abs(n int) int {
 // isRejected reports whether the post states the vote failed.
 func isRejected(v votes.Vote) bool {
 	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "❌"
-}
-
-// isAdopted reports whether a vote's stated verdict is an adoption.
-func isAdopted(v votes.Vote) bool {
-	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "✅"
 }
 
 // statsLine counts a sitting: "15 Geschäfte, 16 Abstimmungen: 14 angenommen,
