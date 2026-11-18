@@ -164,10 +164,11 @@ func fetchPosted(source votes.Source, key string, ids map[string]bool, w window,
 	if err != nil {
 		return nil, err
 	}
-	groups = keep(groups, accept)
-	// The same gate and process as the posts had, so a card here is the
-	// card that went out: no Fraktion table from a partial member list, and
-	// the next-step footer where the business has a process.
+	// The posting filter, then the same gate and process as the posts had,
+	// so a card here is the card that went out: no vote a refetch returned
+	// incomplete, no Fraktion table from a partial member list, and the
+	// next-step footer where the business has a process.
+	groups = voteposting.PostableGroups(keep(groups, accept))
 	voteposting.PrepareGroups(source, groups)
 	return groups, nil
 }
