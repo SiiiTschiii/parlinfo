@@ -55,6 +55,7 @@ func main() {
 	all := flag.Bool("all", false, "list every business of a sitting, not only its rejections and closest votes")
 	cardsDir := flag.String("cards", "out/linkedin", "directory for each entry's first card, to attach to its post (empty: no cards)")
 	openCards := flag.Bool("open", runtime.GOOS == "darwin", "open the cards directory in Finder once written (macOS)")
+	merge := flag.Bool("merge", false, "one post per body for all its sittings in the window, e.g. a session, instead of one per sitting")
 	stateRef := flag.String("state-ref", "", "git ref to read the vote logs from, e.g. origin/state-log (default: the logs on disk)")
 	flag.Parse()
 
@@ -107,7 +108,8 @@ func main() {
 		mapper = nil
 	}
 
-	draft, shortened := render(sections, mapper, options{Site: sites[channel.Key], All: *all})
+	o := options{Site: sites[channel.Key], All: *all, Merge: *merge}
+	draft, shortened := render(sections, mapper, o)
 	if shortened > 0 {
 		log.Printf("%d title(s) cut to fit LinkedIn's %d characters; the links in the first comment have them in full", shortened, maxPostChars)
 	}
@@ -117,7 +119,7 @@ func main() {
 	fmt.Print(draft)
 
 	if *cardsDir != "" {
-		written, err := writeCards(*cardsDir, sections, *all)
+		written, err := writeCards(*cardsDir, sections, o)
 		if err != nil {
 			log.Fatalf("writing cards: %v", err)
 		}

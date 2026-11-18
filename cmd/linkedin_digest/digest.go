@@ -102,11 +102,51 @@ const maxPostChars = 3000
 // not fit is printed as it is, with a warning.
 const shortestSubject = 60
 
-// sitting is one body's votes on one day: what one LinkedIn post covers.
+// sitting is one body's votes on one day, or with -merge on every day of the
+// window it sat: what one LinkedIn post covers.
 type sitting struct {
-	Body   string
-	Date   time.Time
+	Body string
+	Date time.Time
+	// Last is the last day of a merged sitting, zero when it is one day.
+	Last   time.Time
 	Groups [][]votes.Vote
+}
+
+// heading names the body and when it sat: "Kantonsrat Zürich | Sitzung vom
+// 09.11.2026", "Nationalrat | Sitzungen vom 28.09.2026 bis 02.10.2026", or
+// the body alone where the source gave no date.
+func (s sitting) heading() string {
+	if s.Date.IsZero() {
+		return s.Body
+	}
+	if s.Last.IsZero() || sameDay(s.Date, s.Last) {
+		return s.Body + " | Sitzung vom " + voteformat.FormatVoteDate(s.Date)
+	}
+	return s.Body + " | Sitzungen vom " + voteformat.FormatVoteDate(s.Date) + " bis " + voteformat.FormatVoteDate(s.Last)
+}
+
+func sameDay(a, b time.Time) bool { return a.Format("2006-01-02") == b.Format("2006-01-02") }
+
+// merged folds the sittings of each body into one, from its first day to its
+// last: a parliament that sits in sessions, like the Nationalrat, reads better
+// as a session than as a post a day.
+func merged(ss []sitting) []sitting {
+	var out []sitting
+	at := map[string]int{}
+	for _, s := range ss {
+		i, ok := at[s.Body]
+		if !ok {
+			at[s.Body] = len(out)
+			out = append(out, sitting{Body: s.Body, Date: s.Date, Last: s.Date, Groups: append([][]votes.Vote(nil), s.Groups...)})
+			continue
+		}
+		m := &out[i]
+		m.Groups = append(m.Groups, s.Groups...)
+		if s.Date.After(m.Last) {
+			m.Last = s.Date
+		}
+	}
+	return out
 }
 
 // sittings splits the sections into one sitting per body and day, in the
@@ -137,6 +177,17 @@ type options struct {
 	Site string
 	// All lists every business of a sitting, however many there are.
 	All bool
+	// Merge makes one post per body of all its sittings in the window.
+	Merge bool
+}
+
+// posts are the sittings the draft has a post for, in order.
+func posts(sections []section, o options) []sitting {
+	ss := sittings(sections)
+	if o.Merge {
+		return merged(ss)
+	}
+	return ss
 }
 
 // render writes the draft: one post per sitting, each with its first comment
@@ -149,7 +200,7 @@ type options struct {
 //
 // mapper may be nil, which leaves the tagging lists empty.
 func render(sections []section, mapper *contacts.Mapper, o options) (string, int) {
-	all := sittings(sections)
+	all := posts(sections, o)
 	var out strings.Builder
 	shortened := 0
 	for i, s := range all {
@@ -196,7 +247,7 @@ func renderSitting(s sitting, mapper *contacts.Mapper, o options, limit int) (st
 		post, comment, tags, cut = sittingBlocks(s, mapper, o, lo)
 		if n := chars(post); n > limit {
 			log.Printf("%s: the post is %d characters even with every title cut to %d, over LinkedIn's %d; shorten it by hand",
-				sittingHeading(s.Body, s.Date), n, shortestSubject, limit)
+				s.heading(), n, shortestSubject, limit)
 		}
 	}
 	return "━━━ Post ━━━\n" + post +
@@ -388,7 +439,7 @@ func plural(n int, one, many string) string {
 // maxSubject characters (0 for no limit), and says how many it cut.
 func sittingBlocks(s sitting, mapper *contacts.Mapper, o options, maxSubject int) (post, comment, tags string, cut int) {
 	var p, c, t strings.Builder
-	fmt.Fprintf(&p, "🗳️ %s\n\n%s\n", sittingHeading(s.Body, s.Date), statsLine(s.Groups))
+	fmt.Fprintf(&p, "🗳️ %s\n\n%s\n", s.heading(), statsLine(s.Groups))
 	var attributions []string
 	seen := map[string]bool{}
 	n := 0
@@ -512,15 +563,6 @@ func bySitting(groups [][]votes.Vote) [][]votes.Vote {
 	out := append([][]votes.Vote(nil), groups...)
 	sort.SliceStable(out, func(i, j int) bool { return out[i][0].DateString() < out[j][0].DateString() })
 	return out
-}
-
-// sittingHeading names the body and the day it sat: "Kantonsrat Zürich |
-// Sitzung vom 09.11.2026", or the body alone where the source gave no date.
-func sittingHeading(body string, date time.Time) string {
-	if date.IsZero() {
-		return body
-	}
-	return body + " | Sitzung vom " + voteformat.FormatVoteDate(date)
 }
 
 // filingDate is the " vom 07.01.2026" Stadt Zürich's titles give after the

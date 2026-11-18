@@ -170,8 +170,14 @@ Each sitting is a post of its own, headed with its date and a count of its
 businesses and results. A sitting of up to five businesses lists them all; a
 larger one lists only its rejections, then its closest votes, five in all, one
 per business, and points to parlinfo.ch for the rest. `-all` lists every
-business instead. Titles drop the date the business was filed, and where a post
-would pass LinkedIn's 3,000 characters its longest titles are cut at a word,
+business instead. `-merge` makes one post per body of every sitting in the
+window, for a parliament that sits in sessions:
+
+```bash
+go run ./cmd/linkedin_digest -channel chparl -state-ref origin/state-log-chparl -until 2026-10-02 -days 5 -merge -fetch 2000
+```
+
+Titles drop the date the business was filed, and where a post would pass LinkedIn's 3,000 characters its longest titles are cut at a word,
 with a warning saying how many. A vote the bot has not posted yet is not in the
 draft: the Kantonsrat's votes reach the bot days after the sitting, so draft a
 week once its last sitting has gone out.

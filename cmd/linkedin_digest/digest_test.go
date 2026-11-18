@@ -368,7 +368,7 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 
 	// The cards follow the post's numbering: the rejection first, then the
 	// closest.
-	entries := postEntries(sections, false)
+	entries := postEntries(sections, options{})
 	var order []string
 	for _, g := range entries[0].Groups {
 		order = append(order, g[0].SourceID)
@@ -383,7 +383,7 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 	if err := os.WriteFile(stale, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := writeCards(dir, sections, false); err != nil {
+	if _, err := writeCards(dir, sections, options{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -406,5 +406,28 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 	written, _ := os.ReadFile(filepath.Join(dir, kr+"-1.jpg"))
 	if !bytes.Equal(written, first[0].JPEG) {
 		t.Error("the multi-vote business's card is not its first card")
+	}
+}
+
+func TestMergeMakesOnePostOfABodysSittings(t *testing.T) {
+	first := testfixtures.SingleVoteAngenommen()
+	second := testfixtures.SingleVoteAbgelehnt()
+	second[0].Date = first[0].Date.AddDate(0, 0, 4)
+	sections := []section{{Name: "Nationalrat", Groups: [][]votes.Vote{second, first}}}
+
+	got, _ := render(sections, nil, options{Merge: true})
+
+	if strings.Contains(got, "Beitrag") {
+		t.Errorf("merged draft has more than one post:\n%s", got)
+	}
+	want := "🗳️ Nationalrat | Sitzungen vom 15.06.2025 bis 19.06.2025\n\n2 Geschäfte: 1 angenommen, 1 abgelehnt.\n\n1. ✅ Angenommen"
+	if !strings.Contains(got, want) {
+		t.Errorf("render() = %s\nwant it to open with:\n%s", got, want)
+	}
+	if !strings.Contains(got, "\n2. ❌ Abgelehnt") {
+		t.Errorf("the second sitting's vote is not numbered on:\n%s", got)
+	}
+	if p := cardPrefix(posts(sections, options{Merge: true})[0]); p != "2025-06-15-2025-06-19-nationalrat" {
+		t.Errorf("cardPrefix = %q, want both days", p)
 	}
 }

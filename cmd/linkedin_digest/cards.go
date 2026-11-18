@@ -13,11 +13,11 @@ import (
 // postEntries lists, for each post render writes and in the same order, the
 // sitting and the businesses its entries are about, in the order they are
 // numbered.
-func postEntries(sections []section, all bool) []sittingEntries {
+func postEntries(sections []section, o options) []sittingEntries {
 	var out []sittingEntries
-	for _, s := range sittings(sections) {
+	for _, s := range posts(sections, o) {
 		se := sittingEntries{Sitting: s}
-		for _, pt := range parts(s, all) {
+		for _, pt := range parts(s, o.All) {
 			for _, e := range pt.entries {
 				se.Groups = append(se.Groups, e.group)
 			}
@@ -42,12 +42,12 @@ type sittingEntries struct {
 //
 // It returns the files it wrote. Files left by an earlier run for the same
 // sitting are removed first, so a post that lost an entry loses its card.
-func writeCards(dir string, sections []section, all bool) ([]string, error) {
+func writeCards(dir string, sections []section, o options) ([]string, error) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return nil, err
 	}
 	var written []string
-	for _, se := range postEntries(sections, all) {
+	for _, se := range postEntries(sections, o) {
 		prefix := filepath.Join(dir, cardPrefix(se.Sitting))
 		stale, _ := filepath.Glob(prefix + "-*")
 		for _, f := range stale {
@@ -60,7 +60,7 @@ func writeCards(dir string, sections []section, all bool) ([]string, error) {
 		for i, g := range se.Groups {
 			cards, err := imagegen.GenerateCards(g)
 			if err != nil {
-				return nil, fmt.Errorf("%s, entry %d: %w", sittingHeading(se.Sitting.Body, se.Sitting.Date), i+1, err)
+				return nil, fmt.Errorf("%s, entry %d: %w", se.Sitting.heading(), i+1, err)
 			}
 			path := fmt.Sprintf("%s-%d.jpg", prefix, i+1)
 			if err := os.WriteFile(path, cards[0].JPEG, 0o644); err != nil {
@@ -85,8 +85,9 @@ func writeCards(dir string, sections []section, all bool) ([]string, error) {
 	return written, nil
 }
 
-// cardPrefix names a sitting's files by its day and the body's first word:
-// "2026-11-09-kantonsrat".
+// cardPrefix names a sitting's files by its day, or its first and last, and
+// the body's first word: "2026-11-09-kantonsrat",
+// "2026-09-28-2026-10-02-nationalrat".
 func cardPrefix(s sitting) string {
 	body := "sitzung"
 	if f := strings.Fields(s.Body); len(f) > 0 {
@@ -95,5 +96,9 @@ func cardPrefix(s sitting) string {
 	if s.Date.IsZero() {
 		return body
 	}
-	return s.Date.Format("2006-01-02") + "-" + body
+	days := s.Date.Format("2006-01-02")
+	if !s.Last.IsZero() && !sameDay(s.Date, s.Last) {
+		days += "-" + s.Last.Format("2006-01-02")
+	}
+	return days + "-" + body
 }
