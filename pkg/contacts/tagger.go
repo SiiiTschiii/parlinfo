@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
 // HandleTag represents a name and its social handle for tagging.
@@ -397,8 +399,7 @@ func (m *Mapper) Mentions(text, platform string) []Mention {
 			continue
 		}
 		for _, variant := range generateNameVariants(contact.Name) {
-			re := regexp.MustCompile(`\b` + regexp.QuoteMeta(variant) + `\b`)
-			for _, idx := range re.FindAllStringIndex(text, -1) {
+			for _, idx := range nameSpans(text, variant) {
 				matches = append(matches, match{idx[0], idx[1], Mention{Name: contact.Name, URLs: urls}})
 			}
 		}
@@ -433,4 +434,33 @@ func (m *Mapper) Mentions(text, platform string) []Mention {
 		}
 	}
 	return out
+}
+
+// nameSpans finds name in text where it stands as a whole name: not preceded
+// or followed by a letter or digit. A regexp's \b would not do, since it knows
+// only ASCII letters: "Isler René" ends in a letter it counts as a boundary,
+// so the name followed by a space was never found.
+func nameSpans(text, name string) [][2]int {
+	var spans [][2]int
+	if name == "" {
+		return nil
+	}
+	for from := 0; ; {
+		i := strings.Index(text[from:], name)
+		if i < 0 {
+			return spans
+		}
+		start, end := from+i, from+i+len(name)
+		before, _ := utf8.DecodeLastRuneInString(text[:start])
+		after, _ := utf8.DecodeRuneInString(text[end:])
+		if !isNameRune(before) && !isNameRune(after) {
+			spans = append(spans, [2]int{start, end})
+		}
+		_, size := utf8.DecodeRuneInString(text[start:])
+		from = start + size
+	}
+}
+
+func isNameRune(r rune) bool {
+	return r != utf8.RuneError && (unicode.IsLetter(r) || unicode.IsDigit(r))
 }

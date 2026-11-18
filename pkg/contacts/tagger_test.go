@@ -703,3 +703,18 @@ func TestMentions(t *testing.T) {
 		}
 	}
 }
+
+func TestMentionsFindANameEndingInAnAccent(t *testing.T) {
+	m := newMapper([]Contact{
+		{Name: "René Isler", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/rene-isler")},
+		{Name: "Anna Graf", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/anna-graf")},
+	})
+
+	// Surname first, the name ends in "é" and a space follows; "Anna
+	// Graff" contains "Anna Graf" but is somebody else.
+	got := m.Mentions("Motion von Isler René (SVP) und Anna Graff (SP)", "linkedin")
+
+	if len(got) != 1 || got[0].Name != "René Isler" {
+		t.Errorf("Mentions() = %v, want René Isler alone", got)
+	}
+}
