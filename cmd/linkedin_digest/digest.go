@@ -9,6 +9,7 @@ import (
 	"time"
 	"unicode/utf16"
 
+	"github.com/siiitschiii/parlinfo/pkg/config"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
 	"github.com/siiitschiii/parlinfo/pkg/voteposting/voteformat"
@@ -113,16 +114,49 @@ type sitting struct {
 }
 
 // heading names the body and when it sat: "Kantonsrat Zürich | Sitzung vom
-// 09.11.2026", "Nationalrat | Sitzungen vom 28.09.2026 bis 02.10.2026", or
-// the body alone where the source gave no date.
+// 09.11.2026", "Nationalrat | Herbstsession 2026, Sitzungen vom 28.09.2026
+// bis 02.10.2026", or the body alone where the source gave no date.
 func (s sitting) heading() string {
 	if s.Date.IsZero() {
 		return s.Body
 	}
-	if s.Last.IsZero() || sameDay(s.Date, s.Last) {
-		return s.Body + " | Sitzung vom " + voteformat.FormatVoteDate(s.Date)
+	when := "Sitzung vom " + voteformat.FormatVoteDate(s.Date)
+	if !s.Last.IsZero() && !sameDay(s.Date, s.Last) {
+		when = "Sitzungen vom " + voteformat.FormatVoteDate(s.Date) + " bis " + voteformat.FormatVoteDate(s.Last)
 	}
-	return s.Body + " | Sitzungen vom " + voteformat.FormatVoteDate(s.Date) + " bis " + voteformat.FormatVoteDate(s.Last)
+	if len(s.Groups) > 0 {
+		if name := session(s.Groups[0][0]); name != "" {
+			when = name + ", " + when
+		}
+	}
+	return s.Body + " | " + when
+}
+
+// session names the session of the Federal Assembly a Nationalrat vote was
+// taken in, and is empty for any other parliament. The source gives only a
+// numeric ID, but the sessions keep to fixed seasons: spring from late
+// February, a special session in early May, summer from late May, autumn into
+// early October and winter from late November.
+func session(v votes.Vote) string {
+	if !strings.HasPrefix(v.Jurisdiction, config.NationalratKey) || v.Date.IsZero() {
+		return ""
+	}
+	var name string
+	switch m := v.Date.Month(); {
+	case m == time.February || m == time.March:
+		name = "Frühjahrssession"
+	case m == time.April || m == time.May && v.Date.Day() < 20:
+		name = "Sondersession"
+	case m == time.May || m == time.June:
+		name = "Sommersession"
+	case m == time.September || m == time.October:
+		name = "Herbstsession"
+	case m == time.November || m == time.December:
+		name = "Wintersession"
+	default:
+		return ""
+	}
+	return fmt.Sprintf("%s %d", name, v.Date.Year())
 }
 
 func sameDay(a, b time.Time) bool { return a.Format("2006-01-02") == b.Format("2006-01-02") }

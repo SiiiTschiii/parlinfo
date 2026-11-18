@@ -434,3 +434,26 @@ func TestMergeMakesOnePostOfABodysSittings(t *testing.T) {
 		t.Errorf("cardPrefix = %q, want both days", p)
 	}
 }
+
+func TestHeadingNamesTheNationalratsSession(t *testing.T) {
+	at := func(jurisdiction string, y int, m time.Month, d int) []votes.Vote {
+		return []votes.Vote{{Jurisdiction: jurisdiction, Date: time.Date(y, m, d, 9, 0, 0, 0, time.UTC)}}
+	}
+	for _, c := range []struct {
+		s    sitting
+		want string
+	}{
+		{sitting{Body: "Nationalrat", Date: at("nationalrat", 2026, 9, 29)[0].Date, Groups: [][]votes.Vote{at("nationalrat", 2026, 9, 29)}},
+			"Nationalrat | Herbstsession 2026, Sitzung vom 29.09.2026"},
+		{sitting{Body: "Conseil national", Date: at("nationalrat-fr", 2026, 5, 5)[0].Date, Groups: [][]votes.Vote{at("nationalrat-fr", 2026, 5, 5)}},
+			"Conseil national | Sondersession 2026, Sitzung vom 05.05.2026"},
+		{sitting{Body: "Nationalrat", Date: at("nationalrat", 2026, 5, 28)[0].Date, Last: at("nationalrat", 2026, 6, 3)[0].Date, Groups: [][]votes.Vote{at("nationalrat", 2026, 5, 28)}},
+			"Nationalrat | Sommersession 2026, Sitzungen vom 28.05.2026 bis 03.06.2026"},
+		{sitting{Body: "Kantonsrat Zürich", Date: at("zurich-canton", 2026, 11, 9)[0].Date, Groups: [][]votes.Vote{at("zurich-canton", 2026, 11, 9)}},
+			"Kantonsrat Zürich | Sitzung vom 09.11.2026"},
+	} {
+		if got := c.s.heading(); got != c.want {
+			t.Errorf("heading() = %q, want %q", got, c.want)
+		}
+	}
+}
