@@ -272,25 +272,17 @@ type part struct {
 //
 // A post listing a long sitting entry by entry reads as a data feed, and the
 // Gemeinderat's sitting of 28 October still needed ten titles cut to fit. So a
-// sitting of more than maxListed businesses gets the votes worth reading: the
-// rejections, which are the exception in a chamber that adopts most of what
-// comes before it, then the closest results. The rest is one click away.
+// sitting of more than maxListed businesses gets the votes worth reading, its
+// closest, and the rest is one click away.
 func parts(s sitting, all bool) []part {
 	if all || len(s.Groups) <= maxListed {
 		return []part{{entries: whole(s.Groups)}}
 	}
-	rejected, closest := highlights(s.Groups, maxListed)
-	if len(rejected)+len(closest) == 0 {
+	closest := highlights(s.Groups, maxListed)
+	if len(closest) == 0 {
 		return []part{{entries: whole(s.Groups)}}
 	}
-	var out []part
-	if len(rejected) > 0 {
-		out = append(out, part{"Abgelehnt:", rejected})
-	}
-	if len(closest) > 0 {
-		out = append(out, part{"Am knappsten:", closest})
-	}
-	return out
+	return []part{{"Am knappsten:", closest}}
 }
 
 // whole lists every business as it stands.
@@ -302,65 +294,71 @@ func whole(groups [][]votes.Vote) []entry {
 	return out
 }
 
-// highlights picks at most max votes, one per business: the rejections first,
-// then the closest of the rest, each run closest first.
+// eachSide is how many places in the highlights go to rejections, and as many
+// to adoptions, where a sitting has that many. Ranked by margin alone, the
+// closest five of the Nationalrat's last Herbstsession week were all
+// rejections, and the five of a Gemeinderat sitting are often all adoptions;
+// either way the post would tell half the story.
+const eachSide = 2
+
+// highlights picks at most max votes, one per business, closest first: the
+// eachSide closest rejections and adoptions, then the closest of the rest.
 //
 // A business stands in by its closest vote, so six close Änderungsanträge on
 // one ordinance do not crowd out everything else. Only a Ja/Nein vote can be
 // close: a threshold or Auswahl vote's counts do not measure a margin. An
 // election records no result, so it is never one.
-func highlights(groups [][]votes.Vote, max int) (rejected, closest []entry) {
+func highlights(groups [][]votes.Vote, max int) []entry {
 	type candidate struct {
 		e       entry
 		yes, no int
 	}
-	var rej, rest []candidate
+	var all []candidate
 	for _, g := range groups {
 		if votes.IsWahlgeschaeftGroup(g) {
 			continue
 		}
-		var bestRej, bestRest *candidate
+		var best *candidate
 		for i, v := range g {
 			yes, no, ok := yesNo(v)
 			if !ok {
-				// No margin to measure ranks as the widest: a rejected
-				// threshold vote is still a rejection, but never "close".
-				yes, no = 1, 0
+				continue
 			}
-			c := candidate{entry{g, i}, yes, no}
-			switch {
-			case isRejected(v):
-				if bestRej == nil || closer(c.yes, c.no, bestRej.yes, bestRej.no) {
-					bestRej = &c
-				}
-			case ok:
-				if bestRest == nil || closer(c.yes, c.no, bestRest.yes, bestRest.no) {
-					bestRest = &c
-				}
+			if c := (candidate{entry{g, i}, yes, no}); best == nil || closer(c.yes, c.no, best.yes, best.no) {
+				best = &c
 			}
 		}
-		if bestRej != nil {
-			rej = append(rej, *bestRej)
-		} else if bestRest != nil {
-			rest = append(rest, *bestRest)
+		if best != nil {
+			all = append(all, *best)
 		}
 	}
-	byMargin := func(cs []candidate) {
-		sort.SliceStable(cs, func(i, j int) bool { return closer(cs[i].yes, cs[i].no, cs[j].yes, cs[j].no) })
-	}
-	byMargin(rej)
-	byMargin(rest)
-	for _, c := range rej {
-		if len(rejected) < max {
-			rejected = append(rejected, c.e)
+	sort.SliceStable(all, func(i, j int) bool { return closer(all[i].yes, all[i].no, all[j].yes, all[j].no) })
+
+	chosen := make([]bool, len(all))
+	n := 0
+	take := func(want func(votes.Vote) bool, limit int) {
+		for i, c := range all {
+			if n >= max || limit == 0 {
+				return
+			}
+			if !chosen[i] && want(c.e.group[c.e.vote]) {
+				chosen[i] = true
+				n++
+				limit--
+			}
 		}
 	}
-	for _, c := range rest {
-		if len(rejected)+len(closest) < max {
-			closest = append(closest, c.e)
+	take(isRejected, eachSide)
+	take(isAdopted, eachSide)
+	take(func(votes.Vote) bool { return true }, max)
+
+	var out []entry
+	for i, c := range all {
+		if chosen[i] {
+			out = append(out, c.e)
 		}
 	}
-	return rejected, closest
+	return out
 }
 
 // yesNo is a Ja/Nein vote's two counts, and false for any other kind.
@@ -388,6 +386,11 @@ func abs(n int) int {
 // isRejected reports whether the post states the vote failed.
 func isRejected(v votes.Vote) bool {
 	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "❌"
+}
+
+// isAdopted reports whether a vote's stated verdict is an adoption.
+func isAdopted(v votes.Vote) bool {
+	return voteformat.HasVerdict(v) && voteformat.GetVoteResultEmoji(voteformat.Verdict(v)) == "✅"
 }
 
 // statsLine counts a sitting: "15 Geschäfte, 16 Abstimmungen: 14 angenommen,

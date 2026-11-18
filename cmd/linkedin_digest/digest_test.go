@@ -285,7 +285,7 @@ func TestStatsLine(t *testing.T) {
 	}
 }
 
-func TestHighlightsTakeRejectionsThenTheClosest(t *testing.T) {
+func TestHighlightsMixTheClosestRejectionsAndAdoptions(t *testing.T) {
 	multi := testfixtures.MultiVoteGroup() // 90:20 adopted, 40:70 rejected
 	groups := [][]votes.Vote{
 		lone("wide", "angenommen", 90, 30),
@@ -298,19 +298,24 @@ func TestHighlightsTakeRejectionsThenTheClosest(t *testing.T) {
 		testfixtures.KantonsratWahlgeschaeft(), // 157:0, records no result
 	}
 
-	rejected, closest := highlights(groups, 5)
+	var got []string
+	for _, e := range highlights(groups, 5) {
+		got = append(got, e.group[e.vote].SourceID)
+	}
+	// "wide" is closer than "rejected-wide", which is in only because two
+	// places go to rejections; the business stands in by its closest vote.
+	want := []string{"closest", "second", "third", multi[1].SourceID, "rejected-wide"}
+	if strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("highlights = %v, want %v", got, want)
+	}
 
-	ids := func(es []entry) (out []string) {
-		for _, e := range es {
-			out = append(out, e.group[e.vote].SourceID)
-		}
-		return out
+	// With no rejection to hold a place for, the closest fill all five.
+	got = got[:0]
+	for _, e := range highlights(groups[:2], 5) {
+		got = append(got, e.group[e.vote].SourceID)
 	}
-	if got, want := ids(rejected), []string{multi[1].SourceID, "rejected-wide"}; strings.Join(got, ",") != strings.Join(want, ",") {
-		t.Errorf("rejected = %v, want %v, closest first and the business by its rejected vote", got, want)
-	}
-	if got, want := ids(closest), []string{"closest", "second", "third"}; strings.Join(got, ",") != strings.Join(want, ",") {
-		t.Errorf("closest = %v, want %v, filling up to five", got, want)
+	if want := "closest,wide"; strings.Join(got, ",") != want {
+		t.Errorf("highlights of two adoptions = %v, want %s", got, want)
 	}
 }
 
@@ -330,9 +335,8 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	post, rest, _ := strings.Cut(got, "━━━ First comment ━━━")
 	comment, _, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
 	want := "7 Geschäfte: 6 angenommen, 1 abgelehnt.\n\n" +
-		"Abgelehnt:\n1. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
-		"Am knappsten:\n2. ✅ 61 Ja, 59 Nein · Postulat g2\n3. ✅ 66 Ja, 60 Nein · Postulat g6\n" +
-		"4. ✅ 70 Ja, 50 Nein · Postulat g4\n5. ✅ 90 Ja, 30 Nein · Postulat g1\n\n" +
+		"Am knappsten:\n1. ✅ 61 Ja, 59 Nein · Postulat g2\n2. ✅ 66 Ja, 60 Nein · Postulat g6\n" +
+		"3. ✅ 70 Ja, 50 Nein · Postulat g4\n4. ✅ 90 Ja, 30 Nein · Postulat g1\n5. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
 		"Alle 7 Geschäfte einzeln, auf dem Social-Media-Kanal nach Wahl: Link im ersten Kommentar.\n"
 	if !strings.Contains(post, want) {
 		t.Errorf("post = %s\nwant it to contain:\n%s", post, want)
@@ -366,14 +370,13 @@ func TestWriteCardsAttachesTheFirstCardOfEachEntry(t *testing.T) {
 		{Name: "Kantonsrat Zürich", Groups: [][]votes.Vote{multi}},
 	}
 
-	// The cards follow the post's numbering: the rejection first, then the
-	// closest.
+	// The cards follow the post's numbering, closest first.
 	entries := postEntries(sections, options{})
 	var order []string
 	for _, g := range entries[0].Groups {
 		order = append(order, g[0].SourceID)
 	}
-	if got, want := strings.Join(order, " "), "g3 g2 g6 g4 g1"; got != want {
+	if got, want := strings.Join(order, " "), "g2 g6 g4 g1 g3"; got != want {
 		t.Errorf("first post's entries = %s, want %s", got, want)
 	}
 
