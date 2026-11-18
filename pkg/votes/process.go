@@ -55,29 +55,43 @@ import (
 // Kantonsrat can be a committee's proposal to reject, and OpenParlData does not
 // say which; until a source does, the Kantonsrat gets no process.
 //
+// Where the adapter knows the path up to this vote but not the step after it —
+// a Gesamtabstimmung, after which a bill can go to the other chamber, into the
+// Differenzbereinigung or to the Schlussabstimmung — the process ends at this
+// vote's step and says nothing of what follows (Open). It may instead carry a
+// line that is true whichever way the business goes, under a heading of its
+// own: "Noch nicht endgültig: Schlussabstimmung beider Räte steht aus" after a
+// Gesamtabstimmung on a federal law, which is never adopted without one. That
+// line and its heading are the adapter's, not the source's; it is the one
+// place a process words a status itself, and only where the law makes it
+// certain.
+//
 // Nil means the adapter could not say where the business stands, and the post
 // goes out as it always has. That is the right answer for anything the adapter
 // does not recognise: a wrong next step is worse than none.
 type Process struct {
 	// Steps run in order: the steps already taken, then exactly one step this
-	// vote took, then — unless it ended the business — exactly one step to
-	// come. See Validate.
+	// vote took, then — unless it ended the business or the step after it is
+	// not known — exactly one step to come. See Validate.
 	Steps []ProcessStep
 
 	// Next is what happens next, in the source's words, as a post prints it
 	// after "Nächster Schritt:": "In Kommission des Ständerats". When this vote
 	// ended the business it is instead the source's word for a closed one —
 	// "Erledigt" on parlament.ch, "Abgeschlossen" in the Gemeinderat — under
-	// StatusLabel. Required either way; at most MaxNextRunes long.
+	// StatusLabel. Required either way; at most MaxNextRunes long. A process
+	// with no step to come (Open) may leave it empty, or carry a line under
+	// StatusLabel that holds whatever comes next.
 	Next string
 
-	// StatusLabel is the source's own heading for a business's status, which
-	// a post prints before Next instead of "Nächster Schritt:" when this vote
-	// ended the business: "Stand der Beratungen:" on parlament.ch's business
-	// page, "Geschäftsstatus:" for PARIS's Geschaeftsstatus. Nothing comes
-	// next for a closed business, so "Nächster Schritt: Erledigt" answered a
-	// question it had just made moot. Required when the vote ended the
-	// business; unused otherwise.
+	// StatusLabel is the heading a post prints before Next instead of
+	// "Nächster Schritt:" where there is no next step to name. When this vote
+	// ended the business it is the source's own heading for a business's
+	// status: "Stand der Beratungen:" on parlament.ch's business page,
+	// "Geschäftsstatus:" for PARIS's Geschaeftsstatus. Nothing comes next for
+	// a closed business, so "Nächster Schritt: Erledigt" answered a question
+	// it had just made moot. On an Open process with a Next it heads that
+	// line: "Noch nicht endgültig:". Required in both cases; unused otherwise.
 	StatusLabel string
 
 	// Kind is the business type as the source names it ("Postulat"), for the
@@ -95,6 +109,14 @@ type Process struct {
 	// the Gemeinderat. Without it "Überwiesen an den Bundesrat" leaves open
 	// what the Bundesrat now has to do. Optional.
 	About string
+
+	// VoteAbout is the source's own sentence on the kind of vote this was,
+	// where that kind decides what the result means: parlament.ch's
+	// Parlamentswörterbuch on the Gesamtabstimmung, "Die Erstberatung eines
+	// Erlassentwurfes endet mit der Gesamtabstimmung.", which a reader would
+	// otherwise take for the final word. Optional; a card short of room
+	// leaves it out first.
+	VoteAbout string
 }
 
 // ProcessStep is one stage of a business: who acts, and what they did or will
@@ -179,6 +201,21 @@ func TrimHistory(done []ProcessStep, room int) []ProcessStep {
 	return append(append([]ProcessStep{done[0]}, gap), recent...)
 }
 
+// Open reports whether the process ends at this vote's step with the business
+// still going on: the step after it is not known, so none is shown.
+func (p Process) Open() bool {
+	open := false
+	for _, s := range p.Steps {
+		switch {
+		case s.State == StepCurrent:
+			open = true
+		case s.State == StepNext || s.State.closes():
+			return false
+		}
+	}
+	return open
+}
+
 // Ended reports whether the vote ended the business.
 func (p Process) Ended() bool {
 	for _, s := range p.Steps {
@@ -190,8 +227,9 @@ func (p Process) Ended() bool {
 }
 
 // Validate checks that p tells one coherent story: done steps, then the one
-// step this vote took, then — unless that step ended the business — the one
-// step that comes next, and a next-step text in either case.
+// step this vote took, then — unless that step ended the business or the next
+// one is not known — the one step that comes next, and a next-step text
+// wherever there is a step to come or the business closed.
 //
 // Adapters build processes from rules and source data that can disagree with
 // each other; a process that fails here is dropped rather than posted.
@@ -240,14 +278,20 @@ func (p Process) Validate() error {
 	switch {
 	case p.Steps[current].State.closes() && next > 0:
 		return errors.New("steps follow the step that ended the business")
-	case p.Steps[current].State == StepCurrent && next != 1:
-		return fmt.Errorf("an open business shows exactly one next step, not %d", next)
+	case p.Steps[current].State == StepCurrent && next > 1:
+		return fmt.Errorf("an open business shows at most one next step, not %d", next)
 	}
 	if p.Steps[current].State.closes() && strings.TrimSpace(p.StatusLabel) == "" {
 		return errors.New("a closed business needs the source's heading for its status")
 	}
 	text := strings.TrimSpace(p.Next)
-	if text == "" {
+	if p.Steps[current].State == StepCurrent && next == 0 {
+		// The step after this vote is not known: no next step, or a line
+		// that holds whichever it is, under a heading of its own.
+		if text != "" && strings.TrimSpace(p.StatusLabel) == "" {
+			return errors.New("a line in place of the next step needs its own heading")
+		}
+	} else if text == "" {
 		return errors.New("a process needs a next step, or the source's word for a closed business")
 	}
 	if n := len([]rune(text)); n > MaxNextRunes {
@@ -278,7 +322,7 @@ func (p *Process) Equal(q *Process) bool {
 	if p == nil || q == nil {
 		return p == q
 	}
-	if p.Next != q.Next || p.StatusLabel != q.StatusLabel || p.Kind != q.Kind || p.Bill != q.Bill || p.About != q.About || len(p.Steps) != len(q.Steps) {
+	if p.Next != q.Next || p.StatusLabel != q.StatusLabel || p.Kind != q.Kind || p.Bill != q.Bill || p.About != q.About || p.VoteAbout != q.VoteAbout || len(p.Steps) != len(q.Steps) {
 		return false
 	}
 	for i := range p.Steps {

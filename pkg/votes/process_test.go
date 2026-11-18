@@ -54,11 +54,22 @@ func TestProcessValidate(t *testing.T) {
 			p.Steps = append(p.Steps, ProcessStep{Label: "In Ständerat geplant", State: StepNext})
 			return p
 		}, false},
-		{"open business without a next step on the card", func() Process {
+		{"a next step's text without the step, as a next step", func() Process {
 			p := open()
 			p.Steps = p.Steps[:2]
 			return p
 		}, false},
+		{"open business whose next step is not known", func() Process {
+			p := open()
+			p.Steps, p.Next = p.Steps[:2], ""
+			return p
+		}, true},
+		{"open business with a line in place of the next step", func() Process {
+			p := open()
+			p.Steps = p.Steps[:2]
+			p.StatusLabel, p.Next = "Noch nicht endgültig:", "Schlussabstimmung beider Räte steht aus"
+			return p
+		}, true},
 		{"no step for this vote", func() Process {
 			p := open()
 			p.Steps[1].State = StepDone
@@ -117,6 +128,20 @@ func TestProcessValidate(t *testing.T) {
 				t.Errorf("Validate() = %v, want valid=%v", err, tt.valid)
 			}
 		})
+	}
+}
+
+func TestProcessOpen(t *testing.T) {
+	unknown := open()
+	unknown.Steps, unknown.Next = unknown.Steps[:2], ""
+	for _, c := range []struct {
+		name string
+		p    Process
+		want bool
+	}{{"next step known", open(), false}, {"ended", ended(), false}, {"next step not known", unknown, true}} {
+		if got := c.p.Open(); got != c.want {
+			t.Errorf("%s: Open() = %v, want %v", c.name, got, c.want)
+		}
 	}
 }
 
