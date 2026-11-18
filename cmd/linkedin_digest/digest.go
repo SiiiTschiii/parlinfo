@@ -164,23 +164,55 @@ func sameDay(a, b time.Time) bool { return a.Format("2006-01-02") == b.Format("2
 // merged folds the sittings of each body into one, from its first day to its
 // last: a parliament that sits in sessions, like the Nationalrat, reads better
 // as a session than as a post a day.
+//
+// A business voted on more than one day is one business in the merged post,
+// its votes in date order, so it is counted once and highlighted at most once;
+// a source groups by business and day, so the days' groups are joined here.
 func merged(ss []sitting) []sitting {
 	var out []sitting
 	at := map[string]int{}
+	business := map[string]map[string]int{} // body → business → index in Groups
 	for _, s := range ss {
 		i, ok := at[s.Body]
 		if !ok {
-			at[s.Body] = len(out)
-			out = append(out, sitting{Body: s.Body, Date: s.Date, Last: s.Date, Groups: append([][]votes.Vote(nil), s.Groups...)})
-			continue
+			i = len(out)
+			at[s.Body] = i
+			business[s.Body] = map[string]int{}
+			out = append(out, sitting{Body: s.Body, Date: s.Date, Last: s.Date})
 		}
 		m := &out[i]
-		m.Groups = append(m.Groups, s.Groups...)
+		for _, g := range s.Groups {
+			key := businessKey(g)
+			if j, seen := business[s.Body][key]; seen && key != "" {
+				m.Groups[j] = append(append([]votes.Vote(nil), m.Groups[j]...), g...)
+				continue
+			}
+			if key != "" {
+				business[s.Body][key] = len(m.Groups)
+			}
+			m.Groups = append(m.Groups, g)
+		}
 		if s.Date.After(m.Last) {
 			m.Last = s.Date
 		}
 	}
 	return out
+}
+
+// businessKey identifies a group's business, by the source's ID or else its
+// number, and is empty for votes that belong to no business.
+func businessKey(g []votes.Vote) string {
+	if len(g) == 0 {
+		return ""
+	}
+	a := g[0].Affair
+	if a.ID != "" {
+		return g[0].Jurisdiction + "/id/" + a.ID
+	}
+	if a.Number != "" {
+		return g[0].Jurisdiction + "/nr/" + a.Number
+	}
+	return ""
 }
 
 // sittings splits the sections into one sitting per body and day, in the

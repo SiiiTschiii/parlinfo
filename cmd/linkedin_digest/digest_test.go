@@ -479,3 +479,27 @@ func TestHeadingNamesTheNationalratsSession(t *testing.T) {
 		}
 	}
 }
+
+func TestMergeCountsABusinessVotedOnTwoDaysOnce(t *testing.T) {
+	first := testfixtures.SingleVoteAngenommen()
+	second := testfixtures.SingleVoteAbgelehnt()
+	second[0].Affair = first[0].Affair
+	second[0].Jurisdiction = first[0].Jurisdiction
+	second[0].Date = first[0].Date.AddDate(0, 0, 4)
+	other := lone("other", "angenommen", 90, 30)
+	other[0].Date = second[0].Date
+	other[0].Affair = votes.Affair{ID: "other", Number: "other"}
+	sections := []section{{Name: "Nationalrat", Groups: [][]votes.Vote{first, second, other}}}
+
+	ps := posts(sections, options{Merge: true})
+
+	if len(ps) != 1 || len(ps[0].Groups) != 2 {
+		t.Fatalf("merged groups = %d, want the business voted twice as one and the other", len(ps[0].Groups))
+	}
+	if got := ps[0].Groups[0]; len(got) != 2 || !got[0].Date.Before(got[1].Date) {
+		t.Errorf("joined business = %v, want both votes in date order", got)
+	}
+	if got, want := statsLine(ps[0].Groups), "2 Geschäfte, 3 Abstimmungen"; !strings.HasPrefix(got, want) {
+		t.Errorf("statsLine() = %q, want it to start %q", got, want)
+	}
+}
