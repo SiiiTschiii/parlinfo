@@ -147,6 +147,65 @@ existed have neither. To find where one vote was posted, on every platform:
 jq -r --arg id "<vote id>" '.platform as $p | .votes[] | select(.id == $id) | "\($p)\t\(.post_url // .post_id // "-")"' data/zurich-city/posted_votes_*.json
 ```
 
+### The weekly LinkedIn digest
+
+LinkedIn gets a digest by hand, not a post per vote. `linkedin_digest` drafts
+it from the votes the bot posted from the sittings of the last days, and posts
+nothing:
+
+```bash
+git fetch origin state-log state-log-chparl
+go run ./cmd/linkedin_digest -state-ref origin/state-log
+go run ./cmd/linkedin_digest -channel chparl -days 14 -state-ref origin/state-log-chparl
+```
+
+The window is sitting dates, ending today unless `-until` names another day, so
+consecutive weeks never share a vote. For a week that has passed:
+
+```bash
+go run ./cmd/linkedin_digest -state-ref origin/state-log -until 2026-11-10
+```
+
+Each sitting is a post of its own, headed with its date and a count of its
+businesses and results. A sitting of up to five businesses lists them all; a
+larger one lists one business each for the closest and the clearest adoption
+and rejection, under those headings (a lone one under "Einzige Ablehnung" or
+"Einzige Annahme"), and points to parlinfo.ch for the rest; a
+sitting whose source states no verdicts, like the Kantonsrat's, gets its five
+closest votes instead. `-all` lists every
+business instead. `-merge` makes one post per body of every sitting in the
+window, for a parliament that sits in sessions:
+
+```bash
+go run ./cmd/linkedin_digest -channel chparl -state-ref origin/state-log-chparl -until 2026-10-02 -days 5 -merge -fetch 2000
+```
+
+Titles drop the date the business was filed, and where a post would pass LinkedIn's 3,000 characters its longest titles are cut at a word,
+with a warning saying how many. A vote the bot has not posted yet is not in the
+draft: the Kantonsrat's votes reach the bot days after the sitting, so draft a
+week once its last sitting has gone out.
+
+Each post comes as three blocks. **Post** is the text, numbered entries without
+links. **First comment** holds the channel's parlinfo.ch page, which leads to the
+accounts where every vote has its card, and the data credit; a channel without
+a parlinfo.ch page gets the official record of each entry instead, by the same
+number. **Tag
+by hand** lists the people an entry names who have a verified LinkedIn profile:
+type `@` and pick the person in place of the name in the post, and check the
+suggestion against the profile URL before picking it.
+
+It also writes the cards to attach, into `out/linkedin/` (`-cards` for another
+directory, `-cards ""` for none): the first card of each entry's business, the
+one the bot leads with elsewhere, as `<date>-<body>-<n>.jpg` by the entry's
+number, and each card's alt text in `<date>-<body>-alt.txt`. Add them to the
+post in order of the number and paste each alt text under the image's
+**Alternativtext**. On a Mac the folder opens in Finder once written; `-open=false`
+leaves it closed.
+
+Without `-state-ref` it reads the logs on disk. It fetches the latest `-fetch`
+votes from each source (200 by default) and warns when they do not reach back
+to the window's first day; raise `-fetch` for a window further back.
+
 ### Curating who gets tagged
 
 Tagging works by matching names in a post against `data/<jurisdiction>/contacts.yaml`.

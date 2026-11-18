@@ -1,0 +1,14 @@
+version: "1"
+contacts:
+  - name: Anna Graff
+    linkedin:
+      - url: https://www.linkedin.com/in/anna-graff
+        verified: true
+  - name: Liv Mahrer
+    linkedin:
+      - url: https://www.linkedin.com/in/liv-mahrer
+        verified: false
+  - name: Adrian Bergmann
+    linkedin:
+      - url: https://www.linkedin.com/in/adrian-bergmann
+        verified: true

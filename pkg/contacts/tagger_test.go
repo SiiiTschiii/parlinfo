@@ -678,3 +678,43 @@ contacts:
 		t.Errorf("GetXHandle = %q — the verified copy should win the merge", got)
 	}
 }
+
+func TestMentions(t *testing.T) {
+	m := newMapper([]Contact{
+		{Name: "David Garcia", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/david-garcia")},
+		{Name: "David Garcia Nuñez", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/dgn")},
+		{Name: "Moritz Bögli", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/moritz-boegli")},
+		{Name: "Anna Graff", LinkedIn: []Account{{URL: "https://www.linkedin.com/in/guess"}}},
+		{Name: "Ivo Bieri", X: VerifiedAccounts("https://x.com/ivobieri")},
+	})
+
+	got := m.Mentions("Postulat von Bögli Moritz (AL), David Garcia Nuñez (AL), Anna Graff (SP), Ivo Bieri (SP) und Moritz Bögli (AL)", "linkedin")
+
+	want := []Mention{
+		{Name: "Moritz Bögli", URLs: []string{"https://www.linkedin.com/in/moritz-boegli"}},
+		{Name: "David Garcia Nuñez", URLs: []string{"https://www.linkedin.com/in/dgn"}},
+	}
+	if len(got) != len(want) {
+		t.Fatalf("Mentions() = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i].Name != want[i].Name || len(got[i].URLs) != 1 || got[i].URLs[0] != want[i].URLs[0] {
+			t.Errorf("Mentions()[%d] = %v, want %v", i, got[i], want[i])
+		}
+	}
+}
+
+func TestMentionsFindANameEndingInAnAccent(t *testing.T) {
+	m := newMapper([]Contact{
+		{Name: "René Isler", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/rene-isler")},
+		{Name: "Anna Graf", LinkedIn: VerifiedAccounts("https://www.linkedin.com/in/anna-graf")},
+	})
+
+	// Surname first, the name ends in "é" and a space follows; "Anna
+	// Graff" contains "Anna Graf" but is somebody else.
+	got := m.Mentions("Motion von Isler René (SVP) und Anna Graff (SP)", "linkedin")
+
+	if len(got) != 1 || got[0].Name != "René Isler" {
+		t.Errorf("Mentions() = %v, want René Isler alone", got)
+	}
+}
