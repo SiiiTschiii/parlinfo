@@ -289,28 +289,41 @@ func statusHeadingHeight(v votes.Vote, p *votes.Process, fonts *fontSet) int {
 // aboutMaxLines bounds the sentence on what the business type asks for.
 const aboutMaxLines = 3
 
-// statusAbout is the process's sentence on the business type, wrapped to the
-// column, or nil without one.
-func statusAbout(p *votes.Process, fonts *fontSet) []string {
-	text := strings.TrimSpace(p.About)
-	if text == "" {
-		return nil
-	}
+// voteAboutMaxLines bounds the sentence on the kind of vote. The
+// Parlamentswörterbuch's on the Schlussabstimmung runs to five lines on its
+// own; one cut shorter than that is ellipsized rather than left out.
+const voteAboutMaxLines = 5
+
+// statusAbout is the process's sentences under the title, each wrapped to the
+// column as a paragraph of its own: the one on the business type, then, where
+// withVote, the one on the kind of vote.
+func statusAbout(p *votes.Process, fonts *fontSet, withVote bool) [][]string {
 	width := imgWidth - 2*padding
-	return ellipsizeLines(fonts.small, wrapText(fonts.small, text, width), width, titleBlockHeight(fonts.small, aboutMaxLines))
+	var out [][]string
+	wrap := func(text string, maxLines int) {
+		if text = strings.TrimSpace(text); text != "" {
+			out = append(out, ellipsizeLines(fonts.small, wrapText(fonts.small, text, width), width, titleBlockHeight(fonts.small, maxLines)))
+		}
+	}
+	wrap(p.About, aboutMaxLines)
+	if withVote {
+		wrap(p.VoteAbout, voteAboutMaxLines)
+	}
+	return out
 }
 
-// aboutHeight is the space the sentence takes below the title, or 0.
-func aboutHeight(about []string, fonts *fontSet) int {
-	if len(about) == 0 {
-		return 0
+// aboutHeight is the space the sentences take below the title, or 0.
+func aboutHeight(about [][]string, fonts *fontSet) int {
+	h := 0
+	for _, para := range about {
+		h += frac(fonts.small, 0.5) + len(para)*lineHeight(fonts.small)
 	}
-	return frac(fonts.small, 0.5) + len(about)*lineHeight(fonts.small)
+	return h
 }
 
 // statusReserve is the space the status card needs for everything but the
 // title, mirroring layoutStatusCard.
-func statusReserve(v votes.Vote, p *votes.Process, about []string, steps []statusStep, fonts *fontSet) int {
+func statusReserve(v votes.Vote, p *votes.Process, about [][]string, steps []statusStep, fonts *fontSet) int {
 	reserve := statusHeadingHeight(v, p, fonts) + aboutHeight(about, fonts)
 	reserve += titleTrailingGap() + frac(fonts.stepLabel, 0.75)
 	reserve += stepsHeight(steps, fonts)
@@ -331,10 +344,14 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	// not: a business with votes.MaxProcessSteps steps, each detail running to
 	// two lines, under a two-line footer would otherwise leave the title
 	// nothing.
-	// The sentence on the business type goes first when room runs short:
-	// the steps are what the card is for.
+	// The sentences go first when room runs short, the one on the kind of
+	// vote before the one on the business type: the steps are what the card
+	// is for.
 	steps := statusSteps(p, v.Language, fonts, 2)
-	about := statusAbout(p, fonts)
+	about := statusAbout(p, fonts, true)
+	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
+		about = statusAbout(p, fonts, false)
+	}
 	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
 		steps = statusSteps(p, v.Language, fonts, 1)
 	}
@@ -362,9 +379,9 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 		cur.advance(titleFace)
 		cur.gap(titleFace, titleLineGapFactor)
 	}
-	if len(about) > 0 {
+	for _, para := range about {
 		cur.y += frac(fonts.small, 0.5)
-		for _, line := range about {
+		for _, line := range para {
 			if img != nil {
 				x := (imgWidth - font.MeasureString(fonts.small, line).Ceil()) / 2
 				drawTrackedText(img, fonts.small, x, cur.baseline(fonts.small), line, 0, blend(bg, 0xD8))
@@ -517,6 +534,9 @@ func statusAlt(group []votes.Vote) string {
 		label = heading + "\n\n" + label
 	}
 	if about := strings.TrimSpace(p.About); about != "" {
+		label += "\n" + about
+	}
+	if about := strings.TrimSpace(p.VoteAbout); about != "" {
 		label += "\n" + about
 	}
 
