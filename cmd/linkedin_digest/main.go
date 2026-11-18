@@ -22,6 +22,7 @@ import (
 	"github.com/siiitschiii/parlinfo/pkg/config"
 	"github.com/siiitschiii/parlinfo/pkg/contacts"
 	"github.com/siiitschiii/parlinfo/pkg/votelog"
+	"github.com/siiitschiii/parlinfo/pkg/voteposting"
 	"github.com/siiitschiii/parlinfo/pkg/votes"
 )
 
@@ -161,7 +162,12 @@ func fetchPosted(source votes.Source, key string, ids map[string]bool, w window,
 	if err != nil {
 		return nil, err
 	}
-	return keep(groups, accept), nil
+	groups = keep(groups, accept)
+	// The same gate and process as the posts had, so a card here is the
+	// card that went out: no Fraktion table from a partial member list, and
+	// the next-step footer where the business has a process.
+	voteposting.PrepareGroups(source, groups)
+	return groups, nil
 }
 
 // loadLogs reads a jurisdiction's vote log for every platform, from ref when

@@ -71,11 +71,19 @@ func PrepareVoteGroups(
 
 	groups = withoutPostedVotes(groups, voteLog)
 
-	applyCompletenessGate(groups)
-
-	attachProcesses(src, groups)
+	PrepareGroups(src, groups)
 
 	return groups, nil
+}
+
+// PrepareGroups readies grouped votes for rendering, in place, the way every
+// post is readied: a member list that does not account for the totals is
+// dropped, and each group gets its process where the source has one. A tool
+// that renders the cards of votes it grouped itself, such as the LinkedIn
+// digest, calls it so its cards match the ones that were posted.
+func PrepareGroups(src votes.Source, groups [][]votes.Vote) {
+	applyCompletenessGate(groups)
+	attachProcesses(src, groups)
 }
 
 // attachProcesses sets each group's process where the source can say one.
