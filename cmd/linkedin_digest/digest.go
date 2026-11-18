@@ -328,10 +328,11 @@ func parts(s sitting, all bool) []part {
 // not: on a day the Nationalrat rejects most of what it votes on, those are
 // five rejections.
 //
-// Each business appears once, picked in that order, so a sitting with a
-// single rejection shows it as the closest and leaves "clearest" out. A
-// business stands in by whichever of its votes fits the heading. Only a
-// Ja/Nein vote with a stated verdict qualifies; see highlights.
+// Each business appears once, picked in that order. A sitting with a single
+// rejection, or a single adoption, shows it once under a heading saying so,
+// since it is both the closest and the clearest. A business stands in by
+// whichever of its votes fits the heading. Only a Ja/Nein vote with a stated
+// verdict qualifies; see highlights.
 func extremes(groups [][]votes.Vote) []part {
 	type candidate struct {
 		e       entry
@@ -361,20 +362,39 @@ func extremes(groups [][]votes.Vote) []part {
 		used[&best.e.group[0]] = true
 		return []entry{best.e}
 	}
+	// businesses counts the businesses with a vote that qualifies.
+	businesses := func(want func(votes.Vote) bool) int {
+		n := 0
+		for _, g := range groups {
+			if votes.IsWahlgeschaeftGroup(g) {
+				continue
+			}
+			for _, v := range g {
+				if _, _, ok := yesNo(v); ok && want(v) {
+					n++
+					break
+				}
+			}
+		}
+		return n
+	}
 	closest := func(a, b candidate) bool { return closer(a.yes, a.no, b.yes, b.no) }
 	clearest := func(a, b candidate) bool { return closer(b.yes, b.no, a.yes, a.no) }
 
 	var out []part
 	for _, h := range []struct {
-		heading string
-		want    func(votes.Vote) bool
-		better  func(a, b candidate) bool
+		heading, only string
+		want          func(votes.Vote) bool
+		better        func(a, b candidate) bool
 	}{
-		{"Am knappsten angenommen:", isAdopted, closest},
-		{"Am knappsten abgelehnt:", isRejected, closest},
-		{"Am klarsten angenommen:", isAdopted, clearest},
-		{"Am klarsten abgelehnt:", isRejected, clearest},
+		{"Am knappsten angenommen:", "Einzige Annahme:", isAdopted, closest},
+		{"Am knappsten abgelehnt:", "Einzige Ablehnung:", isRejected, closest},
+		{"Am klarsten angenommen:", "", isAdopted, clearest},
+		{"Am klarsten abgelehnt:", "", isRejected, clearest},
 	} {
+		if h.only != "" && businesses(h.want) == 1 {
+			h.heading = h.only
+		}
 		if picked := pick(h.want, h.better); picked != nil {
 			out = append(out, part{h.heading, picked})
 		}

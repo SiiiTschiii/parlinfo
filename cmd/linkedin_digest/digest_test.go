@@ -357,7 +357,7 @@ func TestPostHighlightsALargeSittingAndListsASmallOne(t *testing.T) {
 	comment, _, _ := strings.Cut(rest, "━━━ Tag by hand ━━━")
 	want := "7 Geschäfte: 6 angenommen, 1 abgelehnt.\n\n" +
 		"Am knappsten angenommen:\n1. ✅ 61 Ja, 59 Nein · Postulat g2\n\n" +
-		"Am knappsten abgelehnt:\n2. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
+		"Einzige Ablehnung:\n2. ❌ 20 Ja, 95 Nein · Postulat g3\n\n" +
 		"Am klarsten angenommen:\n3. ✅ 100 Ja, 0 Nein · Postulat g5\n\n" +
 		"Alle 7 Geschäfte einzeln, auf dem Social-Media-Kanal nach Wahl: Link im ersten Kommentar.\n"
 	if !strings.Contains(post, want) {
