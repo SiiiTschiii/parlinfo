@@ -317,21 +317,24 @@ func TestIsSchlussabstimmung(t *testing.T) {
 
 func TestSingleVoteSubtitle(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected string
+		name         string
+		input        string
+		expected     string
+		jurisdiction string
 	}{
-		{"Dringlicherklärung with number", "2026_0244 Dringlicherklärung", "Dringlicherklärung"},
-		{"Schlussabstimmung returns empty", "2026_0244 Schlussabstimmung", ""},
-		{"empty returns empty", "", ""},
-		{"whitespace-only after strip returns empty", "  ", ""},
-		{"no number prefix", "Dringlicherklärung", "Dringlicherklärung"},
-		{"Schlussabstimmung case insensitive", "schlussabstimmung über Ziffer 1", ""},
+		{"Dringlicherklärung with number", "2026_0244 Dringlicherklärung", "Dringlicherklärung", ""},
+		{"Schlussabstimmung returns empty", "2026_0244 Schlussabstimmung", "", ""},
+		{"empty returns empty", "", "", ""},
+		{"whitespace-only after strip returns empty", "  ", "", ""},
+		{"no number prefix", "Dringlicherklärung", "Dringlicherklärung", ""},
+		{"Schlussabstimmung case insensitive", "schlussabstimmung über Ziffer 1", "", ""},
+		// The Nationalrat's names the stage, the bill and what Ja meant.
+		{"Nationalrat Schlussabstimmung is kept", "Schlussabstimmung: Tierschutzgesetz (TSchG)", "Schlussabstimmung: Tierschutzgesetz (TSchG)", "nationalrat"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := singleVoteSubtitle(tt.input)
+			got := singleVoteSubtitle(votes.Vote{Subtitle: tt.input, Jurisdiction: tt.jurisdiction})
 			if got != tt.expected {
 				t.Errorf("singleVoteSubtitle(%q) = %q, want %q", tt.input, got, tt.expected)
 			}
