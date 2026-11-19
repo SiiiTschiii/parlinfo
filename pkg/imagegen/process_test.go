@@ -167,3 +167,42 @@ func TestStatusCard_ShowsSkippedSteps(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// Only a process that says the business is not done, without naming its next
+// step, runs its line on past this vote; one with a next step draws that step
+// instead, and one that says nothing stops at the vote.
+func TestPendingTail(t *testing.T) {
+	this := votes.ProcessStep{Label: "Nationalrat", Detail: "Annahme in der Gesamtabstimmung", State: votes.StepCurrent}
+	pending := &votes.Process{Steps: []votes.ProcessStep{this}, StatusLabel: "Noch nicht endgültig:", Next: "Schlussabstimmung beider Räte steht aus"}
+	unknown := &votes.Process{Steps: []votes.ProcessStep{this}}
+	known := &votes.Process{Steps: []votes.ProcessStep{this, {Label: "In Kommission des Ständerats", State: votes.StepNext}}, Next: "In Kommission des Ständerats"}
+	for _, c := range []struct {
+		name string
+		p    *votes.Process
+		want bool
+	}{{"not done, next step not known", pending, true}, {"next step not known", unknown, false}, {"next step known", known, false}} {
+		if got := pendingTail(c.p) > 0; got != c.want {
+			t.Errorf("%s: tail = %v, want %v", c.name, got, c.want)
+		}
+	}
+
+	// The crowded case still fits with the tail.
+	fonts, err := loadFontSet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	group := testfixtures.ExtremeTitleFullRoster()
+	p := crowdedProcess()
+	p.Steps = p.Steps[:len(p.Steps)-1]
+	p.StatusLabel, p.Next = pending.StatusLabel, pending.Next
+	if err := p.Validate(); err != nil {
+		t.Fatalf("invalid: %v", err)
+	}
+	group[0].Affair.Process = &p
+	bg := SelectColor(group[0].Jurisdiction, group[0].Affair.Number)
+	for _, c := range carouselCards(group, bg, fonts) {
+		if _, err := renderCard(c, bg, fonts); err != nil {
+			t.Errorf("%s: %v", c.name, err)
+		}
+	}
+}

@@ -233,6 +233,19 @@ func stepGap(fonts *fontSet) int {
 	return frac(fonts.partyNum, 0.8)
 }
 
+// pendingTail is how far the line runs on, dashed, past this vote's step on a
+// process that says the business is not done although its next step is not
+// known ("Noch nicht endgültig: …"), or 0. A line that simply stopped at this
+// vote would read as the end of the road, the very misreading the line is
+// there to prevent; one that runs on into nothing says there is more, without
+// naming a step.
+func pendingTail(p *votes.Process) int {
+	if p == nil || !p.Open() || strings.TrimSpace(p.Next) == "" {
+		return 0
+	}
+	return stepMarkSize + 2*stepMarkHalo + 24
+}
+
 func stepsHeight(steps []statusStep, fonts *fontSet) int {
 	h := 0
 	for i, s := range steps {
@@ -326,7 +339,7 @@ func aboutHeight(about [][]string, fonts *fontSet) int {
 func statusReserve(v votes.Vote, p *votes.Process, about [][]string, steps []statusStep, fonts *fontSet) int {
 	reserve := statusHeadingHeight(v, p, fonts) + aboutHeight(about, fonts)
 	reserve += titleTrailingGap() + frac(fonts.stepLabel, 0.75)
-	reserve += stepsHeight(steps, fonts)
+	reserve += stepsHeight(steps, fonts) + pendingTail(p)
 	return reserve + padding
 }
 
@@ -428,6 +441,13 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 		if i < len(steps)-1 {
 			cur.y += stepGap(fonts)
 		}
+	}
+	if tail := pendingTail(p); tail > 0 {
+		from := prevMarkBottom + stepMarkHalo + 4
+		if img != nil {
+			drawStepConnector(img, markX+stepMarkSize/2, from, from+tail, true, bg)
+		}
+		cur.y = max(cur.y, from+tail)
 	}
 	return nil
 }
