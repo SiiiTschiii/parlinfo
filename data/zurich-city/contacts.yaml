@@ -693,9 +693,6 @@ contacts:
     facebook:
       - url: https://www.facebook.com/michael.schmid.946517
         verified: true
-    linkedin:
-      - url: https://www.linkedin.com/in/michael-schmid-0a4230128/
-        verified: true
   - name: Michele Romagnolo
     facebook:
       - url: https://www.facebook.com/michele.romagnolo.svp
