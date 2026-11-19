@@ -127,14 +127,19 @@ li + li { margin-top: .625rem; }
 .card::after { content: "→"; color: var(--text-2); font-size: 1.25rem; }
 .card:hover::after { color: var(--ja); }
 
-/* A platform with one account per language: the row is not a link, its
-   language chips are. */
-.card.multi { flex-wrap: wrap; }
-.card.multi > span:first-child { flex: 1 1 8rem; }
+/* A platform with one account per language: the whole row opens the account
+   in the page's language, and each language chip opens its own account. The
+   row link stretches over the card; the chips sit above it. */
+.card.multi { position: relative; flex-wrap: wrap; }
 .card.multi::after { content: none; }
-.card.multi:hover { border-color: var(--petrol-line); }
+.card.multi .row { flex: 1 1 8rem; min-width: 0; color: inherit; text-decoration: none; }
+.card.multi .row::after { content: ""; position: absolute; inset: 0; border-radius: 1rem; }
+.card.multi:has(.chips a:hover) { border-color: var(--petrol-line); }
+.card.multi:has(.row:focus-visible) { border-color: var(--ja); }
 .chips { flex: 0 1 auto !important; display: flex; flex-wrap: wrap; gap: .375rem; max-width: 100%; }
 .chips a {
+  position: relative;
+  z-index: 1;
   min-width: 2.75rem;
   padding: .5rem .625rem;
   border: 1px solid var(--petrol-line);
