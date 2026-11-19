@@ -138,9 +138,10 @@ Dati: Servizi del Parlamento
 
 [post 2]
 ✅ Votazione finale: Decreto federale concernente l’iniziativa popolare federale «Sì al divieto di importare prodotti di pellicceria ottenuti infliggendo sofferenze agli animali (Iniziativa pellicce)» (Sì: Adopter le projet (recommandation de rejeter l'initiative))
-📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
 
 [post 3]
+📊 156 Sì | 33 No | 7 Astensioni | 3 Assenti
+
 🏛️ Gruppi (Sì/No/Ast/Ass):
 UDC 57/4/5/0
 PS 36/4/1/0
