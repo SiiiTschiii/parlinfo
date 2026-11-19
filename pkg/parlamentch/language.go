@@ -169,10 +169,11 @@ type processWords struct {
 	// 81), whichever step the bill takes first.
 	pendingHeading string
 	pendingFinal   string
-	// overallAbout and finalAbout are the first sentence of the
-	// Parlamentswörterbuch's entries "Gesamtabstimmung" (WordId 92) and
-	// "Schlussabstimmung" (WordId 194), read 18.11.2026, with the spaces its
-	// links leave before punctuation taken out.
+	// overallAbout is the first sentence of the Parlamentswörterbuch's entry
+	// "Gesamtabstimmung" (WordId 92), finalAbout the fifth of its entry
+	// "Schlussabstimmung" (WordId 194), which says what the vote decides in
+	// half the words of the first; read 18.11.2026, with the spaces its links
+	// leave before punctuation taken out.
 	overallAbout  string
 	finalAbout    string
 	transmitted   string // BusinessStatusId 209
@@ -202,7 +203,7 @@ var processWordsByLanguage = map[votes.Language]processWords{
 		pendingHeading:  "Noch nicht endgültig:",
 		pendingFinal:    "Schlussabstimmung beider Räte steht aus",
 		overallAbout:    "Die Erstberatung eines Erlassentwurfes endet mit der Gesamtabstimmung.",
-		finalAbout:      "Haben beide Räte ein Bundesgesetz, eine Verordnung der Bundesversammlung oder einen dem obligatorischen oder dem fakultativen Referendum unterstehenden Bundesbeschluss durchberaten und den von der Redaktionskommission bereinigten Wortlaut gutgeheissen, wird in jedem Rat eine Schlussabstimmung vorgenommen.",
+		finalAbout:      "Stimmen beide Räte einem Erlassentwurf in der Schlussabstimmung zu, ist er als Erlass der Bundesversammlung gültig zu Stande gekommen.",
 		transmitted:     "Überwiesen an den Bundesrat",
 		inCommittee:     "In Kommission des Ständerats",
 		done:            "Erledigt",
@@ -227,7 +228,7 @@ var processWordsByLanguage = map[votes.Language]processWords{
 		pendingHeading:  "Pas encore définitif:",
 		pendingFinal:    "vote final des deux conseils encore à venir",
 		overallAbout:    "La première lecture d’un projet d’acte s’achève par le vote sur l’ensemble.",
-		finalAbout:      "Lorsque les deux conseils ont achevé l’examen d’un projet de loi fédérale, d’un projet d’ordonnance de l'Assemblée fédérale ou d’un projet d'arrêté fédéral soumis au référendum obligatoire ou facultatif, et qu’ils ont approuvé le texte définitif, ils procèdent chacun au vote final portant sur le texte établi par la Commission de rédaction.",
+		finalAbout:      "Si les deux conseils adoptent un projet au vote final, le projet en question est réputé avoir abouti valablement en tant qu’acte de l’Assemblée fédérale.",
 		transmitted:     "Transmis au Conseil fédéral",
 		inCommittee:     "En commission du Conseil des Etats",
 		done:            "Liquidé",
@@ -251,8 +252,8 @@ var processWordsByLanguage = map[votes.Language]processWords{
 		overallRejected: "Reiezione nella votazione sul complesso (= non entrata in materia)",
 		pendingHeading:  "Non ancora definitivo:", //nolint:misspell // Italian, as parlament.ch words it
 		pendingFinal:    "votazione finale delle due Camere ancora da svolgere",
-		overallAbout:    "La prima deliberazione di un disegno di atto legislativo si conclude con la votazione sul complesso.",                                                                                                                                                                                                                      //nolint:misspell // Italian, as parlament.ch words it
-		finalAbout:      "Se ambedue le Camere hanno terminato le deliberazioni su una legge federale, un’ordinanza dell’Assemblea federale o un decreto federale sottostante a referendum obbligatorio o facoltativo e hanno approvato il testo messo a punto dalla Commissione di redazione, in ciascuna Camera si procede alla votazione finale.", //nolint:misspell // Italian, as parlament.ch words it
+		overallAbout:    "La prima deliberazione di un disegno di atto legislativo si conclude con la votazione sul complesso.",                    //nolint:misspell // Italian, as parlament.ch words it
+		finalAbout:      "Se ambo le Camere approvano il progetto, l’atto legislativo dell’Assemblea federale è considerato validamente adottato.", //nolint:misspell // Italian, as parlament.ch words it
 		transmitted:     "Trasmesso al Consiglio federale",
 		inCommittee:     "Nella Commissione del Consiglio degli Stati",
 		done:            "Liquidato",

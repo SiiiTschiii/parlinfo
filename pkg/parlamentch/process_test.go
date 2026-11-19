@@ -531,7 +531,7 @@ func TestProcess_FinalVoteSaysWhatItIs(t *testing.T) {
 	if err != nil || p == nil || !p.Ended() {
 		t.Fatalf("Process = %+v, %v; want the business closed", p, err)
 	}
-	if !strings.HasSuffix(p.VoteAbout, "wird in jedem Rat eine Schlussabstimmung vorgenommen.") {
+	if !strings.HasSuffix(p.VoteAbout, "ist er als Erlass der Bundesversammlung gültig zu Stande gekommen.") {
 		t.Errorf("VoteAbout = %q, want the Parlamentswörterbuch on the Schlussabstimmung", p.VoteAbout)
 	}
 }

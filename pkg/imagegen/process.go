@@ -302,10 +302,9 @@ func statusHeadingHeight(v votes.Vote, p *votes.Process, fonts *fontSet) int {
 // aboutMaxLines bounds the sentence on what the business type asks for.
 const aboutMaxLines = 3
 
-// voteAboutMaxLines bounds the sentence on the kind of vote. The
-// Parlamentswörterbuch's on the Schlussabstimmung runs to five lines on its
-// own; one cut shorter than that is ellipsized rather than left out.
-const voteAboutMaxLines = 5
+// voteAboutMaxLines bounds the sentence on the kind of vote, like
+// aboutMaxLines the one on the business type.
+const voteAboutMaxLines = 3
 
 // infoMarkSize is the diameter of the ⓘ that opens each explanatory sentence,
 // and infoMarkGap the space after it. The mark sets the sentences apart from
