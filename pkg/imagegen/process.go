@@ -243,7 +243,7 @@ func pendingTail(p *votes.Process) int {
 	if p == nil || !p.Open() || strings.TrimSpace(p.Next) == "" {
 		return 0
 	}
-	return stepMarkSize + 2*stepMarkHalo + 24
+	return stepMarkSize
 }
 
 func stepsHeight(steps []statusStep, fonts *fontSet) int {
@@ -307,11 +307,21 @@ const aboutMaxLines = 3
 // own; one cut shorter than that is ellipsized rather than left out.
 const voteAboutMaxLines = 5
 
+// infoMarkSize is the diameter of the ⓘ that opens each explanatory sentence,
+// and infoMarkGap the space after it. The mark sets the sentences apart from
+// the business and the vote they sit under: they say what a Motion or a
+// Gesamtabstimmung is in general, not anything about this one.
+const (
+	infoMarkSize = 26
+	infoMarkGap  = 10
+)
+
 // statusAbout is the process's sentences under the title, each wrapped to the
 // column as a paragraph of its own: the one on the business type, then, where
-// withVote, the one on the kind of vote.
+// withVote, the one on the kind of vote. Every line leaves room for the ⓘ
+// that opens the paragraph, so the first one fits beside it.
 func statusAbout(p *votes.Process, fonts *fontSet, withVote bool) [][]string {
-	width := imgWidth - 2*padding
+	width := imgWidth - 2*padding - infoMarkSize - infoMarkGap
 	var out [][]string
 	wrap := func(text string, maxLines int) {
 		if text = strings.TrimSpace(text); text != "" {
@@ -394,10 +404,18 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	}
 	for _, para := range about {
 		cur.y += frac(fonts.small, 0.5)
-		for _, line := range para {
+		for j, line := range para {
 			if img != nil {
-				x := (imgWidth - font.MeasureString(fonts.small, line).Ceil()) / 2
-				drawTrackedText(img, fonts.small, x, cur.baseline(fonts.small), line, 0, blend(bg, 0xD8))
+				w := font.MeasureString(fonts.small, line).Ceil()
+				base := cur.baseline(fonts.small)
+				if j == 0 {
+					x := (imgWidth - infoMarkSize - infoMarkGap - w) / 2
+					capTop := base - fonts.small.Metrics().Ascent.Ceil()*72/100
+					drawInfoMark(img, x, (capTop+base)/2-infoMarkSize/2, blend(bg, 0xD8))
+					drawTrackedText(img, fonts.small, x+infoMarkSize+infoMarkGap, base, line, 0, blend(bg, 0xD8))
+				} else {
+					drawTrackedText(img, fonts.small, (imgWidth-w)/2, base, line, 0, blend(bg, 0xD8))
+				}
 			}
 			cur.advance(fonts.small)
 		}
@@ -504,6 +522,19 @@ func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGB
 	}
 }
 
+// drawInfoMark draws an ⓘ, a ring with an i in it, at x, y.
+func drawInfoMark(img *image.RGBA, x, y int, c color.RGBA) {
+	drawMask(img, circleMask(infoMarkSize, 0.09, 0), x, y, c)
+	dot := infoMarkSize / 6
+	drawMask(img, circleMask(dot, 0, 0), x+(infoMarkSize-dot)/2, y+infoMarkSize*24/100, c)
+	stem := image.Rect(x+infoMarkSize/2-dot/2, y+infoMarkSize*45/100, x+infoMarkSize/2-dot/2+dot, y+infoMarkSize*76/100)
+	for py := stem.Min.Y; py < stem.Max.Y; py++ {
+		for px := stem.Min.X; px < stem.Max.X; px++ {
+			img.SetRGBA(px, py, c)
+		}
+	}
+}
+
 // circleMask is a disc, or a ring of the given width, as an alpha mask the size
 // of the marker; widths and inset are fractions of the diameter. With dashes,
 // the ring is broken into that many dashes.
@@ -554,10 +585,10 @@ func statusAlt(group []votes.Vote) string {
 		label = heading + "\n\n" + label
 	}
 	if about := strings.TrimSpace(p.About); about != "" {
-		label += "\n" + about
+		label += "\nℹ️ " + about
 	}
 	if about := strings.TrimSpace(p.VoteAbout); about != "" {
-		label += "\n" + about
+		label += "\nℹ️ " + about
 	}
 
 	w := voteformat.W(v.Language)
