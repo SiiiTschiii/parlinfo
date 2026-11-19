@@ -226,8 +226,13 @@ func TestPlatformViewsMultilingual(t *testing.T) {
 	}
 
 	ig := rows[0]
-	if ig.URL != "" || ig.Handle != "@chparlinfo_fr" {
-		t.Errorf("Instagram row: URL %q, handle %q; want no URL and the French handle", ig.URL, ig.Handle)
+	if ig.Handle != "@chparlinfo_fr" {
+		t.Errorf("Instagram row: handle %q, want the French handle", ig.Handle)
+	}
+	for _, c := range ig.Chips {
+		if c.Lang == "fr" && ig.URL != c.URL {
+			t.Errorf("Instagram row URL = %q, want the French account %q", ig.URL, c.URL)
+		}
 	}
 	var langs []string
 	for _, c := range ig.Chips {
@@ -241,7 +246,8 @@ func TestPlatformViewsMultilingual(t *testing.T) {
 	}
 
 	// X has a German account only: the chip says so, and the handle is it.
-	if x := rows[2]; len(x.Chips) != 1 || x.Chips[0].Lang != "de" || x.Handle != "@chparlinfo" {
+	// The row still leads somewhere: to that German account.
+	if x := rows[2]; len(x.Chips) != 1 || x.Chips[0].Lang != "de" || x.Handle != "@chparlinfo" || x.URL != x.Chips[0].URL {
 		t.Errorf("X row = %+v, want one German chip", x)
 	}
 	if li := rows[4]; li.URL == "" || len(li.Chips) != 0 {

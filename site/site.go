@@ -54,8 +54,8 @@ type BrandCard struct {
 type PlatformView struct {
 	Platform string
 	Handle   string        // the account shown under the name: the reader's language if there is one
-	URL      string        // set when the row is a single link
-	Chips    []AccountChip // set when the row links to one account per language
+	URL      string        // where the row as a whole leads: the account whose handle is shown
+	Chips    []AccountChip // set when the row also offers one account per language
 }
 
 // AccountChip is one language's account within a platform row.
@@ -196,9 +196,8 @@ func platformViews(b *Brand, lang string) []PlatformView {
 			continue
 		}
 		if a.Lang == lang {
-			v.Handle = a.Handle
+			v.Handle, v.URL = a.Handle, a.URL
 		}
-		v.URL = ""
 		v.Chips = append(v.Chips, AccountChip{Lang: a.Lang, LangName: Texts[a.Lang].LangName, Handle: a.Handle, URL: a.URL, Current: a.Lang == lang})
 	}
 	return out

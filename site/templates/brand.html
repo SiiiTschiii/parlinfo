@@ -12,7 +12,7 @@
 {{- range .Platforms}}
 {{- if .Chips}}
 <li><div class="card multi">
-<span><strong>{{.Platform}}</strong><small>{{.Handle}}</small></span>
+<a class="row" href="{{.URL}}" rel="me"><strong>{{.Platform}}</strong><small>{{.Handle}}</small></a>
 <span class="chips">
 {{- range .Chips}}
 <a href="{{.URL}}" rel="me" lang="{{.Lang}}" hreflang="{{.Lang}}" title="{{.LangName}}: {{.Handle}}" aria-label="{{.LangName}}: {{.Handle}}"{{if .Current}} class="current"{{end}}>{{.Lang}}</a>
