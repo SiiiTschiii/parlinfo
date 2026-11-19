@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790121600000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "Folge gegeben",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1769126400000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Folge geben (Erstrat)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Nationalrat",
+    "CommitteeAbbreviation1": "WBK-N"
+   },
+   {
+    "ResolutionDate": "/Date(1777852800000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Keine Zustimmung zum Beschluss der Kommission des Erstrates (Zweitrat)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Kommission für Wissenschaft, Bildung und Kultur Ständerat",
+    "CommitteeAbbreviation1": "WBK-S"
+   }
+  ]
+ }
+}

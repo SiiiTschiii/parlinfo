@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1781740800000)/",
+    "ResolutionId": 62,
+    "ResolutionText": "Decisione secondo il disegno (progetto)",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790812800000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adesione",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1790899200000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

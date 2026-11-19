@@ -265,12 +265,12 @@ func TestGroupByAffair_LabelsBillsAndUnusualMeanings(t *testing.T) {
 	want := map[string]string{
 		// Each vote names its own bill. The first adopts the recommendation
 		// to reject the initiative, so its Ja is spelled out.
-		"38953": "Vote final: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))", //nolint:misspell // French, as the service serves it
-		"38954": "Vote final: Tierschutzgesetz (TSchG)",
+		"38953": "Schlussabstimmung: Bundesbeschluss über die Volksinitiative «Ja zum Importverbot für tierquälerisch erzeugte Pelzprodukte (Pelz-Initiative)» (Ja: Adopter le projet (recommandation de rejeter l'initiative))", //nolint:misspell // French, as the service serves it
+		"38954": "Schlussabstimmung: Tierschutzgesetz (TSchG)",
 		// The service gives this one no bill.
-		"38971": "Vote final",
+		"38971": "Schlussabstimmung",
 		// A single-bill business does not repeat its title as a bill.
-		"38963": "Vote final",
+		"38963": "Schlussabstimmung",
 	}
 	for id, w := range want {
 		if subtitles[id] != w {
@@ -297,7 +297,7 @@ func TestGroupByAffair_LabelDoesNotDependOnSiblings(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := groups[0][0].Subtitle; got != "Vote final: Tierschutzgesetz (TSchG)" {
+	if got := groups[0][0].Subtitle; got != "Schlussabstimmung: Tierschutzgesetz (TSchG)" {
 		t.Errorf("lone subtitle = %q, want the bill named", got)
 	}
 }
@@ -326,7 +326,7 @@ func TestLabel_UncountableBillsAreNamed(t *testing.T) {
 	c.labels["1"] = voteLabel{bill: "Tierschutzgesetz (TSchG)"}
 	group := []votes.Vote{{SourceID: "1", Subtitle: "Vote final", Affair: votes.Affair{ID: "20250059", Title: "Pelzinitiative"}}}
 	c.label(group)
-	if got := group[0].Subtitle; got != "Vote final: Tierschutzgesetz (TSchG)" {
+	if got := group[0].Subtitle; got != "Schlussabstimmung: Tierschutzgesetz (TSchG)" {
 		t.Errorf("subtitle = %q", got)
 	}
 }
@@ -336,7 +336,7 @@ func TestLabel_BillRepeatingTheTitleIsLeftOut(t *testing.T) {
 	c.labels["1"] = voteLabel{bill: "Raumfahrtgesetz", meaningYes: "Adopter le projet"}
 	group := []votes.Vote{{SourceID: "1", Subtitle: "Vote sur l'ensemble", Affair: votes.Affair{Title: "Raumfahrtgesetz"}}}
 	c.label(group)
-	if got := group[0].Subtitle; got != "Vote sur l'ensemble" {
+	if got := group[0].Subtitle; got != "Gesamtabstimmung" {
 		t.Errorf("subtitle = %q", got)
 	}
 }
@@ -529,8 +529,10 @@ func TestSubjectLabel(t *testing.T) {
 		{votes.Italian, "Vote sur l'ensemble", "Votazione sul complesso"},
 		{votes.French, "Gesamtabstimmung", "Vote sur l'ensemble"},
 		{votes.French, "Vote final", "Vote final"},
-		// The German account publishes the subject as served.
-		{votes.German, "Vote final", "Vote final"},
+		// The German feed serves them in French.
+		{votes.German, "Vote final", "Schlussabstimmung"},
+		{votes.German, "Vote sur l’ensemble", "Gesamtabstimmung"},
+		{votes.German, "Gesamtabstimmung", "Gesamtabstimmung"},
 		// A hand-typed variant is printed as served, not half translated.
 		{votes.Italian, "Gesamtabstimmung zur Vorlage 2", "Gesamtabstimmung zur Vorlage 2"},
 	}

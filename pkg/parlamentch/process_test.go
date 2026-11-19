@@ -202,14 +202,14 @@ func TestProcess_NoRuleNoProcess(t *testing.T) {
 	c := newProcessClient(t)
 
 	cases := map[string][]votes.Vote{
-		"amended motion": {processVote(c, "a", "20253007", typeMotion, "", "angenommen", outcomeAdopted,
-			"Proposition de la majorité (adopter la motion modifiée)", "Proposition de la minorité (rejeter la motion)", swiss(2026, 9, 14, 18, 1))},
-		"initiative given leave": {processVote(c, "b", "20264000", typeParlIv, "", "angenommen", outcomeLeave,
-			"donner suite", "ne pas donner suite", swiss(2026, 9, 14, 18, 1))},
-		"Gesamtabstimmung": {processVote(c, "c", "20260033", typeFederalCouncil, "Vote sur l'ensemble", "angenommen", "",
-			"Adopter le projet", "Rejeter le projet", swiss(2026, 9, 14, 18, 1))},
+		"Gesamtabstimmung whose Ja rejects the bill": {processVote(c, "c", "20260033", typeFederalCouncil, "Gesamtabstimmung", "angenommen", "",
+			"Antrag der Mehrheit (Ablehnung der Vorlage)", "Antrag der Minderheit (Annahme der Vorlage)", swiss(2026, 9, 14, 18, 1))},
 		"final vote whose Ja is not adopting the bill": {processVote(c, "d", "20250059", typeFederalCouncil, "Vote final", "angenommen", "",
 			"Recommander de rejeter l'initiative", "Rejeter le projet", swiss(2026, 9, 14, 18, 1))},
+		"amendment named only by the losing side": {processVote(c, "h", "20243732", typeMotion, "", "angenommen", outcomeAdopted,
+			"Proposition de la majorité (adopter la motion)", "Proposition de la minorité (adopter la motion modifiée)", swiss(2026, 9, 24, 18, 1))},
+		"adopted without amendment": {processVote(c, "i", "20243732", typeMotion, "", "angenommen", outcomeAdopted,
+			"Annahme der Motion ohne Änderung", "Ablehnung der Motion", swiss(2026, 9, 24, 18, 1))},
 		"no readable outcome": {processVote(c, "e", "20264001", typeMotion, "", "", "",
 			"Adopter le point 1", "Rejeter le point 1", swiss(2026, 9, 14, 18, 1))},
 		"unknown type": {processVote(c, "f", "20264002", "Petition", "", "angenommen", "",
@@ -421,5 +421,149 @@ func TestProcess_CommitteeDecisions(t *testing.T) {
 	}
 	if strings.Join(got, "\n") != strings.Join(want, "\n") {
 		t.Errorf("steps =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+}
+
+// A vote after which the business goes on under a status that is not certain
+// gets the path up to it and no next step; after an adopted Gesamtabstimmung
+// on a law, the line that its Schlussabstimmung is still ahead.
+func TestProcess_OpenEnded(t *testing.T) {
+	c := newProcessClient(t)
+	bill := func(v votes.Vote, n int64) votes.Vote {
+		l := c.labels[v.SourceID]
+		l.billNumber = n
+		c.labels[v.SourceID] = l
+		return v
+	}
+	at := func(ms int64) time.Time { return time.UnixMilli(ms).In(zurich) }
+
+	tests := []struct {
+		name       string
+		vote       votes.Vote
+		step       string
+		label      string
+		next       string
+		voteAbout  string
+		afterSteps int
+	}{
+		{
+			// Keine Abgangsentschädigungen ans Topkader: its Schlussabstimmung
+			// followed the next day, and is history the card must not show.
+			name: "law adopted in the Gesamtabstimmung",
+			vote: bill(processVote(c, "38927", "20230432", typeParlIv, "Vote sur l'ensemble", "angenommen", "",
+				"Adopter le projet", "Rejeter le projet", at(1790853286360)), 1),
+			step: "01.10.2026 · Annahme in der Gesamtabstimmung", label: "Noch nicht endgültig:", next: "Schlussabstimmung beider Räte steht aus",
+			voteAbout: "Die Erstberatung eines Erlassentwurfes endet mit der Gesamtabstimmung.",
+		},
+		{
+			// An Einfacher Bundesbeschluss sees no Schlussabstimmung.
+			name: "simple decree adopted in the Gesamtabstimmung",
+			vote: bill(processVote(c, "35340", "20250040", typeFederalCouncil, "Vote sur l'ensemble", "angenommen", "",
+				"Adopter le projet", "Rejeter le projet", at(1765825121458)), 1),
+			step:      "15.12.2025 · Annahme in der Gesamtabstimmung",
+			voteAbout: "Die Erstberatung eines Erlassentwurfes endet mit der Gesamtabstimmung.",
+		},
+		{
+			// The Tabakproduktegesetz went on: the Ständerat held to it, and
+			// the Nationalrat adopted it a year later.
+			name: "law rejected in the Gesamtabstimmung",
+			vote: bill(processVote(c, "31954", "20230049", typeFederalCouncil, "Gesamtabstimmung", "abgelehnt", "",
+				"Annahme der Vorlage", "Ablehnung der Vorlage", at(1709202687375)), 1),
+			step:      "29.02.2024 · Ablehnung in der Gesamtabstimmung (= Nichteintreten)",
+			voteAbout: "Die Erstberatung eines Erlassentwurfes endet mit der Gesamtabstimmung.",
+		},
+		{
+			name: "motion adopted as amended",
+			vote: processVote(c, "38799", "20243732", typeMotion, "", "angenommen", outcomeAdopted,
+				"Proposition de la majorité (adopter la motion modifiée)", "Proposition de la minorité Källin et du Conseil fédéral (rejeter la motion)", at(1790241324310)),
+			step: "24.09.2026 · Annahme mit Änderung",
+		},
+		{
+			name: "initiative given leave",
+			vote: processVote(c, "38787", "20260404", typeParlIv, "", "angenommen", outcomeLeave,
+				"Proposition de la majorité (donner suite)", "Proposition de la minorité (ne pas donner suite)", at(1790189649837)),
+			step: "23.09.2026 · Folge gegeben",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p, err := c.Process([]votes.Vote{tt.vote})
+			if err != nil || p == nil {
+				t.Fatalf("Process = %+v, %v", p, err)
+			}
+			if err := p.Validate(); err != nil {
+				t.Fatalf("invalid process %+v: %v", p, err)
+			}
+			if !p.Open() {
+				t.Errorf("process is not open: %+v", p.Steps)
+			}
+			last := p.Steps[len(p.Steps)-1]
+			if last.Label != "Nationalrat" || last.Detail != tt.step || last.State != votes.StepCurrent {
+				t.Errorf("last step = %+v, want Nationalrat %q, this vote's", last, tt.step)
+			}
+			if p.StatusLabel != tt.label || p.Next != tt.next {
+				t.Errorf("line = %q %q, want %q %q", p.StatusLabel, p.Next, tt.label, tt.next)
+			}
+			if p.VoteAbout != tt.voteAbout {
+				t.Errorf("VoteAbout = %q, want %q", p.VoteAbout, tt.voteAbout)
+			}
+			for _, s := range p.Steps[:len(p.Steps)-1] {
+				if s.State != votes.StepDone && s.State != votes.StepSkipped {
+					t.Errorf("history step %+v is not a step taken", s)
+				}
+				if s.Label == "Nationalrat" && strings.HasPrefix(s.Detail, tt.vote.Date.Format("02.01.2006")) {
+					t.Errorf("the Nationalrat's decision of the vote's day is listed as history: %+v", s)
+				}
+			}
+		})
+	}
+}
+
+// A Schlussabstimmung's status card says what one is.
+func TestProcess_FinalVoteSaysWhatItIs(t *testing.T) {
+	c := newProcessClient(t)
+	v := processVote(c, "38948", "20230432", typeParlIv, "Vote final", "angenommen", "",
+		"Adopter le projet", "Rejeter le projet", time.UnixMilli(1790933072759).In(zurich))
+	l := c.labels["38948"]
+	l.billNumber = 1
+	c.labels["38948"] = l
+	p, err := c.Process([]votes.Vote{v})
+	if err != nil || p == nil || !p.Ended() {
+		t.Fatalf("Process = %+v, %v; want the business closed", p, err)
+	}
+	if !strings.HasSuffix(p.VoteAbout, "ist er als Erlass der Bundesversammlung gültig zu Stande gekommen.") {
+		t.Errorf("VoteAbout = %q, want the Parlamentswörterbuch on the Schlussabstimmung", p.VoteAbout)
+	}
+}
+
+// The French and Italian posts word the open process in their own language.
+func TestProcess_OpenEndedInFrenchAndItalian(t *testing.T) {
+	for _, tt := range []struct {
+		lang                        votes.Language
+		subtitle, step, label, next string
+	}{
+		{votes.French, "Vote sur l'ensemble", "01.10.2026 · Adoption (vote sur l’ensemble)", "Pas encore définitif:", "vote final des deux conseils encore à venir"},
+		{votes.Italian, "Votazione sul complesso", "01.10.2026 · Adozione nella votazione sul complesso", "Non ancora definitivo:", "votazione finale delle due Camere ancora da svolgere"}, //nolint:misspell // Italian
+	} {
+		t.Run(string(tt.lang), func(t *testing.T) {
+			c := newProcessClient(t)
+			c.jurisdiction.Language = tt.lang
+			c.businessCodes[20230432] = 4
+			v := onBill(c, processVote(c, "38927", "20230432", "", tt.subtitle, "angenommen", "",
+				"Adopter le projet", "Rejeter le projet", time.UnixMilli(1790853286360).In(zurich)), 1)
+			p, err := c.Process([]votes.Vote{v})
+			if err != nil || p == nil || p.Validate() != nil {
+				t.Fatalf("Process = %+v, %v", p, err)
+			}
+			if last := p.Steps[len(p.Steps)-1]; last.Detail != tt.step {
+				t.Errorf("this vote's step = %q, want %q", last.Detail, tt.step)
+			}
+			if p.StatusLabel != tt.label || p.Next != tt.next {
+				t.Errorf("line = %q %q, want %q %q", p.StatusLabel, p.Next, tt.label, tt.next)
+			}
+			if germanWords.MatchString(p.StatusLabel + p.Next + p.VoteAbout + p.Steps[len(p.Steps)-1].Detail) {
+				t.Errorf("German in %+v", p)
+			}
+		})
 	}
 }

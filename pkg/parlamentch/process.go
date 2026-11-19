@@ -26,11 +26,24 @@ import (
 //   - an initiative given no leave ("Keine Folge gegeben"): "Erledigt", 15 of 15
 //   - a Schlussabstimmung, adopted or rejected: "Erledigt", 15 of 15
 //
-// Everything else gets no process: a business with several bills, a motion
-// adopted as amended (2 of its 3
-// went back to the Ständerat), an initiative given leave and a Gesamtabstimmung
-// (each continues under more than one status), a group whose outcome the
-// meanings do not settle, and any business type not named here.
+// Three kinds of vote continue under more than one status: a motion adopted as
+// amended (2 of its 3 went back to the Ständerat), an initiative given leave
+// and a Gesamtabstimmung, after which a bill goes to the other chamber, into
+// the Differenzbereinigung or to the Schlussabstimmung. They get the path up
+// to the vote and no next step (votes.Process.Open). An adopted
+// Gesamtabstimmung on a federal law or an ordinance of the Federal Assembly
+// says instead that the Schlussabstimmung is still ahead. A law is never
+// adopted without one (Parlamentsgesetz Art. 81), so at the vote it always is:
+// of the 154 such votes in the legislature since December 2023, 125 were
+// followed by one, and the rest are still before parliament or failed later in
+// the other chamber. Bundesbeschlüsse do not get the line: the service types
+// some it never holds a Schlussabstimmung on as Bundesbeschluss rather than
+// Einfacher Bundesbeschluss (the Rüstungsprogramm 2025, two credits of
+// 24.017).
+//
+// Everything else gets no process: a business with several bills, a group
+// whose outcome the meanings do not settle, and any business type not named
+// here.
 //
 // The rules read the service's codes — the business type, the council, the
 // decision — which are the same in every language's feed, and the history is
@@ -76,6 +89,7 @@ type processBusinessDTO struct {
 type billDTO struct {
 	ID         string `json:"ID"`
 	BillNumber int64  `json:"BillNumber"`
+	BillType   int    `json:"BillType"`
 }
 
 type resolutionDTO struct {
@@ -184,6 +198,11 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 	switch t := c.businessKind(group[0]); t {
 	case typeMotion, typePostulat:
 		v, why := c.decisiveFiledVote(group)
+		if why == whyAmended {
+			// Back to the other chamber or on to the Bundesrat: the path is
+			// shown, the next step is not.
+			return c.openProcess(id, v, votes.ProcessStep{Label: w.council, Detail: w.amended, State: votes.StepCurrent}, false)
+		}
 		if why != "" {
 			return nil, none(why)
 		}
@@ -196,7 +215,10 @@ func (c *Client) process(id int64, group []votes.Vote) (*votes.Process, error) {
 				return c.closingProcess(id, v, votes.ProcessStep{
 					Label: w.council, Detail: w.noLeave, State: votes.StepEnded})
 			case outcomeLeave:
-				return nil, none("Folge gegeben: nächster Status nicht eindeutig (\"Vorprüfung - in Kommission des Ständerates\" oder \"In Kommission des Ständerats\")")
+				// "Vorprüfung - in Kommission des Ständerates" or "In
+				// Kommission des Ständerats": the path is shown, the next
+				// step is not.
+				return c.openProcess(id, v, votes.ProcessStep{Label: w.council, Detail: w.leave, State: votes.StepCurrent}, false)
 			}
 		}
 		// A vote on leave whose meaning cannot be read says so, rather than
@@ -233,11 +255,32 @@ func (c *Client) decisiveFiledVote(group []votes.Vote) (votes.Vote, string) {
 	}
 	v := decisive[0]
 	l := c.labels[v.SourceID]
-	if amended.MatchString(l.meaningYes) || amended.MatchString(l.meaningNo) {
-		return votes.Vote{}, "Annahme mit Änderung: geht zurück an den anderen Rat, nächster Status nicht eindeutig"
+	if !amended.MatchString(l.meaningYes) && !amended.MatchString(l.meaningNo) {
+		return v, ""
 	}
-	return v, ""
+	// The card says "Annahme mit Änderung", so the meaning that won must say
+	// the motion was adopted as amended: Ja's where Ja carried the vote,
+	// Nein's where Nein did. A mention on the losing side, or "ohne
+	// Änderung", is not that.
+	won := l.meaningNo
+	if v.Decision == outcomeAdopted {
+		won = l.meaningYes
+	}
+	if v.Outcome == outcomeAdopted && (v.Decision == outcomeAdopted || v.Decision == outcomeFailed) &&
+		amended.MatchString(won) && !unamended.MatchString(won) {
+		return v, whyAmended
+	}
+	return votes.Vote{}, "Abstimmung, deren Antrag eine Änderung nennt, ohne dass die gewonnene Bedeutung die Annahme mit Änderung ist: keine Regel"
 }
+
+// unamended matches a meaning that adopts a motion unchanged while naming a
+// change, which amended alone would read as an amendment.
+var unamended = regexp.MustCompile(`(?i)ohne\s+änderung|sans\s+modification|senza\s+modific|non\s+modifi`)
+
+// whyAmended is decisiveFiledVote's answer for a business adopted as amended,
+// which goes back to the other chamber or on to the Bundesrat. The vote comes
+// with it.
+const whyAmended = "Annahme mit Änderung: geht zurück an den anderen Rat oder an den Bundesrat, nächster Status nicht eindeutig"
 
 // filedProcess is the process of a motion or postulate after the Nationalrat
 // decided it.
@@ -280,31 +323,87 @@ func (c *Client) filedProcess(id int64, businessType string, v votes.Vote) (*vot
 	return &votes.Process{Steps: steps, Next: text}, nil
 }
 
-// finalVoteProcess is the process of a business whose group is its
-// Schlussabstimmung: the last vote it takes, after which it is "Erledigt"
-// whichever way the vote went. The group must be that one vote, with Ja meaning
-// to adopt the bill, so the verdict says what the vote did.
+// finalVoteProcess is the process of a business whose group is a vote on a
+// whole bill. After its Schlussabstimmung, the last vote it takes, it is
+// "Erledigt" whichever way the vote went. After a Gesamtabstimmung it goes on
+// under a status that is not certain, so the process ends at the vote; see the
+// rules at the top. The group must be that one vote, with Ja meaning to adopt
+// the bill, so the verdict says what the vote did.
 func (c *Client) finalVoteProcess(id int64, group []votes.Vote) (*votes.Process, error) {
 	if len(group) != 1 {
-		return nil, none(fmt.Sprintf("%d Abstimmungen am selben Tag (z. B. Detailberatung, Gesamtabstimmung): nur eine Schlussabstimmung allein hat eine Regel", len(group)))
+		return nil, none(fmt.Sprintf("%d Abstimmungen am selben Tag (z. B. Detailberatung, Gesamtabstimmung): nur eine Schluss- oder Gesamtabstimmung allein hat eine Regel", len(group)))
 	}
 	v := group[0]
-	if !isFinalVote(v.Subtitle) {
-		return nil, none("keine Schlussabstimmung (" + strings.TrimSpace(v.Subtitle) + "): nächster Status nicht eindeutig")
+	final, overall := isFinalVote(v.Subtitle), isOverallVote(v.Subtitle)
+	if !final && !overall {
+		return nil, none("weder Schluss- noch Gesamtabstimmung (" + strings.TrimSpace(v.Subtitle) + "): nächster Status nicht eindeutig")
 	}
 	if !plainMeanings[strings.ToLower(c.labels[v.SourceID].meaningYes)] {
 		return nil, none("Ja bedeutet nicht \"Annahme des Entwurfs\" (" + c.labels[v.SourceID].meaningYes + ")")
 	}
-	w := c.processWords()
-	switch v.Decision {
-	case outcomeAdopted:
-		return c.closingProcess(id, v, votes.ProcessStep{
-			Label: w.council, Detail: w.finalAdopted, State: votes.StepCompleted})
-	case outcomeFailed:
-		return c.closingProcess(id, v, votes.ProcessStep{
-			Label: w.council, Detail: w.finalRejected, State: votes.StepEnded})
+	if v.Decision != outcomeAdopted && v.Decision != outcomeFailed {
+		return nil, none("kein Ausgang (Stimmengleichheit)")
 	}
-	return nil, none("kein Ausgang (Stimmengleichheit)")
+	w := c.processWords()
+	adopted := v.Decision == outcomeAdopted
+	var p *votes.Process
+	var err error
+	switch {
+	case final && adopted:
+		p, err = c.closingProcess(id, v, votes.ProcessStep{Label: w.council, Detail: w.finalAdopted, State: votes.StepCompleted})
+	case final:
+		p, err = c.closingProcess(id, v, votes.ProcessStep{Label: w.council, Detail: w.finalRejected, State: votes.StepEnded})
+	default:
+		detail := w.overallRejected
+		if adopted {
+			detail = w.overallAdopted
+		}
+		// Only a law and an ordinance are certain to see a
+		// Schlussabstimmung; and only while adopted, since a rejection
+		// counts as Nichteintreten and can end the bill without one.
+		var pending bool
+		if adopted {
+			bill, berr := c.billOf(id, c.labels[v.SourceID].billNumber)
+			if berr != nil {
+				return nil, berr
+			}
+			pending = bill.BillType == billTypeLaw || bill.BillType == billTypeOrdinance
+		}
+		p, err = c.openProcess(id, v, votes.ProcessStep{Label: w.council, Detail: detail, State: votes.StepCurrent}, pending)
+	}
+	if p != nil {
+		p.VoteAbout = w.finalAbout
+		if overall {
+			p.VoteAbout = w.overallAbout
+		}
+	}
+	return p, err
+}
+
+// The service's BillType codes for the bills whose adoption takes a
+// Schlussabstimmung without exception in its data: Bundesgesetz and
+// Verordnung (der Bundesversammlung).
+const (
+	billTypeLaw       = 6
+	billTypeOrdinance = 7
+)
+
+// openProcess is the process of a business this vote moved on without its next
+// status being certain: the history and the vote's step, and nothing after
+// it, or, where pending, the line that the Schlussabstimmung is still ahead.
+func (c *Client) openProcess(id int64, v votes.Vote, step votes.ProcessStep, pending bool) (*votes.Process, error) {
+	steps, _, _, err := c.history(id, v)
+	if err != nil {
+		return nil, err
+	}
+	steps = votes.TrimHistory(steps, votes.MaxProcessSteps-1)
+	step.Detail = dated(v.DateString(), step.Detail)
+	p := &votes.Process{Steps: append(steps, step)}
+	if pending {
+		w := c.processWords()
+		p.StatusLabel, p.Next = w.pendingHeading, w.pendingFinal
+	}
+	return p, nil
 }
 
 // isFinalVote reports whether a vote's subtitle names a Schlussabstimmung, in
@@ -313,6 +412,13 @@ func (c *Client) finalVoteProcess(id int64, group []votes.Vote) (*votes.Process,
 func isFinalVote(subtitle string) bool {
 	s := strings.ToLower(strings.TrimSpace(subtitle))
 	return strings.HasPrefix(s, "vote final") || strings.HasPrefix(s, "schlussabstimmung") || strings.HasPrefix(s, "votazione finale")
+}
+
+// isOverallVote reports whether a vote's subtitle names a Gesamtabstimmung, in
+// the same languages as isFinalVote. "Gesamtabstimmung zur Vorlage 2" is one.
+func isOverallVote(subtitle string) bool {
+	s := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(subtitle)), "’", "'")
+	return strings.HasPrefix(s, "vote sur l'ensemble") || strings.HasPrefix(s, "gesamtabstimmung") || strings.HasPrefix(s, "votazione sul complesso")
 }
 
 // closingProcess is a process this vote ends: the history, the vote's own
@@ -423,7 +529,7 @@ func (c *Client) billOf(id, billNumber int64) (billDTO, error) {
 	var bills []billDTO
 	if err := c.get("/Bill", query{
 		"$filter": fmt.Sprintf("Language eq '%s' and BusinessNumber eq %d", c.odataLanguage(), id),
-		"$select": "ID,BillNumber",
+		"$select": "ID,BillNumber,BillType",
 	}, &bills); err != nil {
 		return billDTO{}, err
 	}

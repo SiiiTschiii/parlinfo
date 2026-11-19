@@ -1,0 +1,42 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1717632000000)/",
+    "ResolutionId": 16,
+    "ResolutionText": "Donné suite",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1731542400000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adhésion",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commission des institutions politiques Conseil national",
+    "CommitteeAbbreviation1": "CIP-N"
+   },
+   {
+    "ResolutionDate": "/Date(1712620800000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Ne pas donner suite (conseil prioritaire)",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": "Commission des institutions politiques Conseil des États",
+    "CommitteeAbbreviation1": "CIP-E"
+   },
+   {
+    "ResolutionDate": "/Date(1701907200000)/",
+    "ResolutionId": 90,
+    "ResolutionText": "L’objet est repris",
+    "Council": null,
+    "CouncilName": null,
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,78 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1709164800000)/",
+    "ResolutionId": 63,
+    "ResolutionText": "Reiezione nella votazione sul complesso (= non entrata in materia)",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1748995200000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adesione",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1695254400000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Decisione in deroga al disegno (progetto)",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1740960000000)/",
+    "ResolutionId": 91,
+    "ResolutionText": "Inizio del dibattito",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1741824000000)/",
+    "ResolutionId": 37,
+    "ResolutionText": "Deroga",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750377600000)/",
+    "ResolutionId": 36,
+    "ResolutionText": "Adozione nella votazione finale",
+    "Council": 1,
+    "CouncilName": "Consiglio nazionale",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1726444800000)/",
+    "ResolutionId": 52,
+    "ResolutionText": "Decisione in deroga al disegno (progetto)",
+    "Council": 2,
+    "CouncilName": "Consiglio degli Stati",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

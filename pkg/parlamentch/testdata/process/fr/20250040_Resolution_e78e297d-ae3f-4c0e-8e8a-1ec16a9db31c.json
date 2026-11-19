@@ -1,0 +1,24 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1757462400000)/",
+    "ResolutionId": 62,
+    "ResolutionText": "Décision conforme au projet",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1765756800000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adhésion",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

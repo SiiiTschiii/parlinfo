@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790208000000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Adoption avec modification",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1773273600000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Adoption avec modification",
+    "Council": 2,
+    "CouncilName": "Conseil des Etats",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750032000000)/",
+    "ResolutionId": 20,
+    "ResolutionText": "Adoption",
+    "Council": 1,
+    "CouncilName": "Conseil national",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

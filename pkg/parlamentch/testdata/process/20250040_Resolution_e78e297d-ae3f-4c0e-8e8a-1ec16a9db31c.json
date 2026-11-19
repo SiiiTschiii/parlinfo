@@ -1,0 +1,24 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1757462400000)/",
+    "ResolutionId": 62,
+    "ResolutionText": "Beschluss gemäss Entwurf",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1765756800000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Zustimmung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

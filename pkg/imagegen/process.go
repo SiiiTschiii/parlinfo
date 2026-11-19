@@ -233,6 +233,19 @@ func stepGap(fonts *fontSet) int {
 	return frac(fonts.partyNum, 0.8)
 }
 
+// pendingTail is how far the line runs on, dashed, past this vote's step on a
+// process that says the business is not done although its next step is not
+// known ("Noch nicht endgültig: …"), or 0. A line that simply stopped at this
+// vote would read as the end of the road, the very misreading the line is
+// there to prevent; one that runs on into nothing says there is more, without
+// naming a step.
+func pendingTail(p *votes.Process) int {
+	if p == nil || !p.Open() || strings.TrimSpace(p.Next) == "" {
+		return 0
+	}
+	return stepMarkSize
+}
+
 func stepsHeight(steps []statusStep, fonts *fontSet) int {
 	h := 0
 	for i, s := range steps {
@@ -289,31 +302,53 @@ func statusHeadingHeight(v votes.Vote, p *votes.Process, fonts *fontSet) int {
 // aboutMaxLines bounds the sentence on what the business type asks for.
 const aboutMaxLines = 3
 
-// statusAbout is the process's sentence on the business type, wrapped to the
-// column, or nil without one.
-func statusAbout(p *votes.Process, fonts *fontSet) []string {
-	text := strings.TrimSpace(p.About)
-	if text == "" {
-		return nil
+// voteAboutMaxLines bounds the sentence on the kind of vote, like
+// aboutMaxLines the one on the business type.
+const voteAboutMaxLines = 3
+
+// infoMarkSize is the diameter of the ⓘ that opens each explanatory sentence,
+// and infoMarkGap the space after it. The mark sets the sentences apart from
+// the business and the vote they sit under: they say what a Motion or a
+// Gesamtabstimmung is in general, not anything about this one.
+const (
+	infoMarkSize = 26
+	infoMarkGap  = 10
+)
+
+// statusAbout is the process's sentences under the title, each wrapped to the
+// column as a paragraph of its own: the one on the business type, then, where
+// withVote, the one on the kind of vote. Every line leaves room for the ⓘ
+// that opens the paragraph, so the first one fits beside it.
+func statusAbout(p *votes.Process, fonts *fontSet, withVote bool) [][]string {
+	width := imgWidth - 2*padding - infoMarkSize - infoMarkGap
+	var out [][]string
+	wrap := func(text string, maxLines int) {
+		if text = strings.TrimSpace(text); text != "" {
+			out = append(out, ellipsizeLines(fonts.small, wrapText(fonts.small, text, width), width, titleBlockHeight(fonts.small, maxLines)))
+		}
 	}
-	width := imgWidth - 2*padding
-	return ellipsizeLines(fonts.small, wrapText(fonts.small, text, width), width, titleBlockHeight(fonts.small, aboutMaxLines))
+	wrap(p.About, aboutMaxLines)
+	if withVote {
+		wrap(p.VoteAbout, voteAboutMaxLines)
+	}
+	return out
 }
 
-// aboutHeight is the space the sentence takes below the title, or 0.
-func aboutHeight(about []string, fonts *fontSet) int {
-	if len(about) == 0 {
-		return 0
+// aboutHeight is the space the sentences take below the title, or 0.
+func aboutHeight(about [][]string, fonts *fontSet) int {
+	h := 0
+	for _, para := range about {
+		h += frac(fonts.small, 0.5) + len(para)*lineHeight(fonts.small)
 	}
-	return frac(fonts.small, 0.5) + len(about)*lineHeight(fonts.small)
+	return h
 }
 
 // statusReserve is the space the status card needs for everything but the
 // title, mirroring layoutStatusCard.
-func statusReserve(v votes.Vote, p *votes.Process, about []string, steps []statusStep, fonts *fontSet) int {
+func statusReserve(v votes.Vote, p *votes.Process, about [][]string, steps []statusStep, fonts *fontSet) int {
 	reserve := statusHeadingHeight(v, p, fonts) + aboutHeight(about, fonts)
 	reserve += titleTrailingGap() + frac(fonts.stepLabel, 0.75)
-	reserve += stepsHeight(steps, fonts)
+	reserve += stepsHeight(steps, fonts) + pendingTail(p)
 	return reserve + padding
 }
 
@@ -331,10 +366,14 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 	// not: a business with votes.MaxProcessSteps steps, each detail running to
 	// two lines, under a two-line footer would otherwise leave the title
 	// nothing.
-	// The sentence on the business type goes first when room runs short:
-	// the steps are what the card is for.
+	// The sentences go first when room runs short, the one on the kind of
+	// vote before the one on the business type: the steps are what the card
+	// is for.
 	steps := statusSteps(p, v.Language, fonts, 2)
-	about := statusAbout(p, fonts)
+	about := statusAbout(p, fonts, true)
+	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
+		about = statusAbout(p, fonts, false)
+	}
 	if titleBudget(inset, statusReserve(v, p, about, steps, fonts)) < statusMinTitle {
 		steps = statusSteps(p, v.Language, fonts, 1)
 	}
@@ -362,12 +401,20 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 		cur.advance(titleFace)
 		cur.gap(titleFace, titleLineGapFactor)
 	}
-	if len(about) > 0 {
+	for _, para := range about {
 		cur.y += frac(fonts.small, 0.5)
-		for _, line := range about {
+		for j, line := range para {
 			if img != nil {
-				x := (imgWidth - font.MeasureString(fonts.small, line).Ceil()) / 2
-				drawTrackedText(img, fonts.small, x, cur.baseline(fonts.small), line, 0, blend(bg, 0xD8))
+				w := font.MeasureString(fonts.small, line).Ceil()
+				base := cur.baseline(fonts.small)
+				if j == 0 {
+					x := (imgWidth - infoMarkSize - infoMarkGap - w) / 2
+					capTop := base - fonts.small.Metrics().Ascent.Ceil()*72/100
+					drawInfoMark(img, x, (capTop+base)/2-infoMarkSize/2, blend(bg, 0xD8))
+					drawTrackedText(img, fonts.small, x+infoMarkSize+infoMarkGap, base, line, 0, blend(bg, 0xD8))
+				} else {
+					drawTrackedText(img, fonts.small, (imgWidth-w)/2, base, line, 0, blend(bg, 0xD8))
+				}
 			}
 			cur.advance(fonts.small)
 		}
@@ -411,6 +458,13 @@ func layoutStatusCard(img *image.RGBA, cur *layoutCursor, inset int, group []vot
 		if i < len(steps)-1 {
 			cur.y += stepGap(fonts)
 		}
+	}
+	if tail := pendingTail(p); tail > 0 {
+		from := prevMarkBottom + stepMarkHalo + 4
+		if img != nil {
+			drawStepConnector(img, markX+stepMarkSize/2, from, from+tail, true, bg)
+		}
+		cur.y = max(cur.y, from+tail)
 	}
 	return nil
 }
@@ -467,6 +521,19 @@ func drawStepMark(img *image.RGBA, x, y int, state votes.StepState, bg color.RGB
 	}
 }
 
+// drawInfoMark draws an ⓘ, a ring with an i in it, at x, y.
+func drawInfoMark(img *image.RGBA, x, y int, c color.RGBA) {
+	drawMask(img, circleMask(infoMarkSize, 0.09, 0), x, y, c)
+	dot := infoMarkSize / 6
+	drawMask(img, circleMask(dot, 0, 0), x+(infoMarkSize-dot)/2, y+infoMarkSize*24/100, c)
+	stem := image.Rect(x+infoMarkSize/2-dot/2, y+infoMarkSize*45/100, x+infoMarkSize/2-dot/2+dot, y+infoMarkSize*76/100)
+	for py := stem.Min.Y; py < stem.Max.Y; py++ {
+		for px := stem.Min.X; px < stem.Max.X; px++ {
+			img.SetRGBA(px, py, c)
+		}
+	}
+}
+
 // circleMask is a disc, or a ring of the given width, as an alpha mask the size
 // of the marker; widths and inset are fractions of the diameter. With dashes,
 // the ring is broken into that many dashes.
@@ -517,7 +584,10 @@ func statusAlt(group []votes.Vote) string {
 		label = heading + "\n\n" + label
 	}
 	if about := strings.TrimSpace(p.About); about != "" {
-		label += "\n" + about
+		label += "\nℹ️ " + about
+	}
+	if about := strings.TrimSpace(p.VoteAbout); about != "" {
+		label += "\nℹ️ " + about
 	}
 
 	w := voteformat.W(v.Language)

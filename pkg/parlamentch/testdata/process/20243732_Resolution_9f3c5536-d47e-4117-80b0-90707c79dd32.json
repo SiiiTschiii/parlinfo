@@ -1,0 +1,33 @@
+{
+ "d": {
+  "results": [
+   {
+    "ResolutionDate": "/Date(1790208000000)/",
+    "ResolutionId": 3,
+    "ResolutionText": "Annahme mit Änderung",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1773273600000)/",
+    "ResolutionId": null,
+    "ResolutionText": "Annahme mit Änderung",
+    "Council": 2,
+    "CouncilName": "Ständerat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   },
+   {
+    "ResolutionDate": "/Date(1750032000000)/",
+    "ResolutionId": 20,
+    "ResolutionText": "Annahme",
+    "Council": 1,
+    "CouncilName": "Nationalrat",
+    "CommitteeName": null,
+    "CommitteeAbbreviation1": null
+   }
+  ]
+ }
+}

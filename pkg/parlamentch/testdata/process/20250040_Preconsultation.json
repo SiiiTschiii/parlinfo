@@ -1,0 +1,34 @@
+{
+ "d": {
+  "results": [
+   {
+    "CommitteeName": "Finanzkommission Ständerat",
+    "Abbreviation1": "FK-S"
+   },
+   {
+    "CommitteeName": "Finanzkommission Nationalrat",
+    "Abbreviation1": "FK-N"
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": null,
+    "Abbreviation1": null
+   },
+   {
+    "CommitteeName": "Finanzkommission Nationalrat",
+    "Abbreviation1": "FK-N"
+   },
+   {
+    "CommitteeName": "Finanzkommission Ständerat",
+    "Abbreviation1": "FK-S"
+   }
+  ]
+ }
+}

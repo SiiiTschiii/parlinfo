@@ -137,7 +137,7 @@ func GroupPrefixLine(group []votes.Vote) string {
 	// two different kinds of fact side by side as though they were one, the
 	// business on the left and the ballot on the right.
 	if len(group) == 1 {
-		if sub := singleVoteSubtitle(group[0].Subtitle); sub != "" {
+		if sub := singleVoteSubtitle(group[0]); sub != "" {
 			if prefix == "" {
 				return sub
 			}
@@ -159,7 +159,7 @@ func FitLabelSubject(line string, group []votes.Vote, room int, measure func(str
 	if measure(line) <= room || len(group) != 1 {
 		return line
 	}
-	sub := singleVoteSubtitle(group[0].Subtitle)
+	sub := singleVoteSubtitle(group[0])
 	if sub == "" || !strings.HasSuffix(line, sub) {
 		return line
 	}
@@ -749,14 +749,22 @@ func IsSchlussabstimmung(abstimmungstitel string) bool {
 	return strings.Contains(strings.ToLower(abstimmungstitel), "schlussabstimmung")
 }
 
-func singleVoteSubtitle(abstimmungstitel string) string {
-	if abstimmungstitel == "" {
+// singleVoteSubtitle is a lone vote's Abstimmungsgegenstand as its post
+// leads with it, or "" where it says nothing the post does not.
+//
+// In Zürich a lone Schlussabstimmung is the decision on the business itself,
+// so naming it adds nothing. In the Nationalrat it does: a bill has a
+// Gesamtabstimmung and a Schlussabstimmung, and the subtitle names which,
+// with the bill and what Ja meant ("Schlussabstimmung: Tierschutzgesetz
+// (TSchG)"). So the Nationalrat's is kept.
+func singleVoteSubtitle(v votes.Vote) string {
+	if v.Subtitle == "" {
 		return ""
 	}
-	if IsSchlussabstimmung(abstimmungstitel) {
+	if IsSchlussabstimmung(v.Subtitle) && !strings.HasPrefix(v.Jurisdiction, "nationalrat") {
 		return ""
 	}
-	return CleanVoteSubtitle(abstimmungstitel)
+	return CleanVoteSubtitle(v.Subtitle)
 }
 
 // typeLabels names the vote types worth surfacing to a reader, keyed by the
