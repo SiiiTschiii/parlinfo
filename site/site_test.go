@@ -229,10 +229,20 @@ func TestPlatformViewsMultilingual(t *testing.T) {
 	if ig.Handle != "@chparlinfo_fr" {
 		t.Errorf("Instagram row: handle %q, want the French handle", ig.Handle)
 	}
+	var frURL string
 	for _, c := range ig.Chips {
-		if c.Lang == "fr" && ig.URL != c.URL {
-			t.Errorf("Instagram row URL = %q, want the French account %q", ig.URL, c.URL)
+		if c.Lang == "fr" {
+			frURL = c.URL
 		}
+	}
+	if frURL == "" || ig.URL != frURL {
+		t.Errorf("Instagram row URL = %q, want the French account %q", ig.URL, frURL)
+	}
+
+	// A page language the platform has no account in: the row leads to the
+	// first account, whose handle is the one shown.
+	if other := platformViews(brand(t, "ch"), "xx")[0]; len(other.Chips) < 2 || other.URL != other.Chips[0].URL || other.Handle != other.Chips[0].Handle {
+		t.Errorf("Instagram row without a matching language = %+v, want the first account", other)
 	}
 	var langs []string
 	for _, c := range ig.Chips {
