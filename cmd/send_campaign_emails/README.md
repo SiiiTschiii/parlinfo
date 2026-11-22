@@ -24,6 +24,24 @@ Planned future additions: `tiktok`, `linkedin` (once those project accounts are 
 | `cantonal-national-parties` | `data/campaign_recipients/cantonal_national_parties.yaml` |
 | `cantonal-zh`               | `data/campaign_recipients/cantonal_zh_politicians.yaml`   |
 | `federal-zh`                | `data/campaign_recipients/federal_zh_politicians.yaml`    |
+| `nationalrat`               | `data/campaign_recipients/nationalrat.yaml`, written by `cmd/fetch_nationalrat_recipients` |
+
+## Nationalrat campaign (`--audience nationalrat`)
+
+Every sitting member of the Nationalrat, from every canton, written to in their own language, with the handles CH Parl Info tags them by. It differs from the other audiences in three ways:
+
+- **Language.** German, French or Italian per member, with its own subject and text. French and Italian are always *vous*/*Lei*. German follows the du/Sie rule below.
+- **Handles.** The email names each verified handle in [`data/nationalrat/contacts.yaml`](../../data/nationalrat/contacts.yaml) on a platform that tags: Instagram, X and Bluesky. Facebook posts only name people. Then it links CH Parl Info's account on each of those platforms, in the member's language where one exists. X has only the German account, so it is marked as German for French and Italian readers. A member tagged nowhere is told they are named, is asked for their handle, and is pointed at Instagram.
+- **Recipients come from a command, not by hand.** It reads the roster and the published emails from the parlament.ch OData service, and takes each member's language from their latest 20 speeches in the chamber:
+
+```bash
+go run ./cmd/fetch_nationalrat_recipients            # writes data/campaign_recipients/nationalrat.yaml
+go run ./cmd/fetch_nationalrat_recipients --force    # overwrite it, losing hand corrections
+```
+
+The language rule, and why: Italian in a quarter of the speeches or more makes a member Italian-speaking, since Ticinesi often speak German to be understood and German speakers almost never speak Italian. Otherwise the majority of German or French decides. A member with fewer than 3 speeches goes by canton. Every guess is commented in the file, and the ones worth a look say `prüfen`: a mixed record, or a bilingual canton (BE, FR, VS, GR) decided by canton. Check those, fill in the dozen members who publish no email, then run the workflow below with `--audience nationalrat`.
+
+The session start the emails name is `sessionStart` in [`nationalrat.go`](nationalrat.go). Update it before reusing the campaign for another session.
 
 The workflow (verify → preview → test → send) below is identical for all kinds; just swap `--platform instagram` for e.g. `--audience city-parties` or a `--custom` invocation.
 
