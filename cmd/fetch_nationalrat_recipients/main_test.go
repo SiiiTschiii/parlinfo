@@ -45,21 +45,10 @@ func TestChooseLanguage(t *testing.T) {
 	}
 }
 
-func TestChooseFormal(t *testing.T) {
-	born := func(y int) time.Time { return time.Date(y, 6, 1, 0, 0, 0, 0, time.UTC) }
-	for _, tc := range []struct {
-		lang string
-		born time.Time
-		want bool
-	}{
-		{"fr", born(1990), true},
-		{"it", born(1990), true},
-		{"de", born(1969), true},
-		{"de", born(1970), false},
-		{"de", time.Time{}, false},
-	} {
-		if got, why := chooseFormal(tc.lang, tc.born); got != tc.want {
-			t.Errorf("chooseFormal(%s, %v) = %v (%s), want %v", tc.lang, tc.born.Year(), got, why, tc.want)
+func TestFormalWord(t *testing.T) {
+	for lang, want := range map[string]string{"de": "Sie", "fr": "vous", "it": "Lei"} {
+		if got := formalWord(lang); got != want {
+			t.Errorf("formalWord(%s) = %q, want %q", lang, got, want)
 		}
 	}
 }

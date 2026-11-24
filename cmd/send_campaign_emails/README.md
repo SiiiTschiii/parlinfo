@@ -30,7 +30,7 @@ Planned future additions: `tiktok`, `linkedin` (once those project accounts are 
 
 Every sitting member of the Nationalrat, from every canton, written to in their own language, with the handles CH Parl Info tags them by. It differs from the other audiences in three ways:
 
-- **Language.** German, French or Italian per member, with its own subject and text. French and Italian are always *vous*/*Lei*. German follows the du/Sie rule below.
+- **Language.** German, French or Italian per member, with its own subject and text. Everyone is addressed formally: *vous*, *Lei* and *Sie*, regardless of age (cold emails to national parliamentarians). The du/Sie rule below applies to the other audiences.
 - **Handles.** The email names each verified handle in [`data/nationalrat/contacts.yaml`](../../data/nationalrat/contacts.yaml) on a platform that tags: Instagram, X and Bluesky. Facebook posts only name people. Then it links CH Parl Info's account on each of those platforms, in the member's language where one exists. X has only the German account, so it is marked as German for French and Italian readers. A member tagged nowhere is told they are named, is asked for their handle, and is pointed at Instagram.
 - **Recipients come from a command, not by hand.** It reads the roster and the published emails from the parlament.ch OData service, and takes each member's language from their latest 20 speeches in the chamber:
 

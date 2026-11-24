@@ -83,8 +83,9 @@ func header(now time.Time) string {
 #             speeches; the canton where they gave too few. Members from the
 #             bilingual cantons (BE, FR, VS, GR) decided by canton are marked
 #             "prüfen".
-#   formal    French and Italian always vous/Lei. German: Sie when born before
-#             1970, otherwise du, as in the other campaigns (see the README).
+#   formal    Always true: vous, Lei, Sie. These are cold emails to national
+#             parliamentarians, so nobody gets a du. Set false by hand for
+#             someone you know.
 #   email     The first address the member publishes; any others are listed in
 #             a comment. Empty when they publish none, and then skipped.
 
@@ -94,7 +95,6 @@ recipients:
 
 func entry(m parlamentch.MemberDetails, counts map[string]int) string {
 	lang, langWhy := chooseLanguage(counts, m.Canton)
-	formal, formalWhy := chooseFormal(lang, m.BirthDate)
 
 	gender, role := "männlich", "Nationalrat"
 	if m.Gender == "f" {
@@ -120,7 +120,7 @@ func entry(m parlamentch.MemberDetails, counts map[string]int) string {
 	fmt.Fprintf(&sb, "    party: %s\n", strconv.Quote(m.Party))
 	fmt.Fprintf(&sb, "    canton: %s\n", m.Canton)
 	fmt.Fprintf(&sb, "    language: %s  # %s\n", lang, langWhy)
-	fmt.Fprintf(&sb, "    formal: %t  # %s\n", formal, formalWhy)
+	fmt.Fprintf(&sb, "    formal: true  # %s\n", formalWord(lang))
 	return sb.String()
 }
 
@@ -204,21 +204,14 @@ func speechSummary(counts map[string]int) string {
 	return strings.Join(parts, ", ")
 }
 
-// formalBornBefore is the cohort the German emails address with Sie, the same
-// cut-off the other campaigns use (see send_campaign_emails/README.md).
-const formalBornBefore = 1970
-
-func chooseFormal(lang string, born time.Time) (bool, string) {
-	switch {
-	case lang == "fr":
-		return true, "vous"
-	case lang == "it":
-		return true, "Lei"
-	case born.IsZero():
-		return false, "du: Geburtsjahr unbekannt"
-	case born.Year() < formalBornBefore:
-		return true, fmt.Sprintf("Sie: geb. %d", born.Year())
-	default:
-		return false, fmt.Sprintf("du: geb. %d", born.Year())
+// formalWord names the formal address in the member's language, for the comment
+// beside the formal line.
+func formalWord(lang string) string {
+	switch lang {
+	case "fr":
+		return "vous"
+	case "it":
+		return "Lei"
 	}
+	return "Sie"
 }
