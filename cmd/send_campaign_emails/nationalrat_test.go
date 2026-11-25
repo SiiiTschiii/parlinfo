@@ -100,11 +100,12 @@ func TestNationalratBody(t *testing.T) {
 				"Sehr geehrte Frau Muster\n",
 				"markieren wir Sie im Post: auf Bluesky als @erika.bsky.social.",
 				"🔵 Bluesky: https://bsky.app/profile/chparlinfo.bsky.social\n",
-				"Zusammen mit Züri Ratsinfo",
-				"aller drei Ebenen im Blick: https://parlinfo.ch/de/zh/\n\nIch würde mich freuen",
+				// Follows on from the zuerichratsinfo email.
+				"Sehr geehrte Frau Muster\n\nVor einiger Zeit habe ich Ihnen zuerichratsinfo vorgestellt",
+				"Alle Accounts, auch auf Französisch und Italienisch: https://parlinfo.ch/de/ch/\nGemeinderat und Kantonsrat bei Züri Ratsinfo: https://parlinfo.ch/de/zh/\n\n",
 				"Freundliche Grüsse",
 			},
-			notWant: []string{"📸", " du "},
+			notWant: []string{"📸", " du ", "Ich möchte Ihnen vor der Wintersession"},
 		},
 		{
 			name: "Italian member tagged on X",
@@ -148,6 +149,14 @@ func TestNationalratSubjectIsInTheMembersLanguage(t *testing.T) {
 		if s := nationalratWordsFor(lang).Subject; !strings.Contains(s, want) {
 			t.Errorf("%s subject %q lacks %q", lang, s, want)
 		}
+	}
+}
+
+func TestNationalratSubject_FollowsOnForZurich(t *testing.T) {
+	zh := nationalratSubject(Recipient{Language: "de", Canton: "ZH"})
+	be := nationalratSubject(Recipient{Language: "de", Canton: "BE"})
+	if !strings.Contains(zh, "nach Gemeinderat und Kantonsrat") || zh == be {
+		t.Errorf("Zurich subject %q, Bern subject %q", zh, be)
 	}
 }
 

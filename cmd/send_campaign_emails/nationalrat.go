@@ -78,7 +78,7 @@ func buildNationalratCampaign(recipientsFile string) Campaign {
 
 	return Campaign{
 		Recipients:    recipients,
-		RenderSubject: func(r Recipient) string { return nationalratWordsFor(r.Language).Subject },
+		RenderSubject: nationalratSubject,
 		RenderBody:    nationalratBody,
 	}
 }
@@ -160,12 +160,18 @@ type nationalratWords struct {
 	Colon string
 	// AllAccounts points at the parlinfo.ch brand page; %s is its URL.
 	AllAccounts string
-	// Zurich is a paragraph for members from canton Zurich, pointing at Züri
-	// Ratsinfo; %s is its brand page. Empty in a language no Zurich member
-	// reads.
-	Zurich string
-	Close  string
-	Thanks string
+	Close       string
+	Thanks      string
+
+	// Members from canton Zurich already had an email about zuerichratsinfo,
+	// as Züri Ratsinfo was called then, which promised the Kantonsrat and the
+	// federal parliament as the next steps. Their email follows on from it,
+	// written so it still reads whole to someone who forgot the first. Empty
+	// in a language no Zurich member reads.
+	ZurichSubject string
+	ZurichIntro   string
+	// ZurichLink follows AllAccounts; %s is Züri Ratsinfo's brand page.
+	ZurichLink string
 }
 
 func nationalratWordsFor(lang string) nationalratWords {
@@ -191,9 +197,12 @@ var deSieWords = nationalratWords{
 	// The German brand page; the language switcher there leads to the others.
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
-	Zurich:      "Zusammen mit Züri Ratsinfo, das die Abstimmungen des Gemeinderats und des Kantonsrats postet, haben die Einwohnerinnen und Einwohner der Stadt Zürich damit die Parlamente aller drei Ebenen im Blick: %s",
 	Close:       "Ich würde mich freuen, wenn Sie dem Account folgen und einen Post teilen, sobald er eines Ihrer Geschäfte betrifft. Und ich bin gespannt auf Ihr Feedback: Was würde die Posts für Sie oder Ihre Wählerinnen und Wähler nützlicher machen?",
 	Thanks:      "Freundliche Grüsse",
+
+	ZurichSubject: "CH Parl Info – nach Gemeinderat und Kantonsrat jetzt auch der Nationalrat auf Social Media",
+	ZurichIntro:   "Vor einiger Zeit habe ich Ihnen zuerichratsinfo vorgestellt, mein ehrenamtliches Projekt, das die Abstimmungen des Zürcher Gemeinderats auf Social Media bringt. Inzwischen heisst es Züri Ratsinfo und postet auch den Kantonsrat, und mit CH Parl Info kommt vor der Wintersession der Nationalrat dazu. Damit haben die Einwohnerinnen und Einwohner der Stadt Zürich die Parlamente aller drei Ebenen im Blick.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
+	ZurichLink:    "Gemeinderat und Kantonsrat bei Züri Ratsinfo: %s",
 }
 
 var deDuWords = nationalratWords{
@@ -207,9 +216,12 @@ var deDuWords = nationalratWords{
 	InGerman:    "",
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
-	Zurich:      "Zusammen mit Züri Ratsinfo, das die Abstimmungen des Gemeinderats und des Kantonsrats postet, haben die Einwohnerinnen und Einwohner der Stadt Zürich damit die Parlamente aller drei Ebenen im Blick: %s",
 	Close:       "Ich würde mich freuen, wenn du dem Account folgst und einen Post teilst, sobald er eines deiner Geschäfte betrifft. Und ich bin gespannt auf dein Feedback: Was würde die Posts für dich oder deine Wählerinnen und Wähler nützlicher machen?",
 	Thanks:      "Liebe Grüsse",
+
+	ZurichSubject: "CH Parl Info – nach Gemeinderat und Kantonsrat jetzt auch der Nationalrat auf Social Media",
+	ZurichIntro:   "Vor einiger Zeit habe ich dir zuerichratsinfo vorgestellt, mein ehrenamtliches Projekt, das die Abstimmungen des Zürcher Gemeinderats auf Social Media bringt. Inzwischen heisst es Züri Ratsinfo und postet auch den Kantonsrat, und mit CH Parl Info kommt vor der Wintersession der Nationalrat dazu. Damit haben die Einwohnerinnen und Einwohner der Stadt Zürich die Parlamente aller drei Ebenen im Blick.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
+	ZurichLink:    "Gemeinderat und Kantonsrat bei Züri Ratsinfo: %s",
 }
 
 var frWords = nationalratWords{
@@ -302,9 +314,10 @@ func nationalratBody(r Recipient) string {
 	}
 	brandPage := fmt.Sprintf("https://%s/%s/ch/", site.Domain, r.Language)
 
-	zurich := ""
-	if r.Canton == "ZH" && w.Zurich != "" {
-		zurich = fmt.Sprintf(w.Zurich, fmt.Sprintf("https://%s/%s/zh/", site.Domain, r.Language)) + "\n\n"
+	intro, allAccounts := w.Intro, fmt.Sprintf(w.AllAccounts, brandPage)
+	if zurichFollowUp(r) {
+		intro = w.ZurichIntro
+		allAccounts += "\n" + fmt.Sprintf(w.ZurichLink, fmt.Sprintf("https://%s/%s/zh/", site.Domain, r.Language))
 	}
 
 	return fmt.Sprintf(`%s
@@ -323,12 +336,27 @@ Christof Gerber
 https://www.linkedin.com/in/christof-gerber/
 `,
 		nationalratGreeting(r),
-		w.Intro,
+		intro,
 		tagLine,
 		fmt.Sprintf(w.Where, sessionStart[r.Language]),
-		accounts.String(), fmt.Sprintf(w.AllAccounts, brandPage),
-		zurich+w.Close,
+		accounts.String(), allAccounts,
+		w.Close,
 		w.Thanks)
+}
+
+// zurichFollowUp reports whether r gets the Zurich text, which follows on
+// from the zuerichratsinfo email.
+func zurichFollowUp(r Recipient) bool {
+	return r.Canton == "ZH" && nationalratWordsFor(r.Language).ZurichIntro != ""
+}
+
+// nationalratSubject is the subject line in r's language.
+func nationalratSubject(r Recipient) string {
+	w := nationalratWordsFor(r.Language)
+	if zurichFollowUp(r) {
+		return w.ZurichSubject
+	}
+	return w.Subject
 }
 
 // joinList joins items as running text: "a", "a und b", "a, b und c".
