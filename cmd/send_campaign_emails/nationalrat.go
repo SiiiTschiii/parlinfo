@@ -206,6 +206,7 @@ var deDuWords = nationalratWords{
 	Thanks:      "Liebe Grüsse",
 }
 
+//nolint:misspell // French: "électeurs"
 var frWords = nationalratWords{
 	Subject:     "CH Parl Info – les votes du Conseil national sur les réseaux sociaux",
 	Intro:       "Avant la session d'hiver, je me permets de vous présenter CH Parl Info, un projet civic tech bénévole. Il publie automatiquement les votes du Conseil national sur les réseaux sociaux, en français, en allemand et en italien. Pour chaque vote, nous montrons le résultat, la position de chaque groupe parlementaire et l'étape où en est l'objet.",
