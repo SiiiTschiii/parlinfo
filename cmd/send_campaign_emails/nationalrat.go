@@ -309,7 +309,7 @@ func nationalratBody(r Recipient) string {
 %s
 
 %s
-Christof
+Christof Gerber
 https://www.linkedin.com/in/christof-gerber/
 `,
 		nationalratGreeting(r),
