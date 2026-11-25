@@ -187,7 +187,7 @@ var deSieWords = nationalratWords{
 	// The German brand page; the language switcher there leads to the others.
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
-	Close:       "Ich würde mich freuen, wenn Sie dem Account folgen und einen Post teilen, wenn er eines Ihrer Geschäfte betrifft. Und ich bin gespannt auf Ihr Feedback: Was würde die Posts für Sie nützlicher machen?",
+	Close:       "Ich würde mich freuen, wenn Sie dem Account folgen und einen Post teilen, wenn er eines Ihrer Geschäfte betrifft. Und ich bin gespannt auf Ihr Feedback: Was würde die Posts für Sie oder Ihre Wähler nützlicher machen?",
 	Thanks:      "Freundliche Grüsse",
 }
 
@@ -202,7 +202,7 @@ var deDuWords = nationalratWords{
 	InGerman:    "",
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
-	Close:       "Ich würde mich freuen, wenn du dem Account folgst und einen Post teilst, wenn er eines deiner Geschäfte betrifft. Und ich bin gespannt auf dein Feedback: Was würde die Posts für dich nützlicher machen?",
+	Close:       "Ich würde mich freuen, wenn du dem Account folgst und einen Post teilst, wenn er eines deiner Geschäfte betrifft. Und ich bin gespannt auf dein Feedback: Was würde die Posts für dich oder deine Wähler nützlicher machen?",
 	Thanks:      "Liebe Grüsse",
 }
 
@@ -217,7 +217,7 @@ var frWords = nationalratWords{
 	InGerman:    " (en allemand)",
 	Colon:       " :",
 	AllAccounts: "Tous les comptes, aussi en allemand et en italien : %s",
-	Close:       "Je serais ravi que vous suiviez le compte et que vous partagiez une publication lorsqu'elle concerne l'un de vos objets. Et vos remarques m'intéressent : qu'est-ce qui rendrait ces publications plus utiles pour vous ?",
+	Close:       "Je serais ravi que vous suiviez le compte et que vous partagiez une publication lorsqu'elle concerne l'un de vos objets. Et vos remarques m'intéressent : qu'est-ce qui rendrait ces publications plus utiles pour vous ou pour vos électeurs ?",
 	Thanks:      "Meilleures salutations",
 }
 
@@ -233,7 +233,7 @@ var itWords = nationalratWords{
 	InGerman:    " (in tedesco)",
 	Colon:       ":",
 	AllAccounts: "Tutti gli account, anche in tedesco e francese: %s",
-	Close:       "Mi farebbe piacere se seguisse l'account e condividesse un post quando riguarda uno dei Suoi oggetti. E sono curioso di sapere cosa ne pensa: cosa renderebbe i post più utili per Lei?",
+	Close:       "Mi farebbe piacere se seguisse l'account e condividesse un post quando riguarda uno dei Suoi oggetti. E sono curioso di sapere cosa ne pensa: cosa renderebbe i post più utili per Lei o per i Suoi elettori?",
 	Thanks:      "Cordiali saluti",
 }
 
