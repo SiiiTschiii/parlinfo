@@ -86,19 +86,22 @@ func TestNationalratBody(t *testing.T) {
 				"https://parlinfo.ch/de/ch/",
 				"Liebe Grüsse",
 			},
-			notWant: []string{"✖️", "Sie", "(en allemand)"},
+			// Not from Zurich, so no word of Züri Ratsinfo.
+			notWant: []string{"✖️", "Sie", "(en allemand)", "Züri Ratsinfo"},
 		},
 		{
-			name: "German member on Sie, tagged on Bluesky",
+			name: "German member on Sie from Zurich, tagged on Bluesky",
 			r: Recipient{
 				Name: "Erika Muster", Lastname: "Muster", Gender: "weiblich", Type: "person",
-				Language: "de", Formal: true,
+				Language: "de", Formal: true, Canton: "ZH",
 				Tagged: []taggedAccount{{"Bluesky", "@erika.bsky.social"}},
 			},
 			want: []string{
 				"Sehr geehrte Frau Muster\n",
 				"markieren wir Sie im Post: auf Bluesky als @erika.bsky.social.",
 				"🔵 Bluesky: https://bsky.app/profile/chparlinfo.bsky.social\n",
+				"Zusammen mit Züri Ratsinfo",
+				"aller drei Ebenen im Blick: https://parlinfo.ch/de/zh/\n\nIch würde mich freuen",
 				"Freundliche Grüsse",
 			},
 			notWant: []string{"📸", " du "},

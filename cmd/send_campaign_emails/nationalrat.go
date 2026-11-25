@@ -160,8 +160,12 @@ type nationalratWords struct {
 	Colon string
 	// AllAccounts points at the parlinfo.ch brand page; %s is its URL.
 	AllAccounts string
-	Close       string
-	Thanks      string
+	// Zurich is a paragraph for members from canton Zurich, pointing at Züri
+	// Ratsinfo; %s is its brand page. Empty in a language no Zurich member
+	// reads.
+	Zurich string
+	Close  string
+	Thanks string
 }
 
 func nationalratWordsFor(lang string) nationalratWords {
@@ -187,6 +191,7 @@ var deSieWords = nationalratWords{
 	// The German brand page; the language switcher there leads to the others.
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
+	Zurich:      "Zusammen mit Züri Ratsinfo, das die Abstimmungen des Gemeinderats und des Kantonsrats postet, haben die Einwohnerinnen und Einwohner der Stadt Zürich damit die Parlamente aller drei Ebenen im Blick: %s",
 	Close:       "Ich würde mich freuen, wenn Sie dem Account folgen und einen Post teilen, sobald er eines Ihrer Geschäfte betrifft. Und ich bin gespannt auf Ihr Feedback: Was würde die Posts für Sie oder Ihre Wählerinnen und Wähler nützlicher machen?",
 	Thanks:      "Freundliche Grüsse",
 }
@@ -202,6 +207,7 @@ var deDuWords = nationalratWords{
 	InGerman:    "",
 	Colon:       ":",
 	AllAccounts: "Alle Accounts, auch auf Französisch und Italienisch: %s",
+	Zurich:      "Zusammen mit Züri Ratsinfo, das die Abstimmungen des Gemeinderats und des Kantonsrats postet, haben die Einwohnerinnen und Einwohner der Stadt Zürich damit die Parlamente aller drei Ebenen im Blick: %s",
 	Close:       "Ich würde mich freuen, wenn du dem Account folgst und einen Post teilst, sobald er eines deiner Geschäfte betrifft. Und ich bin gespannt auf dein Feedback: Was würde die Posts für dich oder deine Wählerinnen und Wähler nützlicher machen?",
 	Thanks:      "Liebe Grüsse",
 }
@@ -296,6 +302,11 @@ func nationalratBody(r Recipient) string {
 	}
 	brandPage := fmt.Sprintf("https://%s/%s/ch/", site.Domain, r.Language)
 
+	zurich := ""
+	if r.Canton == "ZH" && w.Zurich != "" {
+		zurich = fmt.Sprintf(w.Zurich, fmt.Sprintf("https://%s/%s/zh/", site.Domain, r.Language)) + "\n\n"
+	}
+
 	return fmt.Sprintf(`%s
 
 %s
@@ -316,7 +327,7 @@ https://www.linkedin.com/in/christof-gerber/
 		tagLine,
 		fmt.Sprintf(w.Where, sessionStart[r.Language]),
 		accounts.String(), fmt.Sprintf(w.AllAccounts, brandPage),
-		w.Close,
+		zurich+w.Close,
 		w.Thanks)
 }
 
