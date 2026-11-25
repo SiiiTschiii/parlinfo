@@ -103,7 +103,7 @@ func TestNationalratBody(t *testing.T) {
 				// Follows on from the zuerichratsinfo email.
 				"Sehr geehrte Frau Muster\n\nMit zueriratsinfo und chparlinfo haben",
 				"über den ich Ihnen schon geschrieben habe",
-				"Alle Accounts, auch auf Französisch und Italienisch: https://parlinfo.ch/de/ch/\nGemeinderat und Kantonsrat bei Züri Ratsinfo: https://parlinfo.ch/de/zh/\n\n",
+				"Alle Accounts, auch auf Französisch und Italienisch: https://parlinfo.ch/de/ch/\nGemeinderat und Kantonsrat bei zueriratsinfo: https://parlinfo.ch/de/zh/\n\n",
 				"Freundliche Grüsse",
 			},
 			notWant: []string{"📸", " du ", "Ich möchte Ihnen vor der Wintersession"},
