@@ -177,7 +177,7 @@ func nationalratWordsFor(lang string) nationalratWords {
 
 var deSieWords = nationalratWords{
 	Subject:    "CH Parl Info – die Abstimmungen des Nationalrats auf Social Media",
-	Intro:      "Ich möchte Ihnen vor der Wintersession kurz CH Parl Info vorstellen, ein ehrenamtliches Civic-Tech-Projekt. Es bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht.",
+	Intro:      "Ich möchte Ihnen vor der Wintersession kurz CH Parl Info vorstellen, ein ehrenamtliches Civic-Tech-Projekt. Es bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
 	TaggedItem: "auf %s als %s",
 	And:        "und",
 	Tagged:     "Stimmt der Nationalrat über einen Vorstoss ab, den Sie eingereicht oder mitunterzeichnet haben, markieren wir Sie im Post: %s. So erreichen Ihre Vorstösse und ihr Ausgang auch Leute, die nie auf der Parlamentswebsite nachschauen würden.",
@@ -193,7 +193,7 @@ var deSieWords = nationalratWords{
 
 var deDuWords = nationalratWords{
 	Subject:     "CH Parl Info – die Abstimmungen des Nationalrats auf Social Media",
-	Intro:       "Ich möchte dir vor der Wintersession kurz CH Parl Info vorstellen, ein ehrenamtliches Civic-Tech-Projekt. Es bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht.",
+	Intro:       "Ich möchte dir vor der Wintersession kurz CH Parl Info vorstellen, ein ehrenamtliches Civic-Tech-Projekt. Es bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
 	TaggedItem:  "auf %s als %s",
 	And:         "und",
 	Tagged:      "Stimmt der Nationalrat über einen Vorstoss ab, den du eingereicht oder mitunterzeichnet hast, markieren wir dich im Post: %s. So erreichen deine Vorstösse und ihr Ausgang auch Leute, die nie auf der Parlamentswebsite nachschauen würden.",
@@ -209,7 +209,7 @@ var deDuWords = nationalratWords{
 //nolint:misspell // French: "électeurs"
 var frWords = nationalratWords{
 	Subject:     "CH Parl Info – les votes du Conseil national sur les réseaux sociaux",
-	Intro:       "Avant la session d'hiver, je me permets de vous présenter CH Parl Info, un projet civic tech bénévole. Il publie automatiquement les votes du Conseil national sur les réseaux sociaux, en français, en allemand et en italien. Pour chaque vote, nous montrons le résultat, la position de chaque groupe parlementaire et l'étape où en est l'objet.",
+	Intro:       "Avant la session d'hiver, je me permets de vous présenter CH Parl Info, un projet civic tech bénévole. Il publie automatiquement les votes du Conseil national sur les réseaux sociaux, en français, en allemand et en italien. Pour chaque vote, nous montrons le résultat, la position de chaque groupe parlementaire et l'étape où en est l'objet. Mon objectif est que les citoyennes et les citoyens puissent comprendre sans effort comment fonctionnent leurs parlements.",
 	TaggedItem:  "sur %s (%s)",
 	And:         "et",
 	Tagged:      "Lorsque le Conseil national vote sur une intervention que vous avez déposée ou cosignée, nous vous identifions dans la publication : %s. Vos interventions et leur issue atteignent ainsi des personnes qui ne consulteraient jamais le site du Parlement.",
@@ -225,7 +225,7 @@ var frWords = nationalratWords{
 //nolint:misspell // Italian: "intervento"
 var itWords = nationalratWords{
 	Subject:     "CH Parl Info – le votazioni del Consiglio nazionale sui social media",
-	Intro:       "in vista della sessione invernale mi permetto di presentarLe CH Parl Info, un progetto civic tech volontario. Pubblica automaticamente le votazioni del Consiglio nazionale sui social media, in italiano, tedesco e francese. Per ogni votazione mostriamo il risultato, come hanno votato i singoli gruppi parlamentari e a che punto si trova l'oggetto.",
+	Intro:       "in vista della sessione invernale mi permetto di presentarLe CH Parl Info, un progetto civic tech volontario. Pubblica automaticamente le votazioni del Consiglio nazionale sui social media, in italiano, tedesco e francese. Per ogni votazione mostriamo il risultato, come hanno votato i singoli gruppi parlamentari e a che punto si trova l'oggetto. Il mio obiettivo è che le cittadine e i cittadini possano capire senza fatica come lavorano i loro parlamenti.",
 	TaggedItem:  "su %s (%s)",
 	And:         "e",
 	Tagged:      "Quando il Consiglio nazionale vota su un intervento che ha depositato o cofirmato, La menzioniamo nel post: %s. Così i Suoi interventi e il loro esito raggiungono anche persone che non consulterebbero mai il sito del Parlamento.",
