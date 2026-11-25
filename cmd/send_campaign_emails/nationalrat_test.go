@@ -101,7 +101,8 @@ func TestNationalratBody(t *testing.T) {
 				"markieren wir Sie im Post: auf Bluesky als @erika.bsky.social.",
 				"🔵 Bluesky: https://bsky.app/profile/chparlinfo.bsky.social\n",
 				// Follows on from the zuerichratsinfo email.
-				"Sehr geehrte Frau Muster\n\nVor einiger Zeit habe ich Ihnen zuerichratsinfo vorgestellt",
+				"Sehr geehrte Frau Muster\n\nMit zueriratsinfo und chparlinfo haben",
+				"über den ich Ihnen schon geschrieben habe",
 				"Alle Accounts, auch auf Französisch und Italienisch: https://parlinfo.ch/de/ch/\nGemeinderat und Kantonsrat bei Züri Ratsinfo: https://parlinfo.ch/de/zh/\n\n",
 				"Freundliche Grüsse",
 			},

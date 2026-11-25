@@ -201,7 +201,7 @@ var deSieWords = nationalratWords{
 	Thanks:      "Freundliche Grüsse",
 
 	ZurichSubject: "CH Parl Info – nach Gemeinderat und Kantonsrat jetzt auch der Nationalrat auf Social Media",
-	ZurichIntro:   "Vor einiger Zeit habe ich Ihnen zuerichratsinfo vorgestellt, mein ehrenamtliches Projekt, das die Abstimmungen des Zürcher Gemeinderats auf Social Media bringt. Inzwischen heisst es Züri Ratsinfo und postet auch den Kantonsrat, und mit CH Parl Info kommt vor der Wintersession der Nationalrat dazu. Damit haben die Einwohnerinnen und Einwohner der Stadt Zürich die Parlamente aller drei Ebenen im Blick.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
+	ZurichIntro:   "Mit zueriratsinfo und chparlinfo haben die Einwohnerinnen und Einwohner der Stadt Zürich ab der Wintersession die Parlamente aller drei Ebenen im Blick. Zum Gemeinderat, über den ich Ihnen schon geschrieben habe, sind inzwischen der Kantonsrat und mit CH Parl Info der Nationalrat dazugekommen.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
 	ZurichLink:    "Gemeinderat und Kantonsrat bei Züri Ratsinfo: %s",
 }
 
@@ -220,7 +220,7 @@ var deDuWords = nationalratWords{
 	Thanks:      "Liebe Grüsse",
 
 	ZurichSubject: "CH Parl Info – nach Gemeinderat und Kantonsrat jetzt auch der Nationalrat auf Social Media",
-	ZurichIntro:   "Vor einiger Zeit habe ich dir zuerichratsinfo vorgestellt, mein ehrenamtliches Projekt, das die Abstimmungen des Zürcher Gemeinderats auf Social Media bringt. Inzwischen heisst es Züri Ratsinfo und postet auch den Kantonsrat, und mit CH Parl Info kommt vor der Wintersession der Nationalrat dazu. Damit haben die Einwohnerinnen und Einwohner der Stadt Zürich die Parlamente aller drei Ebenen im Blick.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
+	ZurichIntro:   "Mit zueriratsinfo und chparlinfo haben die Einwohnerinnen und Einwohner der Stadt Zürich ab der Wintersession die Parlamente aller drei Ebenen im Blick. Zum Gemeinderat, über den ich dir schon geschrieben habe, sind inzwischen der Kantonsrat und mit CH Parl Info der Nationalrat dazugekommen.\n\nCH Parl Info bringt die Abstimmungen des Nationalrats automatisch auf Social Media, auf Deutsch, Französisch und Italienisch. Zu jeder Abstimmung zeigen wir das Resultat, wie die einzelnen Fraktionen gestimmt haben und wo das Geschäft im Prozess steht. Mein Ziel ist, dass Bürgerinnen und Bürger ohne Aufwand nachvollziehen können, wie ihre Parlamente arbeiten.",
 	ZurichLink:    "Gemeinderat und Kantonsrat bei Züri Ratsinfo: %s",
 }
 
