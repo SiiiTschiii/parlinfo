@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"mime"
 	"net/smtp"
 	"os"
 	"strings"
@@ -20,7 +21,7 @@ var (
 	contactsPath         = flag.String("contacts", contacts.PathFor("zurich-city"), "Path to contacts YAML file")
 	overridesPath        = flag.String("overrides", "data/email_overrides.yaml", "Path to email overrides YAML file")
 	platform             = flag.String("platform", "", "Platform campaign: bluesky | instagram | facebook (mutually exclusive with --audience/--custom)")
-	audience             = flag.String("audience", "", "Audience campaign: city-parties | cantonal-national-parties | cantonal-zh | federal-zh (mutually exclusive with --platform/--custom)")
+	audience             = flag.String("audience", "", "Audience campaign: city-parties | cantonal-national-parties | cantonal-zh | federal-zh | nationalrat (mutually exclusive with --platform/--custom)")
 	custom               = flag.String("custom", "", "Custom campaign: path to a messages YAML file (per-message to/subject/body; mutually exclusive with --platform/--audience)")
 	cantonRecipientsPath = flag.String("canton-recipients", "data/campaign_recipients/cantonal_zh_politicians.yaml", "Kantonsrat email source for platforms that include the canton (gitignored local file; matched to contacts by name)")
 	recipientsPath       = flag.String("recipients", "", "Override the recipient YAML file for --audience (default: the audience's data/campaign_recipients/*.yaml)")
@@ -87,6 +88,14 @@ var audienceConfigs = map[string]audienceConfig{
 		DisplayName:    "National- & Ständerat (ZH)",
 		Subject:        "zuerichratsinfo – Abstimmungen aus dem Gemeinderat Zürich transparent gemacht",
 		RecipientsFile: "data/campaign_recipients/federal_zh_politicians.yaml",
+	},
+	// Every member of the Nationalrat, in their own language, naming the
+	// handles they are tagged with. Subject and body are per language; see
+	// nationalrat.go.
+	nationalratAudienceKey: {
+		Key:            nationalratAudienceKey,
+		DisplayName:    "Nationalrat (alle Kantone)",
+		RecipientsFile: "data/campaign_recipients/nationalrat.yaml",
 	},
 }
 
@@ -251,13 +260,16 @@ type Recipient struct {
 	Salutation  string
 	PlatformURL string
 	Source      string
-	Type        string // "person" (default) or "org"
-	Role        string // e.g. "Nationalrätin" (audience campaigns)
-	Party       string // e.g. "SP" (audience campaigns)
-	Formal      bool   // person only: use Sie ("Sehr geehrte/r …") instead of du
-	Lastname    string // person only: surname for the formal salutation
-	Subject     string // custom campaigns: this message's subject line
-	Body        string // custom campaigns: this message's fully-rendered body
+	Type        string          // "person" (default) or "org"
+	Role        string          // e.g. "Nationalrätin" (audience campaigns)
+	Party       string          // e.g. "SP" (audience campaigns)
+	Formal      bool            // person only: use Sie ("Sehr geehrte/r …") instead of du
+	Lastname    string          // person only: surname for the formal salutation
+	Subject     string          // custom campaigns: this message's subject line
+	Body        string          // custom campaigns: this message's fully-rendered body
+	Language    string          // nationalrat: de, fr or it
+	Canton      string          // nationalrat: e.g. "VD"
+	Tagged      []taggedAccount // nationalrat: the handles the bots tag
 }
 
 // Campaign is a fully-resolved email campaign: a subject, the recipient list,
@@ -283,6 +295,9 @@ type audienceRecipient struct {
 	Formal *bool `yaml:"formal"`
 	// Lastname: person only, surname for the formal salutation ("… Frau Moser").
 	Lastname string `yaml:"lastname"`
+	// Language and Canton: the nationalrat audience only, see nationalrat.go.
+	Language string `yaml:"language"`
+	Canton   string `yaml:"canton"`
 }
 
 type audienceRecipientsFile struct {
@@ -358,11 +373,14 @@ func buildCampaign() Campaign {
 	case *audience != "":
 		ac, ok := audienceConfigs[strings.ToLower(*audience)]
 		if !ok {
-			log.Fatalf("Unknown --audience %q; supported: city-parties, cantonal-national-parties, cantonal-zh, federal-zh", *audience)
+			log.Fatalf("Unknown --audience %q; supported: city-parties, cantonal-national-parties, cantonal-zh, federal-zh, nationalrat", *audience)
 		}
 		file := ac.RecipientsFile
 		if *recipientsPath != "" {
 			file = *recipientsPath
+		}
+		if ac.Key == nationalratAudienceKey {
+			return buildNationalratCampaign(file)
 		}
 		return Campaign{
 			Recipients:    loadAudienceRecipients(file, true),
@@ -514,6 +532,8 @@ func loadAudienceRecipients(path string, report bool) []Recipient {
 			Party:      e.Party,
 			Formal:     formal,
 			Lastname:   e.Lastname,
+			Language:   strings.ToLower(strings.TrimSpace(e.Language)),
+			Canton:     e.Canton,
 		})
 	}
 	if report {
@@ -749,6 +769,10 @@ func addressForm(r Recipient) string {
 		return "-" // custom campaigns: literal body, no adaptive salutation
 	case r.Type == "org":
 		return "ihr"
+	case r.Language == "fr":
+		return "vous"
+	case r.Language == "it":
+		return "Lei"
 	case r.Formal:
 		return "Sie"
 	default:
@@ -813,11 +837,11 @@ func normalize(s string) string {
 
 func runVerify(c Campaign) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	_, _ = fmt.Fprintf(w, "#\tName\tEmail\tType\tAnrede\tGender\tRole\tParty\tPlatform URL\tSubject\tSource\n")
-	_, _ = fmt.Fprintf(w, "-\t----\t-----\t----\t------\t------\t----\t-----\t------------\t-------\t------\n")
+	_, _ = fmt.Fprintf(w, "#\tName\tEmail\tType\tLang\tAnrede\tGender\tRole\tParty\tPlatform URL\tSubject\tSource\n")
+	_, _ = fmt.Fprintf(w, "-\t----\t-----\t----\t----\t------\t------\t----\t-----\t------------\t-------\t------\n")
 	for i, r := range c.Recipients {
-		_, _ = fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-			i+1, r.Name, r.Email, r.Type, addressForm(r), r.Gender, r.Role, r.Party, r.PlatformURL, c.RenderSubject(r), r.Source)
+		_, _ = fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+			i+1, r.Name, r.Email, r.Type, r.Language, addressForm(r), r.Gender, r.Role, r.Party, r.PlatformURL, c.RenderSubject(r), r.Source)
 	}
 	if err := w.Flush(); err != nil {
 		log.Fatalf("Failed to flush table: %v", err)
@@ -911,8 +935,10 @@ func runSend(c Campaign, testOverride string) {
 }
 
 func buildMIMEMessage(from, to, subject, body string) []byte {
+	// A header is ASCII by the letter of RFC 5322, so a subject with "ü" or "é"
+	// is encoded; an ASCII one passes through unchanged.
 	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n",
-		from, to, subject)
+		from, to, mime.QEncoding.Encode("utf-8", subject))
 	return []byte(headers + body)
 }
 
