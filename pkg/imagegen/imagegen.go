@@ -627,6 +627,7 @@ func renderCard(c card, bg color.RGBA, fonts *fontSet) ([]byte, error) {
 	drawBodyBand(img, fonts.bandLabel, c.vote)
 	c.corner.draw(img, fonts, c.vote, bg)
 	c.footer.draw(img, fonts, bg)
+	drawSiteMark(img, fonts.siteMark, bg)
 
 	cur := newCursor(startY, imgHeight-foot)
 	if err := c.layout(img, cur, inset); err != nil {
@@ -730,6 +731,7 @@ type fontSet struct {
 	boldHeading font.Face // gobold 48 (= statNum, shared)
 	bandLabel   font.Face // gobold 44 (body band)
 	stepLabel   font.Face // gobold stepLabelSize (status card)
+	siteMark    font.Face // gobold siteMarkSize (bottom margin)
 
 	emojiRegular font.Face // notoEmoji 36
 	emojiSmall   font.Face // notoEmoji 28
@@ -778,6 +780,9 @@ func loadFontSet() (*fontSet, error) {
 	}
 	if fs.stepLabel, err = load(gobold.TTF, stepLabelSize); err != nil {
 		return nil, fmt.Errorf("stepLabel font: %w", err)
+	}
+	if fs.siteMark, err = load(gobold.TTF, siteMarkSize); err != nil {
+		return nil, fmt.Errorf("siteMark font: %w", err)
 	}
 	fs.boldHeading = fs.statNum // same face, gobold 48
 
